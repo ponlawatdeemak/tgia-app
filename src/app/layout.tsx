@@ -1,3 +1,4 @@
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import type { Metadata } from 'next'
 import { Noto_Sans_Thai } from 'next/font/google'
 import './globals.css'
@@ -17,7 +18,9 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body className={noto.className}>
-				<div className='flex h-full flex-1 flex-col'>{children}</div>
+				<AppRouterCacheProvider options={{ enableCssLayer: true }}>
+					<div className='flex h-full flex-1 flex-col'>{children}</div>
+				</AppRouterCacheProvider>
 			</body>
 		</html>
 	)

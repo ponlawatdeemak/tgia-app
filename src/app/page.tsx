@@ -1,7 +1,10 @@
+import { Button } from '@mui/material'
+
 export default function Home() {
 	return (
 		<main>
-			<div className='text-rose-400'>testttttt</div>
+			<Button variant='contained'>Contained</Button>
+			<Button variant='outlined'>Outlined</Button>
 		</main>
 	)
 }
