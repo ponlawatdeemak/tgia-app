@@ -1,7 +1,7 @@
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import type { Metadata } from 'next'
 import { Noto_Sans_Thai } from 'next/font/google'
-import './globals.css'
+import './../globals.css'
 
 const noto = Noto_Sans_Thai({ subsets: ['latin'] })
 
