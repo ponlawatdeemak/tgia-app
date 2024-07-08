@@ -19,3 +19,9 @@
 		min-height: 100vh;
 	}
 }
+
+/* @layer components {
+	.MuiPaper-root {
+		border-radius: 0.5rem;
+	}
+} */

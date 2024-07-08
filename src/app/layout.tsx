@@ -1,9 +1,10 @@
+import Providers from '@/utils/providers'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import type { Metadata } from 'next'
-import { Noto_Sans_Thai } from 'next/font/google'
-import './../globals.css'
+import { Anuphan } from 'next/font/google'
+import './../styles/globals.css'
 
-const noto = Noto_Sans_Thai({ subsets: ['latin'] })
+const anuphan = Anuphan({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
 	title: 'Create Next App',
@@ -17,9 +18,11 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en'>
-			<body className={noto.className}>
+			<body className={anuphan.className}>
 				<AppRouterCacheProvider options={{ enableCssLayer: true }}>
-					<div className='flex h-full flex-1 flex-col'>{children}</div>
+					<Providers>
+						<div className='flex h-full flex-1 flex-col bg-background'>{children}</div>
+					</Providers>
 				</AppRouterCacheProvider>
 			</body>
 		</html>
