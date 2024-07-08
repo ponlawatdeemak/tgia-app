@@ -10,7 +10,7 @@ export default function PlaygroundPage() {
 	return (
 		<main>
 			<p>โครงการพัฒนาระบบเทคโนโลยี</p>
-			<p>เพื่องานประกันภัยข้าวนาปี test</p>
+			<p>เพื่องานประกันภัยข้าวนาปี</p>
 
 			<TextField required label='ชื่อผู้ใช้งาน' />
 			<TextField required label='รหัสผ่าน' type='password' />
