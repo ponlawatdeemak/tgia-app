@@ -1,13 +1,13 @@
 'use client'
 
-import { Noto_Sans_Thai } from 'next/font/google'
+import { Anuphan } from 'next/font/google'
 import { createTheme } from '@mui/material/styles'
 
-const noto = Noto_Sans_Thai({ subsets: ['latin'] })
+const anuphan = Anuphan({ subsets: ['latin'] })
 
 const theme = createTheme({
 	typography: {
-		fontFamily: noto.style.fontFamily,
+		fontFamily: anuphan.style.fontFamily,
 	},
 	palette: {
 		primary: {
