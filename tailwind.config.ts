@@ -7,11 +7,21 @@ const config: Config = {
 		'./src/app/**/*.{js,ts,jsx,tsx,mdx}',
 	],
 	theme: {
+		fontSize: {
+			'2xs': ['var(--font-size-2xs)', 'var(--line-height-2xs)'],
+			xs: ['var(--font-size-xs)', 'var(--line-height-xs)'],
+			sm: ['var(--font-size-sm)', 'var(--line-height-sm)'],
+			base: ['var(--font-size-base)', 'var(--line-height-base)'],
+			md: ['var(--font-size-md)', 'var(--line-height-md)'],
+			lg: ['var(--font-size-lg)', 'var(--line-height-lg)'],
+			xl: ['var(--font-size-xl)', 'var(--line-height-xl)'],
+			'2xl': ['var(--font-size-2xl)', 'var(--line-height-2xl)'],
+		},
 		extend: {
 			colors: {
 				primary: {
 					// light: '#4870D8',
-					DEFAULT: '#0C626D',
+					DEFAULT: 'var(--primary-color-1)',
 					// dark: '#000982',
 				},
 				black: '#202020',

@@ -4,10 +4,34 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+	/* font*/
+	--font-size-2xs: 8px;
+	--font-size-xs: 10px;
+	--font-size-sm: 12px;
+	--font-size-base: 14px;
+	--font-size-md: 16px;
+	--font-size-lg: 18px;
+	--font-size-xl: 20px;
+	--font-size-2xl: 24px;
+
+	--line-height-2xs: 10px;
+	--line-height-xs: 12px;
+	--line-height-sm: 16px;
+	--line-height-base: 20px;
+	--line-height-md: 24px;
+	--line-height-lg: 28px;
+	--line-height-xl: 28px;
+	--line-height-2xl: 32px;
+
+	/* color */
+	--primary-color-1: '#0C626D';
+}
+
 @layer base {
 	html,
 	body {
-		font-size: 16px; /* set equal to 1rem */
+		font-size: var(--font-size-base);
 		font-weight: 400;
 		margin: 0;
 		height: 100%;
