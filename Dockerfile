@@ -19,7 +19,7 @@ RUN npm ci --only=production && \
     rm -rf package-lock.json
 
 ADD --chown="21001:21001" public ./public
-ADD --chown="21001:21001" next ./next
+ADD --chown="21001:21001" .next ./.next
 ADD --chown="21001:21001" next.config.mjs ./
 
 RUN rm -rf ./.next/cache || true
