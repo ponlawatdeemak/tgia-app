@@ -16,7 +16,7 @@ source-code-scan:
     DOCKER_TLS_CERTDIR: ""
   only:
     refs:
-      - master
+      - main
   script: 
     - sonar-scanner -Dsonar.projectKey=$CI_PROJECT_NAMESPACE--$CI_PROJECT_NAME -Dsonar.sources=. -Dsonar.host.url=https://madrid.thaicom.io/sonar -Dsonar.login=$SONAR_ID
 
@@ -26,7 +26,7 @@ docker_build:
     - docker-runner
   only:
     refs:
-      - master
+      - main
   image: rome.thaicom.io/docker:24.0.5
   services:
     - name: rome.thaicom.io/docker:24.0.5-dind
@@ -50,7 +50,7 @@ deploy_dev:
     - shell
   only:
     refs:
-      - master
+      - main
   script:
     - echo deploy_dev
 
@@ -67,7 +67,7 @@ container_scanning:
   stage: container-scan
   only:
     refs:
-      - master
+      - main
   tags:
     - docker-runner
   when: manual
@@ -107,7 +107,7 @@ deploy_prod:
   allow_failure: false
   only:
     refs:
-      - master
+      - main
   variables:
     ENV_VAR: "prod"
   before_script:
