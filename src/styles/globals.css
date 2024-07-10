@@ -24,14 +24,24 @@
 	--line-height-xl: 28px;
 	--line-height-2xl: 32px;
 
-	/* color */
+	/* primary color */
 	--primary-color-1: '#0C626D';
+
+	/* other color */
+	--black-color: #202020;
+	--white-color: #ffffff;
+	--background-color: #e9eef6;
+
+	--lightest-gray-color: #f2f2f2;
+	--light-gray-color: #d6d6d6;
+	--dark-gray-color: #c2c5cc;
 }
 
 @layer base {
 	html,
 	body {
 		font-size: var(--font-size-base);
+		color: var(--black-color);
 		font-weight: 400;
 		margin: 0;
 		height: 100%;
