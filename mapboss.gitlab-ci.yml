@@ -3,8 +3,7 @@ include:
       file: '/templates/auto-devops.gitlab-ci.yml'
 
 variables:
-    COMPILE_IMAGE: node:20-alpine
-    COMPILE_TARGET_DIR: '.next'
+    COMPILE_DISABLED: "true"
     DEPLOY_AUTO: 'false'
     DOMAIN: tgia.app.mapboss.co.th
     GIT_SUBMODULE_STRATEGY: recursive
