@@ -40,7 +40,10 @@ const ForgetPasswordMain = () => {
 							เราจะส่งลิ้งค์เพื่อตั้งรหัสผ่านใหม่ไปยังอีเมลของคุณ
 						</Typography>
 
-						<form onSubmit={formik.handleSubmit} className='flex w-[300px] flex-col sm:w-full'>
+						<form
+							onSubmit={formik.handleSubmit}
+							className='flex w-full max-w-[340px] flex-col sm:max-w-full'
+						>
 							<FormInput fullWidth name='email' label='อีเมล' formik={formik} className='my-8' />
 							<Button fullWidth variant='contained' type='submit'>
 								ตกลง
