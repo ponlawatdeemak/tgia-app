@@ -42,7 +42,6 @@ const config: Config = {
 					dark: 'var(--dark-gray-color)',
 				},
 				black: 'var(--black-color)',
-				white: 'var(--white-color)',
 				background: 'var(--background-color)',
 			},
 		},
