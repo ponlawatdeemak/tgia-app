@@ -25,7 +25,19 @@
 	--line-height-2xl: 32px;
 
 	/* primary color */
-	--primary-color-1: #0c626d;
+	--primary-color-1: #0c626d; 
+
+	/* secondary color */
+	--secondary-color-1: #9f1853;
+
+	/* yellow color */
+	--yellow-color-1: #9f1853;
+
+	/* success color */
+	--color-success-1: #0c626d; 
+
+	/* error color */
+	--color-error-1: #d13438;
 
 	/* other color */
 	--black-color: #202020;
