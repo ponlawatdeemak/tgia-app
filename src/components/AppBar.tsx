@@ -7,9 +7,9 @@ import Icon from '@mdi/react'
 import { Avatar, Button, IconButton, MenuItem, Typography } from '@mui/material'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
-import AgriculturalDepartmentLogo from '../svg/AgriculturalDepartmentLogo'
-import ThaicomLogo from '../svg/ThaicomLogo'
-import TriangleLogo from '../svg/TriangleLogo'
+import AgriculturalDepartmentLogo from './svg/AgriculturalDepartmentLogo'
+import ThaicomLogo from './svg/ThaicomLogo'
+import TriangleLogo from './svg/TriangleLogo'
 
 const AppBar = () => {
 	const router = useRouter()
