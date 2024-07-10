@@ -13,12 +13,17 @@
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@mdi/js": "^7.4.47",
+    "@mdi/react": "^1.6.1",
     "@mui/material": "^5.15.20",
     "@mui/material-nextjs": "^5.15.11",
     "@mui/x-data-grid": "^7.7.1",
     "@mui/x-date-pickers": "^7.8.0",
+    "@tanstack/react-query": "^5.50.1",
+    "axios": "^1.7.2",
     "billboard.js": "^3.12.4",
     "dayjs": "^1.11.11",
+    "formik": "^2.4.6",
     "i18next": "^23.11.5",
     "maplibre-gl": "^3.6.2",
     "next": "14.2.4",
@@ -27,7 +32,8 @@
     "prettier-plugin-tailwindcss": "^0.6.5",
     "react": "^18",
     "react-dom": "^18",
-    "react-i18next": "^14.1.2"
+    "react-i18next": "^14.1.2",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@types/node": "^20",

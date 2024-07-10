@@ -1,0 +1,57 @@
+@import './mui/_.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	/* font*/
+	--font-size-2xs: 8px;
+	--font-size-xs: 10px;
+	--font-size-sm: 12px;
+	--font-size-base: 14px;
+	--font-size-md: 16px;
+	--font-size-lg: 18px;
+	--font-size-xl: 20px;
+	--font-size-2xl: 24px;
+
+	--line-height-2xs: 10px;
+	--line-height-xs: 12px;
+	--line-height-sm: 16px;
+	--line-height-base: 20px;
+	--line-height-md: 24px;
+	--line-height-lg: 28px;
+	--line-height-xl: 28px;
+	--line-height-2xl: 32px;
+
+	/* primary color */
+	--primary-color-1: #0c626d;
+
+	/* other color */
+	--black-color: #202020;
+	--white-color: #ffffff;
+	--background-color: #e9eef6;
+
+	--lightest-gray-color: #f2f2f2;
+	--light-gray-color: #d6d6d6;
+	--dark-gray-color: #c2c5cc;
+}
+
+@layer base {
+	html,
+	body {
+		font-size: var(--font-size-base);
+		color: var(--black-color);
+		font-weight: 400;
+		margin: 0;
+		height: 100%;
+		min-height: 100vh;
+	}
+
+	#__next {
+		display: flex;
+		flex-direction: row;
+		height: 100%;
+		min-height: 100vh;
+	}
+}
