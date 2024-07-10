@@ -3,10 +3,8 @@ FROM node:20-alpine AS compile-stage
 COPY . /tmp/app
 WORKDIR /tmp/app
 RUN npm ci --cache /cache/.npm && \
-    mkdir -p /cache/.next/cache && \
-    mv /cache/.next/cache ./.next/cache && \
     (npm run build || mkdir -p .next) && \
-    mv ./.next/cache /cache/.next/cache
+    rm -rf ./.next/cache
 VOLUME [ "/cache" ]
 
 FROM node:20-alpine
@@ -33,7 +31,5 @@ RUN npm ci --omit=dev --cache /cache/.npm && \
 COPY --chown="21001:21001" public ./public
 COPY --from=compile-stage --chown="21001:21001" /tmp/app/.next ./.next
 COPY --chown="21001:21001" next.config.mjs ./
-
-RUN rm -rf ./.next/cache || true
 
 CMD npm start
