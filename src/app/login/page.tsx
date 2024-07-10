@@ -1,23 +1,14 @@
 'use client'
-import {
-	Button,
-	FormControl,
-	FormHelperText,
-	FormLabel,
-	IconButton,
-	InputAdornment,
-	Link,
-	OutlinedInput,
-	Typography,
-} from '@mui/material'
-import * as React from 'react'
-import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentLogo'
-import TriangleLogo from '@/components/svg/TriangleLogo'
-import Icon from '@mdi/react'
-import { mdiEyeOffOutline, mdiEyeOutline } from '@mdi/js'
-import ThaicomLogo from '@/components/svg/ThaicomLogo'
-import { useFormik } from 'formik'
 import { LoginDtoIn } from '@/api/auth/dto-in.dto'
+import FormInput from '@/components/common/FormInput'
+import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentLogo'
+import ThaicomLogo from '@/components/svg/ThaicomLogo'
+import TriangleLogo from '@/components/svg/TriangleLogo'
+import { mdiEyeOffOutline, mdiEyeOutline } from '@mdi/js'
+import Icon from '@mdi/react'
+import { Button, IconButton, InputAdornment, Link, Typography } from '@mui/material'
+import { useFormik } from 'formik'
+import * as React from 'react'
 import * as yup from 'yup'
 
 const validationSchema = yup.object({
@@ -25,7 +16,7 @@ const validationSchema = yup.object({
 	password: yup.string().min(8, 'รหัสผ่านต้องมีขนาดอย่างน้อย 8 ตัวอักษร').required('กรุณากรอกรหัสผ่าน'),
 })
 
-export default function LoginPage() {
+const LoginPage = () => {
 	const [showPassword, setShowPassword] = React.useState(false)
 
 	const handleClickShowPassword = () => setShowPassword((show) => !show)
@@ -79,48 +70,31 @@ export default function LoginPage() {
 						<br />
 						เพื่องานประกันภัยข้าวนาปี
 					</Typography>
-					<form onSubmit={formik.handleSubmit} className='flex flex-col'>
-						<FormControl fullWidth>
-							<FormLabel id='username-label'>ชื่อผู้ใช้งาน</FormLabel>
-							<OutlinedInput
-								id='username-input'
-								name='username'
-								size='small'
-								value={formik.values.username}
-								onChange={formik.handleChange}
-								error={formik.touched.username && Boolean(formik.errors.username)}
-							/>
-							<FormHelperText error>{formik.touched.username && formik.errors.username}</FormHelperText>
-						</FormControl>
-						<FormControl fullWidth className='mt-2'>
-							<FormLabel id='password-label'>รหัสผ่าน</FormLabel>
-							<OutlinedInput
-								id='password-input'
-								name='password'
-								size='small'
-								type={showPassword ? 'text' : 'password'}
-								endAdornment={
-									<InputAdornment position='end'>
-										<IconButton
-											aria-label='toggle password visibility'
-											onClick={handleClickShowPassword}
-											onMouseDown={handleMouseDownPassword}
-											edge='end'
-										>
-											{showPassword ? (
-												<Icon path={mdiEyeOffOutline} size={1} />
-											) : (
-												<Icon path={mdiEyeOutline} size={1} />
-											)}
-										</IconButton>
-									</InputAdornment>
-								}
-								value={formik.values.password}
-								onChange={formik.handleChange}
-								error={formik.touched.password && Boolean(formik.errors.password)}
-							/>
-							<FormHelperText error>{formik.touched.password && formik.errors.password}</FormHelperText>
-						</FormControl>
+					<form onSubmit={formik.handleSubmit} className='flex flex-col lg:mx-6'>
+						<FormInput name='username' label='ชื่อผู้ใช้งาน' formik={formik} />
+						<FormInput
+							name='password'
+							label='รหัสผ่าน'
+							formik={formik}
+							className='mt-4'
+							type={showPassword ? 'text' : 'password'}
+							endAdornment={
+								<InputAdornment position='end'>
+									<IconButton
+										aria-label='toggle password visibility'
+										onClick={handleClickShowPassword}
+										onMouseDown={handleMouseDownPassword}
+										edge='end'
+									>
+										{showPassword ? (
+											<Icon path={mdiEyeOffOutline} size={1} />
+										) : (
+											<Icon path={mdiEyeOutline} size={1} />
+										)}
+									</IconButton>
+								</InputAdornment>
+							}
+						/>
 						<Link href='/login/forget-password' className='mt-3 self-end font-medium no-underline'>
 							ลืมรหัสผ่าน
 						</Link>
@@ -138,3 +112,5 @@ export default function LoginPage() {
 		</main>
 	)
 }
+
+export default LoginPage
