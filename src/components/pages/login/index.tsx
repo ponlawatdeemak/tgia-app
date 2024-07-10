@@ -1,14 +1,13 @@
 'use client'
 import { LoginDtoIn } from '@/api/auth/dto-in.dto'
 import FormInput from '@/components/common/FormInput'
+import PasswordInput from '@/components/shared/PasswordInput'
 import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentLogo'
 import ThaicomLogo from '@/components/svg/ThaicomLogo'
 import TriangleLogo from '@/components/svg/TriangleLogo'
-import { mdiEyeOffOutline, mdiEyeOutline } from '@mdi/js'
-import Icon from '@mdi/react'
-import { Button, IconButton, InputAdornment, Link, Typography } from '@mui/material'
+import { Button, Link, Typography } from '@mui/material'
 import { useFormik } from 'formik'
-import React, { useCallback, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import * as yup from 'yup'
 
 const validationSchema = yup.object({
@@ -17,14 +16,6 @@ const validationSchema = yup.object({
 })
 
 const LoginMain = () => {
-	const [showPassword, setShowPassword] = React.useState(false)
-
-	const handleClickShowPassword = useCallback(() => setShowPassword((show) => !show), [])
-
-	const handleMouseDownPassword = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-		event.preventDefault()
-	}, [])
-
 	const onSubmit = useCallback((values: LoginDtoIn) => {
 		console.log(values)
 		// call api
@@ -45,7 +36,7 @@ const LoginMain = () => {
 		<main className='grid h-full lg:grid-cols-2'>
 			<div className='hidden lg:block'>
 				<div className='h-full bg-[url("/leafless-tree.jpeg")] bg-cover bg-center'>
-					<div className='flex h-full items-center justify-center bg-black/50'>
+					<div className='bg-black/50 flex h-full items-center justify-center'>
 						<div className='mx-6 text-center text-white xl:mx-12'>
 							<Typography className='mb-6 text-2xl font-bold'>Loss Analytics System</Typography>
 							<Typography>
@@ -74,29 +65,7 @@ const LoginMain = () => {
 					</Typography>
 					<form onSubmit={formik.handleSubmit} className='flex flex-col lg:mx-6'>
 						<FormInput name='username' label='ชื่อผู้ใช้งาน' formik={formik} />
-						<FormInput
-							name='password'
-							label='รหัสผ่าน'
-							formik={formik}
-							className='mt-4'
-							type={showPassword ? 'text' : 'password'}
-							endAdornment={
-								<InputAdornment position='end'>
-									<IconButton
-										aria-label='toggle password visibility'
-										onClick={handleClickShowPassword}
-										onMouseDown={handleMouseDownPassword}
-										edge='end'
-									>
-										{showPassword ? (
-											<Icon path={mdiEyeOffOutline} size={1} />
-										) : (
-											<Icon path={mdiEyeOutline} size={1} />
-										)}
-									</IconButton>
-								</InputAdornment>
-							}
-						/>
+						<PasswordInput name='password' label='รหัสผ่าน' formik={formik} className='mt-4' />
 						<Link href={forgetPasswordHref} className='mt-3 self-end font-medium no-underline'>
 							ลืมรหัสผ่าน
 						</Link>

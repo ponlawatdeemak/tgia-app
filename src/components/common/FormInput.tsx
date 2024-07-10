@@ -2,7 +2,7 @@ import { FormControl, FormHelperText, FormLabel, OutlinedInput, OutlinedInputPro
 import { FormikProps } from 'formik'
 import React from 'react'
 
-interface FormInputProps extends OutlinedInputProps {
+export interface FormInputProps extends OutlinedInputProps {
 	name: string
 	formik: FormikProps<any>
 }
