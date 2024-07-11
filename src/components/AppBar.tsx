@@ -22,9 +22,9 @@ import {
 } from '@mui/material'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
-import AgriculturalDepartmentLogo from '../svg/AgriculturalDepartmentLogo'
-import ThaicomLogo from '../svg/ThaicomLogo'
-import TriangleLogo from '../svg/TriangleLogo'
+import AgriculturalDepartmentLogo from './svg/AgriculturalDepartmentLogo'
+import ThaicomLogo from './svg/ThaicomLogo'
+import TriangleLogo from './svg/TriangleLogo'
 
 const AppBar = () => {
 	const router = useRouter()

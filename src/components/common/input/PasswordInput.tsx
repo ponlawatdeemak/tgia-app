@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import FormInput, { FormInputProps } from '../common/FormInput'
+import FormInput, { FormInputProps } from './FormInput'
 import { IconButton, InputAdornment } from '@mui/material'
 import Icon from '@mdi/react'
 import { mdiEyeOffOutline, mdiEyeOutline } from '@mdi/js'

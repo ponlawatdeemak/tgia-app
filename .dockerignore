@@ -1,9 +1,5 @@
-.npm
+Dockerfile
 node_modules
-modules
-.next/cache
-pages
-src
 .gitlab
 .env
 .env.template

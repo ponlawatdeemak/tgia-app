@@ -6,11 +6,11 @@ const ServerPage = async () => {
 		username: process.env.APP_USERNAME || '-',
 		password: process.env.APP_PASSWORD || '-',
 	})
-	console.log('loginData?.data : ', loginData)
+	// console.log('loginData?.data : ', loginData)
 
 	updateAccessToken(loginData?.tokens?.accessToken)
 	const userData = await service.um.getUser({ userId: '295a35cc-80c1-702c-72f1-ad596ac1718a' })
-	console.log('userData:', userData)
+	// console.log('userData:', userData)
 
 	return (
 		<div>

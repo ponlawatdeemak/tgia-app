@@ -29,8 +29,8 @@ const ClientPage = () => {
 		return <div>{error?.message}</div>
 	}
 
-	console.log('loginData : ', loginData)
-	console.log('userData : ', userData)
+	// console.log('loginData : ', loginData)
+	// console.log('userData : ', userData)
 
 	return (
 		<div>

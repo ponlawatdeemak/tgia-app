@@ -1,12 +1,11 @@
 'use client'
 
-import FormInput from '@/components/common/FormInput'
-import { Breadcrumbs, Button, Link, Typography } from '@mui/material'
+import PasswordInput from '@/components/common/input/PasswordInput'
+import { Button, Typography } from '@mui/material'
 import { useFormik } from 'formik'
-import React, { useCallback, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
-import PasswordInput from '@/components/shared/PasswordInput'
 
 const validationSchema = yup.object({
 	password: yup.string().required('กรุณากรอกรหัสผ่านใหม่'),

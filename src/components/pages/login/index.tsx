@@ -1,7 +1,7 @@
 'use client'
 import { LoginDtoIn } from '@/api/auth/dto-in.dto'
-import FormInput from '@/components/common/FormInput'
-import PasswordInput from '@/components/shared/PasswordInput'
+import FormInput from '@/components/common/input/FormInput'
+import PasswordInput from '@/components/common/input/PasswordInput'
 import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentLogo'
 import ThaicomLogo from '@/components/svg/ThaicomLogo'
 import TriangleLogo from '@/components/svg/TriangleLogo'
@@ -36,7 +36,7 @@ const LoginMain = () => {
 		<main className='grid h-full lg:grid-cols-2'>
 			<div className='hidden lg:block'>
 				<div className='h-full bg-[url("/leafless-tree.jpeg")] bg-cover bg-center'>
-					<div className='bg-black/50 flex h-full items-center justify-center'>
+					<div className='bg-black-dark/50 flex h-full items-center justify-center'>
 						<div className='mx-6 text-center text-white xl:mx-12'>
 							<Typography className='mb-6 text-2xl font-bold'>Loss Analytics System</Typography>
 							<Typography>

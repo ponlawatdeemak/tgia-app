@@ -1,4 +1,4 @@
-import AppBar from '@/components/shared/AppBar'
+import AppBar from '@/components/AppBar'
 import React, { PropsWithChildren } from 'react'
 
 interface MainLayoutProps extends PropsWithChildren {}

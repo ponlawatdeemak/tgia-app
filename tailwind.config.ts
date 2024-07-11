@@ -24,13 +24,27 @@ const config: Config = {
 					DEFAULT: 'var(--primary-color-1)',
 					// dark: '#000982',
 				},
+				secondary: {
+					DEFAULT: 'var(--secondary-color-1)',
+				},
+				yellow: {
+					DEFAULT: 'var(--yellow-color-1)',
+				},
+				success: {
+					DEFAULT: 'var(--success-color-1)',
+				},
+				error: {
+					DEFAULT: 'var(--error-color-1)',
+				},
 				gray: {
 					light: 'var(--lightest-gray-color)',
 					DEFAULT: 'var(--light-gray-color)',
 					dark: 'var(--dark-gray-color)',
 				},
-				black: 'var(--black-color)',
-				white: 'var(--white-color)',
+				black: {
+					DEFAULT: 'var(--black-color)',
+					dark: '#000000',
+				},
 				background: 'var(--background-color)',
 			},
 		},

@@ -1,3 +1,12 @@
+FROM node:20-alpine AS compile-stage
+
+COPY . /tmp/app
+WORKDIR /tmp/app
+RUN npm ci --cache /cache/.npm && \
+    (npm run build || mkdir -p .next) && \
+    rm -rf ./.next/cache
+VOLUME [ "/cache" ]
+
 FROM node:20-alpine
 
 ARG P_USER_NAME=app
@@ -13,15 +22,14 @@ RUN addgroup --gid ${P_UID} ${P_USER_NAME} && \
 WORKDIR ${HOME}
 USER ${P_UID}
 
-ADD --chown="21001:21001" package*.json ./
+COPY --chown="21001:21001" package*.json ./
+COPY --from=compile-stage --chown="21001:21001" /cache/.npm /cache/.npm
 
-RUN npm ci --only=production && \
-    rm -rf package-lock.json
+RUN npm ci --omit=dev --cache /cache/.npm && \
+    rm -rf package-lock.json /cache/.npm
 
-ADD --chown="21001:21001" public ./public
-#ADD --chown="21001:21001" .next ./.next
-ADD --chown="21001:21001" next.config.mjs ./
-
-RUN rm -rf ./.next/cache || true
+COPY --chown="21001:21001" public ./public
+COPY --from=compile-stage --chown="21001:21001" /tmp/app/.next ./.next
+COPY --chown="21001:21001" next.config.mjs ./
 
 CMD npm start
