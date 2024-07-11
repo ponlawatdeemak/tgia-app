@@ -36,7 +36,7 @@ const LoginMain = () => {
 		<main className='grid h-full lg:grid-cols-2'>
 			<div className='hidden lg:block'>
 				<div className='h-full bg-[url("/leafless-tree.jpeg")] bg-cover bg-center'>
-					<div className='bg-black/50 flex h-full items-center justify-center'>
+					<div className='bg-black-dark/50 flex h-full items-center justify-center'>
 						<div className='mx-6 text-center text-white xl:mx-12'>
 							<Typography className='mb-6 text-2xl font-bold'>Loss Analytics System</Typography>
 							<Typography>
