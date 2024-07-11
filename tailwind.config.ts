@@ -41,7 +41,10 @@ const config: Config = {
 					DEFAULT: 'var(--light-gray-color)',
 					dark: 'var(--dark-gray-color)',
 				},
-				black: 'var(--black-color)',
+				black: {
+					DEFAULT: 'var(--black-color)',
+					dark: '#000000',
+				},
 				background: 'var(--background-color)',
 			},
 		},
