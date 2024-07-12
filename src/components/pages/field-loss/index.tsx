@@ -1,4 +1,4 @@
-'use client'
+// 'use client'
 
 import service from '@/api'
 import { Button, Paper } from '@mui/material'

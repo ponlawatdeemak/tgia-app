@@ -3,7 +3,6 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import type { Metadata } from 'next'
 import { Anuphan } from 'next/font/google'
 import './../styles/globals.css'
-import { Session } from 'next-auth'
 
 const anuphan = Anuphan({ subsets: ['latin'] })
 
@@ -14,16 +13,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
 	children,
-	session,
 }: Readonly<{
 	children: React.ReactNode
-	session: Session | null
 }>) {
 	return (
 		<html lang='en'>
 			<body className={anuphan.className}>
 				<AppRouterCacheProvider options={{ enableCssLayer: true }}>
-					<Providers session={session}>
+					<Providers>
 						<div className='flex h-full flex-1 flex-col bg-background'>{children}</div>
 					</Providers>
 				</AppRouterCacheProvider>
