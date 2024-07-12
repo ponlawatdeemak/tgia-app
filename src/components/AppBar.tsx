@@ -19,7 +19,7 @@ import {
 	ToggleButtonGroup,
 	Typography,
 } from '@mui/material'
-import { signOut, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { useCallback, useMemo, useState } from 'react'
 import AgriculturalDepartmentLogo from './svg/AgriculturalDepartmentLogo'
@@ -52,8 +52,6 @@ const AppBar = () => {
 			}
 		})?.key
 	}, [pathname])
-
-	const logout = useCallback(() => signOut(), [])
 
 	const handleCloseNavMenu = useCallback(
 		(key: keyof typeof AppPath) => {
@@ -292,10 +290,6 @@ const AppBar = () => {
 						<span className='text-xs font-medium leading-[12px]'>Powered by</span>
 						<ThaicomLogo width={58.88} height={16} />
 					</div>
-					{/* <a href={AppPath.Login}>
-						<Button onClick={logout}>Logout</Button>
-					</a> */}
-					<Button onClick={logout}>Logout</Button>
 				</div>
 			</div>
 		)
