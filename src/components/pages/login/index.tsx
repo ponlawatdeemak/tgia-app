@@ -5,8 +5,11 @@ import PasswordInput from '@/components/common/input/PasswordInput'
 import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentLogo'
 import ThaicomLogo from '@/components/svg/ThaicomLogo'
 import TriangleLogo from '@/components/svg/TriangleLogo'
+import { AppPath } from '@/config/app'
 import { Button, Link, Typography } from '@mui/material'
 import { useFormik } from 'formik'
+import { signIn } from 'next-auth/react'
+import { useSearchParams } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import * as yup from 'yup'
 
@@ -16,10 +19,23 @@ const validationSchema = yup.object({
 })
 
 const LoginMain = () => {
-	const onSubmit = useCallback((values: LoginDtoIn) => {
-		console.log(values)
-		// call api
-	}, [])
+	const searchParams = useSearchParams()
+
+	const callbackUrl = useMemo(() => searchParams?.get('callbackUrl'), [searchParams])
+
+	const onSubmit = useCallback(
+		async (values: LoginDtoIn) => {
+			try {
+				const res = await signIn('credentials', {
+					username: values.username,
+					password: values.password,
+					redirect: true,
+					callbackUrl: callbackUrl ?? AppPath.FieldLoss,
+				})
+			} catch (error) {}
+		},
+		[callbackUrl],
+	)
 
 	const formik = useFormik<LoginDtoIn>({
 		initialValues: {
@@ -30,13 +46,11 @@ const LoginMain = () => {
 		onSubmit,
 	})
 
-	const forgetPasswordHref = useMemo(() => '/login/forget-password', [])
-
 	return (
 		<main className='grid h-full lg:grid-cols-2'>
 			<div className='hidden lg:block'>
 				<div className='h-full bg-[url("/leafless-tree.jpeg")] bg-cover bg-center'>
-					<div className='bg-black-dark/50 flex h-full items-center justify-center'>
+					<div className='flex h-full items-center justify-center bg-black-dark/50'>
 						<div className='mx-6 text-center text-white xl:mx-12'>
 							<Typography className='mb-6 text-2xl font-bold'>Loss Analytics System</Typography>
 							<Typography>
@@ -66,9 +80,10 @@ const LoginMain = () => {
 					<form onSubmit={formik.handleSubmit} className='flex flex-col lg:mx-6'>
 						<FormInput name='username' label='ชื่อผู้ใช้งาน' formik={formik} />
 						<PasswordInput name='password' label='รหัสผ่าน' formik={formik} className='mt-4' />
-						<Link href={forgetPasswordHref} className='mt-3 self-end font-medium no-underline'>
+						<Link href={AppPath.ForgetPassword} className='mt-3 self-end font-medium no-underline'>
 							ลืมรหัสผ่าน
 						</Link>
+						{/* {isError && <FormHelperText error>{errorMessage}</FormHelperText>} */}
 						<Button fullWidth variant='contained' className='mt-8' type='submit'>
 							เข้าสู่ระบบ
 						</Button>

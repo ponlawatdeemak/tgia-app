@@ -5,6 +5,7 @@ import useResponsive from '@/hook/responsive'
 import { mdiMenu, mdiTune } from '@mdi/js'
 import Icon from '@mdi/react'
 import { Avatar, Button, IconButton, MenuItem, Typography } from '@mui/material'
+import { signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import AgriculturalDepartmentLogo from './svg/AgriculturalDepartmentLogo'
@@ -15,6 +16,8 @@ const AppBar = () => {
 	const router = useRouter()
 	const pathname = usePathname()
 	const { isDesktop } = useResponsive()
+	const { data: session } = useSession()
+	const user = session?.user ?? null
 
 	const selectedMenuKey = useMemo(() => {
 		return appMenuConfig.find((menu) => menu.path === pathname)?.key
@@ -26,6 +29,8 @@ const AppBar = () => {
 		},
 		[router],
 	)
+
+	const logout = useCallback(() => signOut(), [])
 
 	if (isDesktop) {
 		return (
@@ -55,7 +60,9 @@ const AppBar = () => {
 						<IconButton>
 							<Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' className='h-9 w-9' />
 						</IconButton>
-						<span className='self-center text-lg underline decoration-2 underline-offset-2'>User Name</span>
+						<span className='self-center text-lg underline decoration-2 underline-offset-2'>
+							{`${user?.firstName} ${user?.lastName}.`}
+						</span>
 					</div>
 					<Button className='text-lg text-black' startIcon={<Icon path={mdiTune} size={1} />}>
 						พื้นที่ ทบก. (ไร่)
@@ -64,6 +71,10 @@ const AppBar = () => {
 						<span className='text-xs'>Powered by</span>
 						<ThaicomLogo />
 					</div>
+					{/* <a href={AppPath.Login}>
+						<Button onClick={logout}>Logout</Button>
+					</a> */}
+					<Button onClick={logout}>Logout</Button>
 				</div>
 			</div>
 		)

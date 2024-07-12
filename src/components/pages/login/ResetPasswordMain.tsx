@@ -6,6 +6,7 @@ import { useFormik } from 'formik'
 import { useCallback, useMemo } from 'react'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
+import { AppPath } from '@/config/app'
 
 const validationSchema = yup.object({
 	password: yup.string().required('กรุณากรอกรหัสผ่านใหม่'),
@@ -37,11 +38,9 @@ const ResetPasswordMain = () => {
 		onSubmit,
 	})
 
-	const loginHref = useMemo(() => '/login', [])
-
 	return (
 		<>
-			<AuthBreadcrumbs name='รีเซ็ตรหัสผ่าน' href={loginHref} />
+			<AuthBreadcrumbs name='รีเซ็ตรหัสผ่าน' href={AppPath.Login} />
 
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center lg:mt-48 lg:items-start'>
