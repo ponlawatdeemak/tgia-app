@@ -1,3 +1,4 @@
+'use client'
 import { useLocalStorage } from '@/hook/local-storage'
 import { useMap } from '@/contexts/map'
 import { Button } from '@mui/material'

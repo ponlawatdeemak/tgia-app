@@ -229,7 +229,7 @@ export default function MapView({
 	// 	return disableStreetView !== true && streetViewCoordiantes && !isFullscreen
 	// }, [streetViewCoordiantes, isFullscreen])
 
-	// const showLayerList = disableBasemapList !== true || disableLayerList !== true
+	const showLayerList = disableBasemapList !== true
 
 	// const hideIconTrash = useCallback((hide: boolean) => {
 	// 	setHideIcon(hide)
@@ -289,6 +289,16 @@ export default function MapView({
 			ref={resizeRef}
 		>
 			<div ref={ref} className='flex-1'>
+				{/* {showLayerList ? (
+					<MapLayerList
+						className={classNames('absolute right-[8px] top-1')}
+						defaultMapType={mapType}
+						disableBasemapList={disableBasemapList}
+						// disableLayerList={disableLayerList}
+						// active3d={active3d}
+						// busy={busy}
+					/>
+				) : null} */}
 				{children}
 			</div>
 		</div>
