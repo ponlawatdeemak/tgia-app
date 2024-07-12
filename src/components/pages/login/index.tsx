@@ -25,7 +25,10 @@ const LoginMain = () => {
 	const error = useMemo(() => searchParams?.get('error'), [searchParams])
 
 	const errorMessage = useMemo(() => {
-		if (error === 'CredentialsSignin') return 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'
+		if (error) {
+			if (error === 'CredentialsSignin') return 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'
+			return 'มีบางอย่างผิดพลาด'
+		}
 		return null
 	}, [error])
 
