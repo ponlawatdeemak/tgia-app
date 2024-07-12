@@ -6,7 +6,7 @@ import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentL
 import ThaicomLogo from '@/components/svg/ThaicomLogo'
 import TriangleLogo from '@/components/svg/TriangleLogo'
 import { AppPath } from '@/config/app'
-import { Button, Link, Typography } from '@mui/material'
+import { Button, FormHelperText, Link, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
@@ -22,17 +22,22 @@ const LoginMain = () => {
 	const searchParams = useSearchParams()
 
 	const callbackUrl = useMemo(() => searchParams?.get('callbackUrl'), [searchParams])
+	const error = useMemo(() => searchParams?.get('error'), [searchParams])
+
+	const errorMessage = useMemo(() => {
+		if (error === 'CredentialsSignin') return 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'
+		return null
+	}, [error])
 
 	const onSubmit = useCallback(
 		async (values: LoginDtoIn) => {
-			try {
-				const res = await signIn('credentials', {
-					username: values.username,
-					password: values.password,
-					redirect: true,
-					callbackUrl: callbackUrl ?? AppPath.FieldLoss,
-				})
-			} catch (error) {}
+			const res = await signIn('credentials', {
+				username: values.username,
+				password: values.password,
+				redirect: true,
+				callbackUrl: callbackUrl ?? AppPath.FieldLoss,
+			})
+			console.log('TLOG ~ res:', res)
 		},
 		[callbackUrl],
 	)
@@ -83,7 +88,7 @@ const LoginMain = () => {
 						<Link href={AppPath.ForgetPassword} className='mt-3 self-end font-medium no-underline'>
 							ลืมรหัสผ่าน
 						</Link>
-						{/* {isError && <FormHelperText error>{errorMessage}</FormHelperText>} */}
+						<FormHelperText error>{errorMessage}</FormHelperText>
 						<Button fullWidth variant='contained' className='mt-8' type='submit'>
 							เข้าสู่ระบบ
 						</Button>
