@@ -60,19 +60,19 @@ const AppBar = () => {
 		[router],
 	)
 
-	const handleAreaTypeChange = (event: any, newAreaType: any) => {
+	const handleAreaTypeChange = (event: React.MouseEvent<HTMLElement>, newAreaType: string) => {
 		if (newAreaType !== null) {
 			setAreaType(newAreaType)
 		}
 	}
 
-	const handleAreaUnitChange = (event: any, newAreaUnit: any) => {
+	const handleAreaUnitChange = (event: React.MouseEvent<HTMLElement>, newAreaUnit: string) => {
 		if (newAreaUnit !== null) {
 			setAreaUnit(newAreaUnit)
 		}
 	}
 
-	const handleLanguageChange = (event: any, newLanguage: any) => {
+	const handleLanguageChange = (event: React.MouseEvent<HTMLElement>, newLanguage: string) => {
 		if (newLanguage !== null) {
 			setLanguage(newLanguage)
 		}
@@ -315,88 +315,95 @@ const AppBar = () => {
 				anchor='top'
 				open={drawerOpen}
 				onClose={() => setDrawerOpen(!drawerOpen)}
-				className='[&_.MuiPaper-root]:h-full [&_.MuiPaper-root]:!rounded-none [&_.MuiPaper-root]:bg-background [&_.MuiPaper-root]:!transition-none'
+				className='[&_.MuiPaper-root]:flex [&_.MuiPaper-root]:h-screen [&_.MuiPaper-root]:flex-col [&_.MuiPaper-root]:justify-between [&_.MuiPaper-root]:!rounded-none [&_.MuiPaper-root]:bg-background [&_.MuiPaper-root]:!transition-none'
 			>
-				<div className='mx-4 mt-4 flex items-center justify-between pb-2'>
-					<div className='ml-1 flex items-center gap-2 py-[4px]'>
-						<TriangleLogo width={24} height={24} />
-						<AgriculturalDepartmentLogo width={24} height={24} />
+				<div className='flex flex-col overflow-hidden'>
+					<div className='mx-4 mt-4 flex items-center justify-between pb-2'>
+						<div className='ml-1 flex items-center gap-2 py-[4px]'>
+							<TriangleLogo width={24} height={24} />
+							<AgriculturalDepartmentLogo width={24} height={24} />
+						</div>
+						<IconButton
+							size='large'
+							edge='start'
+							color='inherit'
+							aria-label='menu'
+							className='p-1'
+							onClick={() => setDrawerOpen(!drawerOpen)}
+						>
+							<Icon path={mdiClose} size={1} />
+						</IconButton>
 					</div>
-					<IconButton
-						size='large'
-						edge='start'
-						color='inherit'
-						aria-label='menu'
-						className='p-1'
-						onClick={() => setDrawerOpen(!drawerOpen)}
-					>
-						<Icon path={mdiClose} size={1} />
-					</IconButton>
+					<Divider sx={{ borderBottomWidth: '1px', borderColor: '#D6D6D6' }} />
+					<div className='m-4 flex flex-col overflow-scroll'>
+						<List
+							className='h-full p-0'
+							sx={{
+								'li.MuiListItem-root': {
+									px: 1.5,
+									borderBottom: '1px solid #D6D6D6',
+								},
+								'span.MuiTypography-root': {
+									fontWeight: 500,
+								},
+							}}
+						>
+							{appMenuConfig.map((menu) =>
+								(menu.children?.length || 0) > 0 ? (
+									<div key={menu.path}>
+										{menu.children?.map((subMenu) => (
+											<ListItem
+												key={subMenu.path}
+												onClick={() => handleCloseNavMenu(subMenu.key)}
+											>
+												<ListItemText primary={subMenu.name} />
+											</ListItem>
+										))}
+									</div>
+								) : (
+									<ListItem key={menu.path} onClick={() => handleCloseNavMenu(menu.key)}>
+										<ListItemText primary={menu.name} />
+									</ListItem>
+								),
+							)}
+						</List>
+					</div>
 				</div>
-				<Divider sx={{ borderBottomWidth: '1px', borderColor: '#D6D6D6' }} />
-				<div className='m-4 flex h-full flex-col'>
-					<List
-						className='h-full p-0'
-						sx={{
-							'li.MuiListItem-root': {
-								px: 1.5,
-								borderBottom: '1px solid #D6D6D6',
-							},
-							'span.MuiTypography-root': {
-								fontWeight: 500,
-							},
-						}}
-					>
-						{appMenuConfig.map((menu) =>
-							(menu.children?.length || 0) > 0 ? (
-								<div key={menu.path}>
-									{menu.children?.map((subMenu) => (
-										<ListItem key={subMenu.path} onClick={() => handleCloseNavMenu(subMenu.key)}>
-											<ListItemText primary={subMenu.name} />
-										</ListItem>
-									))}
-								</div>
-							) : (
-								<ListItem key={menu.path} onClick={() => handleCloseNavMenu(menu.key)}>
-									<ListItemText primary={menu.name} />
-								</ListItem>
-							),
-						)}
-					</List>
-					<div className='flex flex-col rounded bg-white'>
-						<div className='flex items-center justify-between p-3'>
-							<Button
-								className='flex items-center gap-2 px-2 py-[4px] [&_>*]:m-0'
-								onClick={() => handleCloseNavMenu(profileMenuConfig.key)}
-							>
-								<IconButton sx={{ width: '24px', height: '24px' }}>
-									<Avatar
-										alt='Remy Sharp'
-										src='/static/images/avatar/2.jpg'
-										className='h-[24px] w-[24px]'
-									/>
-								</IconButton>
-								<span className='text-base font-normal text-black underline decoration-1 underline-offset-2'>
-									สมชาย ล.
-								</span>
-							</Button>
-							<div className='flex gap-3'>
-								<div>
-									<Button
-										className='flex gap-1 py-1.5 pl-2 pr-2.5 text-base font-medium text-black focus:border-[1px] focus:border-solid focus:border-primary [&_>*]:m-0'
-										aria-controls='basic-menu2'
-										onClick={() => setToggle(!toggle)}
-										startIcon={<Icon path={mdiTune} size={1} />}
-									>
-										ตั้งค่า
-									</Button>
-								</div>
-								<div className='flex flex-col'>
-									<span className='text-xs font-medium leading-[12px]'>Powered by</span>
-									<ThaicomLogo width={58.88} height={16} />
-								</div>
+				<div className='m-4 flex flex-col rounded bg-white'>
+					<div className='flex items-center justify-between p-3'>
+						<Button
+							className='flex items-center gap-2 px-2 py-[4px] [&_>*]:m-0'
+							onClick={() => handleCloseNavMenu(profileMenuConfig.key)}
+						>
+							<IconButton sx={{ width: '24px', height: '24px' }}>
+								<Avatar
+									alt='Remy Sharp'
+									src='/static/images/avatar/2.jpg'
+									className='h-[24px] w-[24px]'
+								/>
+							</IconButton>
+							<span className='text-base font-normal text-black underline decoration-1 underline-offset-2'>
+								สมชาย ล.
+							</span>
+						</Button>
+						<div className='flex gap-3'>
+							<div>
+								<Button
+									className='flex gap-1 py-1.5 pl-2 pr-2.5 text-base font-medium text-black focus:border-[1px] focus:border-solid focus:border-primary [&_>*]:m-0'
+									aria-controls='basic-menu2'
+									onClick={() => setToggle(!toggle)}
+									startIcon={<Icon path={mdiTune} size={1} />}
+								>
+									ตั้งค่า
+								</Button>
+							</div>
+							<div className='flex flex-col'>
+								<span className='text-xs font-medium leading-[12px]'>Powered by</span>
+								<ThaicomLogo width={58.88} height={16} />
 							</div>
 						</div>
+					</div>
+					{toggle && (
 						<div className='flex flex-col border-0 border-t-[1px] border-solid border-[#D6D6D6] [&_.Mui-selected]:bg-white [&_.Mui-selected]:text-primary [&_.MuiButtonBase-root.Mui-selected]:border-primary [&_.MuiButtonBase-root]:border-transparent'>
 							<div className='flex flex-col gap-2 px-3 py-2'>
 								<Typography className='text-sm font-medium'>ประเภทพื้นที่</Typography>
@@ -422,60 +429,58 @@ const AppBar = () => {
 									</ToggleButton>
 								</ToggleButtonGroup>
 							</div>
-							{toggle && (
-								<div className='flex border-0 border-t-[1px] border-solid border-[#D6D6D6]'>
-									<div className='flex w-full flex-col gap-2 border-0 border-r-[1px] border-solid border-[#D6D6D6] p-3'>
-										<Typography className='text-sm font-medium'>หน่วยของพื้นที่</Typography>
-										<ToggleButtonGroup
-											className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
-											value={areaUnit}
-											exclusive
-											onChange={handleAreaUnitChange}
+							<div className='flex border-0 border-t-[1px] border-solid border-[#D6D6D6]'>
+								<div className='flex w-full flex-col gap-2 border-0 border-r-[1px] border-solid border-[#D6D6D6] p-3'>
+									<Typography className='text-sm font-medium'>หน่วยของพื้นที่</Typography>
+									<ToggleButtonGroup
+										className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
+										value={areaUnit}
+										exclusive
+										onChange={handleAreaUnitChange}
+									>
+										<ToggleButton
+											className='w-full px-3 py-1.5 text-base font-semibold'
+											value='rai'
+											aria-label='left aligned'
 										>
-											<ToggleButton
-												className='w-full px-3 py-1.5 text-base font-semibold'
-												value='rai'
-												aria-label='left aligned'
-											>
-												ไร่
-											</ToggleButton>
-											<ToggleButton
-												className='w-full rounded px-3 py-1.5 text-base font-semibold'
-												value='landPlot'
-												aria-label='right aligned'
-											>
-												แปลง
-											</ToggleButton>
-										</ToggleButtonGroup>
-									</div>
-									<div className='flex w-full flex-col gap-2 p-3'>
-										<Typography className='text-sm font-medium'>ภาษา</Typography>
-										<ToggleButtonGroup
-											className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
-											value={language}
-											exclusive
-											onChange={handleLanguageChange}
+											ไร่
+										</ToggleButton>
+										<ToggleButton
+											className='w-full rounded px-3 py-1.5 text-base font-semibold'
+											value='landPlot'
+											aria-label='right aligned'
 										>
-											<ToggleButton
-												className='w-full rounded px-3 py-1.5 text-base font-semibold'
-												value='th'
-												aria-label='left aligned'
-											>
-												TH
-											</ToggleButton>
-											<ToggleButton
-												className='w-full rounded px-3 py-1.5 text-base font-semibold'
-												value='en'
-												aria-label='right aligned'
-											>
-												EN
-											</ToggleButton>
-										</ToggleButtonGroup>
-									</div>
+											แปลง
+										</ToggleButton>
+									</ToggleButtonGroup>
 								</div>
-							)}
+								<div className='flex w-full flex-col gap-2 p-3'>
+									<Typography className='text-sm font-medium'>ภาษา</Typography>
+									<ToggleButtonGroup
+										className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
+										value={language}
+										exclusive
+										onChange={handleLanguageChange}
+									>
+										<ToggleButton
+											className='w-full rounded px-3 py-1.5 text-base font-semibold'
+											value='th'
+											aria-label='left aligned'
+										>
+											TH
+										</ToggleButton>
+										<ToggleButton
+											className='w-full rounded px-3 py-1.5 text-base font-semibold'
+											value='en'
+											aria-label='right aligned'
+										>
+											EN
+										</ToggleButton>
+									</ToggleButtonGroup>
+								</div>
+							</div>
 						</div>
-					</div>
+					)}
 				</div>
 			</Drawer>
 		</div>
