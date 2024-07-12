@@ -1,9 +1,10 @@
 'use client'
 
 import FormInput from '@/components/common/input/FormInput'
+import { AppPath } from '@/config/app'
 import { Button, Link, Typography } from '@mui/material'
 import { useFormik } from 'formik'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
 
@@ -25,11 +26,9 @@ const ForgetPasswordMain = () => {
 		onSubmit,
 	})
 
-	const loginHref = useMemo(() => '/login', [])
-
 	return (
 		<>
-			<AuthBreadcrumbs name='ลืมรหัสผ่าน' href={loginHref} />
+			<AuthBreadcrumbs name='ลืมรหัสผ่าน' href={AppPath.Login} />
 
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center lg:mt-48 lg:items-start'>
@@ -49,7 +48,7 @@ const ForgetPasswordMain = () => {
 								ตกลง
 							</Button>
 						</form>
-						<Link href={loginHref} className='mt-8'>
+						<Link href={AppPath.Login} className='mt-8'>
 							กลับสู่เข้าสู่ระบบ
 						</Link>
 					</div>

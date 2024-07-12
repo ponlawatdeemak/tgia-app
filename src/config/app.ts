@@ -1,4 +1,13 @@
-export enum AppPath {
+export enum AuthPath {
+	Login = '/auth/login',
+	ForgetPassword = '/auth/forget-password',
+	VerifyEmail = '/auth/verify-email',
+	ResetPassword = '/auth/reset-password',
+}
+
+export const authPathPrefix = '/auth'
+
+export enum PrivatePath {
 	FieldLoss = '/field-loss',
 	PlotMonitoring = '/plot-monitoring',
 	AnnualAnalysis = '/annual-analysis',
@@ -10,20 +19,7 @@ export enum AppPath {
 	Profile = '/profile',
 }
 
-export enum AreaType {
-	Registration = 'ทบก',
-	Insurance = 'เอาประกัน',
-}
-
-export enum AreaUnit {
-	Rai = 'ไร่',
-	LandPlot = 'แปลง',
-}
-
-export enum Language {
-	EN = 'en',
-	TH = 'th',
-}
+export const AppPath = { ...AuthPath, ...PrivatePath }
 
 export const profileMenuConfig: {
 	key: keyof typeof AppPath
@@ -90,3 +86,18 @@ export const appMenuConfig: {
 		children: othersMenuConfig,
 	},
 ]
+
+export enum AreaType {
+	Registration = 'ทบก',
+	Insurance = 'เอาประกัน',
+}
+
+export enum AreaUnit {
+	Rai = 'ไร่',
+	LandPlot = 'แปลง',
+}
+
+export enum Language {
+	EN = 'en',
+	TH = 'th',
+}

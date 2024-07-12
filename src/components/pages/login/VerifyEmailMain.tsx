@@ -5,16 +5,16 @@ import { useMemo } from 'react'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
 import EmailIcon from '@/components/svg/icons/EmailIcon'
 import useResponsive from '@/hook/responsive'
+import { AppPath } from '@/config/app'
 
 const VerifyEmailMain = () => {
 	const { isDesktop } = useResponsive()
-	const loginHref = useMemo(() => '/login', [])
 
 	const email = 'Somchai@gmail.com'
 
 	return (
 		<>
-			<AuthBreadcrumbs name='ตรวจสอบอีเมล' href={loginHref} />
+			<AuthBreadcrumbs name='ตรวจสอบอีเมล' href={AppPath.Login} />
 
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center'>
@@ -25,7 +25,7 @@ const VerifyEmailMain = () => {
 							เราได้ส่งคำแนะนำเกี่ยวกับวิธีการรีเซ็ตรหัสผ่านของคุณไปที่
 						</Typography>
 						<Typography className='text-center font-semibold text-primary'>{email}</Typography>
-						<Button fullWidth variant='contained' href={loginHref} className='mt-10'>
+						<Button fullWidth variant='contained' href={AppPath.Login} className='mt-10'>
 							กลับสู่หน้าลงชื่อเข้าใช้
 						</Button>
 					</div>
