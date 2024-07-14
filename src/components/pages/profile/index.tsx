@@ -1,12 +1,17 @@
+'use client'
+
 import { Button } from '@mui/material'
+import { signOut } from 'next-auth/react'
+import { useCallback } from 'react'
 
 const ProfileMain = () => {
+	const logout = useCallback(() => signOut(), [])
+
 	return (
-		<>
+		<div>
 			<div>ProfileMain</div>
-			<Button variant='contained'>Contained</Button>
-			<Button variant='outlined'>Outlined</Button>
-		</>
+			<Button onClick={logout}>Logout</Button>
+		</div>
 	)
 }
 
