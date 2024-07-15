@@ -5,7 +5,7 @@ interface AppAPI extends AxiosInstance {
 	fetch: (input: URL | RequestInfo, init?: RequestInit | undefined) => Promise<ResponseDto<any>>
 }
 
-let accessToken = ''
+export let apiAccessToken = ''
 
 const instance = axios.create({
 	baseURL: process.env.API_URL,
@@ -22,7 +22,7 @@ api['fetch'] = async (input: URL | RequestInfo, init?: RequestInit | undefined):
 		headers: {
 			...init?.headers,
 			'x-api-key': process.env.API_KEY || '',
-			Authorization: `Bearer ${accessToken}`,
+			Authorization: `Bearer ${apiAccessToken}`,
 		},
 		cache: 'force-cache',
 	})
@@ -84,7 +84,7 @@ instance.interceptors.response.use(
 export function updateAccessToken(token?: string | void) {
 	if (token) {
 		instance.defaults.headers.common.authorization = 'Bearer ' + token
-		accessToken = token
+		apiAccessToken = token
 	} else {
 		instance.defaults.headers.common.authorization = ''
 	}

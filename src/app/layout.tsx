@@ -1,4 +1,4 @@
-import Providers from '@/utils/providers'
+import Providers from '@/providers'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import type { Metadata } from 'next'
 import { Anuphan } from 'next/font/google'
