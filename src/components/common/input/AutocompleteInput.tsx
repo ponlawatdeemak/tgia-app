@@ -1,26 +1,28 @@
-import { Autocomplete, FormControl, FormHelperText, FormLabel, OutlinedInput, OutlinedInputProps } from '@mui/material'
+import {
+	Autocomplete,
+	AutocompleteProps,
+	FormControl,
+	FormHelperText,
+	FormLabel,
+	OutlinedInput,
+	Paper,
+} from '@mui/material'
 import { FormikProps } from 'formik'
 import React from 'react'
 
-interface CountryType {
-	label: string
-	value: number
-}
-
-export interface AutocompleteInputProps extends OutlinedInputProps {
+export interface AutocompleteInputProps extends Omit<AutocompleteProps<any, false, false, false>, 'renderInput'> {
 	name: string
 	formik: FormikProps<any>
-	options: CountryType[]
-	disabled?: boolean
+	label: string
 }
 
 const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
-	options,
-	formik,
 	name,
+	formik,
 	label,
+	options,
 	className,
-	disabled = false,
+	size = 'small',
 	...props
 }) => {
 	const errorMessage = formik.touched[name] && formik.errors[name]
@@ -30,13 +32,15 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
 				{label}
 			</FormLabel>
 			<Autocomplete
+				{...props}
 				options={options}
-				getOptionLabel={(option) => option.label}
-				disabled={disabled}
-				size='small'
-				value={formik.values[name]}
+				size={size}
+				PaperComponent={({ children }) => (
+					<Paper className='border-gray border-[1px] border-solid'>{children}</Paper>
+				)}
+				value={options.find((option) => option.value === formik.values[name]) || null}
 				onChange={(event, newValue) => {
-					return formik.setFieldValue(name, newValue)
+					return formik.setFieldValue(name, newValue ? newValue.value : null)
 				}}
 				renderInput={(params) => {
 					const { InputLabelProps, InputProps, ...otherParams } = params
@@ -46,7 +50,6 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
 							{...params.InputProps}
 							id={`${name}-input`}
 							error={formik.touched[name] && Boolean(formik.errors[name])}
-							{...props}
 						/>
 					)
 				}}
