@@ -1,106 +1,42 @@
 'use client'
-import {
-	CSSProperties,
-	Dispatch,
-	PropsWithChildren,
-	SetStateAction,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from 'react'
+import { PropsWithChildren, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useMap, useMapLibre } from '@/contexts/map'
-
-// import mapboxgl from 'mapbox-gl'
-import maplibregl from 'maplibre-gl'
-// import type { Layer, PickingInfo } from '@deck.gl/core/typed'
 import BasemapList, { MapStyle, MapType } from './BasemapList'
-import getConfig from 'next/config'
-// import { Divider, Typography } from 'antd'
-// import IconButton from '../button/IconButton'
-
-import { mdiCubeOutline, mdiLayersTripleOutline, mdiLayersOutline } from '@mdi/js'
+import { mdiClose } from '@mdi/js'
 import Icon from '@mdi/react'
-// import { LayerListContainer } from './layer-list'
 import { useResizeDetector } from 'react-resize-detector'
-// import { notification } from '../notification'
-// import { StreetView } from './StreetView'
 import classNames from 'classnames'
-import { IconButton, Typography, Divider } from '@mui/material'
+import { IconButton, Typography, Divider, Button } from '@mui/material'
 import { useLocalStorage } from '@/hook/local-storage'
-// import { useLocalStorage } from '@/contexts/app'
-// import Measurement from './Measurement'
-// import MapboxDraw from '@mapbox/mapbox-gl-draw'
-// import { GetParcelOutDto } from '@libs/interface'
-// import { GeoJSON } from '@libs/interface'
-// import { buildingBlock3dLayer, configParcelLayer, LayerId } from '@/config/app'
-// import { useWebMap, WebMapDatasets, WebMapLayer } from '@/modules/awhere/webMap'
-// import { useStep } from '@/components/page/permit/officer/Layout'
-
-// const {
-// 	publicRuntimeConfig: { map },
-// } = getConfig()
-
-// mapboxgl.accessToken = map.mapbox
 
 export interface MapViewProps extends PropsWithChildren {
-	style?: CSSProperties
+	style?: string
 	loading?: boolean
 	className?: string
 	onClick?: (objects: any[] | null, info: any) => void
 	defaultMapType?: MapType
-	// layers?: any[]
 	disableBasemapList?: boolean
-	// disableLayerList?: boolean
-	// disableStreetView?: boolean
-	// streetViewCoordiantes?: maplibregl.LngLatLike
 	initialBounds?: ThailandBoundsKey | maplibregl.LngLatBoundsLike
 	bounds?: ThailandBoundsKey | maplibregl.LngLatBoundsLike
 	dataBounds?: ThailandBoundsKey | maplibregl.LngLatBoundsLike
 	onReady?: (map: maplibregl.Map) => void
 	busy?: boolean
-	// parcelJson?:
-	// 	| {
-	// 			type: string
-	// 			properties: GetParcelOutDto
-	// 			geometry: GeoJSON | undefined
-	// 	  }
-	// 	| undefined
-	// onMeasurement?: (value: boolean) => void
-
-	// isDashboard?: boolean
-	// showBtnFullScreen?: boolean
 }
 
 export default function MapView({
 	style,
 	loading = true,
 	disableBasemapList = false,
-	// disableLayerList = false,
-	// disableStreetView = false,
 	defaultMapType = MapType.Imagery,
 	onClick,
 	className = '',
 	children,
 	initialBounds = 'full',
-	// streetViewCoordiantes,
 	bounds,
 	dataBounds,
-	// layers,
 	onReady,
 	busy,
-	// parcelJson,
-	// onMeasurement = () => {},
-	// isDashboard = false,
-	// showBtnFullScreen,
 }: MapViewProps) {
-	// const { datasets, setDatasets } = useMap<mapboxgl.Map>()
-
-	// const [hideIcon, setHideIcon] = useState<boolean>(false)
-	// const [active3d, setActive3d] = useState<boolean>(false)
-	// const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
-
 	const initBounds = useMemo(() => {
 		if (typeof initialBounds === 'string') {
 			return thailandBounds[initialBounds] || thailandBounds['full']
@@ -119,27 +55,13 @@ export default function MapView({
 
 	const ref = useRef<HTMLDivElement>(null)
 	const [mapType] = useLocalStorage<MapType>('maplibregl.mapType', defaultMapType)
+	const source = 'https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/openStreetMap.json'
 
 	const { map } = useMapLibre(ref, {
 		style: MapStyle[mapType as MapType],
+		// style: source,
 		bounds: initBounds,
-		// dataBounds: dataBoundsButton,
 	})
-
-	// const fullScreenControl = useMemo(() => {
-	// 	return new mapboxgl.FullscreenControl()
-	// }, [map])
-
-	// useEffect(() => {
-	// 	if (showBtnFullScreen) {
-	// 		if (map?.hasControl(fullScreenControl)) {
-	// 			map?.removeControl(fullScreenControl)
-	// 		} else {
-	// 			map?.addControl(new mapboxgl.FullscreenControl(), 'top-right')
-	// 		}
-	// 	}
-	// 	// map?.on('mouseout')
-	// }, [map, showBtnFullScreen, fullScreenControl])
 
 	const propsOnHover = useMemo(() => {
 		if (!map) return
@@ -285,11 +207,11 @@ export default function MapView({
 				// '[&_.mapboxgl-ctrl-shrink]:w-[32px]',
 				// '[&_.mapboxgl-ctrl-shrink]:h-[32px]',
 			)}
-			style={style}
+			// style={style}s
 			ref={resizeRef}
 		>
 			<div ref={ref} className='flex-1'>
-				{/* {showLayerList ? (
+				{showLayerList ? (
 					<MapLayerList
 						className={classNames('absolute right-[8px] top-1')}
 						defaultMapType={mapType}
@@ -298,7 +220,7 @@ export default function MapView({
 						// active3d={active3d}
 						// busy={busy}
 					/>
-				) : null} */}
+				) : null}
 				{children}
 			</div>
 		</div>
@@ -318,7 +240,8 @@ export function MapLayerList({
 	disableLayerList?: boolean
 	active3d?: boolean
 }) {
-	const [open, setOpen] = useState(false)
+	const { openBasemap, setOpenBasemap } = useMap()
+
 	return (
 		<>
 			{/* <IconButton
@@ -330,12 +253,13 @@ export function MapLayerList({
 				path={mdiLayersTripleOutline}
 				className={classNames('z-10', className)}
 			/> */}
-
-			<Icon path={mdiLayersOutline} />
+			{/* xxx
+			<Button>test</Button>
+			<Icon path={mdiLayersOutline} /> */}
 			<div
-				style={{ display: open ? undefined : 'none' }}
+				style={{ display: openBasemap ? undefined : 'none' }}
 				className={classNames(
-					'absolute right-1 top-10 z-10',
+					'absolute bottom-32 left-14 z-10',
 					'max-h-[calc(100%_-_64px)] min-w-[280px] overflow-y-auto bg-white p-4 py-2 font-normal',
 				)}
 			>
@@ -343,6 +267,16 @@ export function MapLayerList({
 					<>
 						<BasemapList defaultMapType={defaultMapType}>
 							<Typography>แผนที่ฐาน</Typography>
+
+							<IconButton
+								aria-label='delete'
+								color='primary'
+								onClick={() => {
+									setOpenBasemap(false)
+								}}
+							>
+								<Icon path={mdiClose} size={1}></Icon>
+							</IconButton>
 							<Divider className='mb-2 mt-1' />
 						</BasemapList>
 						<div className='mb-2' />
