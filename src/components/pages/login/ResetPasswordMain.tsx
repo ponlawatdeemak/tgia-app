@@ -1,35 +1,51 @@
 'use client'
 
+import service from '@/api'
 import PasswordInput from '@/components/common/input/PasswordInput'
+import { AppPath } from '@/config/app'
 import { Button, Typography } from '@mui/material'
+import { useMutation } from '@tanstack/react-query'
 import { useFormik } from 'formik'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
-import { AppPath } from '@/config/app'
 
 const validationSchema = yup.object({
-	password: yup.string().required('กรุณากรอกรหัสผ่านใหม่'),
+	password: yup
+		.string()
+		.required('กรุณากรอกรหัสผ่านใหม่')
+		.min(8, 'รหัสผ่านต้องมีขนาดอย่างน้อย 8 ตัวอักษร')
+		.matches(/^(?=.*[0-9])/, 'ต้องมีอย่างน้อย 1 หมายเลข')
+		.matches(/^(?=.*[a-z])/, 'ต้องมีตัวอักษรพิมพ์เล็กอย่างน้อย 1 ตัว')
+		.matches(/^(?=.*[A-Z])/, 'ต้องมีอักษรตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว')
+		.matches(/^(?=.*[!@#$%^&*()_+\-=\[\]{};:\\|,.<>~\/?])/, 'ต้องมีอักขระพิเศษอย่างน้อย 1 ตัว'),
 	confirmPassword: yup
 		.string()
 		.required('กรุณากรอกรหัสผ่านอีกครั้ง')
 		.oneOf([yup.ref('password')], 'รหัสผ่านต้องตรงกัน'),
 })
 
-// ข้อกำหนดรหัสผ่าน:
-// - มีอย่างน้อย 1 หมายเลข
-// - มีอักษรตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว
-// - มีตัวอักษรพิมพ์เล็กอย่างน้อย 1 ตัว
-// - มีอักขระพิเศษอย่างน้อย
-// - อักขระต่อไปนี้นับเป็นอักขระพิเศษ: ! @ # % & ^ $ * . [ ] { } ( ) ? - / \ , > < : ; | _ ~ + =
+type ResetPasswordFormType = yup.InferType<typeof validationSchema>
 
 const ResetPasswordMain = () => {
-	const onSubmit = useCallback((values: any) => {
-		console.log(values)
-		// call api
-	}, [])
+	const {
+		isPending,
+		error,
+		mutateAsync: mutateResetPassword,
+	} = useMutation({
+		mutationFn: service.auth.resetPassword,
+	})
+	console.log('TLOG ~ error:', error)
 
-	const formik = useFormik<any>({
+	const onSubmit = useCallback(
+		(values: ResetPasswordFormType) => {
+			console.log(values)
+			// mutateResetPassword(values)
+		},
+		[mutateResetPassword],
+	)
+
+	const formik = useFormik<ResetPasswordFormType>({
 		initialValues: {
 			password: '',
 			confirmPassword: '',
@@ -57,7 +73,7 @@ const ResetPasswordMain = () => {
 								formik={formik}
 								className='mt-4'
 							/>
-							<Button fullWidth variant='contained' className='mt-10' type='submit'>
+							<Button fullWidth disabled={isPending} variant='contained' className='mt-10' type='submit'>
 								ยืนยัน
 							</Button>
 						</form>
