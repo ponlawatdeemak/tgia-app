@@ -22,6 +22,10 @@ export default withAuth(
 			return NextResponse.redirect(new URL(`${AppPath.Login}/?callbackUrl=${encodeURI(nextUrl.href)}`, nextUrl))
 		}
 
+		if (nextUrl.pathname === '/') {
+			return NextResponse.redirect(new URL(AppPath.FieldLoss, nextUrl))
+		}
+
 		return
 	},
 	{

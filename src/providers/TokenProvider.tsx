@@ -17,6 +17,8 @@ const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 		const accessToken = session?.user?.tokens?.accessToken
 		if (accessToken) {
 			updateAccessToken(accessToken)
+		} else {
+			updateAccessToken()
 		}
 	}, [session])
 

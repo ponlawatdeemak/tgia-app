@@ -87,6 +87,7 @@ export function updateAccessToken(token?: string | void) {
 		apiAccessToken = token
 	} else {
 		instance.defaults.headers.common.authorization = ''
+		apiAccessToken = ''
 	}
 }
 
