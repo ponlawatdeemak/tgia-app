@@ -1,16 +1,22 @@
 'use client'
 
-import service from '@/api'
+import service, { ResponseDto } from '@/api'
+import { ResetPasswordDtoIn } from '@/api/auth/dto-in.dto'
+import { ResetPasswordDtoOut } from '@/api/auth/dto-out.dto'
+import FormInput from '@/components/common/input/FormInput'
 import PasswordInput from '@/components/common/input/PasswordInput'
 import { AppPath } from '@/config/app'
-import { Button, Typography } from '@mui/material'
+import { Button, FormHelperText, Typography } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { useFormik } from 'formik'
-import { useCallback } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useMemo } from 'react'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
 
 const validationSchema = yup.object({
+	email: yup.string().required(),
 	password: yup
 		.string()
 		.required('กรุณากรอกรหัสผ่านใหม่')
@@ -23,32 +29,48 @@ const validationSchema = yup.object({
 		.string()
 		.required('กรุณากรอกรหัสผ่านอีกครั้ง')
 		.oneOf([yup.ref('password')], 'รหัสผ่านต้องตรงกัน'),
+	confirmationCode: yup.string().required('กรุณากรอกรหัสยืนยันตัวตน'),
 })
 
 type ResetPasswordFormType = yup.InferType<typeof validationSchema>
 
 const ResetPasswordMain = () => {
+	const router = useRouter()
+	const searchParams = useSearchParams()
+
+	const email = useMemo(() => {
+		const email = searchParams?.get('email')
+		const isEmail = yup.string().email().required().isValidSync(email)
+		if (!isEmail) return null
+		return email
+	}, [searchParams])
+
 	const {
 		isPending,
 		error,
 		mutateAsync: mutateResetPassword,
-	} = useMutation({
+	} = useMutation<ResponseDto<ResetPasswordDtoOut>, AxiosError, ResetPasswordDtoIn, unknown>({
 		mutationFn: service.auth.resetPassword,
 	})
-	console.log('TLOG ~ error:', error)
 
 	const onSubmit = useCallback(
-		(values: ResetPasswordFormType) => {
-			console.log(values)
-			// mutateResetPassword(values)
+		async (values: ResetPasswordFormType) => {
+			try {
+				await mutateResetPassword(values)
+				router.push(`${AppPath.ResetPassword}/?resetStatus=success`)
+			} catch (error) {
+				router.push(`${AppPath.ResetPassword}/?resetStatus=failed`)
+			}
 		},
-		[mutateResetPassword],
+		[mutateResetPassword, router],
 	)
 
 	const formik = useFormik<ResetPasswordFormType>({
 		initialValues: {
+			email: email || '',
 			password: '',
 			confirmPassword: '',
+			confirmationCode: '',
 		},
 		validationSchema: validationSchema,
 		onSubmit,
@@ -73,7 +95,20 @@ const ResetPasswordMain = () => {
 								formik={formik}
 								className='mt-4'
 							/>
-							<Button fullWidth disabled={isPending} variant='contained' className='mt-10' type='submit'>
+							<FormInput
+								name='confirmationCode'
+								label='รหัสยืนยันตัวตน (จากอีเมล)'
+								formik={formik}
+								className='mt-4'
+							/>
+							{!email && <FormHelperText error>URL รีเซ็ตรหัสผ่านไม่ถูกต้อง</FormHelperText>}
+							<Button
+								fullWidth
+								disabled={isPending || !email}
+								variant='contained'
+								className='mt-10'
+								type='submit'
+							>
 								ยืนยัน
 							</Button>
 						</form>

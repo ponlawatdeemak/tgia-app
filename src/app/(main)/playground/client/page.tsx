@@ -16,7 +16,7 @@ const ClientPage = () => {
 		mutationFn: service.auth.login,
 	})
 
-	updateAccessToken(loginData?.tokens?.accessToken)
+	// updateAccessToken(loginData?.tokens?.accessToken)
 	const { data: userData, isLoading } = useQuery({
 		queryKey: ['getUser'],
 		queryFn: () => service.um.getUser({ userId: '295a35cc-80c1-702c-72f1-ad596ac1718a' }),

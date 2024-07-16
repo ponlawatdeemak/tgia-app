@@ -154,7 +154,7 @@ const AppBar = () => {
 							<Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' className='h-[24px] w-[24px]' />
 						</IconButton>
 						<span className='text-base font-medium text-black underline decoration-2 underline-offset-2'>
-							{`${user?.firstName} ${user?.lastName}.`}
+							{`${user?.firstName} ${user?.lastName.charAt(0)}.`}
 						</span>
 					</Button>
 					<div>

@@ -46,6 +46,8 @@
 	--lightest-gray-color: #f2f2f2;
 	--light-gray-color: #d6d6d6;
 	--dark-gray-color: #c2c5cc;
+
+	--light-green-color: #edf8f4;
 }
 
 @layer base {

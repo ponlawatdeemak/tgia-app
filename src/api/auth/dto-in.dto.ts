@@ -3,7 +3,12 @@ export interface LoginDtoIn {
 	password: string
 }
 
-export interface ForgetPasswordDtoIn {
+export interface RefreshTokenDtoIn {
+	userId: string
+	refreshToken: string
+}
+
+export interface ForgotPasswordDtoIn {
 	email: string
 }
 

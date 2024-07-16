@@ -2,9 +2,11 @@ import auth from './auth'
 import um from './um'
 
 export type ResponseDto<T = any> = {
-	data: T
-	message: string
+	data?: T
+	message?: string
 	tokens?: Tokens
+	errorStatus?: number
+	error?: any
 }
 
 export interface Tokens {

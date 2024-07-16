@@ -14,7 +14,11 @@ export interface LoginDtoOut {
 	updatedAt: string
 }
 
-export interface ForgetPasswordDtoOut {
+export interface RefreshTokenDtoOut {
+	id: string
+}
+
+export interface ForgotPasswordDtoOut {
 	success: boolean
 }
 

@@ -1,10 +1,16 @@
 'use client'
 
+import service, { ResponseDto } from '@/api'
+import { ForgotPasswordDtoIn } from '@/api/auth/dto-in.dto'
+import { ForgotPasswordDtoOut } from '@/api/auth/dto-out.dto'
 import FormInput from '@/components/common/input/FormInput'
 import { AppPath } from '@/config/app'
-import { Button, Link, Typography } from '@mui/material'
+import { Button, FormHelperText, Link, Typography } from '@mui/material'
+import { useMutation } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { useFormik } from 'formik'
-import { useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import { useCallback, useMemo } from 'react'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
 
@@ -12,13 +18,36 @@ const validationSchema = yup.object({
 	email: yup.string().email('รูปแบบอีเมลไม่ถูกต้อง').required('กรุณากรอกอีเมล'),
 })
 
-const ForgetPasswordMain = () => {
-	const onSubmit = useCallback((values: any) => {
-		console.log(values)
-		// call api
-	}, [])
+const ForgotPasswordMain = () => {
+	const router = useRouter()
+	const {
+		isPending,
+		error,
+		mutateAsync: mutateForgotPassword,
+	} = useMutation<ResponseDto<ForgotPasswordDtoOut>, AxiosError, ForgotPasswordDtoIn, unknown>({
+		mutationFn: service.auth.forgotPassword,
+	})
 
-	const formik = useFormik<any>({
+	const errorMessage = useMemo(() => {
+		if (error) {
+			if (error.response?.status === 500) return 'ไม่พบอีเมลนี้ในระบบ'
+			return 'มีบางอย่างผิดพลาด'
+		}
+		return null
+	}, [error])
+
+	const onSubmit = useCallback(
+		async (values: ForgotPasswordDtoIn) => {
+			console.log(values)
+			try {
+				await mutateForgotPassword(values)
+				router.push(AppPath.VerifyEmail)
+			} catch (error) {}
+		},
+		[mutateForgotPassword, router],
+	)
+
+	const formik = useFormik<ForgotPasswordDtoIn>({
 		initialValues: {
 			email: '',
 		},
@@ -40,11 +69,13 @@ const ForgetPasswordMain = () => {
 						</Typography>
 
 						<form
+							noValidate
 							onSubmit={formik.handleSubmit}
 							className='flex w-full max-w-[340px] flex-col sm:max-w-full'
 						>
-							<FormInput fullWidth name='email' label='อีเมล' formik={formik} className='my-8' />
-							<Button fullWidth variant='contained' type='submit'>
+							<FormInput name='email' label='อีเมล' formik={formik} className='mt-8' />
+							<FormHelperText error>{errorMessage}</FormHelperText>
+							<Button fullWidth disabled={isPending} variant='contained' type='submit' className='mt-8'>
 								ตกลง
 							</Button>
 						</form>
@@ -58,4 +89,4 @@ const ForgetPasswordMain = () => {
 	)
 }
 
-export default ForgetPasswordMain
+export default ForgotPasswordMain
