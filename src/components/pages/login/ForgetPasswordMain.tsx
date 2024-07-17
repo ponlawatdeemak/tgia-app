@@ -41,7 +41,7 @@ const ForgotPasswordMain = () => {
 			console.log(values)
 			try {
 				await mutateForgotPassword(values)
-				router.push(AppPath.VerifyEmail)
+				router.push(`${AppPath.VerifyEmail}?email=${values?.email}`)
 			} catch (error) {}
 		},
 		[mutateForgotPassword, router],
