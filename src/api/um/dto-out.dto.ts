@@ -13,3 +13,7 @@ export interface GetUmDtoOut {
 	createdAt: string
 	updatedAt: string
 }
+
+export interface CreateProfileImageDtoOut {
+	download_file_url: string
+}
