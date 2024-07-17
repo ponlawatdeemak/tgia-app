@@ -14,11 +14,11 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
 
 	return (
 		<SessionProvider>
-			<TokenProvider>
-				<QueryClientProvider client={queryClient}>
-					<ThemeProvider theme={theme}>{children}</ThemeProvider>
-				</QueryClientProvider>
-			</TokenProvider>
+			<QueryClientProvider client={queryClient}>
+				<ThemeProvider theme={theme}>
+					<TokenProvider>{children}</TokenProvider>
+				</ThemeProvider>
+			</QueryClientProvider>
 		</SessionProvider>
 	)
 }

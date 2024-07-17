@@ -15,7 +15,7 @@ import * as yup from 'yup'
 
 const validationSchema = yup.object({
 	username: yup.string().required('กรุณากรอกอีเมล'),
-	password: yup.string().min(8, 'รหัสผ่านต้องมีขนาดอย่างน้อย 8 ตัวอักษร').required('กรุณากรอกรหัสผ่าน'),
+	password: yup.string().required('กรุณากรอกรหัสผ่าน'),
 })
 
 const LoginMain = () => {
@@ -34,13 +34,12 @@ const LoginMain = () => {
 
 	const onSubmit = useCallback(
 		async (values: LoginDtoIn) => {
-			const res = await signIn('credentials', {
+			await signIn('credentials', {
 				username: values.username,
 				password: values.password,
 				redirect: true,
 				callbackUrl: callbackUrl ?? AppPath.FieldLoss,
 			})
-			console.log('TLOG ~ res:', res)
 		},
 		[callbackUrl],
 	)

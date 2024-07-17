@@ -3,11 +3,19 @@ import React from 'react'
 interface EmailIconProps {
 	width?: number
 	height?: number
+	className?: string
 }
 
-const EmailIcon: React.FC<EmailIconProps> = ({ width = 80, height = 80 }) => {
+const EmailIcon: React.FC<EmailIconProps> = ({ width = 80, height = 80, className }) => {
 	return (
-		<svg width={width} height={height} viewBox='0 0 80 80' fill='none' xmlns='http://www.w3.org/2000/svg'>
+		<svg
+			width={width}
+			height={height}
+			className={className}
+			viewBox='0 0 80 80'
+			fill='none'
+			xmlns='http://www.w3.org/2000/svg'
+		>
 			<g clipPath='url(#clip0_477_132387)'>
 				<path
 					d='M80 40C80 62.0893 62.0893 80 40 80C17.9107 80 0 62.0922 0 40C0 17.9078 17.9078 0 40 0C62.0922 0 80 17.9078 80 40Z'
