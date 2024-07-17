@@ -25,10 +25,16 @@ import React, { useCallback, useMemo, useState } from 'react'
 import AgriculturalDepartmentLogo from './svg/AgriculturalDepartmentLogo'
 import ThaicomLogo from './svg/ThaicomLogo'
 import TriangleLogo from './svg/TriangleLogo'
+import { useTranslation } from '@/i18n/client'
 
-const AppBar = () => {
+interface AppBarProps {
+	lng: string
+}
+
+const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 	const router = useRouter()
 	const pathname = usePathname()
+	const { t } = useTranslation(lng, 'appbar')
 	const { isDesktop } = useResponsive()
 	const { data: session } = useSession()
 	const user = session?.user ?? null
@@ -39,7 +45,7 @@ const AppBar = () => {
 	const [toggle, setToggle] = useState(false)
 	const [areaType, setAreaType] = useState('registration')
 	const [areaUnit, setAreaUnit] = useState('rai')
-	const [language, setLanguage] = useState('th')
+	const [language, setLanguage] = useState(lng)
 	const openOthersMenu = Boolean(anchorOthersMenuEl)
 	const openToggleMenu = Boolean(anchorToggleMenuEl)
 
@@ -78,6 +84,8 @@ const AppBar = () => {
 		if (newLanguage !== null) {
 			setLanguage(newLanguage)
 		}
+		const oldLanguage = pathname?.split('/')?.[1]
+		router.push(window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
 	}
 
 	if (isDesktop) {
@@ -101,7 +109,7 @@ const AppBar = () => {
 											textAlign='center'
 											className='my-1 text-base font-semibold text-black'
 										>
-											{menu.name}
+											{t(menu.name)}
 										</Typography>
 									</MenuItem>
 									<Menu
@@ -138,7 +146,7 @@ const AppBar = () => {
 									selected={selectedMenuKey === menu.key}
 								>
 									<Typography textAlign='center' className='my-1 text-base font-semibold text-black'>
-										{menu.name}
+										{t(menu.name)}
 									</Typography>
 								</MenuItem>
 							),
@@ -364,7 +372,7 @@ const AppBar = () => {
 									</div>
 								) : (
 									<ListItem key={menu.path} onClick={() => handleCloseNavMenu(menu.key)}>
-										<ListItemText primary={menu.name} />
+										<ListItemText primary={t(menu.name)} />
 									</ListItem>
 								),
 							)}
