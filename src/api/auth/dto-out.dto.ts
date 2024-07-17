@@ -13,3 +13,15 @@ export interface LoginDtoOut {
 	createdAt: string
 	updatedAt: string
 }
+
+export interface RefreshTokenDtoOut {
+	id: string
+}
+
+export interface ForgotPasswordDtoOut {
+	success: boolean
+}
+
+export interface ResetPasswordDtoOut {
+	success: boolean
+}

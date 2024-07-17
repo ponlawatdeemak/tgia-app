@@ -1,3 +1,7 @@
 .MuiFormLabel-root:not(.Mui-focused) {
 	color: var(--black-color);
 }
+
+.MuiFormLabel-asterisk {
+	color: var(--error-color-1);
+}

@@ -19,7 +19,14 @@ export default withAuth(
 		}
 
 		if (!isLoggedIn) {
-			return NextResponse.redirect(new URL(`${AppPath.Login}/?callbackUrl=${encodeURI(nextUrl.href)}`, nextUrl))
+			const callback = nextUrl.href.includes('sessionExpired=1')
+				? nextUrl.href.replace('sessionExpired=1', '')
+				: nextUrl.href
+			return NextResponse.redirect(new URL(`${AppPath.Login}/?callbackUrl=${encodeURI(callback)}`, nextUrl))
+		}
+
+		if (nextUrl.pathname === '/') {
+			return NextResponse.redirect(new URL(AppPath.FieldLoss, nextUrl))
 		}
 
 		return
