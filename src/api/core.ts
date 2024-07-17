@@ -1,8 +1,6 @@
 import axios, { AxiosError, AxiosInstance } from 'axios'
 import { ResponseDto } from './index'
-import getConfig from 'next/config'
-const { publicRuntimeConfig } = getConfig()
-const { apiUrl, apiKey } = publicRuntimeConfig
+ 
 interface AppAPI extends AxiosInstance {
 	fetch: (input: URL | RequestInfo, init?: RequestInit | undefined) => Promise<ResponseDto<any>>
 }
@@ -10,20 +8,20 @@ interface AppAPI extends AxiosInstance {
 export let apiAccessToken = ''
 
 const instance = axios.create({
-	baseURL: apiUrl,
+	baseURL: process.env.API_URL,
 	headers: {
-		'x-api-key': apiKey || '',
+		'x-api-key': process.env.API_KEY || '',
 	},
 })
 
 export const api: AppAPI = instance as AppAPI
 
 api['fetch'] = async (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<ResponseDto<any>> => {
-	const res = await fetch((apiUrl ?? '') + input, {
+	const res = await fetch((process.env.API_URL ?? '') + input, {
 		...init,
 		headers: {
 			...init?.headers,
-			'x-api-key': apiKey || '',
+			'x-api-key': process.env.API_KEY || '',
 			Authorization: `Bearer ${apiAccessToken}`,
 		},
 		cache: 'force-cache',
