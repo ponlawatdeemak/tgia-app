@@ -1,6 +1,8 @@
 import axios, { AxiosError, AxiosInstance } from 'axios'
 import service, { ResponseDto } from './index'
-
+import getConfig from 'next/config'
+const { publicRuntimeConfig } = getConfig()
+const { apiUrl, apiKey } = publicRuntimeConfig
 interface AppAPI extends AxiosInstance {
 	fetch: (input: URL | RequestInfo, init?: RequestInit | undefined) => Promise<ResponseDto<any>>
 }
@@ -10,23 +12,22 @@ let apiRefreshToken: string | null = null
 let apiUserId: string | null = null
 
 const instance = axios.create({
-	baseURL: process.env.API_URL,
+	baseURL: apiUrl,
 	headers: {
-		'x-api-key': process.env.API_KEY || '',
+		'x-api-key': apiKey || '',
 	},
 })
 
 export const api: AppAPI = instance as AppAPI
 
 api['fetch'] = async (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<ResponseDto<any>> => {
-	// console.log('TLOG ~ apiAccessToken:', apiAccessToken)
-	const res = await fetch((process.env.API_URL ?? '') + input, {
+	const res = await fetch((apiUrl ?? '') + input, {
 		...init,
 		headers: {
 			...init?.headers,
+			'x-api-key': apiKey || '',
 			Authorization: `Bearer ${apiAccessToken}`,
 			// Authorization: `Bearer eyJraWQiOiI1Vzl6NmhXZmVNQjRhTXlUcGVNV01relk5UEJrakR1YjZsN1lLUTlVdmpnPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJhOWNhNTVlYy0yMDIxLTcwZGItZDc4OS0yMzQxOGMzNjdmMDUiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuYXAtc291dGhlYXN0LTEuYW1hem9uYXdzLmNvbVwvYXAtc291dGhlYXN0LTFfSUdMb3Fub2tNIiwiY2xpZW50X2lkIjoiNHA0MzBwMmRhbGEzYWxqbWloa2s3OWg4MmciLCJvcmlnaW5fanRpIjoiNjNjYzcyZjEtYmIyMC00OTExLTg3YjMtOGU5NTQyYmY2MjVmIiwiZXZlbnRfaWQiOiI2OGVlODk1ZC0zZWQxLTRkNWEtOGZmYS1mNzY2OTMyNGJiYzkiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNzIwNzkzOTU4LCJleHAiOjE3MjA4ODAzNTgsImlhdCI6MTcyMDc5Mzk1OCwianRpIjoiMDAxYTZjM2ItMWYzMS00NTQ1LThlZWMtYTkwMTUzZTZlZWQ1IiwidXNlcm5hbWUiOiJhOWNhNTVlYy0yMDIxLTcwZGItZDc4OS0yMzQxOGMzNjdmMDUifQ.GlheOYJ-MuaCAf-7U76gZ2qdjlgnfLhjeoI8OEYJ2PLGdxzrJ3CbHH1rhncKr9YxCEvSyMFDEwkgIvnt8Wf_pzHTm48qpAdoq6A3TIRQLbIYQo_aTyhs3j_hZ3wTwg3YGDa8f-8tdm4vfvQubID9YxkaZHw7hiI75vkJCNe-1dcePJ1WmSwisyxjsakYLREF1lWvluTc5NcRmLRC8kkFIwZpsuRHCsyNhOncb6-2mT2golLTijJfLWLldbuHVzcfybkplJDJz94M9Dytyjke2KwLBl2OYboGBouukipV-ep29jRcZH1_QKcvau1-0zyz-6_l9T87irM88kALkbtabg`,
-			'x-api-key': process.env.API_KEY || '',
 		},
 		cache: 'force-cache',
 	})
