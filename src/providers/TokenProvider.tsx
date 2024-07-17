@@ -34,7 +34,7 @@ const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 		}
 	}, [session])
 
-	if (pathname && pathname.startsWith(authPathPrefix)) {
+	if (pathname && pathname.includes(authPathPrefix)) {
 		return children
 	}
 

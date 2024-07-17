@@ -1,7 +1,11 @@
 import FieldLossMain from '@/components/pages/field-loss'
 import React from 'react'
 
-const FieldLossPage = () => {
+interface FieldLossPageProps {
+	params: { lng: string }
+}
+
+const FieldLossPage: React.FC<FieldLossPageProps> = ({ params: { lng } }) => {
 	return <FieldLossMain />
 }
 
