@@ -4,6 +4,10 @@ import service from '@/api'
 import { updateAccessToken } from '@/api/core'
 import { Button } from '@mui/material'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig } = getConfig()
+const { appUserName, appPassword } = publicRuntimeConfig
 
 const ClientPage = () => {
 	const {
@@ -29,17 +33,14 @@ const ClientPage = () => {
 		return <div>{error?.message}</div>
 	}
 
-	// console.log('loginData : ', loginData)
-	// console.log('userData : ', userData)
-
 	return (
 		<div>
 			{!isSuccess && (
 				<Button
 					onClick={() =>
 						mutateLogin({
-							username: process.env.APP_USERNAME || '-',
-							password: process.env.APP_PASSWORD || '-',
+							username: appUserName || '-',
+							password: appPassword || '-',
 						})
 					}
 				>
