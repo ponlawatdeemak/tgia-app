@@ -25,10 +25,18 @@ import React, { useCallback, useMemo, useState } from 'react'
 import AgriculturalDepartmentLogo from './svg/AgriculturalDepartmentLogo'
 import ThaicomLogo from './svg/ThaicomLogo'
 import TriangleLogo from './svg/TriangleLogo'
+import { useTranslation } from '@/i18n/client'
+import useLanguage from '@/store/language'
+import { Language } from '@/enum'
 
-const AppBar = () => {
+interface AppBarProps {
+	lng: string
+}
+
+const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 	const router = useRouter()
 	const pathname = usePathname()
+	const { t } = useTranslation(lng, 'appbar')
 	const { isDesktop } = useResponsive()
 	const { data: session } = useSession()
 	const user = session?.user ?? null
@@ -39,9 +47,10 @@ const AppBar = () => {
 	const [toggle, setToggle] = useState(false)
 	const [areaType, setAreaType] = useState('registration')
 	const [areaUnit, setAreaUnit] = useState('rai')
-	const [language, setLanguage] = useState('th')
+	// const [language, setLanguage] = useState(lng)
 	const openOthersMenu = Boolean(anchorOthersMenuEl)
 	const openToggleMenu = Boolean(anchorToggleMenuEl)
+	const { language, setLanguage } = useLanguage()
 
 	const selectedMenuKey = useMemo(() => {
 		return appMenuConfig.find((menu) => {
@@ -74,15 +83,17 @@ const AppBar = () => {
 		}
 	}
 
-	const handleLanguageChange = (event: React.MouseEvent<HTMLElement>, newLanguage: string) => {
+	const handleLanguageChange = (event: React.MouseEvent<HTMLElement>, newLanguage: Language) => {
 		if (newLanguage !== null) {
 			setLanguage(newLanguage)
 		}
+		const oldLanguage = pathname?.split('/')?.[1]
+		router.push(window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
 	}
 
 	if (isDesktop) {
 		return (
-			<div className='mb-2 flex items-center justify-between'>
+			<div className='mb-4 flex items-center justify-between'>
 				<div className='flex items-center gap-4'>
 					<div className='ml-1 flex items-center gap-2 py-1'>
 						<TriangleLogo width={24} height={24} />
@@ -101,7 +112,7 @@ const AppBar = () => {
 											textAlign='center'
 											className='my-1 text-base font-semibold text-black'
 										>
-											{menu.name}
+											{t(menu.name)}
 										</Typography>
 									</MenuItem>
 									<Menu
@@ -138,7 +149,7 @@ const AppBar = () => {
 									selected={selectedMenuKey === menu.key}
 								>
 									<Typography textAlign='center' className='my-1 text-base font-semibold text-black'>
-										{menu.name}
+										{t(menu.name)}
 									</Typography>
 								</MenuItem>
 							),
@@ -150,11 +161,10 @@ const AppBar = () => {
 						className='flex items-center gap-2 px-2 py-[4px] [&_>*]:m-0'
 						onClick={() => handleCloseNavMenu(profileMenuConfig.key)}
 					>
-						<IconButton sx={{ width: '24px', height: '24px' }}>
-							<Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' className='h-[24px] w-[24px]' />
-						</IconButton>
+						<Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' className='h-[24px] w-[24px]' />
+
 						<span className='text-base font-medium text-black underline decoration-2 underline-offset-2'>
-							{`${user?.firstName} ${user?.lastName}.`}
+							{`${user?.firstName} ${user?.lastName.charAt(0)}.`}
 						</span>
 					</Button>
 					<div>
@@ -364,7 +374,7 @@ const AppBar = () => {
 									</div>
 								) : (
 									<ListItem key={menu.path} onClick={() => handleCloseNavMenu(menu.key)}>
-										<ListItemText primary={menu.name} />
+										<ListItemText primary={t(menu.name)} />
 									</ListItem>
 								),
 							)}

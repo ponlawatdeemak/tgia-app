@@ -1,6 +1,6 @@
 'use client'
 import { PropsWithChildren, useCallback, useEffect, useMemo, useRef } from 'react'
-import { useMap, useMapLibre } from '@/contexts/map'
+import { useMap, useMapLibre } from '@/store/contexts/map'
 import BasemapList, { MapStyle, MapType } from './BasemapList'
 import { mdiClose } from '@mdi/js'
 import Icon from '@mdi/react'

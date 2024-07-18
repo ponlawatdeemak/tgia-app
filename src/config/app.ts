@@ -66,38 +66,23 @@ export const appMenuConfig: {
 }[] = [
 	{
 		key: 'FieldLoss',
-		name: 'วิเคราะห์ความเสียหาย',
+		name: 'fieldLoss',
 		path: AppPath.FieldLoss,
 	},
 	{
 		key: 'PlotMonitoring',
-		name: 'ตรวจสอบรายแปลง',
+		name: 'plotMonitoring',
 		path: AppPath.PlotMonitoring,
 	},
 	{
 		key: 'AnnualAnalysis',
-		name: 'วิเคราะห์สถิติรายปี',
+		name: 'annualAnalysis',
 		path: AppPath.AnnualAnalysis,
 	},
 	{
 		key: 'Others',
-		name: 'อื่นๆ',
+		name: 'others',
 		path: AppPath.Others,
 		children: othersMenuConfig,
 	},
 ]
-
-export enum AreaType {
-	Registration = 'ทบก',
-	Insurance = 'เอาประกัน',
-}
-
-export enum AreaUnit {
-	Rai = 'ไร่',
-	LandPlot = 'แปลง',
-}
-
-export enum Language {
-	EN = 'en',
-	TH = 'th',
-}

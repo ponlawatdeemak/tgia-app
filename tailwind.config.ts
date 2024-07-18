@@ -1,3 +1,4 @@
+import { light } from '@mui/material/styles/createPalette'
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
@@ -20,9 +21,7 @@ const config: Config = {
 		extend: {
 			colors: {
 				primary: {
-					// light: '#4870D8',
 					DEFAULT: 'var(--primary-color-1)',
-					// dark: '#000982',
 				},
 				secondary: {
 					DEFAULT: 'var(--secondary-color-1)',
@@ -31,6 +30,7 @@ const config: Config = {
 					DEFAULT: 'var(--yellow-color-1)',
 				},
 				success: {
+					light: 'var(--light-green-color)',
 					DEFAULT: 'var(--success-color-1)',
 				},
 				error: {

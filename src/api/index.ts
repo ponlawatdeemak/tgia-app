@@ -1,10 +1,13 @@
-import auth from './auth'
-import um from './um'
+import auth from '@/api/dto/auth'
+import um from '@/api/dto/um'
+import lookup from '@/api/dto/lookup'
 
 export type ResponseDto<T = any> = {
-	data: T
-	message: string
+	data?: T
+	message?: string
 	tokens?: Tokens
+	errorStatus?: number
+	error?: any
 }
 
 export interface Tokens {
@@ -17,6 +20,7 @@ export interface Tokens {
 const service = {
 	auth,
 	um,
+	lookup,
 }
 
 export default service
