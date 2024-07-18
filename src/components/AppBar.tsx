@@ -26,7 +26,7 @@ import AgriculturalDepartmentLogo from './svg/AgriculturalDepartmentLogo'
 import ThaicomLogo from './svg/ThaicomLogo'
 import TriangleLogo from './svg/TriangleLogo'
 import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/zustand/language/language'
+import useLanguage from '@/store/language'
 import { Language } from '@/enum'
 
 interface AppBarProps {

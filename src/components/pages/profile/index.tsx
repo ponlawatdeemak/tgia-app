@@ -1,7 +1,7 @@
 'use client'
 
 import { api } from '@/api/core'
-import useLanguage from '@/store/zustand/language/language'
+import useLanguage from '@/store/language'
 import { Button } from '@mui/material'
 import { QueryClient, useMutation } from '@tanstack/react-query'
 import { signOut, useSession } from 'next-auth/react'
