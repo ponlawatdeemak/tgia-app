@@ -1,7 +1,7 @@
-import { ResponseDto } from '..'
-import { api } from '../core'
+import { api } from '@/api/core'
 import { ForgotPasswordDtoIn, LoginDtoIn, RefreshTokenDtoIn, ResetPasswordDtoIn } from './dto-in.dto'
 import { ForgotPasswordDtoOut, LoginDtoOut, RefreshTokenDtoOut, ResetPasswordDtoOut } from './dto-out.dto'
+import { ResponseDto } from '@/api'
 
 const auth = {
 	login: async (payload: LoginDtoIn): Promise<ResponseDto<LoginDtoOut>> =>

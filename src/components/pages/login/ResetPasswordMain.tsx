@@ -1,8 +1,6 @@
 'use client'
 
 import service, { ResponseDto } from '@/api'
-import { ResetPasswordDtoIn } from '@/api/auth/dto-in.dto'
-import { ResetPasswordDtoOut } from '@/api/auth/dto-out.dto'
 import FormInput from '@/components/common/input/FormInput'
 import PasswordInput from '@/components/common/input/PasswordInput'
 import { AppPath } from '@/config/app'
@@ -14,6 +12,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
+import { ResetPasswordDtoOut } from '@/api/dto/auth/dto-out.dto'
+import { ResetPasswordDtoIn } from '@/api/dto/auth/dto-in.dto'
 
 const validationSchema = yup.object({
 	email: yup.string().required(),

@@ -1,5 +1,5 @@
-import auth from './auth'
-import um from './um'
+import auth from '@/api/dto/auth'
+import um from '@/api/dto/um'
 
 export type ResponseDto<T = any> = {
 	data?: T

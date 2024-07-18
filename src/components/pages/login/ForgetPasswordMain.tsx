@@ -1,8 +1,6 @@
 'use client'
 
 import service, { ResponseDto } from '@/api'
-import { ForgotPasswordDtoIn } from '@/api/auth/dto-in.dto'
-import { ForgotPasswordDtoOut } from '@/api/auth/dto-out.dto'
 import FormInput from '@/components/common/input/FormInput'
 import { AppPath } from '@/config/app'
 import { Button, FormHelperText, Link, Typography } from '@mui/material'
@@ -13,6 +11,8 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
+import { ForgotPasswordDtoOut } from '@/api/dto/auth/dto-out.dto'
+import { ForgotPasswordDtoIn } from '@/api/dto/auth/dto-in.dto'
 
 const validationSchema = yup.object({
 	email: yup.string().email('รูปแบบอีเมลไม่ถูกต้อง').required('กรุณากรอกอีเมล'),
