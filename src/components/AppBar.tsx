@@ -27,7 +27,9 @@ import ThaicomLogo from './svg/ThaicomLogo'
 import TriangleLogo from './svg/TriangleLogo'
 import { useTranslation } from '@/i18n/client'
 import useLanguage from '@/store/language'
-import { Language } from '@/enum'
+import { AreaType, AreaUnit, Language } from '@/enum'
+import useAreaType from '@/store/area-type'
+import useAreaUnit from '@/store/area-unit'
 
 interface AppBarProps {
 	lng: string
@@ -36,6 +38,8 @@ interface AppBarProps {
 const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 	const router = useRouter()
 	const pathname = usePathname()
+	const { areaType, setAreaType } = useAreaType()
+	const { areaUnit, setAreaUnit } = useAreaUnit()
 	const { language, setLanguage } = useLanguage()
 	const { t } = useTranslation(language, 'appbar')
 	const { isDesktop } = useResponsive()
@@ -46,8 +50,6 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 	const [anchorToggleMenuEl, setAnchorToggleMenuEl] = React.useState<null | HTMLElement>(null)
 	const [drawerOpen, setDrawerOpen] = useState(false)
 	const [toggle, setToggle] = useState(false)
-	const [areaType, setAreaType] = useState('registration')
-	const [areaUnit, setAreaUnit] = useState('rai')
 	const openOthersMenu = Boolean(anchorOthersMenuEl)
 	const openToggleMenu = Boolean(anchorToggleMenuEl)
 
@@ -70,13 +72,13 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 		[router],
 	)
 
-	const handleAreaTypeChange = (event: React.MouseEvent<HTMLElement>, newAreaType: string) => {
+	const handleAreaTypeChange = (event: React.MouseEvent<HTMLElement>, newAreaType: AreaType) => {
 		if (newAreaType !== null) {
 			setAreaType(newAreaType)
 		}
 	}
 
-	const handleAreaUnitChange = (event: React.MouseEvent<HTMLElement>, newAreaUnit: string) => {
+	const handleAreaUnitChange = (event: React.MouseEvent<HTMLElement>, newAreaUnit: AreaUnit) => {
 		if (newAreaUnit !== null) {
 			setAreaUnit(newAreaUnit)
 		}
