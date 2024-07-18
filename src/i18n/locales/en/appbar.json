@@ -17,6 +17,12 @@
 		"role": "Role",
 		"setting": "Setting"
 	},
+	"warning": {
+		"inputEmail": "กรุณากรอกอีเมล",
+		"invalidEmailFormat": "รูปแบบอีเมลไม่ถูกต้อง"
+	},
+	"success": {},
+	"error": {},
 	"auth": {
 		"title": "โครงการพัฒนาระบบเทคโนโลยี",
 		"subTitle": "เพื่องานประกันภัยข้าวนาปี",
