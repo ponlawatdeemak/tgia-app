@@ -1,6 +1,6 @@
 'use client'
 import AppBar from '@/components/AppBar'
-import { MapProvider } from '@/contexts/map'
+import { MapProvider } from '@/store/contexts/map'
 import React, { PropsWithChildren } from 'react'
 
 interface PlayGroundMapLayoutProps extends PropsWithChildren {}

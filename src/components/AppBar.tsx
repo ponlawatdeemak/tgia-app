@@ -26,6 +26,8 @@ import AgriculturalDepartmentLogo from './svg/AgriculturalDepartmentLogo'
 import ThaicomLogo from './svg/ThaicomLogo'
 import TriangleLogo from './svg/TriangleLogo'
 import { useTranslation } from '@/i18n/client'
+import useLanguage from '@/store/zustand/language/language'
+import { Language } from '@/enum'
 
 interface AppBarProps {
 	lng: string
@@ -45,9 +47,10 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 	const [toggle, setToggle] = useState(false)
 	const [areaType, setAreaType] = useState('registration')
 	const [areaUnit, setAreaUnit] = useState('rai')
-	const [language, setLanguage] = useState(lng)
+	// const [language, setLanguage] = useState(lng)
 	const openOthersMenu = Boolean(anchorOthersMenuEl)
 	const openToggleMenu = Boolean(anchorToggleMenuEl)
+	const { language, setLanguage } = useLanguage()
 
 	const selectedMenuKey = useMemo(() => {
 		return appMenuConfig.find((menu) => {
@@ -80,7 +83,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 		}
 	}
 
-	const handleLanguageChange = (event: React.MouseEvent<HTMLElement>, newLanguage: string) => {
+	const handleLanguageChange = (event: React.MouseEvent<HTMLElement>, newLanguage: Language) => {
 		if (newLanguage !== null) {
 			setLanguage(newLanguage)
 		}

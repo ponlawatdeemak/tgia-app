@@ -1,14 +1,16 @@
 'use client'
 
 import { api } from '@/api/core'
+import useLanguage from '@/store/zustand/language/language'
 import { Button } from '@mui/material'
 import { QueryClient, useMutation } from '@tanstack/react-query'
 import { signOut, useSession } from 'next-auth/react'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 
 const ProfileMain = () => {
 	const queryClient = new QueryClient()
 	const { data: session, update } = useSession()
+	const { language } = useLanguage()
 	console.log('TLOG ~ session:', session)
 
 	const {
@@ -22,11 +24,15 @@ const ProfileMain = () => {
 		},
 	})
 
+	useEffect(() => {
+		console.log('useEffect language ', language)
+	}, [language])
+
 	const logout = useCallback(() => signOut(), [])
 
 	return (
 		<div>
-			<div>ProfileMain</div>
+			<div>ProfileMain {language}</div>
 			<div className='flex flex-row'>
 				<Button
 					variant='contained'
