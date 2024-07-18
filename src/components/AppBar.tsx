@@ -36,7 +36,8 @@ interface AppBarProps {
 const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 	const router = useRouter()
 	const pathname = usePathname()
-	const { t } = useTranslation(lng, 'appbar')
+	const { language, setLanguage } = useLanguage()
+	const { t } = useTranslation(language, 'appbar')
 	const { isDesktop } = useResponsive()
 	const { data: session } = useSession()
 	const user = session?.user ?? null
@@ -47,10 +48,8 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 	const [toggle, setToggle] = useState(false)
 	const [areaType, setAreaType] = useState('registration')
 	const [areaUnit, setAreaUnit] = useState('rai')
-	// const [language, setLanguage] = useState(lng)
 	const openOthersMenu = Boolean(anchorOthersMenuEl)
 	const openToggleMenu = Boolean(anchorToggleMenuEl)
-	const { language, setLanguage } = useLanguage()
 
 	const selectedMenuKey = useMemo(() => {
 		return appMenuConfig.find((menu) => {
@@ -220,7 +219,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 								sx={{ borderBottom: '1px solid #D6D6D6' }}
 								className='flex flex-col items-start gap-2 bg-transparent p-0 pb-3'
 							>
-								<Typography className='text-sm'>ประเภทพื้นที่</Typography>
+								<Typography className='text-sm'>{t('menu.areaType')}</Typography>
 								<ToggleButtonGroup
 									className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
 									value={areaType}
@@ -232,14 +231,14 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 										value='registration'
 										aria-label='left aligned'
 									>
-										พื้นที่ ทบก.
+										{t('menu.areaTypeUnit.registration')}
 									</ToggleButton>
 									<ToggleButton
 										className='w-full rounded px-3 py-0.5 text-base'
 										value='insurance'
 										aria-label='right aligned'
 									>
-										พื้นที่เอาประกัน
+										{t('menu.areaTypeUnit.insurance')}
 									</ToggleButton>
 								</ToggleButtonGroup>
 							</MenuItem>
@@ -247,7 +246,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 								sx={{ borderBottom: '1px solid #D6D6D6' }}
 								className='flex flex-col items-start gap-2 bg-transparent p-0 pb-3'
 							>
-								<Typography className='text-sm'>หน่วยของพื้นที่</Typography>
+								<Typography className='text-sm'> {t('menu.areaUnit')} </Typography>
 								<ToggleButtonGroup
 									className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
 									value={areaUnit}
@@ -259,19 +258,19 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 										value='rai'
 										aria-label='left aligned'
 									>
-										ไร่
+										{t('menu.areaUnitUnit.rai')}
 									</ToggleButton>
 									<ToggleButton
 										className='w-full rounded px-3 py-0.5 text-base'
 										value='landPlot'
 										aria-label='right aligned'
 									>
-										แปลง
+										{t('menu.areaUnitUnit.landPlot')}
 									</ToggleButton>
 								</ToggleButtonGroup>
 							</MenuItem>
 							<MenuItem className='flex flex-col items-start gap-2 bg-transparent p-0'>
-								<Typography className='text-sm'>ภาษา</Typography>
+								<Typography className='text-sm'> {t('menu.language')} </Typography>
 								<ToggleButtonGroup
 									className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
 									value={language}
@@ -394,9 +393,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 									className='h-[24px] w-[24px]'
 								/>
 							</IconButton>
-							<span className='text-base font-normal text-black underline decoration-1 underline-offset-2'>
-								สมชาย ล.
-							</span>
+							<span className='text-base font-normal text-black underline decoration-1 underline-offset-2'></span>
 						</Button>
 						<div className='flex gap-3'>
 							<div>
@@ -406,7 +403,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 									onClick={() => setToggle(!toggle)}
 									startIcon={<Icon path={mdiTune} size={1} />}
 								>
-									ตั้งค่า
+									{t('default.setting')}
 								</Button>
 							</div>
 							<div className='flex flex-col'>
@@ -418,7 +415,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 					{toggle && (
 						<div className='flex flex-col border-0 border-t-[1px] border-solid border-[#D6D6D6] [&_.Mui-selected]:bg-white [&_.Mui-selected]:text-primary [&_.MuiButtonBase-root.Mui-selected]:border-primary [&_.MuiButtonBase-root]:border-transparent'>
 							<div className='flex flex-col gap-2 px-3 py-2'>
-								<Typography className='text-sm font-medium'>ประเภทพื้นที่</Typography>
+								<Typography className='text-sm font-medium'>{t('menu.areaType')}</Typography>
 								<ToggleButtonGroup
 									className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
 									value={areaType}
@@ -430,20 +427,20 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 										value='registration'
 										aria-label='left aligned'
 									>
-										พื้นที่ ทบก.
+										{t('menu.areaTypeUnit.registration')}
 									</ToggleButton>
 									<ToggleButton
 										className='w-full rounded px-3 py-1.5 text-base font-semibold'
 										value='insurance'
 										aria-label='right aligned'
 									>
-										พื้นที่เอาประกัน
+										{t('menu.areaTypeUnit.insurance')}
 									</ToggleButton>
 								</ToggleButtonGroup>
 							</div>
 							<div className='flex border-0 border-t-[1px] border-solid border-[#D6D6D6]'>
 								<div className='flex w-full flex-col gap-2 border-0 border-r-[1px] border-solid border-[#D6D6D6] p-3'>
-									<Typography className='text-sm font-medium'>หน่วยของพื้นที่</Typography>
+									<Typography className='text-sm font-medium'> {t('menu.areaUnit')}</Typography>
 									<ToggleButtonGroup
 										className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
 										value={areaUnit}
@@ -455,14 +452,14 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 											value='rai'
 											aria-label='left aligned'
 										>
-											ไร่
+											{t('menu.areaUnitUnit.rai')}
 										</ToggleButton>
 										<ToggleButton
 											className='w-full rounded px-3 py-1.5 text-base font-semibold'
 											value='landPlot'
 											aria-label='right aligned'
 										>
-											แปลง
+											{t('menu.areaUnitUnit.landPlot')}
 										</ToggleButton>
 									</ToggleButtonGroup>
 								</div>
