@@ -12,10 +12,10 @@ export interface BasemapListProps extends React.PropsWithChildren {
 export default function BasemapList(props: BasemapListProps) {
 	const { children, defaultMapType } = props
 	const { map } = useMap<maplibregl.Map>()
-	const [mapType, setMapType] = useLocalStorage<MapType>('mapbox.mapType', defaultMapType)
+	const [mapType, setMapType] = useLocalStorage<MapType>('maplibregl.mapType', defaultMapType)
 	const mapTypes = useMemo(() => {
 		if (!map) return []
-		return [MapType.Streets, MapType.Imagery, MapType.Hybrid].map((m) => {
+		return [MapType.Streets, MapType.Imagery, MapType.Hybrid, MapType.Topo].map((m) => {
 			return (
 				<BasemapListItem
 					key={m}
@@ -47,10 +47,8 @@ function BasemapListItem({
 	onClick?: (mapType: MapType) => void
 }) {
 	const src = useMemo(() => {
-		const url = new URL(MapStyle[mapType].replace('mapbox://styles/', 'https://api.mapbox.com/styles/v1/'))
-
-		return `https://api.maptiler.com/maps/streets-v2/style.json?key=Lwq4BQgNPyauaUe03gYT`
-		// return `${url.protocol}//${url.host}${url.pathname}/static/101,12,3,0,0/256x256?access_token=${maplibregl}`
+		const url = new URL(MapStyle[mapType].replace('maplibregl://styles/', 'https://api.maplibregl.com/styles/v1/'))
+		return `${url.protocol}//${url.host}${url.pathname}/static/101,12,3,0,0/256x256?access_token=${maplibregl}`
 	}, [mapType])
 
 	return (
@@ -74,22 +72,19 @@ export enum MapType {
 	Streets = 'Streets',
 	Imagery = 'Imagery',
 	Hybrid = 'Hybrid',
+	Topo = 'Topo',
 }
 
 export enum MapTypeName {
-	// Streets = "แผนที่",
-	// Imagery = "ดาวเทียม",
-	// Hybrid = "โหมดผสม",
 	Streets = 'แผนที่',
 	Imagery = 'ดาวเทียม',
-	Hybrid = 'ภูมิประเทศ',
+	Hybrid = 'ดาวเทียมผสม',
+	Topo = 'ภูมิประเทศ',
 }
 
 export enum MapStyle {
-	// Streets = "mapbox://styles/mapbox/streets-v12?optimize=true",
-	// Imagery = "mapbox://styles/mapbox/outdoors-v12?optimize=true",
-	// Hybrid = "mapbox://styles/mapbox/satellite-streets-v12?optimize=true",
-	Streets = 'mapbox://styles/mapbox/streets-v12?optimize=true',
-	Imagery = 'mapbox://styles/mapbox/satellite-streets-v12?optimize=true',
-	Hybrid = 'mapbox://styles/mapbox/outdoors-v12?optimize=true',
+	Streets = 'https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/openStreetMap.json',
+	Imagery = 'https://geoserveis.icgc.cat/contextmaps/icgc_orto_estandard.json',
+	Hybrid = 'https://geoserveis.icgc.cat/contextmaps/icgc_orto_hibrida.json',
+	Topo = 'https://api.maptiler.com/maps/topo-v2/style.json?key=Lwq4BQgNPyauaUe03gYT',
 }

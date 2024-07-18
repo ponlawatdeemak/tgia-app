@@ -18,6 +18,7 @@ import { useFormik } from 'formik'
 import { ChangeEvent, useCallback, useState } from 'react'
 import * as yup from 'yup'
 import service from '@/api'
+import { signOut } from 'next-auth/react'
 
 interface ProfileDtoIn {
 	profileImg: File | null
@@ -71,6 +72,8 @@ const ProfileMain = () => {
 		}
 		// call api
 	}, [])
+
+	const logout = useCallback(() => signOut(), [])
 
 	const formik = useFormik<ProfileDtoIn>({
 		initialValues: {
@@ -221,7 +224,7 @@ const ProfileMain = () => {
 								รีเซ็ตรหัสผ่าน
 							</Button>
 						</div>
-						<Button variant='outlined' color='error'>
+						<Button onClick={logout} variant='outlined' color='error'>
 							ออกจากระบบ
 						</Button>
 					</Box>

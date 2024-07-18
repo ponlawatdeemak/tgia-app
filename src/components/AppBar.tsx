@@ -1,27 +1,27 @@
 'use client'
 
-import React, { useState } from 'react'
 import { AppPath, appMenuConfig, profileMenuConfig } from '@/config/app'
 import useResponsive from '@/hook/responsive'
-import { mdiMenu, mdiTune, mdiClose } from '@mdi/js'
+import { mdiClose, mdiMenu, mdiTune } from '@mdi/js'
 import Icon from '@mdi/react'
 import {
 	Avatar,
 	Button,
-	IconButton,
-	MenuItem,
-	Typography,
-	Menu,
+	Divider,
 	Drawer,
+	IconButton,
 	List,
 	ListItem,
 	ListItemText,
-	Divider,
-	ToggleButtonGroup,
+	Menu,
+	MenuItem,
 	ToggleButton,
+	ToggleButtonGroup,
+	Typography,
 } from '@mui/material'
+import { useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
-import { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import AgriculturalDepartmentLogo from './svg/AgriculturalDepartmentLogo'
 import ThaicomLogo from './svg/ThaicomLogo'
 import TriangleLogo from './svg/TriangleLogo'
@@ -30,6 +30,8 @@ const AppBar = () => {
 	const router = useRouter()
 	const pathname = usePathname()
 	const { isDesktop } = useResponsive()
+	const { data: session } = useSession()
+	const user = session?.user ?? null
 
 	const [anchorOthersMenuEl, setAnchorOthersMenuEl] = React.useState<null | HTMLElement>(null)
 	const [anchorToggleMenuEl, setAnchorToggleMenuEl] = React.useState<null | HTMLElement>(null)
@@ -151,7 +153,7 @@ const AppBar = () => {
 						<Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' className='h-[24px] w-[24px]' />
 
 						<span className='text-base font-medium text-black underline decoration-2 underline-offset-2'>
-							สมชาย ล.
+							{`${user?.firstName} ${user?.lastName}.`}
 						</span>
 					</Button>
 					<div>
