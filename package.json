@@ -40,7 +40,8 @@
     "react-dom": "^18",
     "react-i18next": "^14.1.2",
     "react-resize-detector": "^11.0.1",
-    "yup": "^1.4.0"
+    "yup": "^1.4.0",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@types/node": "^20",
