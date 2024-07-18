@@ -15,20 +15,45 @@ import {
 	Typography,
 } from '@mui/material'
 import { useFormik } from 'formik'
-import { ChangeEvent, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import * as yup from 'yup'
 import service from '@/api'
 import { signOut } from 'next-auth/react'
+import { useQuery } from '@tanstack/react-query'
+import { GetProfileDtoOut } from '@/api/um/dto-out.dto'
 
 interface ProfileDtoIn {
-	profileImg: File | null
+	id: string
 	firstName: string
 	lastName: string
 	email: string
-	province: number
-	district: number
-	department: number
-	role: number
+	image: string | File
+}
+
+interface Formvalues {
+	id?: string
+	username?: string
+	firstName?: string
+	lastName?: string
+	email?: string
+	image?: string | File
+	orgCode?: string
+	role?: string
+	responsibleProvinceCode?: string
+	responsibleDistrictCode?: string
+}
+
+const defaultFormValues = {
+	id: '',
+	username: '',
+	firstName: '',
+	lastName: '',
+	email: '',
+	image: '',
+	orgCode: '',
+	role: '',
+	responsibleProvinceCode: '',
+	responsibleDistrictCode: '',
 }
 
 interface OptionType {
@@ -36,24 +61,12 @@ interface OptionType {
 	value: number
 }
 
-const provinceOption: OptionType[] = [
-	{ label: 'นครราชสีมา', value: 1 },
-	{ label: 'กรุงเทพมหานคร', value: 2 },
-	{ label: 'นนทบุรี', value: 3 },
-]
-
-const districtOption: OptionType[] = [
-	{ label: 'เมืองนครราชสีมา', value: 1 },
-	{ label: 'เมืองกรุงเทพมหานคร', value: 2 },
-	{ label: 'เมืองนนทบุรี', value: 3 },
-]
-
 const departmentOption: OptionType[] = [{ label: 'DOAE', value: 1 }]
 
 const roleOption: OptionType[] = [{ label: 'User', value: 1 }]
 
 const validationSchema = yup.object({
-	profileImg: yup.mixed().required('กรุณาใส่รูปภาพ'),
+	image: yup.mixed().required('กรุณาใส่รูปภาพ'),
 	firstName: yup.string().required('กรุณากรอกชื่อ'),
 	lastName: yup.string().required('กรุณากรอกนามสกุล'),
 	email: yup.string().required('กรุณากรอกอีเมล์'),
@@ -62,11 +75,18 @@ const validationSchema = yup.object({
 const ProfileMain = () => {
 	const [isConfirmOpen, setIsConfirmOpen] = useState(false)
 
-	const onSubmit = useCallback(async (values: ProfileDtoIn) => {
+	const { data: userData, isLoading: isUserDataLoading } = useQuery({
+		queryKey: ['getProfile'],
+		queryFn: () => service.um.getProfile(),
+	})
+
+	const onSubmit = useCallback(async (values: GetProfileDtoOut) => {
 		console.log(values)
 		try {
-			const response = await service.um.uploadImg(values.profileImg!)
-			console.log('File uploaded', response.data)
+			if (values.image) {
+				const response = await service.um.uploadImg(values.image as any)
+				console.log('File uploaded', response.data)
+			}
 		} catch (error) {
 			console.log('Error uploading file:', error)
 		}
@@ -75,19 +95,33 @@ const ProfileMain = () => {
 
 	const logout = useCallback(() => signOut(), [])
 
-	const formik = useFormik<ProfileDtoIn>({
-		initialValues: {
-			profileImg: null,
-			firstName: 'สมชาย',
-			lastName: 'ลมเพลมพัด',
-			email: 'somchai@gmail.com',
-			province: 1,
-			district: 1,
-			department: 1,
-			role: 1,
+	const formik = useFormik<GetProfileDtoOut>({
+		enableReinitialize: true,
+		initialValues: userData?.data || {
+			id: '',
+			username: '',
+			firstName: '',
+			lastName: '',
+			email: '',
+			image: '',
+			orgCode: '',
+			role: '',
+			responsibleProvinceCode: '',
+			responsibleDistrictCode: '',
 		},
 		validationSchema: validationSchema,
 		onSubmit,
+	})
+
+	const { data: provinceData, isLoading: isProvinceDataLoading } = useQuery({
+		queryKey: ['getProvince'],
+		queryFn: () => service.lookup.get('provinces'),
+	})
+
+	const { data: districtData, isLoading: isDistricDataLoading } = useQuery({
+		queryKey: ['getDistrict'],
+		queryFn: () => service.lookup.get(`districts/${formik.values.responsibleProvinceCode}`),
+		enabled: !!formik.values.responsibleProvinceCode,
 	})
 
 	const handleConfirmOpen = () => {
@@ -111,7 +145,7 @@ const ProfileMain = () => {
 					<Box className='flex w-full gap-3'>
 						<div className='h-[244px] w-[214px]'>
 							<UploadImage
-								name='profileImg'
+								name='image'
 								formik={formik}
 								className='flex flex-col items-center gap-3 py-4'
 							/>
@@ -140,6 +174,8 @@ const ProfileMain = () => {
 										name='email'
 										label='อีเมล์'
 										formik={formik}
+										required
+										disabled
 									/>
 								</div>
 							</Box>
@@ -147,17 +183,32 @@ const ProfileMain = () => {
 								<div className='flex gap-3'>
 									<AutocompleteInput
 										className='w-[240px] text-sm font-medium'
-										options={provinceOption}
-										name='province'
+										options={
+											provinceData?.map((item) => ({
+												...item,
+												value: String(item.provinceCode),
+											})) || []
+										}
+										getOptionLabel={(option) => option.nameTh}
+										name='responsibleProvinceCode'
 										label='สังกัดจังหวัด'
 										formik={formik}
+										disabled={isProvinceDataLoading}
+										required
 									/>
 									<AutocompleteInput
 										className='w-[240px] text-sm font-medium'
-										options={districtOption}
-										name='district'
+										options={
+											districtData?.map((item) => ({
+												...item,
+												value: String(item.ampherCode),
+											})) || []
+										}
+										getOptionLabel={(option) => option.nameTh}
+										name='responsibleDistrictCode'
 										label='สังกัดอำเภอ'
 										formik={formik}
+										disabled={isDistricDataLoading}
 									/>
 								</div>
 								<div className='flex gap-3'>
