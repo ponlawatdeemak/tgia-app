@@ -93,7 +93,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 
 	if (isDesktop) {
 		return (
-			<div className='mb-2 flex items-center justify-between'>
+			<div className='mb-4 flex items-center justify-between'>
 				<div className='flex items-center gap-4'>
 					<div className='ml-1 flex items-center gap-2 py-1'>
 						<TriangleLogo width={24} height={24} />
@@ -161,9 +161,8 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 						className='flex items-center gap-2 px-2 py-[4px] [&_>*]:m-0'
 						onClick={() => handleCloseNavMenu(profileMenuConfig.key)}
 					>
-						<IconButton sx={{ width: '24px', height: '24px' }}>
-							<Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' className='h-[24px] w-[24px]' />
-						</IconButton>
+						<Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' className='h-[24px] w-[24px]' />
+
 						<span className='text-base font-medium text-black underline decoration-2 underline-offset-2'>
 							{`${user?.firstName} ${user?.lastName.charAt(0)}.`}
 						</span>

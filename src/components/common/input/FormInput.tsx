@@ -5,6 +5,7 @@ import React from 'react'
 export interface FormInputProps extends OutlinedInputProps {
 	name: string
 	formik: FormikProps<any>
+	required?: boolean
 }
 
 const FormInput: React.FC<FormInputProps> = ({

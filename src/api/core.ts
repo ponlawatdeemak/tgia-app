@@ -3,6 +3,7 @@ import service, { ResponseDto } from './index'
  
 interface AppAPI extends AxiosInstance {
 	fetch: (input: URL | RequestInfo, init?: RequestInit | undefined) => Promise<ResponseDto<any>>
+	fetchLookup: (input: URL | RequestInfo, init?: RequestInit | undefined) => Promise<any>
 }
 
 export let apiAccessToken: string | null = null
@@ -66,6 +67,22 @@ const forceLogout = () => {
 			? href
 			: href + '&sessionExpired=1'
 		: href + '?sessionExpired=1'
+}
+
+api['fetchLookup'] = async (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<any> => {
+	const res = await fetch((process.env.API_URL ?? '') + input, {
+		...init,
+		headers: {
+			...init?.headers,
+			'x-api-key': process.env.API_KEY || '',
+			Authorization: `Bearer ${apiAccessToken}`,
+		},
+		cache: 'force-cache',
+	})
+
+	if (!res.ok) throw new Error(`Failed to fetch data with status ${res.status}`)
+
+	return res.json()
 }
 
 instance.interceptors.response.use(
