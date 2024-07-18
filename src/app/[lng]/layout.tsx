@@ -1,9 +1,9 @@
 import { appLanguages } from '@/i18n/settings'
-import Providers from '@/providers'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import type { Metadata } from 'next'
 import { Anuphan } from 'next/font/google'
 import './../../styles/globals.css'
+import Providers from '@/components/providers'
 
 const anuphan = Anuphan({ subsets: ['latin'] })
 
