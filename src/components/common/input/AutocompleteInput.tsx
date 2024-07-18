@@ -14,6 +14,7 @@ export interface AutocompleteInputProps extends Omit<AutocompleteProps<any, fals
 	name: string
 	formik: FormikProps<any>
 	label: string
+	required?: boolean
 }
 
 const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
@@ -23,12 +24,13 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
 	options,
 	className,
 	size = 'small',
+	required = false,
 	...props
 }) => {
 	const errorMessage = formik.touched[name] && formik.errors[name]
 	return (
-		<FormControl className={className}>
-			<FormLabel id={`${name}-label`} className='mb-2'>
+		<FormControl className={className} required={required}>
+			<FormLabel id={`${name}-label`} className='[&_.MuiFormLabel-asterisk]:text-error mb-2'>
 				{label}
 			</FormLabel>
 			<Autocomplete

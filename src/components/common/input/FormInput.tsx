@@ -5,13 +5,14 @@ import React from 'react'
 export interface FormInputProps extends OutlinedInputProps {
 	name: string
 	formik: FormikProps<any>
+	required?: boolean
 }
 
-const FormInput: React.FC<FormInputProps> = ({ formik, name, label, className, ...props }) => {
+const FormInput: React.FC<FormInputProps> = ({ formik, name, label, className, required = false, ...props }) => {
 	const errorMessage = formik.touched[name] && formik.errors[name]
 	return (
-		<FormControl fullWidth className={className}>
-			<FormLabel id={`${name}-label`} className='mb-2'>
+		<FormControl fullWidth className={className} required={required}>
+			<FormLabel id={`${name}-label`} className='[&_.MuiFormLabel-asterisk]:text-error mb-2'>
 				{label}
 			</FormLabel>
 			<OutlinedInput
