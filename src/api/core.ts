@@ -3,9 +3,10 @@ import { ResponseDto } from './index'
 
 interface AppAPI extends AxiosInstance {
 	fetch: (input: URL | RequestInfo, init?: RequestInit | undefined) => Promise<ResponseDto<any>>
+	fetchLookup: (input: URL | RequestInfo, init?: RequestInit | undefined) => Promise<any>
 }
 
-let accessToken = ''
+export let apiAccessToken = ''
 
 const instance = axios.create({
 	baseURL: process.env.API_URL,
@@ -22,7 +23,23 @@ api['fetch'] = async (input: URL | RequestInfo, init?: RequestInit | undefined):
 		headers: {
 			...init?.headers,
 			'x-api-key': process.env.API_KEY || '',
-			Authorization: `Bearer ${accessToken}`,
+			Authorization: `Bearer ${apiAccessToken}`,
+		},
+		cache: 'force-cache',
+	})
+
+	if (!res.ok) throw new Error(`Failed to fetch data with status ${res.status}`)
+
+	return res.json()
+}
+
+api['fetchLookup'] = async (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<any> => {
+	const res = await fetch((process.env.API_URL ?? '') + input, {
+		...init,
+		headers: {
+			...init?.headers,
+			'x-api-key': process.env.API_KEY || '',
+			Authorization: `Bearer ${apiAccessToken}`,
 		},
 		cache: 'force-cache',
 	})
@@ -84,7 +101,7 @@ instance.interceptors.response.use(
 export function updateAccessToken(token?: string | void) {
 	if (token) {
 		instance.defaults.headers.common.authorization = 'Bearer ' + token
-		accessToken = token
+		apiAccessToken = token
 	} else {
 		instance.defaults.headers.common.authorization = ''
 	}
