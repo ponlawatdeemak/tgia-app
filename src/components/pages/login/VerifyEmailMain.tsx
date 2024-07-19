@@ -1,13 +1,17 @@
+'use client'
+
 import EmailIcon from '@/components/svg/icons/EmailIcon'
 import { AppPath } from '@/config/app'
 import { Button, Typography } from '@mui/material'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
+import useLanguage from '@/store/language'
 
 interface VerifyEmailMainProps {
 	email: string
 }
 
 const VerifyEmailMain: React.FC<VerifyEmailMainProps> = ({ email }) => {
+	const { language } = useLanguage()
 	return (
 		<>
 			<AuthBreadcrumbs name='ตรวจสอบอีเมล' href={AppPath.Login} />
@@ -22,8 +26,13 @@ const VerifyEmailMain: React.FC<VerifyEmailMainProps> = ({ email }) => {
 							เราได้ส่งคำแนะนำเกี่ยวกับวิธีการรีเซ็ตรหัสผ่านของคุณไปที่
 						</Typography>
 						<Typography className='text-center font-semibold text-primary'>{email}</Typography>
-						<Button fullWidth variant='contained' href={AppPath.Login} className='mt-10'>
-							กลับสู่หน้าลงชื่อเข้าใช้
+						<Button
+							fullWidth
+							variant='contained'
+							href={`/${language}${AppPath.ResetPassword}?email=${email}`}
+							className='mt-10'
+						>
+							ไปยัง หน้ารีเซ็ตรหัสผ่าน
 						</Button>
 					</div>
 				</div>
