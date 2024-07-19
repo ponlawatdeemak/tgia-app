@@ -143,11 +143,11 @@ const ProfileMain = () => {
 				<Typography className='mb-6 text-md font-semibold'>ข้อมูลส่วนตัว</Typography>
 				<form className='flex h-[90%] flex-col justify-between'>
 					<Box className='flex w-full gap-3'>
-						<div className='h-[244px] w-[214px]'>
+						<div className='w-[214px]'>
 							<UploadImage
 								name='image'
 								formik={formik}
-								className='flex flex-col items-center gap-3 py-4'
+								className='flex flex-col items-center gap-[12px] py-[16px]'
 							/>
 						</div>
 						<div className=''>

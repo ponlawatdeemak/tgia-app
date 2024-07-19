@@ -1,5 +1,4 @@
 import React, { useState, ChangeEvent } from 'react'
-import { styled } from '@mui/material/styles'
 import { FormikProps } from 'formik'
 import { Button, Avatar, FormHelperText } from '@mui/material'
 import Icon from '@mdi/react'
@@ -8,22 +7,10 @@ import { mdiTrayArrowUp, mdiAccountOutline } from '@mdi/js'
 export interface UploadImageProps {
 	name: string
 	formik: FormikProps<any>
-	className: string
+	className?: string
 	defaultImage?: string
 	[key: string]: unknown
 }
-
-const VisuallyHiddenInput = styled('input')({
-	clip: 'rect(0 0 0 0)',
-	clipPath: 'inset(50%)',
-	height: 1,
-	overflow: 'hidden',
-	position: 'absolute',
-	bottom: 0,
-	left: 0,
-	whiteSpace: 'nowrap',
-	width: 1,
-})
 
 const UploadImage: React.FC<UploadImageProps> = ({
 	formik,
@@ -49,24 +36,10 @@ const UploadImage: React.FC<UploadImageProps> = ({
 	return (
 		<div className={className}>
 			{image ? (
-				<Avatar
-					src={image}
-					alt='Profile Image'
-					sx={{
-						width: 120,
-						height: 120,
-						backgroundColor: '#EDF8F4',
-					}}
-				/>
+				<Avatar src={image} alt='Profile Image' className='h-[120px] w-[120px] bg-success-light' />
 			) : (
-				<Avatar
-					sx={{
-						width: 120,
-						height: 120,
-						backgroundColor: '#EDF8F4',
-					}}
-				>
-					<Icon path={defaultImage} className='text-primary' size='90px' />
+				<Avatar className='h-[120px] w-[120px] bg-success-light'>
+					<Icon path={defaultImage} size={'90px'} className='text-primary' />
 				</Avatar>
 			)}
 			<Button
@@ -74,17 +47,30 @@ const UploadImage: React.FC<UploadImageProps> = ({
 				role={undefined}
 				variant='outlined'
 				tabIndex={-1}
-				startIcon={<Icon path={mdiTrayArrowUp} className='m-0 h-5 w-5 p-0' />}
+				className='flex gap-[4px] border-gray py-[6px] pl-[8px] pr-[10px] text-base text-black [&_.MuiButton-startIcon]:m-0'
+				startIcon={<Icon path={mdiTrayArrowUp} size={'20px'} />}
 			>
 				อัปโหลดรูปภาพ
-				<VisuallyHiddenInput
+				<input
 					type='file'
 					accept="'image/png', 'image/jpeg'"
+					className='absolute bottom-0 left-0 h-full w-full cursor-pointer opacity-0'
+					// style={{
+					// 	position: 'absolute',
+					// 	bottom: 0,
+					// 	left: 0,
+					// 	width: '100%',
+					// 	height: '100%',
+					// 	opacity: 0,
+					// 	cursor: 'pointer',
+					// 	overflow: 'hidden',
+					// 	whiteSpace: 'nowrap',
+					// }}
 					onChange={handleImageChange}
 					{...props}
 				/>
 			</Button>
-			<p className='w-[123px] text-center text-sm text-[#7A7A7A]'>ขนาดไฟล์ไม่เกิน 3mb (jpg หรือ png)</p>
+			<p className='m-0 w-[123px] text-center text-sm text-[#7A7A7A]'>ขนาดไฟล์ไม่เกิน 3mb (jpg หรือ png)</p>
 			{typeof errorMessage === 'string' && <FormHelperText error>{errorMessage}</FormHelperText>}
 		</div>
 	)
