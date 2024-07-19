@@ -43,6 +43,10 @@
 		"annualAnalysis": "Annual Analysis",
 		"others": "Others",
 		"language": "Language",
+		"report": "Report",
+		"userManagement": "User Management",
+		"about": "About",
+		"glossary": "Glossary",
 		"areaType": "Area type",
 		"areaTypeUnit": {
 			"registration": "พื้นที่ ทบก.",
