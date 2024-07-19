@@ -1,6 +1,64 @@
 {
-	"fieldLoss": "Field Loss",
-	"plotMonitoring": "Plot Monitoring",
-	"annualAnalysis": "Annual Analysis",
-	"others": "Others"
+	"default": {
+		"confirm": "Confirm",
+		"cancel": "Cancel",
+		"edit": "Edit",
+		"resetPassword": "Reset Password",
+		"userName": "Username",
+		"password": "Password",
+		"passwordNew": "New Password",
+		"passwordConfirm": "Confirm Password",
+		"email": "E-mail",
+		"firstName": "First Name",
+		"lastName": "Last Name",
+		"province": "Province",
+		"amphor": "District",
+		"org": "Organization",
+		"role": "Role",
+		"setting": "Setting"
+	},
+	"warning": {
+		"inputEmail": "กรุณากรอกอีเมล",
+		"invalidEmailFormat": "รูปแบบอีเมลไม่ถูกต้อง"
+	},
+	"success": {},
+	"error": {},
+	"auth": {
+		"title": "โครงการพัฒนาระบบเทคโนโลยี",
+		"subTitle": "เพื่องานประกันภัยข้าวนาปี",
+		"signIn": "Sign In",
+		"returnLogin": "Return to login",
+		"forgotPassword": "Forgot password",
+		"headerForgotPassword": "You forgot your password?",
+		"subHeaderForgotPassword": "Please enter email. We will email you a link to reset your password.",
+		"headerCheckEmail": "Check your email",
+		"subHeaderCheckEmail": "We have sent instructions on how to reset your password to",
+		"goToResetPassword": "Go Reset Password",
+		"verificationCode": "Verification code (Form E-mail)",
+		"loginOut": "Log Out"
+	},
+	"menu": {
+		"fieldLoss": "Field Loss",
+		"plotMonitoring": "Plot Monitoring",
+		"annualAnalysis": "Annual Analysis",
+		"others": "Others",
+		"language": "Language",
+		"areaType": "Area type",
+		"areaTypeUnit": {
+			"registration": "พื้นที่ ทบก.",
+			"insurance": "พื้นที่เอาประกัน"
+		},
+		"areaUnit": "Area unit",
+		"areaUnitUnit": {
+			"rai": "Rai",
+			"landPlot": "Land Plot"
+		}
+	},
+	"profile": {
+		"profile": "Profile"
+	},
+	"common": {
+		"uploadImg": "Upload Image",
+		"conditionImg": "File size does not exceed 3 MB (jpg or png)"
+	}
 }

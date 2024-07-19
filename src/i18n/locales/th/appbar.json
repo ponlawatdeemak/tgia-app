@@ -1,6 +1,64 @@
 {
-	"fieldLoss": "วิเคราะห์ความเสียหาย",
-	"plotMonitoring": "ตรวจสอบรายแปลง",
-	"annualAnalysis": "วิเคราะห์สถิติรายปี",
-	"others": "อื่นๆ"
+	"default": {
+		"confirm": "ยืนยัน",
+		"cancel": "ยกเลิก",
+		"edit": "แก้ไข",
+		"resetPassword": "รีเซ็ตรหัสผ่าน",
+		"userName": "ชื่อผู้ใช้งาน",
+		"password": "รหัสผ่าน",
+		"passwordNew": "รหัสผ่านใหม่",
+		"passwordConfirm": "ยืนยันรหัสผ่าน",
+		"email": "อีเมล",
+		"firstName": "ชื่อจริง",
+		"lastName": "นามสกุล",
+		"province": "สังกัดจังหวัด",
+		"amphor": "สังกัดอำเภอ",
+		"org": "หน่วยงาน",
+		"role": "บทบาท",
+		"setting": "ตั้งค่า"
+	},
+	"warning": {
+		"inputEmail": "กรุณากรอกอีเมล",
+		"invalidEmailFormat": "รูปแบบอีเมลไม่ถูกต้อง"
+	},
+	"success": {},
+	"error": {},
+	"auth": {
+		"title": "โครงการพัฒนาระบบเทคโนโลยี",
+		"subTitle": "เพื่องานประกันภัยข้าวนาปี",
+		"signIn": "เข้าสู่ระบบ",
+		"returnLogin": "กลับสู่เข้าสู่ระบบ",
+		"forgotPassword": "ลืมรหัสผ่าน",
+		"headerForgotPassword": "คุณลืมรหัสผ่าน?",
+		"subHeaderForgotPassword": "กรุณากรอกอีเมล์ เราจะส่งลิ้งค์เพื่อตั้งรหัสผ่านใหม่ไปยังอีเมลของคุณ",
+		"headerCheckEmail": "ตรวจสอบอีเมลของคุณ",
+		"subHeaderCheckEmail": "เราได้ส่งคำแนะนำเกี่ยวกับวิธีการรีเซ็ตรหัสผ่านของคุณไปที่",
+		"goToResetPassword": "ไป รีเซ็ตผ่าน",
+		"verificationCode": "รหัสยินยัน (จากอีเมล)",
+		"loginOut": "ออกจากระบบ"
+	},
+	"menu": {
+		"fieldLoss": "วิเคราะห์ความเสียหาย",
+		"plotMonitoring": "ตรวจสอบรายแปลง",
+		"annualAnalysis": "วิเคราะห์สถิติรายปี",
+		"others": "อื่นๆ",
+		"language": "ภาษา",
+		"areaType": "ประเภทพื้นที่",
+		"areaTypeUnit": {
+			"registration": "พื้นที่ ทบก.",
+			"insurance": "พื้นที่เอาประกัน"
+		},
+		"areaUnit": "หน่วยของพื้นที่",
+		"areaUnitUnit": {
+			"rai": "ไร่",
+			"landPlot": "แปลง"
+		}
+	},
+	"profile": {
+		"profile": "ข้อมูลส่วนตัว"
+	},
+	"common": {
+		"uploadImg": "อัปโหลดรูปภาพ",
+		"conditionImg": "ขนาดไฟล์ไม่เกิน 3 MB (jpg หรือ png)"
+	}
 }

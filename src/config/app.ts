@@ -66,22 +66,22 @@ export const appMenuConfig: {
 }[] = [
 	{
 		key: 'FieldLoss',
-		name: 'fieldLoss',
+		name: 'menu.fieldLoss',
 		path: AppPath.FieldLoss,
 	},
 	{
 		key: 'PlotMonitoring',
-		name: 'plotMonitoring',
+		name: 'menu.plotMonitoring',
 		path: AppPath.PlotMonitoring,
 	},
 	{
 		key: 'AnnualAnalysis',
-		name: 'annualAnalysis',
+		name: 'menu.annualAnalysis',
 		path: AppPath.AnnualAnalysis,
 	},
 	{
 		key: 'Others',
-		name: 'others',
+		name: 'menu.others',
 		path: AppPath.Others,
 		children: othersMenuConfig,
 	},
