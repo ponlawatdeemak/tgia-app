@@ -135,7 +135,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 											<MenuItem
 												key={subMenu.path}
 												onClick={() => handleCloseNavMenu(subMenu.key)}
-												className='px-2.5 text-base font-medium'
+												className='px-2.5 text-base font-medium p-3'
 											>
 												{subMenu.name}
 											</MenuItem>
