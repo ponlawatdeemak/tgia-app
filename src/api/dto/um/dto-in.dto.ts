@@ -12,4 +12,6 @@ export interface PutProfileDtoIn {
 	lastName: string
 	email: string
 	image: string
+	responsibleProvinceCode: string
+	responsibleDistrictCode: string
 }

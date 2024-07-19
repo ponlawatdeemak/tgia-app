@@ -32,8 +32,5 @@ export interface GetProfileDtoOut {
 }
 
 export interface PutProfileDtoOut {
-	data: {
-		id: string
-	}
-	message: string
+	id: string
 }
