@@ -24,6 +24,7 @@
     "accept-language": "^3.0.18",
     "axios": "^1.7.2",
     "billboard.js": "^3.12.4",
+    "camelcase": "^8.0.0",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.11",
     "formik": "^2.4.6",
