@@ -4,10 +4,8 @@ import { ResponseDto } from '@/api'
 import { api } from '@/api/core'
 
 const lookup = {
-	get: async (lookupName: string): Promise<GetLookupOutDto[]> => await api.fetchLookup(`/lookup/${lookupName}`),
-	getProfile: async (): Promise<ResponseDto<GetProfileDtoOut>> => await api.fetch('/profile'),
+	get: async (lookupName: string): Promise<ResponseDto<GetLookupOutDto[]>> =>
+		await api.fetch(`/lookup/${lookupName}`),
 }
 
 export default lookup
-
- 
