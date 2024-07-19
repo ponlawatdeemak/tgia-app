@@ -20,6 +20,8 @@ import * as yup from 'yup'
 import service from '@/api'
 import { signOut } from 'next-auth/react'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from '@/i18n/client'
+import useLanguage from '@/store/language'
 import { GetProfileDtoOut } from '@/api/dto/um/dto-out.dto'
 
 interface ProfileDtoIn {
@@ -74,6 +76,8 @@ const validationSchema = yup.object({
 
 const ProfileMain = () => {
 	const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+	const { language } = useLanguage()
+	const { t } = useTranslation(language, 'appbar')
 
 	const { data: userData, isLoading: isUserDataLoading } = useQuery({
 		queryKey: ['getProfile'],
@@ -140,7 +144,7 @@ const ProfileMain = () => {
 	return (
 		<Paper className='m-0 flex h-full flex-col justify-between bg-white px-6 py-4'>
 			<div className='h-full'>
-				<Typography className='mb-6 text-md font-semibold'>ข้อมูลส่วนตัว</Typography>
+				<Typography className='mb-6 text-md font-semibold'>{t('profile.profile')}</Typography>
 				<form className='flex h-[90%] flex-col justify-between'>
 					<Box className='flex w-full gap-3'>
 						<div className='h-[244px] w-[214px]'>
@@ -156,14 +160,14 @@ const ProfileMain = () => {
 									<FormInput
 										className='w-[240px] text-sm font-medium'
 										name='firstName'
-										label='ชื่อจริง'
+										label={t('default.firstName')}
 										formik={formik}
 										required
 									/>
 									<FormInput
 										className='w-[240px] text-sm font-medium'
 										name='lastName'
-										label='นามสกุล'
+										label={t('default.lastName')}
 										formik={formik}
 										required
 									/>
