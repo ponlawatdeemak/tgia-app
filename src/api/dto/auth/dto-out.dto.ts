@@ -25,3 +25,7 @@ export interface ForgotPasswordDtoOut {
 export interface ResetPasswordDtoOut {
 	success: boolean
 }
+
+export interface ChangePasswordDtoOut {
+	success: boolean
+}
