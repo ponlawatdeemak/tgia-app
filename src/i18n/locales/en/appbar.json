@@ -47,12 +47,12 @@
 		"userManagement": "User Management",
 		"about": "About",
 		"glossary": "Glossary",
-		"areaType": "Area type",
+		"areaType": "Area Type",
 		"areaTypeUnit": {
-			"registration": "พื้นที่ ทบก.",
-			"insurance": "พื้นที่เอาประกัน"
+			"registration": "Registration",
+			"insurance": "Insurance"
 		},
-		"areaUnit": "Area unit",
+		"areaUnit": "Area Unit",
 		"areaUnitUnit": {
 			"rai": "Rai",
 			"landPlot": "Land Plot"
