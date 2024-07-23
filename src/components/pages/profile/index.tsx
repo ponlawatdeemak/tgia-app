@@ -3,17 +3,10 @@
 import AutocompleteInput from '@/components/common/input/AutocompleteInput'
 import FormInput from '@/components/common/input/FormInput'
 import UploadImage from '@/components/common/upload/UploadImage'
-import {
-	Box,
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-	Paper,
-	Typography,
-} from '@mui/material'
+import AlertConfirm from '@/components/common/dialog/AlertConfirm'
+import { Alert, Box, Button, CircularProgress, Paper, Snackbar, Typography } from '@mui/material'
+import Icon from '@mdi/react'
+import { mdiLockReset } from '@mdi/js'
 import { useFormik } from 'formik'
 import { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
@@ -23,12 +16,15 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from '@/i18n/client'
 import useLanguage from '@/store/language'
 import { CreateProfileImageDtoIn, PutProfileDtoIn } from '@/api/dto/um/dto-in.dto'
-import { mdiCheckBold, mdiCloseThick } from '@mdi/js'
-import Icon from '@mdi/react'
-import camelCase from 'camelcase'
 import { QueryClient, useMutation } from '@tanstack/react-query'
 
-export interface FormValues {
+interface AlertInfoType {
+	open: boolean
+	severity: 'success' | 'error'
+	message: string
+}
+
+interface FormValues {
 	id: string
 	username: string
 	firstName: string
@@ -37,8 +33,8 @@ export interface FormValues {
 	image: File | string
 	orgCode: string
 	role: string
-	responsibleProvinceCode: any
-	responsibleDistrictCode: any
+	responsibleProvinceCode: string
+	responsibleDistrictCode: string
 }
 
 const defaultFormValues: FormValues = {
@@ -55,7 +51,6 @@ const defaultFormValues: FormValues = {
 }
 
 const validationSchema = yup.object({
-	//image: yup.mixed().required('กรุณาใส่รูปภาพ'),
 	firstName: yup.string().required('กรุณากรอกชื่อ'),
 	lastName: yup.string().required('กรุณากรอกนามสกุล'),
 	email: yup.string().email('กรุณากรอกอีเมลให้ถูกต้อง').required('กรุณากรอกอีเมล'),
@@ -68,8 +63,13 @@ const ProfileMain = () => {
 	const { language } = useLanguage()
 	const { t } = useTranslation(language, 'appbar')
 
-	const [isConfirmOpen, setIsConfirmOpen] = useState(false)
-	const [status, setStatus] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
+	const [busy, setBusy] = useState<boolean>(false)
+	const [confirmOpen, setConfirmOpen] = useState<boolean>(false)
+	const [alertInfo, setAlertInfo] = useState<AlertInfoType>({
+		open: false,
+		severity: 'success',
+		message: '',
+	})
 
 	const { data: userData, isLoading: isUserDataLoading } = useQuery({
 		queryKey: ['getProfile'],
@@ -90,6 +90,7 @@ const ProfileMain = () => {
 
 	const onSubmit = useCallback(async (values: FormValues) => {
 		try {
+			setBusy(true)
 			if (values.image instanceof File) {
 				const selectedImage: CreateProfileImageDtoIn = {
 					file: values.image,
@@ -132,10 +133,12 @@ const ProfileMain = () => {
 				throw new Error('Failed to update session')
 			}
 
-			setStatus({ open: true, message: 'แก้ไขข้อมูลส่วนตัวสำเร็จ' })
+			setAlertInfo({ open: true, severity: 'success', message: 'แก้ไขข้อมูลส่วนตัวสำเร็จ' })
 		} catch (error: any) {
 			console.log('Error:', error.message)
-			setStatus({ open: true, message: 'แก้ไขข้อมูลส่วนตัวไม่สำเร็จ' })
+			setAlertInfo({ open: true, severity: 'error', message: 'แก้ไขข้อมูลส่วนตัวไม่สำเร็จ' })
+		} finally {
+			setBusy(false)
 		}
 	}, [])
 
@@ -148,13 +151,13 @@ const ProfileMain = () => {
 		onSubmit,
 	})
 
-	const { data: provinceData, isLoading: isProvinceDataLoading } = useQuery({
+	const { data: provinceLookupData, isLoading: isProvinceDataLoading } = useQuery({
 		queryKey: ['getProvince'],
 		queryFn: () => service.lookup.get('provinces'),
 	})
 
 	const {
-		data: districtData,
+		data: districtLookupData,
 		isLoading: isDistricDataLoading,
 		refetch: refetchDistricts,
 	} = useQuery({
@@ -169,210 +172,208 @@ const ProfileMain = () => {
 		}
 	}, [formik.values.responsibleProvinceCode, refetchDistricts])
 
-	const { data: organizationData, isLoading: isOrganizationDataLoading } = useQuery({
+	const { data: organizationLookupData, isLoading: isOrganizationDataLoading } = useQuery({
 		queryKey: ['getOrganization'],
 		queryFn: () => service.lookup.get('organizations'),
 	})
 
-	const { data: roleData, isLoading: isRoleDataLoading } = useQuery({
+	const { data: roleLookupData, isLoading: isRoleDataLoading } = useQuery({
 		queryKey: ['getRole'],
 		queryFn: () => service.lookup.get('roles'),
 	})
 
+	const handleConfirmOpen = () => {
+		formik.validateForm().then((errors) => {
+			if (Object.keys(errors).length === 0) {
+				setConfirmOpen(true)
+			} else {
+				formik.handleSubmit()
+			}
+		})
+	}
+
 	const handleConfirmSubmit = () => {
+		setConfirmOpen(false)
 		formik.handleSubmit()
-		setIsConfirmOpen(false)
 	}
 
 	return (
-		<Paper className='m-0 flex h-full flex-col justify-between bg-white px-6 py-4'>
-			<div className='h-full'>
-				<Typography className='mb-6 text-md font-semibold'>{t('profile.profile')}</Typography>
-				<form className='flex h-[90%] flex-col justify-between'>
-					<Box className='flex w-full gap-3'>
-						<div className='w-[214px]'>
-							<UploadImage
-								name='image'
-								formik={formik}
-								className='flex flex-col items-center gap-[12px] py-[16px]'
-							/>
-						</div>
-						<div className=''>
-							<Box className='mb-4 flex flex-col gap-3'>
-								<div className='flex gap-3'>
-									<FormInput
-										className='w-[240px] text-sm font-medium'
-										name='firstName'
-										label={t('default.firstName')}
-										formik={formik}
-										required
+		<Paper className='flex h-full flex-col justify-between gap-[16px] bg-white p-[24px] pt-[16px] max-lg:px-[16px] lg:gap-[24px]'>
+			<Typography className='text-xl font-semibold text-black lg:text-md'>{t('profile.profile')}</Typography>
+			<form
+				onSubmit={formik.handleSubmit}
+				className='flex h-full flex-col justify-between max-lg:justify-start max-lg:gap-[32px]'
+			>
+				<Box className='flex w-full gap-[16px] max-lg:flex-col lg:gap-[12px]'>
+					<div className='w-full lg:w-[214px]'>
+						<UploadImage
+							name='image'
+							formik={formik}
+							className='flex flex-col items-center gap-[12px] py-[16px]'
+							disabled={busy}
+						/>
+					</div>
+					<div className='flex flex-col gap-[16px]'>
+						<Box className='flex flex-col gap-[12px]'>
+							<div className='flex gap-[12px] max-lg:flex-col'>
+								<FormInput
+									className='w-full text-sm font-medium lg:w-[240px]'
+									name='firstName'
+									label={t('default.firstName')}
+									formik={formik}
+									required
+									disabled={busy}
+								/>
+								<FormInput
+									className='w-full text-sm font-medium lg:w-[240px]'
+									name='lastName'
+									label={t('default.lastName')}
+									formik={formik}
+									required
+									disabled={busy}
+								/>
+							</div>
+							<div className='flex gap-[12px] max-lg:flex-col'>
+								<FormInput
+									className='w-full text-sm font-medium lg:w-[240px]'
+									name='email'
+									label={t('default.email')}
+									formik={formik}
+									required
+									disabled
+								/>
+							</div>
+						</Box>
+						<Box className='flex flex-col gap-[16px] lg:gap-[12px]'>
+							<div className='flex gap-[16px] max-lg:flex-col lg:gap-[12px]'>
+								<AutocompleteInput
+									className='w-full text-sm font-medium lg:w-[240px]'
+									options={
+										provinceLookupData?.data?.map((item) => ({
+											...item,
+											value: String(item.code),
+										})) || []
+									}
+									getOptionLabel={(option) => option.name[language]}
+									name='responsibleProvinceCode'
+									label={t('default.province')}
+									formik={formik}
+									disabled={isProvinceDataLoading || busy}
+									required
+								/>
+								<AutocompleteInput
+									className='w-full text-sm font-medium lg:w-[240px]'
+									options={
+										districtLookupData?.data?.map((item) => ({
+											...item,
+											value: String(item.code),
+										})) || []
+									}
+									getOptionLabel={(option) => option.name?.[language]}
+									name='responsibleDistrictCode'
+									label={t('default.amphor')}
+									formik={formik}
+									disabled={isDistricDataLoading || busy}
+								/>
+							</div>
+							<div className='flex gap-[16px] max-lg:flex-col lg:gap-[12px]'>
+								<AutocompleteInput
+									className='w-full text-sm font-medium lg:w-[240px]'
+									options={
+										organizationLookupData?.data?.map((item) => ({
+											...item,
+											value: item.code,
+										})) || []
+									}
+									getOptionLabel={(option) => option.name[language]}
+									name='orgCode'
+									label={t('default.org')}
+									formik={formik}
+									disabled
+								/>
+								<AutocompleteInput
+									className='w-full text-sm font-medium lg:w-[240px]'
+									options={
+										roleLookupData?.data?.map((item) => ({
+											...item,
+											value: item.code,
+										})) || []
+									}
+									getOptionLabel={(option) => option.name[language]}
+									name='role'
+									label={t('default.role')}
+									formik={formik}
+									disabled
+								/>
+							</div>
+						</Box>
+					</div>
+				</Box>
+				<Box className='flex items-center justify-between lg:px-[40px]'>
+					<div className='flex h-[40px] lg:gap-[20px]'>
+						<Button
+							className='px-[16px] py-[8px] text-base font-semibold'
+							variant='contained'
+							onClick={handleConfirmOpen}
+							color='primary'
+							disabled={busy}
+							startIcon={
+								busy ? (
+									<CircularProgress
+										className='[&_.MuiCircularProgress-circle]:text-[#00000042]'
+										size={16}
 									/>
-									<FormInput
-										className='w-[240px] text-sm font-medium'
-										name='lastName'
-										label={t('default.lastName')}
-										formik={formik}
-										required
-									/>
-								</div>
-								<div className='flex gap-3'>
-									<FormInput
-										className='w-[240px] text-sm font-medium'
-										name='email'
-										label={t('default.email')}
-										formik={formik}
-										required
-										disabled
-									/>
-								</div>
-							</Box>
-							<Box className='mb-[46px] flex flex-col gap-3'>
-								<div className='flex gap-3'>
-									<AutocompleteInput
-										className='w-[240px] text-sm font-medium'
-										options={
-											provinceData?.data?.map((item) => ({
-												...item,
-												value: String(item.code),
-											})) || []
-										}
-										getOptionLabel={(option) => option[camelCase(`name-${language}`)]}
-										name='responsibleProvinceCode'
-										label={t('default.province')}
-										formik={formik}
-										disabled={isProvinceDataLoading}
-										required
-									/>
-									<AutocompleteInput
-										className='w-[240px] text-sm font-medium'
-										options={
-											districtData?.data?.map((item) => ({
-												...item,
-												value: String(item.code),
-											})) || []
-										}
-										getOptionLabel={(option) => option[camelCase(`name-${language}`)]}
-										name='responsibleDistrictCode'
-										label={t('default.amphor')}
-										formik={formik}
-										disabled={isDistricDataLoading}
-									/>
-								</div>
-								<div className='flex gap-3'>
-									<AutocompleteInput
-										className='w-[240px] text-sm font-medium'
-										options={
-											organizationData?.data?.map((item) => ({
-												...item,
-												value: item.code,
-											})) || []
-										}
-										getOptionLabel={(option) => option[camelCase(`name-${language}`)]}
-										name='orgCode'
-										label={t('default.org')}
-										formik={formik}
-										disabled
-									/>
-									<AutocompleteInput
-										className='w-[240px] text-sm font-medium'
-										options={
-											roleData?.data?.map((item) => ({
-												...item,
-												value: item.code,
-											})) || []
-										}
-										getOptionLabel={(option) => option[camelCase(`name-${language}`)]}
-										name='role'
-										label={t('default.role')}
-										formik={formik}
-										disabled
-									/>
-								</div>
-							</Box>
-						</div>
-					</Box>
-					<Box className='ml-10 flex justify-between'>
-						<div className='flex gap-6'>
-							<Button variant='contained' onClick={() => setIsConfirmOpen(true)} color='primary'>
-								{t('default.confirm')}
-							</Button>
-							<Dialog
-								open={isConfirmOpen}
-								onClose={() => setIsConfirmOpen(false)}
-								aria-labelledby='alert-dialog-title'
-								aria-describedby='alert-dialog-description'
-								className='.MuiDialog-paper:w-[100px]'
-							>
-								<DialogTitle id='alert-dialog-title'>{'บันทึกบัญชีผู้ใช้งาน'}</DialogTitle>
-								<DialogContent>
-									<DialogContentText id='alert-dialog-description'>
-										ต้องการยืนยันการบันทึกบัญชีผู้ใช้งานนี้ใช่หรือไม่
-									</DialogContentText>
-								</DialogContent>
-								<DialogActions sx={{ m: 2 }}>
-									<Button
-										variant='outlined'
-										sx={{ width: '150px' }}
-										color='error'
-										onClick={() => setIsConfirmOpen(false)}
-									>
-										ยกเลิก
-									</Button>
-									<Button
-										variant='contained'
-										sx={{ width: '150px' }}
-										color='success'
-										type='submit'
-										onClick={handleConfirmSubmit}
-										autoFocus
-									>
-										ยืนยัน
-									</Button>
-								</DialogActions>
-							</Dialog>
+								) : null
+							}
+						>
+							{t('default.confirm')}
+						</Button>
+						<AlertConfirm
+							open={confirmOpen}
+							title='บันทึกบัญชีผู้ใช้งาน'
+							content='ต้องการยืนยันการบันทึกบัญชีผู้ใช้งานนี้ใช่หรือไม่'
+							onClose={() => setConfirmOpen(false)}
+							onConfirm={handleConfirmSubmit}
+						/>
 
-							<Dialog
-								open={status.open}
-								onClose={() => setStatus({ open: false, message: '' })}
-								className='[&_.MuiDialog-paper]:h-[300px] [&_.MuiDialog-paper]:w-[400px]'
+						<div className='[&_.Mui-disabled]:border-[#0000001f] [&_.Mui-disabled]:bg-transparent [&_.Mui-disabled]:text-[#00000042] [&_.Mui-disabled_.MuiButton-startIcon>svg]:text-[#00000042]'>
+							<Button
+								className='flex h-[40px] gap-[4px] border-[#6E6E6E] bg-success-light px-[16px] py-[8px] text-base text-[#7A7A7A] [&_.MuiButton-startIcon]:m-0'
+								variant='outlined'
+								color='primary'
+								disabled={busy}
+								startIcon={<Icon path={mdiLockReset} size={'20px'} className='text-[#A6A6A6]' />}
 							>
-								<DialogContent className='flex items-center justify-center'>
-									<div className='flex flex-col items-center gap-4'>
-										{status.message === 'แก้ไขข้อมูลส่วนตัวสำเร็จ' && (
-											<div className='relative flex size-24 items-center justify-center overflow-hidden rounded-full'>
-												<div className='absolute h-full w-full bg-success-light' />
-												<Icon path={mdiCheckBold} size={2} className='z-10 text-success' />
-											</div>
-										)}
-										{status.message === 'แก้ไขข้อมูลส่วนตัวไม่สำเร็จ' && (
-											<div className='relative flex size-24 items-center justify-center overflow-hidden rounded-full'>
-												<div className='absolute h-full w-full bg-error opacity-20' />
-												<Icon path={mdiCloseThick} size={2} className='text-error' />
-											</div>
-										)}
-										<Typography className='text-2xl font-bold'>{status.message}</Typography>
-									</div>
-								</DialogContent>
-								<DialogActions>
-									<Button
-										variant='contained'
-										className='mt-8'
-										onClick={() => setStatus({ open: false, message: '' })}
-									>
-										ตกลง
-									</Button>
-								</DialogActions>
-							</Dialog>
-							<Button variant='outlined' color='primary'>
 								{t('default.resetPassword')}
 							</Button>
 						</div>
-						<Button onClick={logout} variant='outlined' color='error'>
-							{t('auth.loginOut')}
-						</Button>
-					</Box>
-				</form>
-			</div>
+					</div>
+					<Button
+						className='h-[40px] px-[16px] py-[8px] text-base'
+						onClick={logout}
+						variant='outlined'
+						color='error'
+						disabled={busy}
+					>
+						{t('auth.loginOut')}
+					</Button>
+				</Box>
+			</form>
+			<Snackbar
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+				open={alertInfo.open}
+				autoHideDuration={6000}
+				onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+				className='w-[300px]'
+			>
+				<Alert
+					onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+					severity={alertInfo.severity}
+					className='w-full'
+				>
+					{alertInfo.message}
+				</Alert>
+			</Snackbar>
 		</Paper>
 	)
 }
