@@ -96,9 +96,10 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 	const handleLanguageChange = (event: React.MouseEvent<HTMLElement>, newLanguage: Language) => {
 		if (newLanguage !== null) {
 			setLanguage(newLanguage)
-		}
-		const oldLanguage = pathname?.split('/')?.[1]
+			const oldLanguage = pathname?.split('/')?.[1]
 		router.push(window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
+		}
+		
 	}
 
 	//console.log('image', user?.image)
