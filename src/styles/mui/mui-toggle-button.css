@@ -1,3 +1,4 @@
 .MuiToggleButton-root {
     border-radius: 0.5rem;
+    text-transform: none;
 }
