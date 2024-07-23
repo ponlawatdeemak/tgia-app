@@ -21,15 +21,17 @@ import {
 } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import AgriculturalDepartmentLogo from './svg/AgriculturalDepartmentLogo'
 import ThaicomLogo from './svg/ThaicomLogo'
 import TriangleLogo from './svg/TriangleLogo'
 import { useTranslation } from '@/i18n/client'
 import useLanguage from '@/store/language'
-import { AreaType, AreaUnit, Language } from '@/enum'
+import { AreaTypeKey, AreaUnitKey, Language } from '@/enum'
 import useAreaType from '@/store/area-type'
 import useAreaUnit from '@/store/area-unit'
+import { areaTypeString, areaUnitString } from '@/utils/area-string'
+import { useLocalStorage } from '@/hook/local-storage'
 
 interface AppBarProps {
 	lng: string
@@ -50,8 +52,15 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 	const [anchorToggleMenuEl, setAnchorToggleMenuEl] = React.useState<null | HTMLElement>(null)
 	const [drawerOpen, setDrawerOpen] = useState(false)
 	const [toggle, setToggle] = useState(false)
+	const [menuAreaString, setMenuAreaString] = useState<string>('')
 	const openOthersMenu = Boolean(anchorOthersMenuEl)
 	const openToggleMenu = Boolean(anchorToggleMenuEl)
+
+	useEffect(() => {
+		if (!(areaType && areaUnit && language)) return
+
+		setMenuAreaString(`${t(areaTypeString(areaType))} (${t(areaUnitString(areaUnit))})`)
+	}, [language, areaType, areaUnit])
 
 	const selectedMenuKey = useMemo(() => {
 		return appMenuConfig.find((menu) => {
@@ -72,13 +81,13 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 		[router],
 	)
 
-	const handleAreaTypeChange = (event: React.MouseEvent<HTMLElement>, newAreaType: AreaType) => {
+	const handleAreaTypeChange = (event: React.MouseEvent<HTMLElement>, newAreaType: AreaTypeKey) => {
 		if (newAreaType !== null) {
 			setAreaType(newAreaType)
 		}
 	}
 
-	const handleAreaUnitChange = (event: React.MouseEvent<HTMLElement>, newAreaUnit: AreaUnit) => {
+	const handleAreaUnitChange = (event: React.MouseEvent<HTMLElement>, newAreaUnit: AreaUnitKey) => {
 		if (newAreaUnit !== null) {
 			setAreaUnit(newAreaUnit)
 		}
@@ -177,7 +186,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 							}
 							startIcon={<Icon path={mdiTune} size={1} />}
 						>
-							พื้นที่ ทบก. (ไร่)
+							{menuAreaString}
 						</Button>
 						<Menu
 							id='basic-menu2'
@@ -230,14 +239,14 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 								>
 									<ToggleButton
 										className='w-full rounded px-3 py-0.5 text-base'
-										value='registration'
+										value={AreaTypeKey.Registration}
 										aria-label='left aligned'
 									>
 										{t('menu.areaTypeUnit.registration')}
 									</ToggleButton>
 									<ToggleButton
 										className='w-full rounded px-3 py-0.5 text-base'
-										value='insurance'
+										value={AreaTypeKey.Insurance}
 										aria-label='right aligned'
 									>
 										{t('menu.areaTypeUnit.insurance')}
@@ -257,14 +266,14 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 								>
 									<ToggleButton
 										className='w-full rounded px-3 py-0.5 text-base'
-										value='rai'
+										value={AreaUnitKey.Rai}
 										aria-label='left aligned'
 									>
 										{t('menu.areaUnitUnit.rai')}
 									</ToggleButton>
 									<ToggleButton
 										className='w-full rounded px-3 py-0.5 text-base'
-										value='landPlot'
+										value={AreaUnitKey.LandPlot}
 										aria-label='right aligned'
 									>
 										{t('menu.areaUnitUnit.landPlot')}
@@ -281,14 +290,14 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 								>
 									<ToggleButton
 										className='w-full rounded px-3 py-0.5 text-base'
-										value='th'
+										value={Language.TH}
 										aria-label='left aligned'
 									>
 										TH
 									</ToggleButton>
 									<ToggleButton
 										className='w-full rounded px-3 py-0.5 text-base'
-										value='en'
+										value={Language.EN}
 										aria-label='right aligned'
 									>
 										EN

@@ -1,14 +1,23 @@
 import { create } from 'zustand'
-import { AreaUnit } from '@/enum'
+import { AreaUnitKey } from '@/enum'
 
 type Store = {
-	areaUnit: AreaUnit
-	setAreaUnit: (areaUnit: AreaUnit) => void
+	areaUnit: AreaUnitKey
+	setAreaUnit: (areaUnit: AreaUnitKey) => void
+}
+
+const getInitialAreaUnit = (): AreaUnitKey => {
+	const areaUnit = (localStorage.getItem('areaUnit') || AreaUnitKey.Rai) as AreaUnitKey
+	return areaUnit
 }
 
 const useAreaUnit = create<Store>()((set) => ({
-	areaUnit: AreaUnit.Rai,
-	setAreaUnit: (areaUnit: AreaUnit) => set(() => ({ areaUnit: areaUnit })),
+	areaUnit: getInitialAreaUnit(),
+	setAreaUnit: (areaUnit: AreaUnitKey) =>
+		set(() => {
+			localStorage?.setItem('areaUnit', areaUnit)
+			return { areaUnit: areaUnit }
+		}),
 }))
 
 export default useAreaUnit
