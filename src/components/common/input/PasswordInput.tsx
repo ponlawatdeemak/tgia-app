@@ -6,7 +6,7 @@ import { mdiEyeOffOutline, mdiEyeOutline } from '@mdi/js'
 
 interface PasswordInputProps extends FormInputProps {}
 
-const PasswordInput: React.FC<PasswordInputProps> = ({ formik, label, name, className }) => {
+const PasswordInput: React.FC<PasswordInputProps> = ({ formik, label, name, disabled, className }) => {
 	const [showPassword, setShowPassword] = React.useState(false)
 
 	const handleClickShowPassword = useCallback(() => setShowPassword((show) => !show), [])
@@ -22,6 +22,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ formik, label, name, clas
 			formik={formik}
 			className={className}
 			type={showPassword ? 'text' : 'password'}
+			disabled={disabled}
 			endAdornment={
 				<InputAdornment position='end'>
 					<IconButton
