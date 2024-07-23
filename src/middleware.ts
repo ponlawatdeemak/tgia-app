@@ -85,5 +85,5 @@ const responseWithLanguageCookie = (req: NextRequestWithAuth, redirectUrl?: URL)
 }
 
 export const config = {
-	matcher: ['/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js|site.webmanifest).*)'],
+	matcher: ['/((?!api|_next/static|_next/image|assets|favicon.ico|public|sw.js|site.webmanifest|).*)'],
 }
