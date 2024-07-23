@@ -15,6 +15,7 @@ import AuthBreadcrumbs from './AuthBreadcrumbs'
 import { ResetPasswordDtoOut } from '@/api/dto/auth/dto-out.dto'
 import { ResetPasswordDtoIn } from '@/api/dto/auth/dto-in.dto'
 import useLanguage from '@/store/language'
+import { useTranslation } from '@/i18n/client'
 
 const validationSchema = yup.object({
 	email: yup.string().required(),
@@ -39,6 +40,7 @@ const ResetPasswordMain = () => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const { language } = useLanguage()
+	const { t } = useTranslation(language, 'appbar')
 
 	const email = useMemo(() => {
 		const email = searchParams?.get('email')
@@ -80,33 +82,44 @@ const ResetPasswordMain = () => {
 
 	return (
 		<>
-			<AuthBreadcrumbs name='รีเซ็ตรหัสผ่าน' href={AppPath.Login} />
+			<AuthBreadcrumbs name={t('default.resetPassword')} href={AppPath.Login} />
 
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center lg:mt-32 lg:items-start'>
 					<div className='mx-2 flex w-full max-w-[500px] flex-col items-center'>
-						<Typography className='mb-8 text-2xl font-bold'>รีเซ็ตรหัสผ่าน</Typography>
+						<Typography className='mb-8 text-2xl font-bold'>{t('default.resetPassword')}</Typography>
 						<form
 							onSubmit={formik.handleSubmit}
 							className='flex w-full max-w-[340px] flex-col sm:max-w-full'
 						>
-							<FormInput name='email' label='อีเมล' disabled={!!email} formik={formik} className='mt-4' />
-							<PasswordInput name='password' label='รหัสผ่านใหม่' formik={formik} className='mt-4' />
+							<FormInput
+								name='email'
+								label={t('default.email')}
+								disabled={!!email}
+								formik={formik}
+								className='mt-4'
+							/>
+							<PasswordInput
+								name='password'
+								label={t('default.passwordNew')}
+								formik={formik}
+								className='mt-4'
+							/>
 							<PasswordInput
 								name='confirmPassword'
-								label='ยืนยันรหัสผ่าน'
+								label={t('default.passwordConfirm')}
 								formik={formik}
 								className='mt-4'
 							/>
 							<FormInput
 								name='confirmationCode'
-								label='รหัสยืนยันตัวตน (จากอีเมล)'
+								label={t('auth.verificationCode')}
 								formik={formik}
 								className='mt-4'
 							/>
 							{/* {!email && <FormHelperText error>URL รีเซ็ตรหัสผ่านไม่ถูกต้อง</FormHelperText>} */}
 							<Button fullWidth disabled={isPending} variant='contained' className='mt-10' type='submit'>
-								ยืนยัน
+								{t('default.confirm')}
 							</Button>
 						</form>
 					</div>

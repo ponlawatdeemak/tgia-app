@@ -1,5 +1,6 @@
 {
 	"default": {
+		"ok": "ตกลง",
 		"confirm": "ยืนยัน",
 		"cancel": "ยกเลิก",
 		"edit": "แก้ไข",
@@ -22,20 +23,32 @@
 		"invalidEmailFormat": "รูปแบบอีเมลไม่ถูกต้อง"
 	},
 	"success": {},
-	"error": {},
+	"error": {
+		"somethingWrong": "มีบางอย่างผิดพลาด",
+		"incorrectEmailOrPassword": "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
+
+		
+	},
 	"auth": {
 		"title": "โครงการพัฒนาระบบเทคโนโลยี",
 		"subTitle": "เพื่องานประกันภัยข้าวนาปี",
-		"signIn": "เข้าสู่ระบบ",
+		"login": "เข้าสู่ระบบ",
+		"signIn": "ลงชื่อเช้าใช้",
 		"returnLogin": "กลับสู่เข้าสู่ระบบ",
 		"forgotPassword": "ลืมรหัสผ่าน",
 		"headerForgotPassword": "คุณลืมรหัสผ่าน?",
-		"subHeaderForgotPassword": "กรุณากรอกอีเมล์ เราจะส่งลิ้งค์เพื่อตั้งรหัสผ่านใหม่ไปยังอีเมลของคุณ",
+		"subHeaderForgotPassword": "กรุณากรอกอีเมล์",
+		"subHeaderSendLink": "เราจะส่งลิ้งค์เพื่อตั้งรหัสผ่านใหม่ไปยังอีเมลของคุณ",
+		"checkEmail": "ตรวจสอบอีเมล",
 		"headerCheckEmail": "ตรวจสอบอีเมลของคุณ",
 		"subHeaderCheckEmail": "เราได้ส่งคำแนะนำเกี่ยวกับวิธีการรีเซ็ตรหัสผ่านของคุณไปที่",
-		"goToResetPassword": "ไป รีเซ็ตผ่าน",
+		"goToResetPassword": "ไปยัง หน้ารีเซ็ตรหัสผ่าน",
 		"verificationCode": "รหัสยินยัน (จากอีเมล)",
-		"loginOut": "ออกจากระบบ"
+		"loginOut": "ออกจากระบบ",
+		"headerResetPasswordSuccess": "รีเซ็ตรหัสผ่านใหม่สำเร็จ",
+		"subHeaderResetPasswordSuccess": "โปรดใช้รหัสผ่านที่ตั้งขึ้นใหม่นี้ในการเข้าใช้งานระบบในครั้งต่อไป",
+		"headerResetPasswordUnsuccess": "รีเซ็ตรหัสผ่านใหม่ไม่สำเร็จ",
+		"subHeaderResetPasswordUnsuccess": "กรุณาตรวจเช็คความถูกต้องใหม่อีกครั้ง"
 	},
 	"menu": {
 		"fieldLoss": "วิเคราะห์ความเสียหาย",

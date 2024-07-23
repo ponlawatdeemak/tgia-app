@@ -1,4 +1,4 @@
-'use client' 
+'use client'
 import { LoginDtoIn } from '@/api/dto/auth/dto-in.dto'
 import FormInput from '@/components/common/input/FormInput'
 import PasswordInput from '@/components/common/input/PasswordInput'
@@ -11,6 +11,8 @@ import { useFormik } from 'formik'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
+import useLanguage from '@/store/language'
+import { useTranslation } from '@/i18n/client'
 import * as yup from 'yup'
 
 const validationSchema = yup.object({
@@ -20,14 +22,15 @@ const validationSchema = yup.object({
 
 const LoginMain = () => {
 	const searchParams = useSearchParams()
-
+	const { language } = useLanguage()
+	const { t } = useTranslation(language, 'appbar')
 	const callbackUrl = useMemo(() => searchParams?.get('callbackUrl'), [searchParams])
 	const error = useMemo(() => searchParams?.get('error'), [searchParams])
 
 	const errorMessage = useMemo(() => {
 		if (error) {
-			if (error === 'CredentialsSignin') return 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'
-			return 'มีบางอย่างผิดพลาด'
+			if (error === 'CredentialsSignin') return `${t('error.incorrectEmailOrPassword')}`
+			return `${t('error.somethingWrong')}`
 		}
 		return null
 	}, [error])
@@ -80,19 +83,22 @@ const LoginMain = () => {
 						<AgriculturalDepartmentLogo width={70} height={70} />
 					</div>
 					<Typography className='mb-6 mt-3 text-center text-2xl font-semibold sm:mx-10'>
-						โครงการพัฒนาระบบเทคโนโลยี
+						{t('auth.title')}
 						<br />
-						เพื่องานประกันภัยข้าวนาปี
+						{t('auth.subTitle')}
 					</Typography>
 					<form onSubmit={formik.handleSubmit} className='flex flex-col lg:mx-6'>
-						<FormInput name='username' label='ชื่อผู้ใช้งาน' formik={formik} />
-						<PasswordInput name='password' label='รหัสผ่าน' formik={formik} className='mt-4' />
-						<Link href={AppPath.ForgetPassword} className='mt-3 self-end font-medium no-underline'>
-							ลืมรหัสผ่าน
+						<FormInput name='username' label={t('default.userName')} formik={formik} />
+						<PasswordInput name='password' label={t('default.password')} formik={formik} className='mt-4' />
+						<Link
+							href={`/${language}${AppPath.ForgetPassword}`}
+							className='mt-3 self-end font-medium no-underline'
+						>
+							{t('auth.forgotPassword')}
 						</Link>
 						<FormHelperText error>{errorMessage}</FormHelperText>
 						<Button fullWidth variant='contained' className='mt-8' type='submit'>
-							เข้าสู่ระบบ
+							{t('auth.login')}
 						</Button>
 					</form>
 				</div>

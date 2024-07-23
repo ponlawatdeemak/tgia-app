@@ -1,5 +1,6 @@
 {
 	"default": {
+		"ok": "Confirm",
 		"confirm": "Confirm",
 		"cancel": "Cancel",
 		"edit": "Edit",
@@ -22,20 +23,30 @@
 		"invalidEmailFormat": "รูปแบบอีเมลไม่ถูกต้อง"
 	},
 	"success": {},
-	"error": {},
+	"error": {
+		"somethingWrong": "Something went wrong.",
+		"incorrectEmailOrPassword": "Incorrect email or password"
+	},
 	"auth": {
 		"title": "โครงการพัฒนาระบบเทคโนโลยี",
 		"subTitle": "เพื่องานประกันภัยข้าวนาปี",
+		"login": "Login",
 		"signIn": "Sign In",
 		"returnLogin": "Return to login",
 		"forgotPassword": "Forgot password",
 		"headerForgotPassword": "You forgot your password?",
-		"subHeaderForgotPassword": "Please enter email. We will email you a link to reset your password.",
+		"subHeaderForgotPassword": "Please enter email.",
+		"subHeaderSendLink": " We will email you a link to reset your password.",
+		"checkEmail": "Check email",
 		"headerCheckEmail": "Check your email",
 		"subHeaderCheckEmail": "We have sent instructions on how to reset your password to",
 		"goToResetPassword": "Go Reset Password",
 		"verificationCode": "Verification code (Form E-mail)",
-		"loginOut": "Log Out"
+		"loginOut": "Log Out",
+		"headerResetPasswordSuccess": "Reset reset successful.",
+		"subHeaderResetPasswordSuccess": "Please use your new password to log in.",
+		"headerResetPasswordUnsuccess": "Reset reset unsuccessful.",
+		"subHeaderResetPasswordUnsuccess": "Please check the accuracy again."
 	},
 	"menu": {
 		"fieldLoss": "Field Loss",

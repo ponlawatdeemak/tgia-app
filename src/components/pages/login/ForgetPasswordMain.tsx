@@ -14,6 +14,7 @@ import AuthBreadcrumbs from './AuthBreadcrumbs'
 import { ForgotPasswordDtoOut } from '@/api/dto/auth/dto-out.dto'
 import { ForgotPasswordDtoIn } from '@/api/dto/auth/dto-in.dto'
 import useLanguage from '@/store/language'
+import { useTranslation } from '@/i18n/client'
 
 const validationSchema = yup.object({
 	email: yup.string().email('รูปแบบอีเมลไม่ถูกต้อง').required('กรุณากรอกอีเมล'),
@@ -22,6 +23,7 @@ const validationSchema = yup.object({
 const ForgotPasswordMain = () => {
 	const router = useRouter()
 	const { language } = useLanguage()
+	const { t } = useTranslation(language, 'appbar')
 	const {
 		isPending,
 		error,
@@ -33,7 +35,7 @@ const ForgotPasswordMain = () => {
 	const errorMessage = useMemo(() => {
 		if (error) {
 			const msgError: any = error.response
-			return 'มีบางอย่างผิดพลาด'
+			return `${t('error.somethingWrong')}`
 		}
 		return null
 	}, [error])
@@ -58,15 +60,15 @@ const ForgotPasswordMain = () => {
 
 	return (
 		<>
-			<AuthBreadcrumbs name='ลืมรหัสผ่าน' href={AppPath.Login} />
+			<AuthBreadcrumbs name={t('auth.forgotPassword')} href={`/${language}${AppPath.Login}`} />
 
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center lg:mt-48 lg:items-start'>
 					<div className='mx-2 flex w-full max-w-[500px] flex-col items-center'>
-						<Typography className='mb-2 text-2xl font-bold'>คุณลืมรหัสผ่าน?</Typography>
+						<Typography className='mb-2 text-2xl font-bold'> {t('auth.headerForgotPassword')}</Typography>
 						<Typography className='text-center'>
-							กรุณากรอกอีเมล <br className='lg:hidden' />
-							เราจะส่งลิ้งค์เพื่อตั้งรหัสผ่านใหม่ไปยังอีเมลของคุณ
+							{t('auth.subHeaderForgotPassword')} <br className='lg:hidden' />
+							{t('auth.subHeaderSendLink')}
 						</Typography>
 
 						<form
@@ -77,17 +79,17 @@ const ForgotPasswordMain = () => {
 							<FormInput
 								disabled={isPending}
 								name='email'
-								label='อีเมล'
+								label={t('default.email')}
 								formik={formik}
 								className='mt-8'
 							/>
 							<FormHelperText error>{errorMessage}</FormHelperText>
 							<Button fullWidth disabled={isPending} variant='contained' type='submit' className='mt-8'>
-								ตกลง
+								{t('default.ok')}
 							</Button>
 						</form>
-						<Link href={AppPath.Login} className='mt-8'>
-							กลับสู่เข้าสู่ระบบ
+						<Link href={`/${language}${AppPath.Login}`} className='mt-8'>
+							{t('auth.returnLogin')}
 						</Link>
 					</div>
 				</div>
