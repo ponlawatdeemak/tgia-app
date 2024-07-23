@@ -14,6 +14,7 @@ import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
 import { ResetPasswordDtoOut } from '@/api/dto/auth/dto-out.dto'
 import { ResetPasswordDtoIn } from '@/api/dto/auth/dto-in.dto'
+import useLanguage from '@/store/language'
 
 const validationSchema = yup.object({
 	email: yup.string().required(),
@@ -37,6 +38,7 @@ type ResetPasswordFormType = yup.InferType<typeof validationSchema>
 const ResetPasswordMain = () => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
+	const { language } = useLanguage()
 
 	const email = useMemo(() => {
 		const email = searchParams?.get('email')
@@ -57,9 +59,9 @@ const ResetPasswordMain = () => {
 		async (values: ResetPasswordFormType) => {
 			try {
 				await mutateResetPassword(values)
-				router.push(`${AppPath.ResetPassword}/?resetStatus=success`)
+				router.push(`/${language}${AppPath.ResetPassword}/?resetStatus=success`)
 			} catch (error) {
-				router.push(`${AppPath.ResetPassword}/?resetStatus=failed`)
+				router.push(`/${language}${AppPath.ResetPassword}/?resetStatus=failed`)
 			}
 		},
 		[mutateResetPassword, router],
@@ -81,14 +83,15 @@ const ResetPasswordMain = () => {
 			<AuthBreadcrumbs name='รีเซ็ตรหัสผ่าน' href={AppPath.Login} />
 
 			<div className='flex flex-grow flex-row'>
-				<div className='flex w-full items-center justify-center lg:mt-48 lg:items-start'>
+				<div className='flex w-full items-center justify-center lg:mt-32 lg:items-start'>
 					<div className='mx-2 flex w-full max-w-[500px] flex-col items-center'>
 						<Typography className='mb-8 text-2xl font-bold'>รีเซ็ตรหัสผ่าน</Typography>
 						<form
 							onSubmit={formik.handleSubmit}
 							className='flex w-full max-w-[340px] flex-col sm:max-w-full'
 						>
-							<PasswordInput name='password' label='รหัสผ่านใหม่' formik={formik} />
+							<FormInput name='email' label='อีเมล' disabled={!!email} formik={formik} className='mt-4' />
+							<PasswordInput name='password' label='รหัสผ่านใหม่' formik={formik} className='mt-4' />
 							<PasswordInput
 								name='confirmPassword'
 								label='ยืนยันรหัสผ่าน'
@@ -101,14 +104,8 @@ const ResetPasswordMain = () => {
 								formik={formik}
 								className='mt-4'
 							/>
-							{!email && <FormHelperText error>URL รีเซ็ตรหัสผ่านไม่ถูกต้อง</FormHelperText>}
-							<Button
-								fullWidth
-								disabled={isPending || !email}
-								variant='contained'
-								className='mt-10'
-								type='submit'
-							>
+							{/* {!email && <FormHelperText error>URL รีเซ็ตรหัสผ่านไม่ถูกต้อง</FormHelperText>} */}
+							<Button fullWidth disabled={isPending} variant='contained' className='mt-10' type='submit'>
 								ยืนยัน
 							</Button>
 						</form>

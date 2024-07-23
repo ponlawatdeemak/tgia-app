@@ -38,22 +38,22 @@ export const othersMenuConfig: {
 }[] = [
 	{
 		key: 'Report',
-		name: 'รายงาน',
+		name: 'menu.report',
 		path: AppPath.Report,
 	},
 	{
 		key: 'UserManagement',
-		name: 'จัดการผู้ใช้งาน',
+		name: 'menu.userManagement',
 		path: AppPath.UserManagement,
 	},
 	{
 		key: 'About',
-		name: 'เกี่ยวกับ',
+		name: 'menu.about',
 		path: AppPath.About,
 	},
 	{
 		key: 'Glossary',
-		name: 'อภิธานศัพท์',
+		name: 'menu.glossary',
 		path: AppPath.Glossary,
 	},
 ]

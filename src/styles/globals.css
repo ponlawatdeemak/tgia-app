@@ -7,23 +7,23 @@
 
 :root {
 	/* font*/
-	--font-size-2xs: 8px;
-	--font-size-xs: 10px;
-	--font-size-sm: 12px;
-	--font-size-base: 14px;
-	--font-size-md: 16px;
-	--font-size-lg: 18px;
-	--font-size-xl: 20px;
-	--font-size-2xl: 24px;
+	--font-size-2xs: 10px;
+	--font-size-xs: 12px;
+	--font-size-sm: 14px;
+	--font-size-base: 16px;
+	--font-size-md: 18px;
+	--font-size-lg: 20px;
+	--font-size-xl: 22px;
+	--font-size-2xl: 26px;
 
-	--line-height-2xs: 10px;
-	--line-height-xs: 12px;
-	--line-height-sm: 16px;
-	--line-height-base: 20px;
-	--line-height-md: 24px;
-	--line-height-lg: 28px;
-	--line-height-xl: 28px;
-	--line-height-2xl: 32px;
+	--line-height-2xs: 12px;
+	--line-height-xs: 14px;
+	--line-height-sm: 18px;
+	--line-height-base: 22px;
+	--line-height-md: 26px;
+	--line-height-lg: 30px;
+	--line-height-xl: 30px;
+	--line-height-2xl: 34px;
 
 	/* primary color */
 	--primary-color-1: #0c626d;

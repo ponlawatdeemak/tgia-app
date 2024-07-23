@@ -99,8 +99,8 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 			<div className='mb-4 flex items-center justify-between'>
 				<div className='flex items-center gap-4'>
 					<div className='ml-1 flex items-center gap-2 py-1'>
-						<TriangleLogo width={24} height={24} />
-						<AgriculturalDepartmentLogo width={24} height={24} />
+						<TriangleLogo width={30} height={30} />
+						<AgriculturalDepartmentLogo width={30} height={30} />
 					</div>
 					<div className='flex items-center gap-3 [&_.Mui-selected]:border-primary'>
 						{appMenuConfig.map((menu) =>
@@ -137,9 +137,9 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 											<MenuItem
 												key={subMenu.path}
 												onClick={() => handleCloseNavMenu(subMenu.key)}
-												className='px-2.5 text-base font-medium'
+												className='p-3 px-2.5 text-base font-medium'
 											>
-												{subMenu.name}
+												{t(subMenu.name)}
 											</MenuItem>
 										))}
 									</Menu>
@@ -310,8 +310,8 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 						</Menu>
 					</div>
 					<div className='flex flex-col'>
-						<span className='text-xs font-medium leading-[12px]'>Powered by</span>
-						<ThaicomLogo width={58.88} height={16} />
+						<span className='text-2xs font-medium leading-[12px]'>Powered by</span>
+						<ThaicomLogo width={70} height={19.02} />
 					</div>
 				</div>
 			</div>
@@ -381,7 +381,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 												key={subMenu.path}
 												onClick={() => handleCloseNavMenu(subMenu.key)}
 											>
-												<ListItemText primary={subMenu.name} />
+												<ListItemText primary={t(subMenu.name)} />
 											</ListItem>
 										))}
 									</div>
@@ -421,8 +421,8 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 								</Button>
 							</div>
 							<div className='flex flex-col'>
-								<span className='text-xs font-medium leading-[12px]'>Powered by</span>
-								<ThaicomLogo width={58.88} height={16} />
+								<span className='text-2xs font-medium leading-[12px]'>Powered by</span>
+								<ThaicomLogo width={70} height={19.02} />
 							</div>
 						</div>
 					</div>

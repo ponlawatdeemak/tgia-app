@@ -13,6 +13,7 @@ import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
 import { ForgotPasswordDtoOut } from '@/api/dto/auth/dto-out.dto'
 import { ForgotPasswordDtoIn } from '@/api/dto/auth/dto-in.dto'
+import useLanguage from '@/store/language'
 
 const validationSchema = yup.object({
 	email: yup.string().email('รูปแบบอีเมลไม่ถูกต้อง').required('กรุณากรอกอีเมล'),
@@ -20,6 +21,7 @@ const validationSchema = yup.object({
 
 const ForgotPasswordMain = () => {
 	const router = useRouter()
+	const { language } = useLanguage()
 	const {
 		isPending,
 		error,
@@ -30,7 +32,7 @@ const ForgotPasswordMain = () => {
 
 	const errorMessage = useMemo(() => {
 		if (error) {
-			if (error.response?.status === 500) return 'ไม่พบอีเมลนี้ในระบบ'
+			const msgError: any = error.response
 			return 'มีบางอย่างผิดพลาด'
 		}
 		return null
@@ -38,10 +40,9 @@ const ForgotPasswordMain = () => {
 
 	const onSubmit = useCallback(
 		async (values: ForgotPasswordDtoIn) => {
-			console.log(values)
 			try {
 				await mutateForgotPassword(values)
-				router.push(`${AppPath.VerifyEmail}?email=${values?.email}`)
+				router.push(`/${language}${AppPath.VerifyEmail}?email=${values?.email}`)
 			} catch (error) {}
 		},
 		[mutateForgotPassword, router],
@@ -73,7 +74,13 @@ const ForgotPasswordMain = () => {
 							onSubmit={formik.handleSubmit}
 							className='flex w-full max-w-[340px] flex-col sm:max-w-full'
 						>
-							<FormInput name='email' label='อีเมล' formik={formik} className='mt-8' />
+							<FormInput
+								disabled={isPending}
+								name='email'
+								label='อีเมล'
+								formik={formik}
+								className='mt-8'
+							/>
 							<FormHelperText error>{errorMessage}</FormHelperText>
 							<Button fullWidth disabled={isPending} variant='contained' type='submit' className='mt-8'>
 								ตกลง

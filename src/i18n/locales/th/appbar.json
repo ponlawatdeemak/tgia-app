@@ -43,6 +43,10 @@
 		"annualAnalysis": "วิเคราะห์สถิติรายปี",
 		"others": "อื่นๆ",
 		"language": "ภาษา",
+		"report": "รายงาน",
+		"userManagement": "จัดการผู้ใช้งาน",
+		"about": "เกี่ยวกับ",
+		"glossary": "อภิธานศัพท์",
 		"areaType": "ประเภทพื้นที่",
 		"areaTypeUnit": {
 			"registration": "พื้นที่ ทบก.",
