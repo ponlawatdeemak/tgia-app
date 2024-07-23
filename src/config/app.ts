@@ -17,6 +17,7 @@ export enum PrivatePath {
 	About = '/others/about',
 	Glossary = '/others/glossary',
 	Profile = '/profile',
+	PasswordReset = '/profile/password-reset',
 }
 
 export const AppPath = { ...AuthPath, ...PrivatePath }

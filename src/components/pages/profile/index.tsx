@@ -17,6 +17,8 @@ import { useTranslation } from '@/i18n/client'
 import useLanguage from '@/store/language'
 import { CreateProfileImageDtoIn, PutProfileDtoIn } from '@/api/dto/um/dto-in.dto'
 import { QueryClient, useMutation } from '@tanstack/react-query'
+import { AppPath } from '@/config/app'
+import { usePathname, useRouter } from 'next/navigation'
 
 interface AlertInfoType {
 	open: boolean
@@ -58,6 +60,7 @@ const validationSchema = yup.object({
 })
 
 const ProfileMain = () => {
+	const router = useRouter()
 	const queryClient = new QueryClient()
 	const { data: session, update } = useSession()
 	const { language } = useLanguage()
@@ -196,6 +199,14 @@ const ProfileMain = () => {
 		setConfirmOpen(false)
 		formik.handleSubmit()
 	}
+
+	// const handleCloseNavMenu = useCallback(
+	// 	(key: any) => {
+	// 		console.log('key', key)
+	// 		router.push(key)
+	// 	},
+	// 	[router],
+	// )
 
 	return (
 		<Paper className='flex h-full flex-col justify-between gap-[16px] bg-white p-[24px] pt-[16px] max-lg:px-[16px] lg:gap-[24px]'>
@@ -340,6 +351,7 @@ const ProfileMain = () => {
 							<Button
 								className='flex h-[40px] gap-[4px] border-[#6E6E6E] bg-success-light px-[16px] py-[8px] text-base text-[#7A7A7A] [&_.MuiButton-startIcon]:m-0'
 								variant='outlined'
+								onClick={() => router.push(AppPath.PasswordReset)}
 								color='primary'
 								disabled={busy}
 								startIcon={<Icon path={mdiLockReset} size={'20px'} className='text-[#A6A6A6]' />}

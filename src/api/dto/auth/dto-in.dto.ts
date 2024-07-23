@@ -17,3 +17,9 @@ export interface ResetPasswordDtoIn {
 	password: string
 	confirmationCode: string
 }
+
+export interface ChangePasswordDtoIn {
+	userId: string
+	password: string
+	newPassword: string
+}

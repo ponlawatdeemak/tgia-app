@@ -1,5 +1,11 @@
 import { api } from '@/api/core'
-import { ForgotPasswordDtoIn, LoginDtoIn, RefreshTokenDtoIn, ResetPasswordDtoIn } from './dto-in.dto'
+import {
+	ChangePasswordDtoIn,
+	ForgotPasswordDtoIn,
+	LoginDtoIn,
+	RefreshTokenDtoIn,
+	ResetPasswordDtoIn,
+} from './dto-in.dto'
 import { ForgotPasswordDtoOut, LoginDtoOut, RefreshTokenDtoOut, ResetPasswordDtoOut } from './dto-out.dto'
 import { ResponseDto } from '@/api'
 
@@ -12,6 +18,8 @@ const auth = {
 		(await api.post('/auth/forgot-password', payload))?.data,
 	resetPassword: async (payload: ResetPasswordDtoIn): Promise<ResponseDto<ResetPasswordDtoOut>> =>
 		(await api.put('/auth/reset-password', payload))?.data,
+	changePassword: async (payload: ChangePasswordDtoIn): Promise<ResponseDto<ChangePasswordDtoIn>> =>
+		(await api.put('/auth/change-password', payload))?.data,
 }
 
 export default auth
