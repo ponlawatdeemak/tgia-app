@@ -2,7 +2,7 @@
 
 import { AppPath, appMenuConfig, profileMenuConfig } from '@/config/app'
 import useResponsive from '@/hook/responsive'
-import { mdiClose, mdiMenu, mdiTune } from '@mdi/js'
+import { mdiAccountOutline, mdiClose, mdiMenu, mdiTune } from '@mdi/js'
 import Icon from '@mdi/react'
 import {
 	Avatar,
@@ -92,6 +92,8 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 		router.push(window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
 	}
 
+	//console.log('image', user?.image)
+
 	if (isDesktop) {
 		return (
 			<div className='mb-4 flex items-center justify-between'>
@@ -162,7 +164,17 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 						className='flex items-center gap-2 px-2 py-[4px] [&_>*]:m-0'
 						onClick={() => handleCloseNavMenu(profileMenuConfig.key)}
 					>
-						<Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' className='h-[24px] w-[24px]' />
+						{user?.image ? (
+							<Avatar
+								src={user.image}
+								alt='Profile Image'
+								className='h-[24px] w-[24px] bg-success-light'
+							/>
+						) : (
+							<Avatar className='h-[24px] w-[24px] bg-success-light'>
+								<Icon path={mdiAccountOutline} size={'90px'} className='text-primary' />
+							</Avatar>
+						)}
 
 						<span className='text-base font-medium text-black underline decoration-2 underline-offset-2'>
 							{`${user?.firstName} ${user?.lastName.charAt(0)}.`}
