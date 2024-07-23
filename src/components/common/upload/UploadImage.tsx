@@ -13,6 +13,7 @@ export interface UploadImageProps {
 	formik: FormikProps<any>
 	className?: string
 	defaultImage?: string
+	disabled?: boolean
 	[key: string]: unknown
 }
 
@@ -21,6 +22,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
 	name,
 	className,
 	defaultImage = mdiAccountOutline,
+	disabled = false,
 	...props
 }) => {
 	const { language } = useLanguage()
@@ -60,23 +62,26 @@ const UploadImage: React.FC<UploadImageProps> = ({
 					<Icon path={defaultImage} size={'90px'} className='text-primary' />
 				</Avatar>
 			)}
-			<Button
-				component='label'
-				role={undefined}
-				variant='outlined'
-				tabIndex={-1}
-				className='flex gap-[4px] border-gray py-[6px] pl-[8px] pr-[10px] text-base text-black [&_.MuiButton-startIcon]:m-0'
-				startIcon={<Icon path={mdiTrayArrowUp} size={'20px'} />}
-			>
-				{t('common.uploadImg')}
-				<input
-					type='file'
-					accept="'image/png', 'image/jpeg'"
-					className='absolute bottom-0 left-0 h-full w-full cursor-pointer opacity-0'
-					onChange={handleImageChange}
-					{...props}
-				/>
-			</Button>
+			<div className='[&_.Mui-disabled]:border-[#0000001f] [&_.Mui-disabled]:bg-transparent [&_.Mui-disabled]:text-[#00000042] [&_.Mui-disabled_.MuiButton-startIcon>svg]:text-[#00000042]'>
+				<Button
+					component='label'
+					role={undefined}
+					variant='outlined'
+					tabIndex={-1}
+					className='flex h-[32px] gap-[4px] border-gray py-[6px] pl-[8px] pr-[10px] text-base text-black [&_.MuiButton-startIcon]:m-0'
+					startIcon={<Icon path={mdiTrayArrowUp} size={'20px'} />}
+					disabled={disabled}
+				>
+					{t('common.uploadImg')}
+					<input
+						type='file'
+						accept="'image/png', 'image/jpeg'"
+						className='absolute bottom-0 left-0 h-full w-full cursor-pointer opacity-0'
+						onChange={handleImageChange}
+						{...props}
+					/>
+				</Button>
+			</div>
 			<p className='m-0 w-[123px] text-center text-sm text-[#7A7A7A]'>{t('common.conditionImg')}</p>
 			{typeof errorMessage === 'string' && <FormHelperText error>{errorMessage}</FormHelperText>}
 		</div>
