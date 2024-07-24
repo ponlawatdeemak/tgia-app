@@ -10,16 +10,18 @@ import { Button, FormHelperText, Link, ToggleButton, ToggleButtonGroup, Typograp
 import { useFormik } from 'formik'
 import { signIn } from 'next-auth/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import useLanguage from '@/store/language'
 import { useTranslation } from '@/i18n/client'
 import * as yup from 'yup'
 import { Language } from '@/enum'
+import LoadingButton from '@mui/lab/LoadingButton'
+import clsx from 'clsx'
 
-const validationSchema = yup.object({
-	username: yup.string().required('กรุณากรอกอีเมล'),
-	password: yup.string().required('กรุณากรอกรหัสผ่าน'),
-})
+// const validationSchema = yup.object({
+// 	username: yup.string().required('กรุณากรอกอีเมล'),
+// 	password: yup.string().required('กรุณากรอกรหัสผ่าน'),
+// })
 
 const LoginMain = () => {
 	const searchParams = useSearchParams()
@@ -29,6 +31,12 @@ const LoginMain = () => {
 	const router = useRouter()
 	const callbackUrl = useMemo(() => searchParams?.get('callbackUrl'), [searchParams])
 	const error = useMemo(() => searchParams?.get('error'), [searchParams])
+	const [busy, setBusy] = useState<boolean>(false)
+
+	const validationSchema = yup.object({
+		username: yup.string().required(t('warning.inputEmail')),
+		password: yup.string().required(t('warning.inputPassword')),
+	})
 
 	const errorMessage = useMemo(() => {
 		if (error) {
@@ -40,12 +48,19 @@ const LoginMain = () => {
 
 	const onSubmit = useCallback(
 		async (values: LoginDtoIn) => {
-			await signIn('credentials', {
-				username: values.username,
-				password: values.password,
-				redirect: true,
-				callbackUrl: callbackUrl ?? `/${language}${AppPath.FieldLoss}`,
-			})
+			try {
+				setBusy(true)
+				await signIn('credentials', {
+					username: values.username,
+					password: values.password,
+					redirect: true,
+					callbackUrl: callbackUrl ?? `/${language}${AppPath.FieldLoss}`,
+				})
+			} catch (error) {
+				console.log('Login failed')
+			} finally {
+				setBusy(false)
+			}
 		},
 		[callbackUrl],
 	)
@@ -87,7 +102,6 @@ const LoginMain = () => {
 						exclusive
 						color='primary'
 						onChange={(event: React.MouseEvent<HTMLElement>, newLanguage: Language) => {
- 
 							if (newLanguage !== null) {
 								setLanguage(newLanguage)
 								const oldLanguage = pathname?.split('/')?.[1]
@@ -122,8 +136,14 @@ const LoginMain = () => {
 						{t('auth.subTitle')}
 					</Typography>
 					<form onSubmit={formik.handleSubmit} className='flex flex-col lg:mx-6'>
-						<FormInput name='username' label={t('default.userName')} formik={formik} />
-						<PasswordInput name='password' label={t('default.password')} formik={formik} className='mt-4' />
+						<FormInput disabled={busy} name='username' label={t('default.userName')} formik={formik} />
+						<PasswordInput
+							disabled={busy}
+							name='password'
+							label={t('default.password')}
+							formik={formik}
+							className='mt-4'
+						/>
 						<Link
 							href={`/${language}${AppPath.ForgetPassword}`}
 							className='mt-3 self-end font-medium no-underline'
@@ -131,9 +151,25 @@ const LoginMain = () => {
 							{t('auth.forgotPassword')}
 						</Link>
 						<FormHelperText error>{errorMessage}</FormHelperText>
-						<Button fullWidth variant='contained' className='mt-8' type='submit'>
+						{/* <Button disabled={busy} fullWidth variant='contained' className='mt-8' type='submit'>
 							{t('auth.login')}
-						</Button>
+						</Button> */}
+						<LoadingButton
+							fullWidth
+							loading={busy}
+							loadingPosition='start'
+							variant='contained'
+							type='submit'
+							className={clsx(
+								'mt-8 h-[36.5px] [&_.MuiLoadingButton-loadingIndicator]:relative [&_.MuiLoadingButton-loadingIndicator]:left-auto',
+								{
+									'[&_.MuiLoadingButton-loadingIndicator]:right-[45px]': language === 'th',
+									'[&_.MuiLoadingButton-loadingIndicator]:right-[30px]': language === 'en',
+								},
+							)}
+						>
+							<div className='absolute'>{t('auth.login')}</div>
+						</LoadingButton>
 					</form>
 				</div>
 

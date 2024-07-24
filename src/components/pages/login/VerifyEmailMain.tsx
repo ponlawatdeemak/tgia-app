@@ -16,7 +16,7 @@ const VerifyEmailMain: React.FC<VerifyEmailMainProps> = ({ email }) => {
 	const { t } = useTranslation(language, 'appbar')
 	return (
 		<>
-			<AuthBreadcrumbs name={t('auth.checkEmail')} href={AppPath.Login} />
+			<AuthBreadcrumbs name={t('auth.checkEmail')} href={`/${language}${AppPath.Login}`} />
 
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center'>

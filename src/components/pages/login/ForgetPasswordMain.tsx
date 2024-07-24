@@ -15,10 +15,12 @@ import { ForgotPasswordDtoOut } from '@/api/dto/auth/dto-out.dto'
 import { ForgotPasswordDtoIn } from '@/api/dto/auth/dto-in.dto'
 import useLanguage from '@/store/language'
 import { useTranslation } from '@/i18n/client'
+import LoadingButton from '@mui/lab/LoadingButton'
+import clsx from 'clsx'
 
-const validationSchema = yup.object({
-	email: yup.string().email('รูปแบบอีเมลไม่ถูกต้อง').required('กรุณากรอกอีเมล'),
-})
+// const validationSchema = yup.object({
+// 	email: yup.string().email('รูปแบบอีเมลไม่ถูกต้อง').required('กรุณากรอกอีเมล'),
+// })
 
 const ForgotPasswordMain = () => {
 	const router = useRouter()
@@ -30,6 +32,10 @@ const ForgotPasswordMain = () => {
 		mutateAsync: mutateForgotPassword,
 	} = useMutation<ResponseDto<ForgotPasswordDtoOut>, AxiosError, ForgotPasswordDtoIn, unknown>({
 		mutationFn: service.auth.forgotPassword,
+	})
+
+	const validationSchema = yup.object({
+		email: yup.string().email(t('warning.invalidEmailFormat')).required(t('warning.inputEmail')),
 	})
 
 	const errorMessage = useMemo(() => {
@@ -84,9 +90,25 @@ const ForgotPasswordMain = () => {
 								className='mt-8'
 							/>
 							<FormHelperText error>{errorMessage}</FormHelperText>
-							<Button fullWidth disabled={isPending} variant='contained' type='submit' className='mt-8'>
+							{/* <Button fullWidth disabled={isPending} variant='contained' type='submit' className='mt-8'>
 								{t('default.ok')}
-							</Button>
+							</Button> */}
+							<LoadingButton
+								fullWidth
+								loading={isPending}
+								loadingPosition='start'
+								variant='contained'
+								type='submit'
+								className={clsx(
+									'mt-8 h-[36.5px] [&_.MuiLoadingButton-loadingIndicator]:relative [&_.MuiLoadingButton-loadingIndicator]:left-auto',
+									{
+										'[&_.MuiLoadingButton-loadingIndicator]:right-[35px]': language === 'th',
+										'[&_.MuiLoadingButton-loadingIndicator]:right-[40px]': language === 'en',
+									},
+								)}
+							>
+								<div className='absolute'>{t('default.ok')}</div>
+							</LoadingButton>
 						</form>
 						<Link href={`/${language}${AppPath.Login}`} className='mt-8'>
 							{t('auth.returnLogin')}
