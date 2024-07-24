@@ -10,6 +10,12 @@
   },
   "dependencies": {
     "@billboard.js/react": "^1.1.1",
+    "@deck.gl/carto": "^9.0.24",
+    "@deck.gl/core": "^9.0.24",
+    "@deck.gl/geo-layers": "^9.0.24",
+    "@deck.gl/google-maps": "^9.0.24",
+    "@deck.gl/layers": "^9.0.24",
+    "@deck.gl/mapbox": "^9.0.24",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
@@ -21,6 +27,7 @@
     "@mui/x-data-grid": "^7.7.1",
     "@mui/x-date-pickers": "^7.8.0",
     "@tanstack/react-query": "^5.50.1",
+    "@vis.gl/react-google-maps": "^1.1.0",
     "accept-language": "^3.0.18",
     "axios": "^1.7.2",
     "billboard.js": "^3.12.4",
@@ -40,6 +47,7 @@
     "react-cookie": "^7.1.4",
     "react-dom": "^18",
     "react-i18next": "^14.1.2",
+    "react-map-gl": "^7.1.7",
     "react-resize-detector": "^11.0.1",
     "yup": "^1.4.0",
     "zustand": "^4.5.4"
