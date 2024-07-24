@@ -67,7 +67,8 @@ const ProfileMain = () => {
 	const { t } = useTranslation(language, 'appbar')
 
 	const [busy, setBusy] = useState<boolean>(false)
-	const [confirmOpen, setConfirmOpen] = useState<boolean>(false)
+	const [confirmOpenDialog, setConfirmOpenDialog] = useState<boolean>(false)
+	const [logoutOpenDialog, setLogoutOpenDialog] = useState<boolean>(false)
 	const [alertInfo, setAlertInfo] = useState<AlertInfoType>({
 		open: false,
 		severity: 'success',
@@ -145,7 +146,7 @@ const ProfileMain = () => {
 		}
 	}, [])
 
-	const logout = useCallback(() => signOut(), [])
+	const logout = useCallback(() => signOut({ callbackUrl: `/${language}${AppPath.Login}` }), [])
 
 	const formik = useFormik<FormValues>({
 		enableReinitialize: true,
@@ -188,7 +189,7 @@ const ProfileMain = () => {
 	const handleConfirmOpen = () => {
 		formik.validateForm().then((errors) => {
 			if (Object.keys(errors).length === 0) {
-				setConfirmOpen(true)
+				setConfirmOpenDialog(true)
 			} else {
 				formik.handleSubmit()
 			}
@@ -196,7 +197,7 @@ const ProfileMain = () => {
 	}
 
 	const handleConfirmSubmit = () => {
-		setConfirmOpen(false)
+		setConfirmOpenDialog(false)
 		formik.handleSubmit()
 	}
 
@@ -209,8 +210,7 @@ const ProfileMain = () => {
 	// )
 
 	return (
-		<Paper className='flex h-full flex-col justify-between gap-[16px] bg-white p-[24px] pt-[16px] max-lg:px-[16px] lg:gap-[24px]'>
-			<Typography className='text-xl font-semibold text-black lg:text-md'>{t('profile.profile')}</Typography>
+		<>
 			<form
 				onSubmit={formik.handleSubmit}
 				className='flex h-full flex-col justify-between max-lg:justify-start max-lg:gap-[32px]'
@@ -287,7 +287,7 @@ const ProfileMain = () => {
 									disabled={isDistricDataLoading || busy}
 								/>
 							</div>
-							<div className='flex gap-[16px] max-lg:flex-col lg:gap-[12px]'>
+							<div className='flex gap-[16px] max-lg:hidden max-lg:flex-col lg:gap-[12px]'>
 								<AutocompleteInput
 									className='w-full text-sm font-medium lg:w-[240px]'
 									options={
@@ -320,10 +320,10 @@ const ProfileMain = () => {
 						</Box>
 					</div>
 				</Box>
-				<Box className='flex items-center justify-between lg:px-[40px]'>
-					<div className='flex h-[40px] lg:gap-[20px]'>
+				<Box className='flex items-center max-lg:flex-col max-lg:items-center max-lg:gap-[8px] lg:justify-between lg:px-[40px]'>
+					<div className='flex gap-[8px] max-lg:w-[250px] max-lg:flex-col lg:gap-[20px]'>
 						<Button
-							className='px-[16px] py-[8px] text-base font-semibold'
+							className='h-[40px] px-[16px] py-[8px] text-base font-semibold'
 							variant='contained'
 							onClick={handleConfirmOpen}
 							color='primary'
@@ -340,18 +340,18 @@ const ProfileMain = () => {
 							{t('default.confirm')}
 						</Button>
 						<AlertConfirm
-							open={confirmOpen}
+							open={confirmOpenDialog}
 							title='บันทึกบัญชีผู้ใช้งาน'
 							content='ต้องการยืนยันการบันทึกบัญชีผู้ใช้งานนี้ใช่หรือไม่'
-							onClose={() => setConfirmOpen(false)}
+							onClose={() => setConfirmOpenDialog(false)}
 							onConfirm={handleConfirmSubmit}
 						/>
 
 						<div className='[&_.Mui-disabled]:border-[#0000001f] [&_.Mui-disabled]:bg-transparent [&_.Mui-disabled]:text-[#00000042] [&_.Mui-disabled_.MuiButton-startIcon>svg]:text-[#00000042]'>
 							<Button
-								className='flex h-[40px] gap-[4px] border-[#6E6E6E] bg-success-light px-[16px] py-[8px] text-base text-[#7A7A7A] [&_.MuiButton-startIcon]:m-0'
+								className='flex h-[40px] gap-[4px] border-[#6E6E6E] bg-success-light px-[16px] py-[8px] text-base text-[#7A7A7A] max-lg:w-full [&_.MuiButton-startIcon]:m-0'
 								variant='outlined'
-								onClick={() => router.push(AppPath.PasswordReset)}
+								onClick={() => router.push(`/${language}${AppPath.PasswordReset}`)}
 								color='primary'
 								disabled={busy}
 								startIcon={<Icon path={mdiLockReset} size={'20px'} className='text-[#A6A6A6]' />}
@@ -361,14 +361,21 @@ const ProfileMain = () => {
 						</div>
 					</div>
 					<Button
-						className='h-[40px] px-[16px] py-[8px] text-base'
-						onClick={logout}
+						className='h-[40px] px-[16px] py-[8px] text-base max-lg:w-[250px]'
+						onClick={() => setLogoutOpenDialog(true)}
 						variant='outlined'
 						color='error'
 						disabled={busy}
 					>
 						{t('auth.loginOut')}
 					</Button>
+					<AlertConfirm
+						open={logoutOpenDialog}
+						title='ยืนยันการออกจากระบบ'
+						content='ต้องการยืนยันการออกจากระบบของผู้ใช้งานนี้ใช่หรือไม่'
+						onClose={() => setLogoutOpenDialog(false)}
+						onConfirm={logout}
+					/>
 				</Box>
 			</form>
 			<Snackbar
@@ -386,7 +393,7 @@ const ProfileMain = () => {
 					{alertInfo.message}
 				</Alert>
 			</Snackbar>
-		</Paper>
+		</>
 	)
 }
 
