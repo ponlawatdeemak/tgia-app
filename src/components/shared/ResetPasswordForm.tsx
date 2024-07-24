@@ -47,7 +47,7 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 					name='currentPassword'
 					label={t('default.password')}
 					formik={formik}
-					className='mt-4'
+					className=''
 					disabled={loading}
 				/>
 			)}
@@ -55,14 +55,14 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 				name='password'
 				label={t('default.passwordNew')}
 				formik={formik}
-				className='mt-4'
+				className=''
 				disabled={loading}
 			/>
 			<PasswordInput
 				name='confirmPassword'
 				label={t('default.passwordConfirm')}
 				formik={formik}
-				className='mt-4'
+				className=''
 				disabled={loading}
 			/>
 			{resetPassword && (
@@ -70,7 +70,7 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 					name='confirmationCode'
 					label='รหัสยืนยันตัวตน (จากอีเมล)'
 					formik={formik}
-					className='mt-4'
+					className=''
 				/>
 			)}
 		</div>
