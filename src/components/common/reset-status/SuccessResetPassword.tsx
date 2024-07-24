@@ -21,7 +21,7 @@ const SuccessResetPassword: React.FC<SuccessResetPasswordProps> = ({ buttonLabel
 				<Icon path={mdiCheckBold} size={2} className='z-10 text-success' />
 			</div>
 			<Typography className='text-2xl font-bold'>{t('auth.headerResetPasswordSuccess')}</Typography>
-			<Typography>{t('auth.subHeaderResetPasswordSuccess')}</Typography>
+			<Typography className='text-center'>{t('auth.subHeaderResetPasswordSuccess')}</Typography>
 			<Button variant='contained' className='mt-8' href={`/${language}${buttonHref}`}>
 				{t(buttonLabel)}
 			</Button>
