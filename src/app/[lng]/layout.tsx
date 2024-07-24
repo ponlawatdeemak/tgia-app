@@ -30,7 +30,7 @@ export default function RootLayout({
 			<body className={anuphan.className}>
 				<AppRouterCacheProvider options={{ enableCssLayer: true }}>
 					<Providers>
-						<div className='flex h-full flex-1 flex-col bg-background'>{children}</div>
+						<div className='flex h-full flex-1 flex-col overflow-scroll bg-background'>{children}</div>
 					</Providers>
 				</AppRouterCacheProvider>
 			</body>
