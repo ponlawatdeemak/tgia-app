@@ -97,9 +97,8 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 		if (newLanguage !== null) {
 			setLanguage(newLanguage)
 			const oldLanguage = pathname?.split('/')?.[1]
-		router.push(window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
+			router.push(window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
 		}
-		
 	}
 
 	//console.log('image', user?.image)
@@ -410,14 +409,20 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 							className='flex items-center gap-2 px-2 py-[4px] [&_>*]:m-0'
 							onClick={() => handleCloseNavMenu(profileMenuConfig.key)}
 						>
-							<IconButton sx={{ width: '24px', height: '24px' }}>
+							{user?.image ? (
 								<Avatar
-									alt='Remy Sharp'
-									src='/static/images/avatar/2.jpg'
-									className='h-[24px] w-[24px]'
+									src={user.image}
+									alt='Profile Image'
+									className='h-[24px] w-[24px] bg-success-light'
 								/>
-							</IconButton>
-							<span className='text-base font-normal text-black underline decoration-1 underline-offset-2'></span>
+							) : (
+								<Avatar className='h-[24px] w-[24px] bg-success-light'>
+									<Icon path={mdiAccountOutline} size={'90px'} className='text-primary' />
+								</Avatar>
+							)}
+							<span className='text-base font-normal text-black underline decoration-1 underline-offset-2'>
+								{`${user?.firstName} ${user?.lastName.charAt(0)}.`}
+							</span>
 						</Button>
 						<div className='flex gap-3'>
 							<div>
