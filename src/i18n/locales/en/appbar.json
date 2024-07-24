@@ -16,7 +16,8 @@
 		"amphor": "District",
 		"org": "Organization",
 		"role": "Role",
-		"setting": "Setting"
+		"setting": "Setting",
+		"back": "Back"
 	},
 	"warning": {
 		"inputEmail": "กรุณากรอกอีเมล",
@@ -33,6 +34,7 @@
 		"login": "Login",
 		"signIn": "Sign In",
 		"returnLogin": "Return to login",
+		"returnProfile": "Return to profile",
 		"forgotPassword": "Forgot password",
 		"headerForgotPassword": "You forgot your password?",
 		"subHeaderForgotPassword": "Please enter email.",

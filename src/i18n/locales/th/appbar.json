@@ -16,7 +16,8 @@
 		"amphor": "สังกัดอำเภอ",
 		"org": "หน่วยงาน",
 		"role": "บทบาท",
-		"setting": "ตั้งค่า"
+		"setting": "ตั้งค่า",
+		"back": "ย้อนกลับ"
 	},
 	"warning": {
 		"inputEmail": "กรุณากรอกอีเมล",
@@ -35,6 +36,7 @@
 		"login": "เข้าสู่ระบบ",
 		"signIn": "ลงชื่อเช้าใช้",
 		"returnLogin": "กลับสู่เข้าสู่ระบบ",
+		"returnProfile": "กลับไปยังหน้าข้อมูลส่วนตัว",
 		"forgotPassword": "ลืมรหัสผ่าน",
 		"headerForgotPassword": "คุณลืมรหัสผ่าน?",
 		"subHeaderForgotPassword": "กรุณากรอกอีเมล์",
