@@ -61,18 +61,23 @@ export default function MapView({ className = '' }: MapViewProps) {
 		setViewState(v)
 	}, [])
 
+	const handleChange = (event: React.MouseEvent<HTMLElement>, newBasemap: string) => {
+		setBasemap((prev) => newBasemap || prev)
+	}
+
 	return (
 		<div className={classNames('relative flex h-full flex-1 flex-col overflow-hidden', className)}>
-			<ToggleButtonGroup className='absolute left-0 top-0 z-10' value={basemap}>
-				<ToggleButton value={'carto-light'} onClick={() => setBasemap('carto-light')}>
-					Street
-				</ToggleButton>
-				<ToggleButton value={'carto-dark'} onClick={() => setBasemap('carto-dark')}>
-					Dark Matter
-				</ToggleButton>
-				<ToggleButton value={'google'} onClick={() => setBasemap('google')}>
-					Satellite
-				</ToggleButton>
+			<ToggleButtonGroup
+				size='small'
+				exclusive
+				color='primary'
+				className='absolute left-0 top-0 z-10 bg-white'
+				value={basemap}
+				onChange={handleChange}
+			>
+				<ToggleButton value={'carto-light'}>Street</ToggleButton>
+				<ToggleButton value={'carto-dark'}>Dark Matter</ToggleButton>
+				<ToggleButton value={'google'}>Satellite</ToggleButton>
 			</ToggleButtonGroup>
 			{basemap !== 'google' ? (
 				<MapLibre
