@@ -12,7 +12,7 @@ const PasswordResetPage: React.FC<PasswordResetPageProps> = ({ searchParams }) =
 	if (searchParams?.resetStatus === 'success') {
 		return (
 			<div className='flex flex-grow items-center justify-center'>
-				<SuccessResetPassword buttonLabel='auth.returnLogin' buttonHref={AppPath.Profile} />
+				<SuccessResetPassword buttonLabel='auth.returnProfile' buttonHref={AppPath.Profile} />
 			</div>
 		)
 	}
@@ -20,7 +20,7 @@ const PasswordResetPage: React.FC<PasswordResetPageProps> = ({ searchParams }) =
 	if (searchParams?.resetStatus === 'failed') {
 		return (
 			<div className='flex flex-grow items-center justify-center'>
-				<FailedResetPassword buttonLabel='auth.returnLogin' buttonHref={AppPath.Profile} />
+				<FailedResetPassword buttonLabel='auth.returnProfile' buttonHref={AppPath.Profile} />
 			</div>
 		)
 	}

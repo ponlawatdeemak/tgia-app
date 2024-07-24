@@ -113,20 +113,29 @@ const PasswordResetMain = () => {
 	}
 
 	return (
-		<Paper className='flex h-full flex-col gap-[16px] bg-white p-[24px] pt-[16px] max-lg:px-[16px] lg:gap-[24px]'>
-			<Typography className='text-xl font-semibold text-black lg:text-md'>{t('profile.profile')}</Typography>
+		<div className='flex h-full flex-col gap-[16px] lg:gap-[18px] lg:px-[16px] lg:py-[10px]'>
 			<div>
 				<Button
-					className='h-[40px] px-[16px] py-[8px] text-base'
-					onClick={() => router.push(AppPath.Profile)}
+					className='flex gap-[4px] border-gray py-[4px] pl-[6px] pr-[8px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
+					onClick={() => router.push(`/${language}${AppPath.Profile}`)}
 					variant='outlined'
 					disabled={busy}
-					startIcon={<Icon path={mdiArrowLeft} size={1} />}
+					startIcon={<Icon path={mdiArrowLeft} size={'18px'} className='text-black' />}
 				>
-					ย้อนกลับ
+					{t('default.back')}
 				</Button>
-				<form onSubmit={formik.handleSubmit} className='flex h-full w-[306px] flex-col max-lg:justify-start'>
-					<ResetPasswordForm className='mb-6' formik={formik} changePassword={true} loading={busy} />
+			</div>
+			<form
+				onSubmit={formik.handleSubmit}
+				className='flex h-full flex-col gap-[28px] max-lg:justify-between lg:w-[306px]'
+			>
+				<ResetPasswordForm
+					className='flex flex-col gap-[16px] lg:gap-[18px]'
+					formik={formik}
+					changePassword={true}
+					loading={busy}
+				/>
+				<div className='flex max-lg:justify-center'>
 					<Button
 						className='h-[40px] px-[16px] py-[8px] text-base font-semibold'
 						variant='contained'
@@ -144,16 +153,16 @@ const PasswordResetMain = () => {
 					>
 						{t('default.confirm')}
 					</Button>
-					<AlertConfirm
-						open={confirmOpen}
-						title='ยืนยันการแก้รหัสผ่าน'
-						content='ต้องการยืนยันการแก้รหัสผ่านของผู้ใช้งานนี้ใช่หรือไม่'
-						onClose={() => setConfirmOpen(false)}
-						onConfirm={handleConfirmSubmit}
-					/>
-				</form>
-			</div>
-		</Paper>
+				</div>
+				<AlertConfirm
+					open={confirmOpen}
+					title='ยืนยันการแก้รหัสผ่าน'
+					content='ต้องการยืนยันการแก้รหัสผ่านของผู้ใช้งานนี้ใช่หรือไม่'
+					onClose={() => setConfirmOpen(false)}
+					onConfirm={handleConfirmSubmit}
+				/>
+			</form>
+		</div>
 	)
 }
 
