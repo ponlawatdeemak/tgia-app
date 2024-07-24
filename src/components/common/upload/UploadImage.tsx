@@ -45,8 +45,18 @@ const UploadImage: React.FC<UploadImageProps> = ({
 	const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const selectedImage = event.target.files?.[0]
 		if (selectedImage) {
-			formik.setFieldValue(name, selectedImage)
-			setImage(URL.createObjectURL(selectedImage))
+			const imageType = selectedImage.type
+			const imageSize = selectedImage.size
+			const validImageTypes = ['image/png', 'image/jpeg']
+			const maxImageSize = 3 * 1024 * 1024
+
+			if (validImageTypes.includes(imageType) && imageSize <= maxImageSize) {
+				formik.setFieldValue(name, selectedImage)
+				setImage(URL.createObjectURL(selectedImage))
+			} else {
+				formik.setFieldValue(name, null)
+				setImage(null)
+			}
 		} else {
 			formik.setFieldValue(name, null)
 			setImage(null)
@@ -75,7 +85,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
 					{t('common.uploadImg')}
 					<input
 						type='file'
-						accept="'image/png', 'image/jpeg'"
+						accept='image/png, image/jpeg'
 						className='absolute bottom-0 left-0 h-full w-full cursor-pointer opacity-0'
 						onChange={handleImageChange}
 						{...props}
