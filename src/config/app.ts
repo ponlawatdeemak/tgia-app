@@ -1,3 +1,5 @@
+import { UserRole } from '@/enum/um.enum'
+
 export enum AuthPath {
 	Login = '/auth/login',
 	ForgetPassword = '/auth/forget-password',
@@ -36,16 +38,19 @@ export const othersMenuConfig: {
 	key: keyof typeof AppPath
 	name: string
 	path: string
+	access?: string[]
 }[] = [
 	{
 		key: 'Report',
 		name: 'menu.report',
 		path: AppPath.Report,
+		access: [UserRole.Root, UserRole.Admin, UserRole.Analyst],
 	},
 	{
 		key: 'UserManagement',
 		name: 'menu.userManagement',
 		path: AppPath.UserManagement,
+		access: [UserRole.Root, UserRole.Admin],
 	},
 	{
 		key: 'About',
@@ -64,6 +69,7 @@ export const appMenuConfig: {
 	name: string
 	path: string
 	children?: typeof othersMenuConfig
+	access?: string[]
 }[] = [
 	{
 		key: 'FieldLoss',
