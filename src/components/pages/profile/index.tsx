@@ -52,12 +52,12 @@ const defaultFormValues: FormValues = {
 	responsibleDistrictCode: '',
 }
 
-const validationSchema = yup.object({
-	firstName: yup.string().required('กรุณากรอกชื่อ'),
-	lastName: yup.string().required('กรุณากรอกนามสกุล'),
-	email: yup.string().email('กรุณากรอกอีเมลให้ถูกต้อง').required('กรุณากรอกอีเมล'),
-	responsibleProvinceCode: yup.string().required('กรุณาเลือกจังหวัด'),
-})
+// const validationSchema = yup.object({
+// 	firstName: yup.string().required('กรุณากรอกชื่อ'),
+// 	lastName: yup.string().required('กรุณากรอกนามสกุล'),
+// 	email: yup.string().email('กรุณากรอกอีเมลให้ถูกต้อง').required('กรุณากรอกอีเมล'),
+// 	responsibleProvinceCode: yup.string().required('กรุณาเลือกจังหวัด'),
+// })
 
 const ProfileMain = () => {
 	const router = useRouter()
@@ -73,6 +73,13 @@ const ProfileMain = () => {
 		open: false,
 		severity: 'success',
 		message: '',
+	})
+
+	const validationSchema = yup.object({
+		firstName: yup.string().required(t('warning.inputFirstName')),
+		lastName: yup.string().required(t('warning.inputLastName')),
+		email: yup.string().email(t('warning.invalidEmailFormat')).required(t('warning.inputEmail')),
+		responsibleProvinceCode: yup.string().required(t('warning.inputProvince')),
 	})
 
 	const { data: userData, isLoading: isUserDataLoading } = useQuery({
