@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { AreaTypeKey } from '@/enum'
 
 import { MVTLayer } from '@deck.gl/geo-layers'
+import { BASEMAP } from '@deck.gl/carto'
 import { Layer, LayersList } from '@deck.gl/core'
 
 
@@ -31,25 +32,4 @@ export const useLayerStore = create<LayerStore>()((set) => ({
 	],
 }))
 
-// type StoreAreaTypeKey = {
-// 	areaType: AreaTypeKey
-// 	setAreaType: (areaType: AreaTypeKey) => void
-// }
-
-// const useAreaType = create(
-// 	persist<StoreAreaTypeKey>(
-// 		(set) => ({
-// 			areaType: AreaTypeKey.Registration,
-// 			setAreaType: (areaType: AreaTypeKey) =>
-// 				set(() => {
-// 					return { areaType: areaType }
-// 				}),
-// 		}),
-// 		{
-// 			name: 'areaType', // name of the item in the storage (must be unique)
-// 			storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
-// 		},
-// 	),
-// )
-
-// export default useAreaType
+export default useLayerStore

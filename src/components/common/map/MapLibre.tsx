@@ -3,8 +3,8 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import React from 'react'
 import { Map, useControl } from 'react-map-gl/maplibre'
 import { MapboxOverlay } from '@deck.gl/mapbox'
-import { MapInterface } from './MapView'
-import { useLayerStore } from '@/store/map'
+import useLayerStore from './store/map'
+import { MapInterface } from './interface/map'
 
 function DeckGLOverlay() {
 	const layers = useLayerStore((state) => state.layers)
