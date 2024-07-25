@@ -6,21 +6,26 @@ import { MapInterface, useLayerStore } from './MapView'
 
 function DeckGLOverlay() {
 	const layers = useLayerStore((state) => state.layers)
+	const setOverlay = useLayerStore((state) => state.setOverlay)
 	const map = useMap()
-	const overlay = useMemo(() => new GoogleMapsOverlay({ layers }), [layers])
-
+	const overlay = useMemo(() => new GoogleMapsOverlay({}), [])
+	useEffect(() => {
+		overlay.setProps({ layers })
+	}, [layers, overlay])
 	useEffect(() => {
 		overlay.setMap(map)
-		return () => {
-			overlay.setMap(null)
-			map?.unbindAll()
-		}
-	}, [map, overlay])
-
+		setOverlay(overlay)
+	}, [map, overlay, setOverlay])
 	return null
 }
 
 export default function MapGoogle({ viewState, onViewStateChange }: MapInterface) {
+	const overlay = useLayerStore((state) => state.overlay)
+	useEffect(() => {
+		return () => {
+			overlay?.setProps({ layers: [] })
+		}
+	}, [overlay])
 	return (
 		<APIProvider apiKey={process.env.GOOGLE_MAPS_API_KEY}>
 			<Map
