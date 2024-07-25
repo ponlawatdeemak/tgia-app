@@ -395,7 +395,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 						</IconButton>
 					</div>
 					<Divider sx={{ borderBottomWidth: '1px', borderColor: '#D6D6D6' }} />
-					<div className='m-4 flex flex-col overflow-scroll'>
+					<div className='m-4 flex flex-col overflow-auto'>
 						<List
 							className='h-full p-0'
 							sx={{
