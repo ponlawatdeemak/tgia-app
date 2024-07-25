@@ -123,13 +123,20 @@ const ProfileMain = () => {
 				throw new Error('Profile update failed')
 			}
 
+			let userImage
+			try {
+				userImage = (await service.um.getProfile()).data?.image
+			} catch (error) {
+				throw new Error('Access Profile failed')
+			}
+
 			// ใช้ update ค่า data จาก useSession
 			try {
 				await update({
 					firstName: profileData.firstName,
 					lastName: profileData.lastName,
 					email: profileData.email,
-					image: profileData.image,
+					image: userImage,
 					responsibleProvinceCode: profileData.responsibleProvinceCode,
 					responsibleDistrictCode: profileData.responsibleDistrictCode,
 				})
