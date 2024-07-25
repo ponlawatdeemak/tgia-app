@@ -29,30 +29,30 @@ export interface MapViewProps extends PropsWithChildren {
 	className?: string
 }
 
-export type LayerStore = {
-	layers: LayersList
-	addLayer: (layer: Layer) => Layer
-}
-export const useLayerStore = create<LayerStore>()((set) => ({
-	addLayer: (layer) => {
-		set((state) => ({ ...state, layers: [...state.layers, layer] }))
-		return layer
-	},
-	layers: [
-		new MVTLayer({
-			data: 'https://tileserver.cropinsurance-dev.thaicom.io/boundary_2022/tiles.json',
-			filled: true,
-			getFillColor(d) {
-				return [255, 0, 0, 100]
-			},
-			getLineColor(d) {
-				return [255, 0, 0, 255]
-			},
-			getLineWidth: 4,
-			pickable: true,
-		}),
-	],
-}))
+// export type LayerStore = {
+// 	layers: LayersList
+// 	addLayer: (layer: Layer) => Layer
+// }
+// export const useLayerStore = create<LayerStore>()((set) => ({
+// 	addLayer: (layer) => {
+// 		set((state) => ({ ...state, layers: [...state.layers, layer] }))
+// 		return layer
+// 	},
+// 	layers: [
+// 		new MVTLayer({
+// 			data: 'https://tileserver.cropinsurance-dev.thaicom.io/boundary_2022/tiles.json',
+// 			filled: true,
+// 			getFillColor(d) {
+// 				return [255, 0, 0, 100]
+// 			},
+// 			getLineColor(d) {
+// 				return [255, 0, 0, 255]
+// 			},
+// 			getLineWidth: 4,
+// 			pickable: true,
+// 		}),
+// 	],
+// }))
 
 export default function MapView({ className = '' }: MapViewProps) {
 	const [viewState, setViewState] = useState<MapViewState>(INITIAL_VIEW_STATE)
