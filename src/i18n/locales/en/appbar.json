@@ -38,7 +38,7 @@
 	},
 	"success": {},
 	"error": {
-		"somethingWrong": "Something went wrong.",
+		"somethingWrong": "Something went wrong. Please check the information again.",
 		"incorrectEmailOrPassword": "Incorrect email or password"
 	},
 	"auth": {
