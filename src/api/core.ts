@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosInstance } from 'axios'
 import service, { ResponseDto } from './index'
- 
+
 interface AppAPI extends AxiosInstance {
 	fetch: (input: URL | RequestInfo, init?: RequestInit | undefined) => Promise<ResponseDto<any>>
 }
@@ -49,7 +49,6 @@ export const refreshAccessToken = async () => {
 	console.log('token expired!!!')
 	// ใช้ refresh token แลก access token ใหม่
 	const res = await service.auth.refreshToken({ userId: apiUserId || '', refreshToken: apiRefreshToken || '' })
-	console.log('TLOG ~ res:', res)
 	// const res = await service.auth.refreshToken({ userId: apiUserId || '', refreshToken: temp })
 	const accessToken = res?.tokens?.accessToken === '' ? undefined : res?.tokens?.accessToken
 	const refreshToken = res?.tokens?.refreshToken === '' ? undefined : res?.tokens?.refreshToken

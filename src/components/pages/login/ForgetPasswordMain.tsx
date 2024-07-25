@@ -49,7 +49,7 @@ const ForgotPasswordMain = () => {
 		async (values: ForgotPasswordDtoIn) => {
 			try {
 				await mutateForgotPassword(values)
-				router.push(`/${language}${AppPath.VerifyEmail}?email=${values?.email}`)
+				router.push(`${AppPath.VerifyEmail}?email=${values?.email}`)
 			} catch (error) {}
 		},
 		[mutateForgotPassword, router],
@@ -65,7 +65,7 @@ const ForgotPasswordMain = () => {
 
 	return (
 		<>
-			<AuthBreadcrumbs name={t('auth.forgotPassword')} href={`/${language}${AppPath.Login}`} />
+			<AuthBreadcrumbs name={t('auth.forgotPassword')} href={AppPath.Login} />
 
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center lg:mt-48 lg:items-start'>
@@ -101,7 +101,7 @@ const ForgotPasswordMain = () => {
 								<span>{t('default.ok')}</span>
 							</LoadingButton>
 						</form>
-						<Link href={`/${language}${AppPath.Login}`} className='mt-8'>
+						<Link href={AppPath.Login} className='mt-8'>
 							{t('auth.returnLogin')}
 						</Link>
 					</div>

@@ -31,11 +31,14 @@ export default withAuth(
 			const callback = nextUrl.href.includes('sessionExpired=1')
 				? nextUrl.href.replace('sessionExpired=1', '')
 				: nextUrl.href
-			return NextResponse.redirect(new URL(`${AppPath.Login}/?callbackUrl=${encodeURI(callback)}`, nextUrl))
+			return responseWithLanguageCookie(
+				req,
+				new URL(`${AppPath.Login}/?callbackUrl=${encodeURI(callback)}`, nextUrl),
+			)
 		}
 
-		if (nextUrl.pathname === '/') {
-			return NextResponse.redirect(new URL(AppPath.FieldLoss, nextUrl))
+		if (nextUrl.pathname === `/${lang}`) {
+			return responseWithLanguageCookie(req, new URL(AppPath.FieldLoss, nextUrl))
 		}
 
 		return responseWithLanguageCookie(req)
@@ -57,7 +60,13 @@ const redirectWithLanguagePath = (req: NextRequestWithAuth) => {
 		!appLanguages.some((loc) => req.nextUrl.pathname.startsWith(`/${loc}`)) &&
 		!req.nextUrl.pathname.startsWith('/_next')
 	) {
-		return NextResponse.redirect(new URL(`/${lng}${req.nextUrl.pathname}`, req.url))
+		const urlSearchParams = new URLSearchParams(req.nextUrl.search)
+		const paramList = Object.entries(Object.fromEntries(urlSearchParams.entries()))
+		const query = []
+		for (const [key, value] of paramList) {
+			query.push(`${key}=${value}`)
+		}
+		return NextResponse.redirect(new URL(`/${lng}${req.nextUrl.pathname}?${query.join('&')}`, req.url))
 	}
 
 	return NextResponse.next()
@@ -85,5 +94,5 @@ const responseWithLanguageCookie = (req: NextRequestWithAuth, redirectUrl?: URL)
 }
 
 export const config = {
-	matcher: ['/((?!api|_next/static|_next/image|assets|favicon.ico|public|sw.js|site.webmanifest|).*)'],
+	matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
 }

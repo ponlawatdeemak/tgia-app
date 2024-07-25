@@ -21,7 +21,7 @@ const FailedResetPassword: React.FC<FailedResetPasswordProps> = ({ buttonLabel, 
 			</div>
 			<Typography className='text-2xl font-bold'>{t('auth.headerResetPasswordUnsuccess')}</Typography>
 			<Typography>{t('auth.subHeaderResetPasswordUnsuccess')}</Typography>
-			<Button variant='contained' className='mt-8' href={`/${language}${buttonHref}`}>
+			<Button variant='contained' className='mt-8' href={buttonHref}>
 				{t(buttonLabel)}
 			</Button>
 		</div>

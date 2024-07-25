@@ -159,7 +159,7 @@ const ProfileMain = () => {
 		}
 	}, [])
 
-	const logout = useCallback(() => signOut({ callbackUrl: `/${language}${AppPath.Login}` }), [])
+	const logout = useCallback(() => signOut({ callbackUrl: AppPath.Login }), [])
 
 	const formik = useFormik<FormValues>({
 		enableReinitialize: true,
@@ -356,7 +356,7 @@ const ProfileMain = () => {
 							<Button
 								className='flex h-[40px] gap-[4px] border-[#6E6E6E] bg-success-light px-[16px] py-[8px] text-base text-[#7A7A7A] max-lg:w-full [&_.MuiButton-startIcon]:m-0'
 								variant='outlined'
-								onClick={() => router.push(`/${language}${AppPath.PasswordReset}`)}
+								onClick={() => router.push(AppPath.PasswordReset)}
 								color='primary'
 								disabled={busy}
 								startIcon={<Icon path={mdiLockReset} size={'20px'} className='text-[#A6A6A6]' />}

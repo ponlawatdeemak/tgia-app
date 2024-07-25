@@ -16,7 +16,7 @@ const VerifyEmailMain: React.FC<VerifyEmailMainProps> = ({ email }) => {
 	const { t } = useTranslation(language, 'appbar')
 	return (
 		<>
-			<AuthBreadcrumbs name={t('auth.checkEmail')} href={`/${language}${AppPath.Login}`} />
+			<AuthBreadcrumbs name={t('auth.checkEmail')} href={AppPath.Login} />
 
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center'>
@@ -29,7 +29,7 @@ const VerifyEmailMain: React.FC<VerifyEmailMainProps> = ({ email }) => {
 						<Button
 							fullWidth
 							variant='contained'
-							href={`/${language}${AppPath.ResetPassword}?email=${email}`}
+							href={`${AppPath.ResetPassword}?email=${email}`}
 							className='mt-10'
 						>
 							{t('auth.goToResetPassword')}

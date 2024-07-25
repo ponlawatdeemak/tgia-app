@@ -22,7 +22,7 @@ const SuccessResetPassword: React.FC<SuccessResetPasswordProps> = ({ buttonLabel
 			</div>
 			<Typography className='text-2xl font-bold'>{t('auth.headerResetPasswordSuccess')}</Typography>
 			<Typography className='text-center'>{t('auth.subHeaderResetPasswordSuccess')}</Typography>
-			<Button variant='contained' className='mt-8' href={`/${language}${buttonHref}`}>
+			<Button variant='contained' className='mt-8' href={buttonHref}>
 				{t(buttonLabel)}
 			</Button>
 		</div>

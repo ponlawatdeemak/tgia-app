@@ -80,9 +80,9 @@ const ResetPasswordMain = () => {
 		async (values: ResetPasswordFormType) => {
 			try {
 				await mutateResetPassword(values)
-				router.push(`/${language}${AppPath.ResetPassword}/?resetStatus=success`)
+				router.push(`${AppPath.ResetPassword}/?resetStatus=success`)
 			} catch (error) {
-				router.push(`/${language}${AppPath.ResetPassword}/?resetStatus=failed`)
+				router.push(`${AppPath.ResetPassword}/?resetStatus=failed`)
 			}
 		},
 		[mutateResetPassword, router],
@@ -101,7 +101,7 @@ const ResetPasswordMain = () => {
 
 	return (
 		<>
-			<AuthBreadcrumbs name={t('default.resetPassword')} href={`/${language}${AppPath.Login}`} />
+			<AuthBreadcrumbs name={t('default.resetPassword')} href={AppPath.Login} />
 
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center lg:mt-32 lg:items-start'>
@@ -116,7 +116,7 @@ const ResetPasswordMain = () => {
 								formik={formik}
 								resetPassword={true}
 								loading={isPending}
-								isEmail={!!email}
+								isEmail={true}
 							/>
 							{/* {!email && <FormHelperText error>URL รีเซ็ตรหัสผ่านไม่ถูกต้อง</FormHelperText>} */}
 							<LoadingButton

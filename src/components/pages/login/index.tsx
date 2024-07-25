@@ -61,7 +61,7 @@ const LoginMain = () => {
 					username: values.username,
 					password: values.password,
 					redirect: true,
-					callbackUrl: callbackUrl ?? `/${language}${AppPath.FieldLoss}`,
+					callbackUrl: callbackUrl ?? AppPath.FieldLoss,
 				})
 			} catch (error) {
 				console.log('Login failed')
@@ -151,10 +151,7 @@ const LoginMain = () => {
 							formik={formik}
 							className='mt-4'
 						/>
-						<Link
-							href={`/${language}${AppPath.ForgetPassword}`}
-							className='mt-3 self-end font-medium no-underline'
-						>
+						<Link href={AppPath.ForgetPassword} className='mt-3 self-end font-medium no-underline'>
 							{t('auth.forgotPassword')}
 						</Link>
 						<FormHelperText error>{errorMessage}</FormHelperText>
