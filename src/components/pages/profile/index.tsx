@@ -86,7 +86,6 @@ const ProfileMain = () => {
 		mutateAsync: mutateUpdateProfile,
 	} = useMutation({
 		mutationFn: async (payload: PutProfileDtoIn) => {
-			//await api.put('/profile', payload)
 			await service.um.putProfile(payload)
 			queryClient.invalidateQueries({ queryKey: ['getProfile'] })
 		},
@@ -207,14 +206,6 @@ const ProfileMain = () => {
 		setConfirmOpenDialog(false)
 		formik.handleSubmit()
 	}
-
-	// const handleCloseNavMenu = useCallback(
-	// 	(key: any) => {
-	// 		console.log('key', key)
-	// 		router.push(key)
-	// 	},
-	// 	[router],
-	// )
 
 	return (
 		<>
