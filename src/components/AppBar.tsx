@@ -74,7 +74,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 
 	const handleCloseNavMenu = useCallback(
 		(key: keyof typeof AppPath) => {
-			router.push(`/${language}${AppPath[key]}`)
+			router.push(AppPath[key])
 			setAnchorOthersMenuEl(null)
 			setDrawerOpen(false)
 		},
@@ -100,8 +100,6 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 			router.push(window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
 		}
 	}
-
-	//console.log('image', user?.image)
 
 	if (isDesktop) {
 		return (
@@ -142,17 +140,45 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 											},
 										}}
 									>
-										{menu?.children?.map((subMenu) => (
-											<MenuItem
-												key={subMenu.path}
-												onClick={() => handleCloseNavMenu(subMenu.key)}
-												className='p-3 px-2.5 text-base font-medium'
-											>
-												{t(subMenu.name)}
-											</MenuItem>
-										))}
+										{menu?.children?.map((subMenu) =>
+											(subMenu.access?.length || 0) > 0 ? (
+												subMenu.access?.includes(user?.role || '') && (
+													<MenuItem
+														key={subMenu.path}
+														onClick={() => handleCloseNavMenu(subMenu.key)}
+														className='p-3 px-2.5 text-base font-medium'
+													>
+														{t(subMenu.name)}
+													</MenuItem>
+												)
+											) : (
+												<MenuItem
+													key={subMenu.path}
+													onClick={() => handleCloseNavMenu(subMenu.key)}
+													className='p-3 px-2.5 text-base font-medium'
+												>
+													{t(subMenu.name)}
+												</MenuItem>
+											),
+										)}
 									</Menu>
 								</div>
+							) : (menu.access?.length || 0) > 0 ? (
+								menu.access?.includes(user?.role || '') && (
+									<MenuItem
+										key={menu.path}
+										onClick={() => handleCloseNavMenu(menu.key)}
+										className='border-b-[2px] border-solid border-transparent bg-inherit p-0'
+										selected={selectedMenuKey === menu.key}
+									>
+										<Typography
+											textAlign='center'
+											className='my-1 text-base font-semibold text-black'
+										>
+											{t(menu.name)}
+										</Typography>
+									</MenuItem>
+								)
 							) : (
 								<MenuItem
 									key={menu.path}
@@ -369,7 +395,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 						</IconButton>
 					</div>
 					<Divider sx={{ borderBottomWidth: '1px', borderColor: '#D6D6D6' }} />
-					<div className='m-4 flex flex-col overflow-scroll'>
+					<div className='m-4 flex flex-col overflow-auto'>
 						<List
 							className='h-full p-0'
 							sx={{
@@ -385,15 +411,32 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 							{appMenuConfig.map((menu) =>
 								(menu.children?.length || 0) > 0 ? (
 									<div key={menu.path}>
-										{menu.children?.map((subMenu) => (
-											<ListItem
-												key={subMenu.path}
-												onClick={() => handleCloseNavMenu(subMenu.key)}
-											>
-												<ListItemText primary={t(subMenu.name)} />
-											</ListItem>
-										))}
+										{menu.children?.map((subMenu) =>
+											(subMenu.access?.length || 0) > 0 ? (
+												subMenu.access?.includes(user?.role || '') && (
+													<ListItem
+														key={subMenu.path}
+														onClick={() => handleCloseNavMenu(subMenu.key)}
+													>
+														<ListItemText primary={t(subMenu.name)} />
+													</ListItem>
+												)
+											) : (
+												<ListItem
+													key={subMenu.path}
+													onClick={() => handleCloseNavMenu(subMenu.key)}
+												>
+													<ListItemText primary={t(subMenu.name)} />
+												</ListItem>
+											),
+										)}
 									</div>
+								) : (menu.access?.length || 0) > 0 ? (
+									menu.access?.includes(user?.role || '') && (
+										<ListItem key={menu.path} onClick={() => handleCloseNavMenu(menu.key)}>
+											<ListItemText primary={t(menu.name)} />
+										</ListItem>
+									)
 								) : (
 									<ListItem key={menu.path} onClick={() => handleCloseNavMenu(menu.key)}>
 										<ListItemText primary={t(menu.name)} />

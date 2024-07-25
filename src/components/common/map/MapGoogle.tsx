@@ -1,8 +1,9 @@
 'use client'
 import React, { useMemo, useEffect } from 'react'
 import { APIProvider, Map, useMap } from '@vis.gl/react-google-maps'
-import { GoogleMapsOverlay } from '@deck.gl/google-maps'
-import { MapInterface, useLayerStore } from './MapView'
+import { GoogleMapsOverlay } from '@deck.gl/google-maps' 
+import useLayerStore from './store/map'
+import { MapInterface } from './interface/map'
 
 function DeckGLOverlay() {
 	const layers = useLayerStore((state) => state.layers)

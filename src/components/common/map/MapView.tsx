@@ -1,58 +1,17 @@
 'use client'
-import { PropsWithChildren, useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import classNames from 'classnames'
 import { ToggleButtonGroup, ToggleButton } from '@mui/material'
 import MapGoogle from './MapGoogle'
 import MapLibre from './MapLibre'
-import { MVTLayer } from '@deck.gl/geo-layers'
 import { BASEMAP } from '@deck.gl/carto'
-import { Layer, LayersList } from '@deck.gl/core'
-import { create } from 'zustand'
+import { MapViewProps, MapViewState } from './interface/map'
 
-export interface MapInterface {
-	layers?: LayersList
-	viewState?: MapViewState
-	onViewStateChange?: (viewState: MapViewState) => void
-}
-export interface MapViewState {
-	longitude: number
-	latitude: number
-	zoom: number
-}
 const INITIAL_VIEW_STATE: MapViewState = {
 	longitude: 100,
 	latitude: 13,
 	zoom: 5,
 }
-
-export interface MapViewProps extends PropsWithChildren {
-	className?: string
-}
-
-export type LayerStore = {
-	layers: LayersList
-	addLayer: (layer: Layer) => Layer
-}
-export const useLayerStore = create<LayerStore>()((set) => ({
-	addLayer: (layer) => {
-		set((state) => ({ ...state, layers: [...state.layers, layer] }))
-		return layer
-	},
-	layers: [
-		new MVTLayer({
-			data: 'https://tileserver.cropinsurance-dev.thaicom.io/boundary_2022/tiles.json',
-			filled: true,
-			getFillColor(d) {
-				return [255, 0, 0, 100]
-			},
-			getLineColor(d) {
-				return [255, 0, 0, 255]
-			},
-			getLineWidth: 4,
-			pickable: true,
-		}),
-	],
-}))
 
 export default function MapView({ className = '' }: MapViewProps) {
 	const [viewState, setViewState] = useState<MapViewState>(INITIAL_VIEW_STATE)

@@ -97,10 +97,10 @@ const PasswordResetMain = () => {
 				}
 				await mutateChangePassword(passwordInfo)
 
-				router.push(`/${language}${AppPath.PasswordReset}/?resetStatus=success`)
+				router.push(`${AppPath.PasswordReset}/?resetStatus=success`)
 			} catch (error) {
 				console.log('Password update failed')
-				router.push(`/${language}${AppPath.PasswordReset}/?resetStatus=failed`)
+				router.push(`${AppPath.PasswordReset}/?resetStatus=failed`)
 			} finally {
 				setBusy(false)
 			}
@@ -138,7 +138,7 @@ const PasswordResetMain = () => {
 			<div>
 				<Button
 					className='flex gap-[4px] border-gray py-[4px] pl-[6px] pr-[8px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
-					onClick={() => router.push(`/${language}${AppPath.Profile}`)}
+					onClick={() => router.push(AppPath.Profile)}
 					variant='outlined'
 					disabled={busy}
 					startIcon={<Icon path={mdiArrowLeft} size={'18px'} className='text-black' />}

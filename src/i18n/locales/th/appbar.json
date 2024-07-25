@@ -38,7 +38,7 @@
 	},
 	"success": {},
 	"error": {
-		"somethingWrong": "มีบางอย่างผิดพลาด",
+		"somethingWrong": "เกิดข้อผิดพลาด กรุณาตรวจสอบข้อมูลอีกครั้ง",
 		"incorrectEmailOrPassword": "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
 
 		
