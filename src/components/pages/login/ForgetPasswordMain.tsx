@@ -3,7 +3,7 @@
 import service, { ResponseDto } from '@/api'
 import FormInput from '@/components/common/input/FormInput'
 import { AppPath } from '@/config/app'
-import { Button, FormHelperText, Link, Typography } from '@mui/material'
+import { Button, CircularProgress, FormHelperText, Link, Typography } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { useFormik } from 'formik'
@@ -16,7 +16,6 @@ import { ForgotPasswordDtoIn } from '@/api/dto/auth/dto-in.dto'
 import useLanguage from '@/store/language'
 import { useTranslation } from '@/i18n/client'
 import LoadingButton from '@mui/lab/LoadingButton'
-import clsx from 'clsx'
 
 // const validationSchema = yup.object({
 // 	email: yup.string().email('รูปแบบอีเมลไม่ถูกต้อง').required('กรุณากรอกอีเมล'),
@@ -90,24 +89,16 @@ const ForgotPasswordMain = () => {
 								className='mt-8'
 							/>
 							<FormHelperText error>{errorMessage}</FormHelperText>
-							{/* <Button fullWidth disabled={isPending} variant='contained' type='submit' className='mt-8'>
-								{t('default.ok')}
-							</Button> */}
 							<LoadingButton
 								fullWidth
 								loading={isPending}
 								loadingPosition='start'
+								startIcon={<CircularProgress size={0} />}
 								variant='contained'
 								type='submit'
-								className={clsx(
-									'mt-8 h-[36.5px] [&_.MuiLoadingButton-loadingIndicator]:relative [&_.MuiLoadingButton-loadingIndicator]:left-auto',
-									{
-										'[&_.MuiLoadingButton-loadingIndicator]:right-[35px]': language === 'th',
-										'[&_.MuiLoadingButton-loadingIndicator]:right-[40px]': language === 'en',
-									},
-								)}
+								className='mt-8 [&_.MuiButton-startIcon]:m-0'
 							>
-								<div className='absolute'>{t('default.ok')}</div>
+								<span>{t('default.ok')}</span>
 							</LoadingButton>
 						</form>
 						<Link href={`/${language}${AppPath.Login}`} className='mt-8'>

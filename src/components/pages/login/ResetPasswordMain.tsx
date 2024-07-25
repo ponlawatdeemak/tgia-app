@@ -1,10 +1,8 @@
 'use client'
 
 import service, { ResponseDto } from '@/api'
-import FormInput from '@/components/common/input/FormInput'
-import PasswordInput from '@/components/common/input/PasswordInput'
 import { AppPath } from '@/config/app'
-import { Button, FormHelperText, Typography } from '@mui/material'
+import { Button, CircularProgress, FormHelperText, Typography } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { useFormik } from 'formik'
@@ -17,7 +15,7 @@ import { ResetPasswordDtoIn } from '@/api/dto/auth/dto-in.dto'
 import useLanguage from '@/store/language'
 import { useTranslation } from '@/i18n/client'
 import LoadingButton from '@mui/lab/LoadingButton'
-import clsx from 'clsx'
+import ResetPasswordForm from '@/components/shared/ResetPasswordForm'
 
 // const validationSchema = yup.object({
 // 	email: yup.string().required(),
@@ -113,53 +111,24 @@ const ResetPasswordMain = () => {
 							onSubmit={formik.handleSubmit}
 							className='flex w-full max-w-[340px] flex-col sm:max-w-full'
 						>
-							<FormInput
-								name='email'
-								label={t('default.email')}
-								disabled={!!email}
+							<ResetPasswordForm
+								className='mt-4 flex flex-col gap-4'
 								formik={formik}
-								className='mt-4'
-							/>
-							<PasswordInput
-								disabled={isPending}
-								name='password'
-								label={t('default.passwordNew')}
-								formik={formik}
-								className='mt-4'
-							/>
-							<PasswordInput
-								disabled={isPending}
-								name='confirmPassword'
-								label={t('default.passwordConfirm')}
-								formik={formik}
-								className='mt-4'
-							/>
-							<FormInput
-								disabled={isPending}
-								name='confirmationCode'
-								label={t('auth.verificationCode')}
-								formik={formik}
-								className='mt-4'
+								resetPassword={true}
+								loading={isPending}
+								isEmail={!!email}
 							/>
 							{/* {!email && <FormHelperText error>URL รีเซ็ตรหัสผ่านไม่ถูกต้อง</FormHelperText>} */}
-							{/* <Button fullWidth disabled={isPending} variant='contained' className='mt-10' type='submit'>
-								{t('default.confirm')}
-							</Button> */}
 							<LoadingButton
 								fullWidth
 								loading={isPending}
 								loadingPosition='start'
+								startIcon={<CircularProgress size={0} />}
 								variant='contained'
 								type='submit'
-								className={clsx(
-									'mt-10 h-[36.5px] [&_.MuiLoadingButton-loadingIndicator]:relative [&_.MuiLoadingButton-loadingIndicator]:left-auto',
-									{
-										'[&_.MuiLoadingButton-loadingIndicator]:right-[35px]': language === 'th',
-										'[&_.MuiLoadingButton-loadingIndicator]:right-[40px]': language === 'en',
-									},
-								)}
+								className='mt-10 [&_.MuiButton-startIcon]:m-0'
 							>
-								<div className='absolute'>{t('default.confirm')}</div>
+								<span>{t('default.confirm')}</span>
 							</LoadingButton>
 						</form>
 					</div>

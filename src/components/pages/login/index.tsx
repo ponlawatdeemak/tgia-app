@@ -6,7 +6,15 @@ import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentL
 import ThaicomLogo from '@/components/svg/ThaicomLogo'
 import TriangleLogo from '@/components/svg/TriangleLogo'
 import { AppPath } from '@/config/app'
-import { Button, FormHelperText, Link, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import {
+	Button,
+	CircularProgress,
+	FormHelperText,
+	Link,
+	ToggleButton,
+	ToggleButtonGroup,
+	Typography,
+} from '@mui/material'
 import { useFormik } from 'formik'
 import { signIn } from 'next-auth/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -16,7 +24,6 @@ import { useTranslation } from '@/i18n/client'
 import * as yup from 'yup'
 import { Language } from '@/enum'
 import LoadingButton from '@mui/lab/LoadingButton'
-import clsx from 'clsx'
 
 // const validationSchema = yup.object({
 // 	username: yup.string().required('กรุณากรอกอีเมล'),
@@ -151,24 +158,16 @@ const LoginMain = () => {
 							{t('auth.forgotPassword')}
 						</Link>
 						<FormHelperText error>{errorMessage}</FormHelperText>
-						{/* <Button disabled={busy} fullWidth variant='contained' className='mt-8' type='submit'>
-							{t('auth.login')}
-						</Button> */}
 						<LoadingButton
 							fullWidth
 							loading={busy}
 							loadingPosition='start'
+							startIcon={<CircularProgress size={0} />}
 							variant='contained'
 							type='submit'
-							className={clsx(
-								'mt-8 h-[36.5px] [&_.MuiLoadingButton-loadingIndicator]:relative [&_.MuiLoadingButton-loadingIndicator]:left-auto',
-								{
-									'[&_.MuiLoadingButton-loadingIndicator]:right-[45px]': language === 'th',
-									'[&_.MuiLoadingButton-loadingIndicator]:right-[30px]': language === 'en',
-								},
-							)}
+							className='mt-8 [&_.MuiButton-startIcon]:m-0'
 						>
-							<div className='absolute'>{t('auth.login')}</div>
+							<span>{t('auth.login')}</span>
 						</LoadingButton>
 					</form>
 				</div>
