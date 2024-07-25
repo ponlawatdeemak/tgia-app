@@ -17,38 +17,42 @@ import { visuallyHidden } from '@mui/utils'
 
 interface Data {
 	id: number
-	calories: number
-	carbs: number
-	fat: number
-	name: string
-	protein: number
+	fullName: string
+	email: string
+	organization: string
+	role: string
+	status: string
 }
 
-function createData(id: number, name: string, calories: number, fat: number, carbs: number, protein: number): Data {
+function createData(
+	id: number,
+	fullName: string,
+	email: string,
+	organization: string,
+	role: string,
+	status: string,
+): Data {
 	return {
 		id,
-		name,
-		calories,
-		fat,
-		carbs,
-		protein,
+		fullName,
+		email,
+		organization,
+		role,
+		status,
 	}
 }
 
 const rows = [
-	createData(1, 'Cupcake', 305, 3.7, 67, 4.3),
-	createData(2, 'Donut', 452, 25.0, 51, 4.9),
-	createData(3, 'Eclair', 262, 16.0, 24, 6.0),
-	createData(4, 'Frozen yoghurt', 159, 6.0, 24, 4.0),
-	createData(5, 'Gingerbread', 356, 16.0, 49, 3.9),
-	createData(6, 'Honeycomb', 408, 3.2, 87, 6.5),
-	createData(7, 'Ice cream sandwich', 237, 9.0, 37, 4.3),
-	createData(8, 'Jelly Bean', 375, 0.0, 94, 0.0),
-	createData(9, 'KitKat', 518, 26.0, 65, 7.0),
-	createData(10, 'Lollipop', 392, 0.2, 98, 0.0),
-	createData(11, 'Marshmallow', 318, 0, 81, 2.0),
-	createData(12, 'Nougat', 360, 19.0, 9, 37.0),
-	createData(13, 'Oreo', 437, 18.0, 63, 4.0),
+	createData(1, 'สมชาย ลำเพลมพัด', 'Somchai@gmail.com', 'Thaicom', 'Super Admin', 'open'),
+	createData(2, 'สิริกัญญา เมตตาทรัพย์', 'Sirikanya@gmail.com', 'TGIA', 'Admin', 'open'),
+	createData(3, 'ขวัญมณี เอี่ยมกำเนิด', 'Kwanmani@gmail.com', 'DOAE', 'Admin', 'open'),
+	createData(4, 'กษิดิษ เกษรศาสน์', 'Kasidit@gmail.com', 'TGIA', 'Admin', 'open'),
+	createData(5, 'เอกลักษณ์ ตั้งคงอยู่', 'Eklaksorn@gmail.com', 'TGIA', 'User', 'open'),
+	createData(6, 'สมาน ดำรงไทย', 'Saman@gmail.com', 'TGIA', 'User', 'close'),
+	createData(7, 'ดิเรก รักเกษตร', 'Direk@gmail.com', 'TGIA', 'User', 'close'),
+	createData(8, 'กฤษณา เยี่ยมอำไพ', 'Kritsana@gmail.com', 'TGIA', 'User', 'close'),
+	createData(9, 'เขมิกา สินเจริญสุข', 'Khemika@gmail.com', 'TGIA', 'User', 'close'),
+	createData(10, 'พรพิมา บุญสูงเนิน', 'Phonphima@gmail.com', 'TGIA', 'User', 'close'),
 ]
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -72,10 +76,6 @@ function getComparator<Key extends keyof any>(
 		: (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
 function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
 	const stabilizedThis = array.map((el, index) => [el, index] as [T, number])
 	stabilizedThis.sort((a, b) => {
@@ -97,95 +97,40 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
 	{
-		id: 'name',
+		id: 'fullName',
 		numeric: false,
 		disablePadding: true,
-		label: 'Dessert (100g serving)',
+		label: 'ชื่อ นามสกุล',
 	},
 	{
-		id: 'calories',
-		numeric: true,
+		id: 'email',
+		numeric: false,
 		disablePadding: false,
-		label: 'Calories',
+		label: 'อีเมล',
 	},
 	{
-		id: 'fat',
-		numeric: true,
+		id: 'organization',
+		numeric: false,
 		disablePadding: false,
-		label: 'Fat (g)',
+		label: 'หน่วยงาน',
 	},
 	{
-		id: 'carbs',
-		numeric: true,
+		id: 'role',
+		numeric: false,
 		disablePadding: false,
-		label: 'Carbs (g)',
+		label: 'บทบาท',
 	},
 	{
-		id: 'protein',
-		numeric: true,
+		id: 'status',
+		numeric: false,
 		disablePadding: false,
-		label: 'Protein (g)',
+		label: 'สถานะ',
 	},
 ]
 
-interface EnhancedTableProps {
-	numSelected: number
-	onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void
-	onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void
-	order: Order
-	orderBy: string
-	rowCount: number
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-	const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props
-	const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-		onRequestSort(event, property)
-	}
-
-	return (
-		<TableHead>
-			<TableRow>
-				<TableCell padding='checkbox'>
-					<Checkbox
-						color='primary'
-						indeterminate={numSelected > 0 && numSelected < rowCount}
-						checked={rowCount > 0 && numSelected === rowCount}
-						onChange={onSelectAllClick}
-						inputProps={{
-							'aria-label': 'select all desserts',
-						}}
-					/>
-				</TableCell>
-				{headCells.map((headCell) => (
-					<TableCell
-						key={headCell.id}
-						align={headCell.numeric ? 'right' : 'left'}
-						padding={headCell.disablePadding ? 'none' : 'normal'}
-						sortDirection={orderBy === headCell.id ? order : false}
-					>
-						<TableSortLabel
-							active={orderBy === headCell.id}
-							direction={orderBy === headCell.id ? order : 'asc'}
-							onClick={createSortHandler(headCell.id)}
-						>
-							{headCell.label}
-							{orderBy === headCell.id ? (
-								<Box component='span' sx={visuallyHidden}>
-									{order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-								</Box>
-							) : null}
-						</TableSortLabel>
-					</TableCell>
-				))}
-			</TableRow>
-		</TableHead>
-	)
-}
-
 const UserManagementTable = () => {
 	const [order, setOrder] = React.useState<Order>('asc')
-	const [orderBy, setOrderBy] = React.useState<keyof Data>('calories')
+	const [orderBy, setOrderBy] = React.useState<keyof Data>('fullName')
 	const [selected, setSelected] = React.useState<readonly number[]>([])
 	const [page, setPage] = React.useState(0)
 	const [dense, setDense] = React.useState(false)
@@ -204,6 +149,10 @@ const UserManagementTable = () => {
 			return
 		}
 		setSelected([])
+	}
+
+	const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+		handleRequestSort(event, property)
 	}
 
 	const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
@@ -231,10 +180,6 @@ const UserManagementTable = () => {
 		setPage(0)
 	}
 
-	const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setDense(event.target.checked)
-	}
-
 	const isSelected = (id: number) => selected.indexOf(id) !== -1
 
 	// Avoid a layout jump when reaching the last page with empty rows.
@@ -260,14 +205,42 @@ const UserManagementTable = () => {
 				<Box className='flex flex-col gap-[16px]'>
 					<TableContainer>
 						<Table sx={{ minWidth: 750 }} aria-labelledby='tableTitle' size={dense ? 'small' : 'medium'}>
-							<EnhancedTableHead
-								numSelected={selected.length}
-								order={order}
-								orderBy={orderBy}
-								onSelectAllClick={handleSelectAllClick}
-								onRequestSort={handleRequestSort}
-								rowCount={rows.length}
-							/>
+							<TableHead>
+								<TableRow>
+									<TableCell padding='checkbox'>
+										<Checkbox
+											color='primary'
+											indeterminate={selected.length > 0 && selected.length < rows.length}
+											checked={rows.length > 0 && selected.length === rows.length}
+											onChange={handleSelectAllClick}
+											inputProps={{
+												'aria-label': 'select all desserts',
+											}}
+										/>
+									</TableCell>
+									{headCells.map((headCell) => (
+										<TableCell
+											key={headCell.id}
+											align={headCell.numeric ? 'right' : 'left'}
+											padding={headCell.disablePadding ? 'none' : 'normal'}
+											sortDirection={orderBy === headCell.id ? order : false}
+										>
+											<TableSortLabel
+												active={orderBy === headCell.id}
+												direction={orderBy === headCell.id ? order : 'asc'}
+												onClick={createSortHandler(headCell.id)}
+											>
+												{headCell.label}
+												{orderBy === headCell.id ? (
+													<Box component='span' sx={visuallyHidden}>
+														{order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+													</Box>
+												) : null}
+											</TableSortLabel>
+										</TableCell>
+									))}
+								</TableRow>
+							</TableHead>
 							<TableBody>
 								{visibleRows.map((row, index) => {
 									const isItemSelected = isSelected(row.id)
@@ -294,12 +267,12 @@ const UserManagementTable = () => {
 												/>
 											</TableCell>
 											<TableCell component='th' id={labelId} scope='row' padding='none'>
-												{row.name}
+												{row.fullName}
 											</TableCell>
-											<TableCell align='right'>{row.calories}</TableCell>
-											<TableCell align='right'>{row.fat}</TableCell>
-											<TableCell align='right'>{row.carbs}</TableCell>
-											<TableCell align='right'>{row.protein}</TableCell>
+											<TableCell>{row.email}</TableCell>
+											<TableCell>{row.organization}</TableCell>
+											<TableCell>{row.role}</TableCell>
+											<TableCell>{row.status}</TableCell>
 										</TableRow>
 									)
 								})}
