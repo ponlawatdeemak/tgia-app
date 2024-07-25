@@ -20,12 +20,18 @@ export default withAuth(
 		const isLoggedIn = !!token
 		const isAuthRoute = nextUrl.pathname.includes(authPathPrefix)
 
+		console.log('token ', token)
+
+		console.log('isAuthRoute ', isAuthRoute)
+
 		if (isAuthRoute) {
 			if (isLoggedIn) {
 				return responseWithLanguageCookie(req, new URL(AppPath.FieldLoss, nextUrl))
 			}
 			return responseWithLanguageCookie(req)
 		}
+
+		console.log('isLoggedIn ', isLoggedIn)
 
 		if (!isLoggedIn) {
 			const callback = nextUrl.href.includes('sessionExpired=1')

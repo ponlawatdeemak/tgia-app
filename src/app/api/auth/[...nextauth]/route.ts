@@ -28,7 +28,9 @@ const authOptions: NextAuthOptions = {
 			async authorize(credentials) {
 				try {
 					const { username, password } = credentials as any
+					console.log('route', username, password)
 					const res = await service.auth.login({ username, password })
+					console.log('route res', res)
 					if (res.data?.id) return { ...res.data, tokens: res.tokens }
 					return null
 				} catch (error: any) {
@@ -78,6 +80,7 @@ const authOptions: NextAuthOptions = {
 
 			const { error, ...user } = token
 			session.user = user as UserSession
+			console.log('route session ', accessToken)
 			if (accessToken) {
 				updateAccessToken({ accessToken, refreshToken, userId })
 				session.user.tokens.accessToken = accessToken
