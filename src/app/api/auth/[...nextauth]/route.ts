@@ -27,6 +27,7 @@ const authOptions: NextAuthOptions = {
 			},
 			async authorize(credentials) {
 				try {
+					console.log('credentials', credentials)
 					const { username, password } = credentials as any
 					console.log('route', username, password)
 					const res = await service.auth.login({ username, password })
