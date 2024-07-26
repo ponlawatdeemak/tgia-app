@@ -1,13 +1,13 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 import React, { FormEvent } from 'react'
 
-export interface UserManagementProps {
+export interface ProfileFormProps {
 	open: boolean
 	onClose: () => void
 	onSubmitUser: (event: FormEvent) => void
 }
 
-const UserManagementForm: React.FC<UserManagementProps> = ({ open, onClose, onSubmitUser, ...props }) => {
+const UserManagementForm: React.FC<ProfileFormProps> = ({ open, onClose, onSubmitUser, ...props }) => {
 	return (
 		<Dialog open={open} onClose={onClose} component='form' onSubmit={onSubmitUser} fullWidth scroll='paper'>
 			<DialogTitle>เพิ่มผู้ใช้งาน</DialogTitle>

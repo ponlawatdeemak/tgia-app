@@ -19,25 +19,7 @@ import { CreateProfileImageDtoIn, PutProfileDtoIn } from '@/api/dto/um/dto-in.dt
 import { QueryClient, useMutation } from '@tanstack/react-query'
 import { AppPath } from '@/config/app'
 import { usePathname, useRouter } from 'next/navigation'
-
-interface AlertInfoType {
-	open: boolean
-	severity: 'success' | 'error'
-	message: string
-}
-
-interface FormValues {
-	id: string
-	username: string
-	firstName: string
-	lastName: string
-	email: string
-	image: File | string
-	orgCode: string
-	role: string
-	responsibleProvinceCode: string
-	responsibleDistrictCode: string
-}
+import { AlertInfoType, FormValues } from '@/components/shared/ProfileForm/interface'
 
 const defaultFormValues: FormValues = {
 	id: '',
