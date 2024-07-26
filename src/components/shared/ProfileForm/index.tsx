@@ -1,73 +1,25 @@
-import React, { FormEvent } from 'react'
+'use client'
 
+import React from 'react'
 import AutocompleteInput from '@/components/common/input/AutocompleteInput'
 import FormInput from '@/components/common/input/FormInput'
 import UploadImage from '@/components/common/upload/UploadImage'
-import AlertConfirm from '@/components/common/dialog/AlertConfirm'
-import { Alert, Box, Button, CircularProgress, Paper, Snackbar, Typography } from '@mui/material'
-import Icon from '@mdi/react'
-import { mdiLockReset } from '@mdi/js'
-import { useFormik, FormikProps } from 'formik'
-
-import { useCallback, useEffect, useState } from 'react'
-import * as yup from 'yup'
+import { Box } from '@mui/material'
+import { FormikProps } from 'formik'
+import { useEffect } from 'react'
 import service from '@/api'
-import { signOut, useSession } from 'next-auth/react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from '@/i18n/client'
 import useLanguage from '@/store/language'
-import { CreateProfileImageDtoIn, PutProfileDtoIn } from '@/api/dto/um/dto-in.dto'
-import { QueryClient, useMutation } from '@tanstack/react-query'
-import { AppPath } from '@/config/app'
-import { usePathname, useRouter } from 'next/navigation'
-import { AlertInfoType, FormValues } from './interface'
 
 export interface ProfileFormProps {
 	formik: FormikProps<any>
+	loading?: boolean
 }
 
-const defaultFormValues: FormValues = {
-	id: '',
-	username: '',
-	firstName: '',
-	lastName: '',
-	email: '',
-	image: '',
-	orgCode: '',
-	role: '',
-	responsibleProvinceCode: '',
-	responsibleDistrictCode: '',
-}
-
-const ProfileForm: React.FC<ProfileFormProps> = ({ formik }) => {
-	const router = useRouter()
-	const queryClient = new QueryClient()
-	const { data: session, update } = useSession()
+const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) => {
 	const { language } = useLanguage()
 	const { t } = useTranslation(language, 'appbar')
-
-	const [busy, setBusy] = useState<boolean>(false)
-	const [alertInfo, setAlertInfo] = useState<AlertInfoType>({
-		open: false,
-		severity: 'success',
-		message: '',
-	})
-
-	const validationSchema = yup.object({
-		firstName: yup.string().required(t('warning.inputFirstName')),
-		lastName: yup.string().required(t('warning.inputLastName')),
-		email: yup.string().email(t('warning.invalidEmailFormat')).required(t('warning.inputEmail')),
-		responsibleProvinceCode: yup.string().required(t('warning.inputProvince')),
-	})
-
-
-
-	// const formik = useFormik<FormValues>({
-	// 	enableReinitialize: true,
-	// 	initialValues: userData?.data || defaultFormValues,
-	// 	validationSchema: validationSchema,
-	// 	onSubmit,
-	// })
 
 	const { data: provinceLookupData, isLoading: isProvinceDataLoading } = useQuery({
 		queryKey: ['getProvince'],
@@ -83,6 +35,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik }) => {
 		queryFn: () => service.lookup.get(`districts/${formik.values.responsibleProvinceCode}`),
 		enabled: !!formik.values.responsibleProvinceCode,
 	})
+
+	useEffect(() => {
+		if (formik.values.responsibleProvinceCode) {
+			refetchDistricts()
+		}
+	}, [formik.values.responsibleProvinceCode, refetchDistricts])
 
 	const { data: organizationLookupData, isLoading: isOrganizationDataLoading } = useQuery({
 		queryKey: ['getOrganization'],
@@ -101,7 +59,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik }) => {
 					name='image'
 					formik={formik}
 					className='flex flex-col items-center gap-[12px] py-[16px]'
-					disabled={busy}
+					disabled={loading}
 				/>
 			</div>
 			<div className='flex flex-col gap-[16px]'>
@@ -113,7 +71,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik }) => {
 							label={t('default.firstName')}
 							formik={formik}
 							required
-							disabled={busy}
+							disabled={loading}
 						/>
 						<FormInput
 							className='w-full text-sm font-medium lg:w-[240px]'
@@ -121,7 +79,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik }) => {
 							label={t('default.lastName')}
 							formik={formik}
 							required
-							disabled={busy}
+							disabled={loading}
 						/>
 					</div>
 					<div className='flex gap-[12px] max-lg:flex-col'>
@@ -149,7 +107,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik }) => {
 							name='responsibleProvinceCode'
 							label={t('default.province')}
 							formik={formik}
-							disabled={isProvinceDataLoading || busy}
+							disabled={isProvinceDataLoading || loading}
 							required
 						/>
 						<AutocompleteInput
@@ -164,7 +122,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik }) => {
 							name='responsibleDistrictCode'
 							label={t('default.amphor')}
 							formik={formik}
-							disabled={isDistricDataLoading || busy}
+							disabled={isDistricDataLoading || loading}
 						/>
 					</div>
 					<div className='flex gap-[16px] max-lg:hidden max-lg:flex-col lg:gap-[12px]'>
