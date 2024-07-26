@@ -116,7 +116,7 @@ const ResetPasswordMain = () => {
 								formik={formik}
 								resetPassword={true}
 								loading={isPending}
-								isEmail={true}
+								isEmail={!!email}
 							/>
 							{/* {!email && <FormHelperText error>URL รีเซ็ตรหัสผ่านไม่ถูกต้อง</FormHelperText>} */}
 							<LoadingButton
