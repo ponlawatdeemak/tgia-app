@@ -42,7 +42,7 @@ const AlertConfirm: React.FC<AlertConfirmProps> = ({
 	return (
 		<Dialog open={open} onClose={onClose} className='[&_.MuiDialog-paper]:w-[560px]'>
 			<DialogTitle className='flex items-center justify-between p-[8px] pl-[24px]'>
-				<Typography className='text-xl font-semibold'>{title}</Typography>
+				<Typography className='text-md font-semibold'>{title}</Typography>
 				{!hideClose && (
 					<IconButton aria-label='close' onClick={onClose}>
 						<Icon path={mdiClose} size={'24px'} />
@@ -50,7 +50,7 @@ const AlertConfirm: React.FC<AlertConfirmProps> = ({
 				)}
 			</DialogTitle>
 			<DialogContent className='flex flex-col gap-[24px] py-[16px]'>
-				<DialogContentText className='text-md text-black'>{content}</DialogContentText>
+				<DialogContentText className='text-base text-black'>{content}</DialogContentText>
 				{subContent && <DialogContentText>{subContent}</DialogContentText>}
 			</DialogContent>
 			{mode === 'DialogConfirm' ? (
