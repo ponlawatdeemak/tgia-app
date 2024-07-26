@@ -25,11 +25,6 @@ import * as yup from 'yup'
 import { Language } from '@/enum'
 import LoadingButton from '@mui/lab/LoadingButton'
 
-// const validationSchema = yup.object({
-// 	username: yup.string().required('กรุณากรอกอีเมล'),
-// 	password: yup.string().required('กรุณากรอกรหัสผ่าน'),
-// })
-
 const LoginMain = () => {
 	const searchParams = useSearchParams()
 	const { language, setLanguage } = useLanguage()
