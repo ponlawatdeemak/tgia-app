@@ -35,6 +35,7 @@ const authOptions: NextAuthOptions = {
 					if (res.data?.id) return { ...res.data, tokens: res.tokens }
 					return null
 				} catch (error: any) {
+					console.log('CredentialsProvider error ', error)
 					return null
 				}
 			},
