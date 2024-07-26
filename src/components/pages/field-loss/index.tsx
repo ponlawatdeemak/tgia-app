@@ -1,5 +1,3 @@
-'use client'
-
 import MapView from '@/components/common/map/MapView'
 import { Paper } from '@mui/material'
 

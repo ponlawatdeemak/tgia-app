@@ -2,17 +2,14 @@
 import { Breadcrumbs, Link, Typography } from '@mui/material'
 import React from 'react'
 
-import useLanguage from '@/store/language'
-import { useTranslation } from '@/i18n/client'
+import { WithTranslation, withTranslation } from 'react-i18next'
 
-interface AuthBreadcrumbsProps {
+interface AuthBreadcrumbsProps extends WithTranslation {
 	name: string
 	href: string
 }
 
-const AuthBreadcrumbs: React.FC<AuthBreadcrumbsProps> = ({ name, href }) => {
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+const AuthBreadcrumbs: React.FC<AuthBreadcrumbsProps> = ({ name, href, t }) => {
 	return (
 		<Breadcrumbs className='border-0 border-b border-solid border-gray px-12 py-4 text-sm'>
 			<Link className='font-semibold' underline='always' href={href}>
@@ -23,4 +20,4 @@ const AuthBreadcrumbs: React.FC<AuthBreadcrumbsProps> = ({ name, href }) => {
 	)
 }
 
-export default AuthBreadcrumbs
+export default withTranslation('appbar')(AuthBreadcrumbs)

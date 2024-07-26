@@ -1,24 +1,22 @@
 'use client'
 
+import service from '@/api'
+import { CreateProfileImageDtoIn, PutProfileDtoIn } from '@/api/dto/um/dto-in.dto'
+import AlertConfirm from '@/components/common/dialog/AlertConfirm'
 import AutocompleteInput from '@/components/common/input/AutocompleteInput'
 import FormInput from '@/components/common/input/FormInput'
 import UploadImage from '@/components/common/upload/UploadImage'
-import AlertConfirm from '@/components/common/dialog/AlertConfirm'
-import { Alert, Box, Button, CircularProgress, Paper, Snackbar, Typography } from '@mui/material'
-import Icon from '@mdi/react'
-import { mdiLockReset } from '@mdi/js'
-import { useFormik } from 'formik'
-import { useCallback, useEffect, useState } from 'react'
-import * as yup from 'yup'
-import service from '@/api'
-import { signOut, useSession } from 'next-auth/react'
-import { useQuery } from '@tanstack/react-query'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
-import { CreateProfileImageDtoIn, PutProfileDtoIn } from '@/api/dto/um/dto-in.dto'
-import { QueryClient, useMutation } from '@tanstack/react-query'
 import { AppPath } from '@/config/app'
-import { usePathname, useRouter } from 'next/navigation'
+import { mdiLockReset } from '@mdi/js'
+import Icon from '@mdi/react'
+import { Alert, Box, Button, CircularProgress, Snackbar } from '@mui/material'
+import { QueryClient, useMutation, useQuery } from '@tanstack/react-query'
+import { useFormik } from 'formik'
+import { signOut, useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
+import { WithTranslation, withTranslation } from 'react-i18next'
+import * as yup from 'yup'
 
 interface AlertInfoType {
 	open: boolean
@@ -59,13 +57,12 @@ const defaultFormValues: FormValues = {
 // 	responsibleProvinceCode: yup.string().required('กรุณาเลือกจังหวัด'),
 // })
 
-const ProfileMain = () => {
+interface ProfileMainProps extends WithTranslation {}
+
+const ProfileMain: React.FC<ProfileMainProps> = ({ t, i18n }) => {
 	const router = useRouter()
 	const queryClient = new QueryClient()
 	const { data: session, update } = useSession()
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
-
 	const [busy, setBusy] = useState<boolean>(false)
 	const [confirmOpenDialog, setConfirmOpenDialog] = useState<boolean>(false)
 	const [logoutOpenDialog, setLogoutOpenDialog] = useState<boolean>(false)
@@ -270,7 +267,7 @@ const ProfileMain = () => {
 											value: String(item.code),
 										})) || []
 									}
-									getOptionLabel={(option) => option.name[language]}
+									getOptionLabel={(option) => option.name[i18n.language]}
 									name='responsibleProvinceCode'
 									label={t('default.province')}
 									formik={formik}
@@ -285,7 +282,7 @@ const ProfileMain = () => {
 											value: String(item.code),
 										})) || []
 									}
-									getOptionLabel={(option) => option.name?.[language]}
+									getOptionLabel={(option) => option.name?.[i18n.language]}
 									name='responsibleDistrictCode'
 									label={t('default.amphor')}
 									formik={formik}
@@ -301,7 +298,7 @@ const ProfileMain = () => {
 											value: item.code,
 										})) || []
 									}
-									getOptionLabel={(option) => option.name[language]}
+									getOptionLabel={(option) => option.name[i18n.language]}
 									name='orgCode'
 									label={t('default.org')}
 									formik={formik}
@@ -315,7 +312,7 @@ const ProfileMain = () => {
 											value: item.code,
 										})) || []
 									}
-									getOptionLabel={(option) => option.name[language]}
+									getOptionLabel={(option) => option.name[i18n.language]}
 									name='role'
 									label={t('default.role')}
 									formik={formik}
@@ -402,4 +399,4 @@ const ProfileMain = () => {
 	)
 }
 
-export default ProfileMain
+export default withTranslation('appbar')(ProfileMain)

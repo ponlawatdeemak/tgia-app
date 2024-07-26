@@ -23,6 +23,8 @@ i18next
 		preload: runsOnServerSide ? appLanguages : [],
 	})
 
+export default i18next
+
 export function useTranslation(lng: string, ns: string, options?: any) {
 	const [cookies, setCookie] = useCookies([cookieName])
 	const ret = useTranslationOrg(ns, options)
@@ -46,7 +48,7 @@ export function useTranslation(lng: string, ns: string, options?: any) {
 		useEffect(() => {
 			if (cookies.i18next === lng) return
 			setCookie(cookieName, lng, { path: '/' })
-		}, [lng, cookies.i18next])
+		}, [lng, cookies.i18next, setCookie])
 	}
 	return ret
 }

@@ -3,17 +3,14 @@
 import EmailIcon from '@/components/svg/icons/EmailIcon'
 import { AppPath } from '@/config/app'
 import { Button, Typography } from '@mui/material'
+import { WithTranslation, withTranslation } from 'react-i18next'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
-import useLanguage from '@/store/language'
-import { useTranslation } from '@/i18n/client'
 
-interface VerifyEmailMainProps {
+interface VerifyEmailMainProps extends WithTranslation {
 	email: string
 }
 
-const VerifyEmailMain: React.FC<VerifyEmailMainProps> = ({ email }) => {
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+const VerifyEmailMain: React.FC<VerifyEmailMainProps> = ({ email, t }) => {
 	return (
 		<>
 			<AuthBreadcrumbs name={t('auth.checkEmail')} href={AppPath.Login} />
@@ -41,4 +38,4 @@ const VerifyEmailMain: React.FC<VerifyEmailMainProps> = ({ email }) => {
 	)
 }
 
-export default VerifyEmailMain
+export default withTranslation('appbar')(VerifyEmailMain)

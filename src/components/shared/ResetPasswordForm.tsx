@@ -3,10 +3,9 @@
 import FormInput from '@/components/common/input/FormInput'
 import PasswordInput from '@/components/common/input/PasswordInput'
 import { FormikProps } from 'formik'
-import useLanguage from '@/store/language'
-import { useTranslation } from '@/i18n/client'
+import { WithTranslation, withTranslation } from 'react-i18next'
 
-export interface ResetPasswordFormProps {
+export interface ResetPasswordFormProps extends WithTranslation {
 	formik: FormikProps<any>
 	loading?: boolean
 	isEmail?: boolean
@@ -22,10 +21,8 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 	className,
 	changePassword = false,
 	resetPassword = false,
+	t,
 }) => {
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
-
 	return (
 		<div className={className}>
 			{resetPassword && <FormInput name='email' label={t('default.email')} disabled={isEmail} formik={formik} />}
@@ -49,4 +46,4 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 	)
 }
 
-export default ResetPasswordForm
+export default withTranslation('appbar')(ResetPasswordForm)

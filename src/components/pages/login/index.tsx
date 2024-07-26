@@ -6,44 +6,35 @@ import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentL
 import ThaicomLogo from '@/components/svg/ThaicomLogo'
 import TriangleLogo from '@/components/svg/TriangleLogo'
 import { AppPath } from '@/config/app'
-import {
-	Button,
-	CircularProgress,
-	FormHelperText,
-	Link,
-	ToggleButton,
-	ToggleButtonGroup,
-	Typography,
-} from '@mui/material'
+import { CircularProgress, FormHelperText, Link, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import { signIn } from 'next-auth/react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
-import useLanguage from '@/store/language'
-import { useTranslation } from '@/i18n/client'
 import * as yup from 'yup'
 import { Language } from '@/enum'
 import LoadingButton from '@mui/lab/LoadingButton'
+import { WithTranslation, withTranslation } from 'react-i18next'
+import { useTranslation } from '@/i18n/client'
 
-// const validationSchema = yup.object({
-// 	username: yup.string().required('กรุณากรอกอีเมล'),
-// 	password: yup.string().required('กรุณากรอกรหัสผ่าน'),
-// })
+interface LoginMainProps extends WithTranslation {}
 
-const LoginMain = () => {
+const LoginMain: React.FC<LoginMainProps> = ({ i18n }) => {
 	const searchParams = useSearchParams()
-	const { language, setLanguage } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
 	const pathname = usePathname()
-	const router = useRouter()
+	const { t, i18n: i18nWithCookie } = useTranslation(i18n.language, 'appbar')
 	const callbackUrl = useMemo(() => searchParams?.get('callbackUrl'), [searchParams])
 	const error = useMemo(() => searchParams?.get('error'), [searchParams])
 	const [busy, setBusy] = useState<boolean>(false)
 
-	const validationSchema = yup.object({
-		username: yup.string().required(t('warning.inputEmail')),
-		password: yup.string().required(t('warning.inputPassword')),
-	})
+	const validationSchema = useMemo(
+		() =>
+			yup.object({
+				username: yup.string().required(t('warning.inputEmail')),
+				password: yup.string().required(t('warning.inputPassword')),
+			}),
+		[t],
+	)
 
 	const errorMessage = useMemo(() => {
 		if (error) {
@@ -51,7 +42,7 @@ const LoginMain = () => {
 			return `${t('error.somethingWrong')}`
 		}
 		return null
-	}, [error])
+	}, [error, t])
 
 	const onSubmit = useCallback(
 		async (values: LoginDtoIn) => {
@@ -71,6 +62,17 @@ const LoginMain = () => {
 			}
 		},
 		[callbackUrl],
+	)
+
+	const handleChangeLanguage = useCallback(
+		(_: React.MouseEvent<HTMLElement>, newLanguage: Language) => {
+			if (newLanguage !== null) {
+				i18nWithCookie.changeLanguage(newLanguage)
+				const oldLanguage = pathname?.split('/')?.[1]
+				window.history.pushState(null, '', window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
+			}
+		},
+		[i18nWithCookie, pathname],
 	)
 
 	const formik = useFormik<LoginDtoIn>({
@@ -106,16 +108,10 @@ const LoginMain = () => {
 				<div className='fixed right-4 top-4'>
 					<ToggleButtonGroup
 						className='box-border flex p-1'
-						value={language}
+						value={i18n.language}
 						exclusive
 						color='primary'
-						onChange={(event: React.MouseEvent<HTMLElement>, newLanguage: Language) => {
-							if (newLanguage !== null) {
-								setLanguage(newLanguage)
-								const oldLanguage = pathname?.split('/')?.[1]
-								router.push(window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
-							}
-						}}
+						onChange={handleChangeLanguage}
 					>
 						<ToggleButton
 							className='primary-color rounded px-3 py-0.5 text-sm'
@@ -179,4 +175,4 @@ const LoginMain = () => {
 	)
 }
 
-export default LoginMain
+export default withTranslation('appbar')(LoginMain)

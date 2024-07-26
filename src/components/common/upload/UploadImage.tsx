@@ -1,14 +1,13 @@
 'use client'
 
-import React, { useState, ChangeEvent, useEffect } from 'react'
-import { FormikProps } from 'formik'
-import { Button, Avatar, FormHelperText } from '@mui/material'
+import { mdiAccountOutline, mdiTrayArrowUp } from '@mdi/js'
 import Icon from '@mdi/react'
-import { mdiTrayArrowUp, mdiAccountOutline } from '@mdi/js'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
+import { Avatar, Button, FormHelperText } from '@mui/material'
+import { FormikProps } from 'formik'
+import React, { ChangeEvent, useEffect, useState } from 'react'
+import { WithTranslation, withTranslation } from 'react-i18next'
 
-export interface UploadImageProps {
+export interface UploadImageProps extends WithTranslation {
 	name: string
 	formik: FormikProps<any>
 	className?: string
@@ -23,11 +22,9 @@ const UploadImage: React.FC<UploadImageProps> = ({
 	className,
 	defaultImage = mdiAccountOutline,
 	disabled = false,
+	t,
 	...props
 }) => {
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
-
 	const [image, setImage] = useState<string | null>(null)
 	const errorMessage = formik.touched[name] && formik.errors[name]
 
@@ -98,4 +95,4 @@ const UploadImage: React.FC<UploadImageProps> = ({
 	)
 }
 
-export default UploadImage
+export default withTranslation('appbar')(UploadImage)

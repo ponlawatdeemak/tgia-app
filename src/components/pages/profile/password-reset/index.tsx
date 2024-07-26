@@ -1,52 +1,26 @@
 'use client'
 
 import service from '@/api'
+import { ChangePasswordDtoIn } from '@/api/dto/auth/dto-in.dto'
+import AlertConfirm from '@/components/common/dialog/AlertConfirm'
 import ResetPasswordForm from '@/components/shared/ResetPasswordForm'
 import { AppPath } from '@/config/app'
+import { mdiArrowLeft } from '@mdi/js'
+import Icon from '@mdi/react'
 import { Button, CircularProgress } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
 import { useFormik } from 'formik'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
+import { WithTranslation, withTranslation } from 'react-i18next'
 import * as yup from 'yup'
-import { ChangePasswordDtoIn } from '@/api/dto/auth/dto-in.dto'
-import useLanguage from '@/store/language'
-import { useSession } from 'next-auth/react'
-import { useTranslation } from '@/i18n/client'
-import AlertConfirm from '@/components/common/dialog/AlertConfirm'
-import Icon from '@mdi/react'
-import { mdiArrowLeft } from '@mdi/js'
 
-// const validationSchema = yup.object({
-// 	currentPassword: yup
-// 		.string()
-// 		.required('กรุณากรอกรหัสผ่านใหม่')
-// 		.min(8, 'รหัสผ่านต้องมีขนาดอย่างน้อย 8 ตัวอักษร')
-// 		.matches(/^(?=.*[0-9])/, 'ต้องมีอย่างน้อย 1 หมายเลข')
-// 		.matches(/^(?=.*[a-z])/, 'ต้องมีตัวอักษรพิมพ์เล็กอย่างน้อย 1 ตัว')
-// 		.matches(/^(?=.*[A-Z])/, 'ต้องมีอักษรตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว')
-// 		.matches(/^(?=.*[!@#$%^&*()_+\-=\[\]{};:\\|,.<>~\/?])/, 'ต้องมีอักขระพิเศษอย่างน้อย 1 ตัว'),
-// 	password: yup
-// 		.string()
-// 		.required('กรุณากรอกรหัสผ่านใหม่')
-// 		.min(8, 'รหัสผ่านต้องมีขนาดอย่างน้อย 8 ตัวอักษร')
-// 		.matches(/^(?=.*[0-9])/, 'ต้องมีอย่างน้อย 1 หมายเลข')
-// 		.matches(/^(?=.*[a-z])/, 'ต้องมีตัวอักษรพิมพ์เล็กอย่างน้อย 1 ตัว')
-// 		.matches(/^(?=.*[A-Z])/, 'ต้องมีอักษรตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว')
-// 		.matches(/^(?=.*[!@#$%^&*()_+\-=\[\]{};:\\|,.<>~\/?])/, 'ต้องมีอักขระพิเศษอย่างน้อย 1 ตัว'),
-// 	confirmPassword: yup
-// 		.string()
-// 		.required('กรุณากรอกรหัสผ่านอีกครั้ง')
-// 		.oneOf([yup.ref('password')], 'รหัสผ่านไม่ตรงกัน'),
-// })
+interface PasswordResetMainProps extends WithTranslation {}
 
-// type ChangePasswordFormType = yup.InferType<typeof validationSchema>
-
-const PasswordResetMain = () => {
+const PasswordResetMain: React.FC<PasswordResetMainProps> = ({ t }) => {
 	const router = useRouter()
 	const { data: session } = useSession()
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
 
 	const [busy, setBusy] = useState<boolean>(false)
 	const [confirmOpen, setConfirmOpen] = useState<boolean>(false)
@@ -187,4 +161,4 @@ const PasswordResetMain = () => {
 	)
 }
 
-export default PasswordResetMain
+export default withTranslation('appbar')(PasswordResetMain)
