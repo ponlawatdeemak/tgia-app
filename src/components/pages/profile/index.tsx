@@ -9,7 +9,7 @@ import UploadImage from '@/components/common/upload/UploadImage'
 import { AppPath } from '@/config/app'
 import { mdiLockReset } from '@mdi/js'
 import Icon from '@mdi/react'
-import { Alert, Box, Button, CircularProgress, Snackbar } from '@mui/material'
+import { Alert, Box, Button, CircularProgress, Snackbar, Typography } from '@mui/material'
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query'
 import { useFormik } from 'formik'
 import { signOut, useSession } from 'next-auth/react'
@@ -49,13 +49,6 @@ const defaultFormValues: FormValues = {
 	responsibleProvinceCode: '',
 	responsibleDistrictCode: '',
 }
-
-// const validationSchema = yup.object({
-// 	firstName: yup.string().required('กรุณากรอกชื่อ'),
-// 	lastName: yup.string().required('กรุณากรอกนามสกุล'),
-// 	email: yup.string().email('กรุณากรอกอีเมลให้ถูกต้อง').required('กรุณากรอกอีเมล'),
-// 	responsibleProvinceCode: yup.string().required('กรุณาเลือกจังหวัด'),
-// })
 
 interface ProfileMainProps extends WithTranslation {}
 
@@ -213,6 +206,7 @@ const ProfileMain: React.FC<ProfileMainProps> = ({ t, i18n }) => {
 
 	return (
 		<>
+			<Typography className='text-xl font-semibold text-black lg:text-md'>{t('profile.profile')}</Typography>
 			<form
 				onSubmit={formik.handleSubmit}
 				className='flex h-full flex-col justify-between max-lg:justify-start max-lg:gap-[32px]'

@@ -27,6 +27,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
 }) => {
 	const [image, setImage] = useState<string | null>(null)
 	const errorMessage = formik.touched[name] && formik.errors[name]
+	const { i18n, tReady, ...uploadProps } = props
 
 	useEffect(() => {
 		const formikValue = formik.values[name]
@@ -85,7 +86,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
 						accept='image/png, image/jpeg'
 						className='absolute bottom-0 left-0 h-full w-full cursor-pointer opacity-0'
 						onChange={handleImageChange}
-						{...props}
+						{...uploadProps}
 					/>
 				</Button>
 			</div>
