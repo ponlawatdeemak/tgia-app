@@ -17,10 +17,6 @@ import useLanguage from '@/store/language'
 import { useTranslation } from '@/i18n/client'
 import LoadingButton from '@mui/lab/LoadingButton'
 
-// const validationSchema = yup.object({
-// 	email: yup.string().email('รูปแบบอีเมลไม่ถูกต้อง').required('กรุณากรอกอีเมล'),
-// })
-
 const ForgotPasswordMain = () => {
 	const router = useRouter()
 	const { language } = useLanguage()
