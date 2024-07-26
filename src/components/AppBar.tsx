@@ -31,7 +31,6 @@ import { AreaTypeKey, AreaUnitKey, Language } from '@/enum'
 import useAreaType from '@/store/area-type'
 import useAreaUnit from '@/store/area-unit'
 import { areaTypeString, areaUnitString } from '@/utils/area-string'
-import { useLocalStorage } from '@/hook/local-storage'
 
 interface AppBarProps {
 	lng: string
@@ -97,7 +96,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 		if (newLanguage !== null) {
 			setLanguage(newLanguage)
 			const oldLanguage = pathname?.split('/')?.[1]
-			router.push(window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
+			window.history.pushState(null, '', window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
 		}
 	}
 

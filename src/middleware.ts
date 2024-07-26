@@ -22,26 +22,23 @@ export default withAuth(
 
 		if (isAuthRoute) {
 			if (isLoggedIn) {
-				return responseWithLanguageCookie(req, new URL(AppPath.FieldLoss, nextUrl))
+				return NextResponse.redirect(new URL(AppPath.FieldLoss, nextUrl))
 			}
-			return responseWithLanguageCookie(req)
+			return NextResponse.next()
 		}
 
 		if (!isLoggedIn) {
 			const callback = nextUrl.href.includes('sessionExpired=1')
 				? nextUrl.href.replace('sessionExpired=1', '')
 				: nextUrl.href
-			return responseWithLanguageCookie(
-				req,
-				new URL(`${AppPath.Login}/?callbackUrl=${encodeURI(callback)}`, nextUrl),
-			)
+			return NextResponse.redirect(new URL(`${AppPath.Login}/?callbackUrl=${encodeURI(callback)}`, nextUrl))
 		}
 
 		if (nextUrl.pathname === `/${lang}`) {
-			return responseWithLanguageCookie(req, new URL(AppPath.FieldLoss, nextUrl))
+			return NextResponse.redirect(new URL(AppPath.FieldLoss, nextUrl))
 		}
 
-		return responseWithLanguageCookie(req)
+		return NextResponse.next()
 	},
 	{
 		callbacks: {
@@ -69,27 +66,6 @@ const redirectWithLanguagePath = (req: NextRequestWithAuth) => {
 		return NextResponse.redirect(new URL(`/${lng}${req.nextUrl.pathname}?${query.join('&')}`, req.url))
 	}
 
-	return NextResponse.next()
-}
-
-const responseWithLanguageCookie = (req: NextRequestWithAuth, redirectUrl?: URL) => {
-	if (req.headers.has('referer')) {
-		const refererUrl = new URL(req.headers.get('referer') as string)
-		const lngInReferer = appLanguages.find((l) => refererUrl.pathname.startsWith(`/${l}`))
-		if (lngInReferer) {
-			let response
-			if (redirectUrl) {
-				response = NextResponse.redirect(redirectUrl)
-			} else {
-				response = NextResponse.next()
-			}
-			response.cookies.set(cookieName, lngInReferer)
-			return response
-		}
-	}
-	if (redirectUrl) {
-		return NextResponse.redirect(redirectUrl)
-	}
 	return NextResponse.next()
 }
 
