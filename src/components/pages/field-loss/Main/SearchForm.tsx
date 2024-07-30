@@ -13,55 +13,52 @@ import {
 	Typography,
 } from '@mui/material'
 import { SearchOutlined, GroupAddOutlined, SystemUpdateAlt, StarBorder, Clear, Remove } from '@mui/icons-material'
-import React, { ChangeEvent, ReactNode, useState } from 'react'
+import React, { ChangeEvent, ReactNode, useMemo, useState } from 'react'
 import clsx from 'clsx'
 import service from '@/api'
 import { useQuery } from '@tanstack/react-query'
+import { useLocalStorage } from '@/hook/local-storage'
+import { useSession } from 'next-auth/react'
 
 interface OptionType {
-	title: string
-	value: string
-	type: string
+	name: string
+	id: string
+	searchType: string
+}
+
+interface HistoryType {
+	[key: string]: OptionType[]
 }
 
 const options: OptionType[] = [
-	{ title: 'นครราชสีมา', value: 'นครราชสีมา', type: 'favorite' },
-	{ title: 'สุพรรณบุรี', value: 'สุพรรณบุรี', type: 'favorite' },
-	{ title: 'อ่างทอง', value: 'อ่างทอง', type: 'favorite' },
-	{ title: 'ร้อยเอ็ด', value: 'ร้อยเอ็ด', type: 'favorite' },
-	{ title: 'บุรีรัมย์', value: 'บุรีรัมย์', type: 'favorite' },
-	{ title: 'นครศรีธรรมราช', value: 'นครศรีธรรมราช', type: 'history' },
-	{ title: 'พระนครศรีอยุธยา', value: 'พระนครศรีอยุธยา', type: 'history' },
-	{ title: 'กำแพงเพชร', value: 'กำแพงเพชร', type: 'history' },
+	{ name: 'นครราชสีมา', id: '30', searchType: 'favorite' },
+	{ name: 'สุพรรณบุรี', id: '72', searchType: 'favorite' },
+	{ name: 'อ่างทอง', id: '15', searchType: 'favorite' },
+	{ name: 'ร้อยเอ็ด', id: '45', searchType: 'favorite' },
+	{ name: 'บุรีรัมย์', id: '31', searchType: 'favorite' },
+	{ name: 'นครศรีธรรมราช', id: '80', searchType: 'history' },
+	{ name: 'พระนครศรีอยุธยา', id: '14', searchType: 'history' },
+	{ name: 'กำแพงเพชร', id: '62', searchType: 'history' },
 ]
 
 const SearchForm = () => {
-	//const [clicked, setClicked] = useState<boolean>(false)
 	const [isFocused, setIsFocused] = useState<boolean>(false)
-	const [optionList, setOptionList] = useState<OptionType[]>(options)
 	const [inputValue, setInputValue] = useState<string>('')
+	const [selectedOption, setSeletedOption] = useState<OptionType | null>(null)
+	const [history, setHistory] = useLocalStorage<HistoryType>('fieldLoss.history', {})
+	const [favorite, setFavorite] = useLocalStorage<HistoryType>('fieldLoss.favorite', {})
+	const [optionList, setOptionList] = useState<OptionType[]>(options)
+	const { data: session } = useSession()
+	const userId = session?.user.id ?? null
 
-	const handleClear = () => {
-		setInputValue('')
-	}
-
-	// const { data: userData, isLoading: isUserDataLoading } = useQuery({
-	// 	queryKey: ['search'],
-	// 	queryFn: () => service.um.getSearch({ keyword: 'ปักธงชัย' }),
-	// })
-
-	// console.log('userData', userData)
-
-	// const handleOpen = () => {
-	// 	if (!clicked) {
-	// 		setClicked(true)
-	// 	}
-	// }
-
-	const handleRemove = (event: any, value: string) => {
-		event.stopPropagation()
-		setOptionList((prev) => prev.filter((option) => option.value !== value))
-	}
+	const combinedOptions = useMemo(() => {
+		if (userId) {
+			const historyList = history[userId] || []
+			const favoriteList = favorite[userId] || []
+			return [...historyList, ...favoriteList]
+		}
+		return []
+	}, [history, favorite, userId])
 
 	const highlightText = (text: string, highlight: string): ReactNode => {
 		const parts = text.split(new RegExp(`(${highlight})`, 'gi'))
@@ -80,23 +77,97 @@ const SearchForm = () => {
 		)
 	}
 
-	//console.log('inputValue', inputValue)
+	const handleSelectOption = (_event: ChangeEvent<{}>, newSelectedValue: OptionType | null) => {
+		setSeletedOption(newSelectedValue)
+		if (userId) {
+			const historyList = history[userId] || []
+			if (newSelectedValue) {
+				const isDuplicate = historyList.map((item) => item.id).includes(newSelectedValue.id)
+				if (!isDuplicate) {
+					if (historyList.length === 5) {
+						historyList.shift()
+						historyList.push(newSelectedValue)
+						setHistory({
+							...history,
+							[userId]: historyList.map((history) => ({ ...history, searchType: 'history' })),
+						})
+					} else if (historyList.length < 5) {
+						historyList.push(newSelectedValue)
+						setHistory({
+							...history,
+							[userId]: historyList.map((history) => ({ ...history, searchType: 'history' })),
+						})
+					}
+				}
+			}
+		}
+	}
+
+	const handleSelectFavorite = (event: React.MouseEvent, selectedFavorite: OptionType | null) => {
+		event.stopPropagation()
+		if (userId) {
+			const favoriteList = favorite[userId] || []
+			if (selectedFavorite) {
+				const isDuplicate = favoriteList.map((item) => item.id).includes(selectedFavorite.id)
+				if (!isDuplicate) {
+					if (favoriteList.length === 5) return
+					if (favoriteList.length < 5) {
+						favoriteList.push(selectedFavorite)
+						setFavorite({
+							...favorite,
+							[userId]: favoriteList.map((favorite) => ({ ...favorite, searchType: 'favorite' })),
+						})
+					}
+				}
+			}
+		}
+	}
+
+	const handleRemoveHistory = (event: React.MouseEvent, value: string) => {
+		event.stopPropagation()
+		if (userId) {
+			const historyList = history[userId] || []
+			const newHistoryList = historyList.filter((option) => option.id !== value)
+			setHistory({
+				...history,
+				[userId]: newHistoryList,
+			})
+		}
+	}
+
+	const handleRemoveFavorite = (event: React.MouseEvent, value: string) => {
+		event.stopPropagation()
+		if (userId) {
+			const favoriteList = favorite[userId] || []
+			const newFavoriteList = favoriteList.filter((option) => option.id !== value)
+			setFavorite({
+				...favorite,
+				[userId]: newFavoriteList,
+			})
+		}
+	}
+
+	const handleClear = () => {
+		setInputValue('')
+		setSeletedOption(null)
+	}
 
 	return (
 		<>
 			<Paper className='flex gap-[6px] bg-[#D9E0EB] p-[6px]'>
 				<FormControl fullWidth variant='standard' className='h-[40px] rounded-[8px] bg-white'>
 					<Autocomplete
-						//freeSolo
 						blurOnSelect
-						options={optionList}
-						getOptionLabel={(option) => (typeof option === 'string' ? option : option.title)}
-						groupBy={(option) => option.type}
+						options={combinedOptions.sort((a, b) => a.searchType.localeCompare(b.searchType))}
+						groupBy={(option) => (!inputValue ? option.searchType : '')}
+						getOptionLabel={(option) => option.name}
 						PaperComponent={({ children }) => (
 							<Paper className='border-[1px] border-solid border-gray'>{children}</Paper>
 						)}
 						inputValue={inputValue}
+						value={selectedOption}
 						onInputChange={(_event, newInputValue) => setInputValue(newInputValue)}
+						onChange={handleSelectOption}
 						renderInput={(params) => {
 							const { InputLabelProps, InputProps, ...otherParams } = params
 							return (
@@ -113,7 +184,7 @@ const SearchForm = () => {
 										<InputAdornment position='end'>
 											{isFocused ? (
 												<div className='flex items-center'>
-													{inputValue && (
+													{/* {inputValue && (
 														<IconButton className='rounded-[8px]'>
 															<span className='text-sm text-[#7A7A7A]'>ล้าง</span>
 														</IconButton>
@@ -125,15 +196,29 @@ const SearchForm = () => {
 															className='mx-[4px] h-[28px] border-gray'
 															flexItem
 														/>
+													)} */}
+													{inputValue && (
+														<IconButton className='p-[4px]' onClick={handleClear}>
+															<Clear className='h-[24px] w-[24px] text-[#7A7A7A]' />
+														</IconButton>
 													)}
-													<IconButton className='p-[4px]' onClick={handleClear}>
-														<Clear className='h-[24px] w-[24px] text-[#7A7A7A]' />
-													</IconButton>
 												</div>
 											) : (
 												inputValue && (
-													<IconButton className='p-[4px]'>
-														<StarBorder className='h-[24px] w-[24px] text-black' />
+													<IconButton
+														className='p-[4px]'
+														onClick={(event) => handleSelectFavorite(event, selectedOption)}
+													>
+														<StarBorder
+															className={clsx('h-[24px] w-[24px] text-black', {
+																'text-[#DCBA09]': combinedOptions
+																	.filter(
+																		(option) => option.searchType === 'favorite',
+																	)
+																	.map((option) => option.id)
+																	.includes(selectedOption?.id || ''),
+															})}
+														/>
 													</IconButton>
 												)
 											)}
@@ -148,35 +233,37 @@ const SearchForm = () => {
 							)
 						}}
 						renderGroup={(params) => {
-							console.log('params', params)
 							return inputValue ? (
 								<li key={params.key}>
+									<div className='sticky top-[-8px] bg-primary px-[10px] py-[4px] text-gray'>
+										{'ผลลัพธ์การค้นหา'}
+									</div>
 									<ul className='p-0'>{params.children}</ul>
 								</li>
 							) : (
 								<li key={params.key}>
 									<div className='sticky top-[-8px] bg-primary px-[10px] py-[4px] text-gray'>
-										{params.group}
+										{params.group === 'favorite' ? 'พื้นที่ในรายการโปรด' : 'ค้นหาล่าสุด'}
 									</div>
 									<ul className='p-0'>{params.children}</ul>
 								</li>
 							)
 						}}
 						renderOption={(props, option) => {
-							return option.type === 'favorite' ? (
-								<li {...props}>
+							return option.searchType === 'favorite' ? (
+								<li {...props} key={`favorite-${option.id}`}>
 									<div className='flex w-full items-center justify-between'>
 										<div className='flex'>
 											<IconButton size='small'>
-												<StarBorder />
+												<StarBorder className='text-[#DCBA09]' />
 											</IconButton>
-											<Typography>{highlightText(option.title, inputValue)}</Typography>
+											<Typography>{highlightText(option.name, inputValue)}</Typography>
 										</div>
 										{!inputValue && (
 											<IconButton
 												className=''
 												size='small'
-												onClick={(event) => handleRemove(event, option.value)}
+												onClick={(event) => handleRemoveFavorite(event, option.id)}
 											>
 												<Remove />
 											</IconButton>
@@ -184,14 +271,14 @@ const SearchForm = () => {
 									</div>
 								</li>
 							) : (
-								<li {...props}>
+								<li {...props} key={`history-${option.id}`}>
 									<div className='flex w-full items-center justify-between'>
-										<Typography>{highlightText(option.title, inputValue)}</Typography>
+										<Typography>{highlightText(option.name, inputValue)}</Typography>
 										{!inputValue && (
 											<IconButton
 												className=''
 												size='small'
-												onClick={(event) => handleRemove(event, option.value)}
+												onClick={(event) => handleRemoveHistory(event, option.id)}
 											>
 												<Clear />
 											</IconButton>
@@ -200,7 +287,6 @@ const SearchForm = () => {
 								</li>
 							)
 						}}
-						//onOpen={handleOpen}
 					/>
 				</FormControl>
 				<Button
