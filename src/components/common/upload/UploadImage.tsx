@@ -4,7 +4,7 @@ import React, { useState, ChangeEvent, useEffect } from 'react'
 import { FormikProps } from 'formik'
 import { Button, Avatar, FormHelperText } from '@mui/material'
 import Icon from '@mdi/react'
-import { mdiTrayArrowUp, mdiAccountOutline } from '@mdi/js'
+import { mdiTrayArrowUp, mdiAccountOutline, mdiDeleteOutline } from '@mdi/js'
 import { useTranslation } from '@/i18n/client'
 import useLanguage from '@/store/language'
 
@@ -63,15 +63,27 @@ const UploadImage: React.FC<UploadImageProps> = ({
 		}
 	}
 
+	const handleDeleteClick = () => {
+		setImage(null)
+	}
+
 	return (
 		<div className={className}>
-			{image ? (
-				<Avatar src={image} alt='Profile Image' className='h-[120px] w-[120px] bg-success-light' />
-			) : (
-				<Avatar className='h-[120px] w-[120px] bg-success-light'>
-					<Icon path={defaultImage} size={'90px'} className='text-primary' />
-				</Avatar>
-			)}
+			<>
+				{image ? (
+					<Avatar src={image} alt='Profile Image' className='h-[120px] w-[120px] bg-success-light' />
+				) : (
+					<Avatar className='h-[120px] w-[120px] bg-success-light'>
+						<Icon path={defaultImage} size={'90px'} className='text-primary' />
+					</Avatar>
+				)}
+				{/* <div className='absolute box-border flex h-[120px] w-[120px] items-center justify-center rounded-[60px] bg-black opacity-0 transition hover:opacity-70'>
+					<div onClick={handleDeleteClick}>
+						<Icon path={mdiDeleteOutline} size={1} className='cursor-pointer text-white' />
+					</div>
+				</div> */}
+			</>
+
 			<div className='[&_.Mui-disabled]:border-[#0000001f] [&_.Mui-disabled]:bg-transparent [&_.Mui-disabled]:text-[#00000042] [&_.Mui-disabled_.MuiButton-startIcon>svg]:text-[#00000042]'>
 				<Button
 					component='label'

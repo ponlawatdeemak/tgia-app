@@ -27,6 +27,7 @@ const authOptions: NextAuthOptions = {
 			},
 			async authorize(credentials) {
 				try {
+					console.log('credentials', credentials)
 					const { username, password } = credentials as any
 					console.log('route', username, password)
 					const res = await service.auth.login({ username, password })
@@ -34,6 +35,7 @@ const authOptions: NextAuthOptions = {
 					if (res.data?.id) return { ...res.data, tokens: res.tokens }
 					return null
 				} catch (error: any) {
+					console.log('CredentialsProvider error ', error)
 					return null
 				}
 			},
@@ -42,23 +44,23 @@ const authOptions: NextAuthOptions = {
 	callbacks: {
 		async jwt({ token, user, session, trigger }) {
 			delete token.error
-			console.log('TLOG ~ session:', session)
-			console.log('TLOG ~ user:', user)
-			console.log('TLOG ~ token:', token)
+			// console.log('TLOG ~ session:', session)
+			// console.log('TLOG ~ user:', user)
+			// console.log('TLOG ~ token:', token)
 			if (trigger === 'update' && session) {
 				// เมื่อมีการแก้ไข profile ต้องเอาค่าจาก session เข้าไปด้วย
 				return { ...token, ...user, ...session } as JWT
 			}
 			const accessToken = token?.tokens?.accessToken
 			const jwt = { ...token, ...user }
-			console.log('TLOG ~ jwt:', jwt)
+			// console.log('TLOG ~ jwt:', jwt)
 			if (accessToken) {
 				try {
 					const data = parseJwt(accessToken)
-					console.log('TLOG ~ data:', data)
+					// console.log('TLOG ~ data:', data)
 					const expiredTime = data?.exp
 					const currentTime = Math.floor(Date.now() / 1000)
-					console.log('TLOG ~ currentTime:', currentTime)
+					// console.log('TLOG ~ currentTime:', currentTime)
 					if (currentTime >= expiredTime) {
 						const newToken = await refreshAccessToken()
 						if (newToken?.accessToken) jwt.tokens.accessToken = newToken?.accessToken
@@ -74,13 +76,13 @@ const authOptions: NextAuthOptions = {
 			const userId = token?.id
 			const accessToken = token?.tokens?.accessToken
 			const refreshToken = token?.tokens?.refreshToken
-			console.log('------- session -------')
-			console.log('TLOG ~ accessToken:', accessToken)
-			console.log('TLOG ~ refreshToken:', refreshToken)
+			// console.log('------- session -------')
+			// console.log('TLOG ~ accessToken:', accessToken)
+			// console.log('TLOG ~ refreshToken:', refreshToken)
 
 			const { error, ...user } = token
 			session.user = user as UserSession
-			console.log('route session ', accessToken)
+			// console.log('route session ', accessToken)
 			if (accessToken) {
 				updateAccessToken({ accessToken, refreshToken, userId })
 				session.user.tokens.accessToken = accessToken
