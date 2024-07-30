@@ -1,15 +1,16 @@
 'use client'
+
 import { Breadcrumbs, Link, Typography } from '@mui/material'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { WithTranslation, withTranslation } from 'react-i18next'
-
-interface AuthBreadcrumbsProps extends WithTranslation {
+interface AuthBreadcrumbsProps {
 	name: string
 	href: string
 }
 
-const AuthBreadcrumbs: React.FC<AuthBreadcrumbsProps> = ({ name, href, t }) => {
+const AuthBreadcrumbs: React.FC<AuthBreadcrumbsProps> = ({ name, href }) => {
+	const { t } = useTranslation()
 	return (
 		<Breadcrumbs className='border-0 border-b border-solid border-gray px-12 py-4 text-sm'>
 			<Link className='font-semibold' underline='always' href={href}>
@@ -20,4 +21,4 @@ const AuthBreadcrumbs: React.FC<AuthBreadcrumbsProps> = ({ name, href, t }) => {
 	)
 }
 
-export default withTranslation('appbar')(AuthBreadcrumbs)
+export default AuthBreadcrumbs

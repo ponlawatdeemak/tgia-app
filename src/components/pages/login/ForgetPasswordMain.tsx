@@ -12,14 +12,15 @@ import { AxiosError } from 'axios'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
-import { WithTranslation, withTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
 
-interface ForgotPasswordMainProps extends WithTranslation {}
+interface ForgotPasswordMainProps {}
 
-const ForgotPasswordMain: React.FC<ForgotPasswordMainProps> = ({ t }) => {
+const ForgotPasswordMain: React.FC<ForgotPasswordMainProps> = () => {
 	const router = useRouter()
+	const { t } = useTranslation('appbar')
 	const {
 		isPending,
 		error,
@@ -106,4 +107,4 @@ const ForgotPasswordMain: React.FC<ForgotPasswordMainProps> = ({ t }) => {
 	)
 }
 
-export default withTranslation('appbar')(ForgotPasswordMain)
+export default ForgotPasswordMain

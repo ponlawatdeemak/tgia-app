@@ -13,14 +13,15 @@ import { useFormik } from 'formik'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
-import { WithTranslation, withTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
 
-interface PasswordResetMainProps extends WithTranslation {}
+interface PasswordResetMainProps {}
 
-const PasswordResetMain: React.FC<PasswordResetMainProps> = ({ t }) => {
+const PasswordResetMain: React.FC<PasswordResetMainProps> = () => {
 	const router = useRouter()
 	const { data: session } = useSession()
+	const { t } = useTranslation()
 
 	const [busy, setBusy] = useState<boolean>(false)
 	const [confirmOpen, setConfirmOpen] = useState<boolean>(false)
@@ -161,4 +162,4 @@ const PasswordResetMain: React.FC<PasswordResetMainProps> = ({ t }) => {
 	)
 }
 
-export default withTranslation('appbar')(PasswordResetMain)
+export default PasswordResetMain

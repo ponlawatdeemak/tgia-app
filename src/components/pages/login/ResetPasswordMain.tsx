@@ -12,15 +12,16 @@ import { AxiosError } from 'axios'
 import { useFormik } from 'formik'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
-import { WithTranslation, withTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
 
-interface ResetPasswordProps extends WithTranslation {}
+interface ResetPasswordProps {}
 
-const ResetPasswordMain: React.FC<ResetPasswordProps> = ({ t }) => {
+const ResetPasswordMain: React.FC<ResetPasswordProps> = () => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
+	const { t } = useTranslation('appbar')
 
 	const validationSchema = yup.object({
 		email: yup.string().required(),
@@ -118,4 +119,4 @@ const ResetPasswordMain: React.FC<ResetPasswordProps> = ({ t }) => {
 	)
 }
 
-export default withTranslation('appbar')(ResetPasswordMain)
+export default ResetPasswordMain

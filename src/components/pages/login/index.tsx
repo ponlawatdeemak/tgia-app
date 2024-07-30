@@ -6,26 +6,24 @@ import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentL
 import ThaicomLogo from '@/components/svg/ThaicomLogo'
 import TriangleLogo from '@/components/svg/TriangleLogo'
 import { AppPath } from '@/config/app'
-import { CircularProgress, FormHelperText, Link, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton'
+import { CircularProgress, FormHelperText, Link, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import { signIn } from 'next-auth/react'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
-import { Language } from '@/enum'
-import LoadingButton from '@mui/lab/LoadingButton'
-import { WithTranslation, withTranslation } from 'react-i18next'
-import { useTranslation } from '@/i18n/client'
+import LanguageSwitcher from './LanguageSwitcher'
 
-interface LoginMainProps extends WithTranslation {}
+interface LoginMainProps {}
 
-const LoginMain: React.FC<LoginMainProps> = ({ i18n }) => {
+const LoginMain: React.FC<LoginMainProps> = () => {
 	const searchParams = useSearchParams()
-	const pathname = usePathname()
-	const { t, i18n: i18nWithCookie } = useTranslation(i18n.language, 'appbar')
+	const { t } = useTranslation('appbar')
 	const callbackUrl = useMemo(() => searchParams?.get('callbackUrl'), [searchParams])
 	const error = useMemo(() => searchParams?.get('error'), [searchParams])
-	const [busy, setBusy] = useState<boolean>(false)
+	const [busy, setBusy] = useState(false)
 
 	const validationSchema = useMemo(
 		() =>
@@ -64,17 +62,6 @@ const LoginMain: React.FC<LoginMainProps> = ({ i18n }) => {
 		[callbackUrl],
 	)
 
-	const handleChangeLanguage = useCallback(
-		(_: React.MouseEvent<HTMLElement>, newLanguage: Language) => {
-			if (newLanguage !== null) {
-				i18nWithCookie.changeLanguage(newLanguage)
-				const oldLanguage = pathname?.split('/')?.[1]
-				window.history.pushState(null, '', window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
-			}
-		},
-		[i18nWithCookie, pathname],
-	)
-
 	const formik = useFormik<LoginDtoIn>({
 		initialValues: {
 			username: '',
@@ -106,28 +93,7 @@ const LoginMain: React.FC<LoginMainProps> = ({ i18n }) => {
 			</div>
 			<div className='flex h-full flex-col items-center justify-center bg-white'>
 				<div className='fixed right-4 top-4'>
-					<ToggleButtonGroup
-						className='box-border flex p-1'
-						value={i18n.language}
-						exclusive
-						color='primary'
-						onChange={handleChangeLanguage}
-					>
-						<ToggleButton
-							className='primary-color rounded px-3 py-0.5 text-sm'
-							value={Language.TH}
-							aria-label='left aligned'
-						>
-							TH
-						</ToggleButton>
-						<ToggleButton
-							className='rounded px-3 py-0.5 text-sm'
-							value={Language.EN}
-							aria-label='right aligned'
-						>
-							EN
-						</ToggleButton>
-					</ToggleButtonGroup>
+					<LanguageSwitcher />
 				</div>
 				<div className='mx-2 flex flex-col lg:w-[500px]'>
 					<div className='flex justify-center gap-1'>
@@ -175,4 +141,4 @@ const LoginMain: React.FC<LoginMainProps> = ({ i18n }) => {
 	)
 }
 
-export default withTranslation('appbar')(LoginMain)
+export default LoginMain

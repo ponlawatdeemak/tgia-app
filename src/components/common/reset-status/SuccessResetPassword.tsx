@@ -4,13 +4,14 @@ import { mdiCheckBold } from '@mdi/js'
 import Icon from '@mdi/react'
 import { Button, Typography } from '@mui/material'
 import React from 'react'
-import { WithTranslation, withTranslation } from 'react-i18next'
-interface SuccessResetPasswordProps extends WithTranslation {
+import { useTranslation } from 'react-i18next'
+interface SuccessResetPasswordProps {
 	buttonLabel: string
 	buttonHref: string
 }
 
-const SuccessResetPassword: React.FC<SuccessResetPasswordProps> = ({ buttonLabel, buttonHref, t }) => {
+const SuccessResetPassword: React.FC<SuccessResetPasswordProps> = ({ buttonLabel, buttonHref }) => {
+	const { t } = useTranslation()
 	return (
 		<div className='flex flex-col items-center gap-4'>
 			<div className='relative flex size-24 items-center justify-center overflow-hidden rounded-full'>
@@ -26,4 +27,4 @@ const SuccessResetPassword: React.FC<SuccessResetPasswordProps> = ({ buttonLabel
 	)
 }
 
-export default withTranslation('appbar')(SuccessResetPassword)
+export default SuccessResetPassword

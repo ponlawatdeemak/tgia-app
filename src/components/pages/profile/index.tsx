@@ -15,7 +15,7 @@ import { useFormik } from 'formik'
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
-import { WithTranslation, withTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
 
 interface AlertInfoType {
@@ -50,11 +50,12 @@ const defaultFormValues: FormValues = {
 	responsibleDistrictCode: '',
 }
 
-interface ProfileMainProps extends WithTranslation {}
+interface ProfileMainProps {}
 
-const ProfileMain: React.FC<ProfileMainProps> = ({ t, i18n }) => {
+const ProfileMain: React.FC<ProfileMainProps> = () => {
 	const router = useRouter()
 	const queryClient = new QueryClient()
+	const { t, i18n } = useTranslation()
 	const { data: session, update } = useSession()
 	const [busy, setBusy] = useState<boolean>(false)
 	const [confirmOpenDialog, setConfirmOpenDialog] = useState<boolean>(false)
@@ -393,4 +394,4 @@ const ProfileMain: React.FC<ProfileMainProps> = ({ t, i18n }) => {
 	)
 }
 
-export default withTranslation('appbar')(ProfileMain)
+export default ProfileMain

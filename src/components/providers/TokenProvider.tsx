@@ -47,6 +47,7 @@ const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 		)
 	}
 
+	console.log('apiAccessToken:', apiAccessToken)
 	if (apiAccessToken) {
 		return children
 	}

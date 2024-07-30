@@ -3,7 +3,6 @@
 import { AppPath, appMenuConfig, profileMenuConfig } from '@/config/app'
 import { AreaTypeKey, AreaUnitKey, Language } from '@/enum'
 import useResponsive from '@/hook/responsive'
-import { useTranslation } from '@/i18n/client'
 import useAreaType from '@/store/area-type'
 import useAreaUnit from '@/store/area-unit'
 import { areaTypeString, areaUnitString } from '@/utils/area-string'
@@ -27,19 +26,21 @@ import {
 import { useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { WithTranslation, withTranslation } from 'react-i18next'
 import AgriculturalDepartmentLogo from './svg/AgriculturalDepartmentLogo'
 import ThaicomLogo from './svg/ThaicomLogo'
 import TriangleLogo from './svg/TriangleLogo'
+import { useTranslation } from 'react-i18next'
+import { useSwitchLanguage } from '@/i18n/client'
 
-interface AppBarProps extends WithTranslation {}
+interface AppBarProps {}
 
-const AppBar: React.FC<AppBarProps> = ({ i18n }) => {
+const AppBar: React.FC<AppBarProps> = () => {
 	const router = useRouter()
 	const pathname = usePathname()
 	const { areaType, setAreaType } = useAreaType()
 	const { areaUnit, setAreaUnit } = useAreaUnit()
-	const { t, i18n: i18nWithCookie } = useTranslation(i18n.language, 'appbar')
+	const { t, i18n } = useTranslation()
+	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 	const { isDesktop } = useResponsive()
 	const { data: session } = useSession()
 	const user = session?.user ?? null
@@ -564,4 +565,4 @@ const AppBar: React.FC<AppBarProps> = ({ i18n }) => {
 	)
 }
 
-export default withTranslation('appbar')(AppBar)
+export default AppBar

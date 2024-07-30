@@ -5,9 +5,9 @@ import Icon from '@mdi/react'
 import { Avatar, Button, FormHelperText } from '@mui/material'
 import { FormikProps } from 'formik'
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import { WithTranslation, withTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 
-export interface UploadImageProps extends WithTranslation {
+export interface UploadImageProps {
 	name: string
 	formik: FormikProps<any>
 	className?: string
@@ -22,9 +22,9 @@ const UploadImage: React.FC<UploadImageProps> = ({
 	className,
 	defaultImage = mdiAccountOutline,
 	disabled = false,
-	t,
 	...props
 }) => {
+	const { t } = useTranslation()
 	const [image, setImage] = useState<string | null>(null)
 	const errorMessage = formik.touched[name] && formik.errors[name]
 	const { i18n, tReady, ...uploadProps } = props
@@ -96,4 +96,4 @@ const UploadImage: React.FC<UploadImageProps> = ({
 	)
 }
 
-export default withTranslation('appbar')(UploadImage)
+export default UploadImage

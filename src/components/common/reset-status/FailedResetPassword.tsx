@@ -1,15 +1,17 @@
 'use client'
 
+// import { useTranslation } from '@/i18n'
 import { mdiCloseThick } from '@mdi/js'
 import Icon from '@mdi/react'
 import { Button, Typography } from '@mui/material'
-import { WithTranslation, withTranslation } from 'react-i18next'
-interface FailedResetPasswordProps extends WithTranslation {
+import { useTranslation } from 'react-i18next'
+interface FailedResetPasswordProps {
 	buttonLabel: string
 	buttonHref: string
 }
 
-const FailedResetPassword: React.FC<FailedResetPasswordProps> = ({ buttonLabel, buttonHref, t }) => {
+const FailedResetPassword: React.FC<FailedResetPasswordProps> = ({ buttonLabel, buttonHref }) => {
+	const { t } = useTranslation()
 	return (
 		<div className='flex flex-col items-center gap-4'>
 			<div className='relative flex size-24 items-center justify-center overflow-hidden rounded-full'>
@@ -25,4 +27,4 @@ const FailedResetPassword: React.FC<FailedResetPasswordProps> = ({ buttonLabel, 
 	)
 }
 
-export default withTranslation('appbar')(FailedResetPassword)
+export default FailedResetPassword
