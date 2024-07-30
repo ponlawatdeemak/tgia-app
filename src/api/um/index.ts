@@ -1,6 +1,6 @@
 import { api } from '@/api/core'
-import { CreateProfileImageDtoOut, GetProfileDtoOut, GetUmDtoOut, PutProfileDtoOut } from '@/api/dto/um/dto-out.dto'
-import { CreateProfileImageDtoIn, GetUmDtoIn, PutProfileDtoIn } from '@/api/dto/um/dto-in.dto'
+import { CreateProfileImageDtoOut, GetProfileDtoOut, GetUmDtoOut, PutProfileDtoOut } from '@/api/um/dto-out.dto'
+import { CreateProfileImageDtoIn, GetUmDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
 import { ResponseDto } from '@/api'
 
 const um = {

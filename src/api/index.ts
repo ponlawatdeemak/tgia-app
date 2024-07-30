@@ -1,6 +1,7 @@
-import auth from '@/api/dto/auth'
-import um from '@/api/dto/um'
-import lookup from '@/api/dto/lookup'
+import auth from '@/api/auth'
+import um from '@/api/um'
+import lookup from '@/api/lookup'
+import fieldLoss from '@/api/field-loss'
 
 export type ResponseDto<T = any> = {
 	data?: T
@@ -21,6 +22,7 @@ const service = {
 	auth,
 	um,
 	lookup,
+	fieldLoss,
 }
 
 export default service

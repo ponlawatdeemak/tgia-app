@@ -1,5 +1,5 @@
 'use client'
-import { LoginDtoIn } from '@/api/dto/auth/dto-in.dto'
+import { LoginDtoIn } from '@/api/auth/dto-in.dto'
 import FormInput from '@/components/common/input/FormInput'
 import PasswordInput from '@/components/common/input/PasswordInput'
 import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentLogo'
