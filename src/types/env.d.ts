@@ -3,7 +3,9 @@ namespace NodeJS {
 		API_URL: string
 		API_KEY: string
 		API_URL_DISASTER: string
-		API_KEY_DISASTER: string
+		API_KEY_DISASTER: string 
+		API_URL_TILE: string
+		API_KEY_TILE: string​
 		NEXTAUTH_SECRET: string
 		NEXTAUTH_URL: string
 		APP_USERNAME: string

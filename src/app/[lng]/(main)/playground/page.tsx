@@ -50,7 +50,7 @@ export default function PlaygroundPage() {
 			>
 				Test Search
 			</Button>
-			<br/>
+			<br />
 			<Button variant='contained'>Contained</Button>
 			<Button variant='outlined'>Outlined</Button>
 
