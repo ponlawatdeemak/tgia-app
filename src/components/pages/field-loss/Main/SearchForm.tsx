@@ -234,14 +234,20 @@ const SearchForm = () => {
 						}}
 						renderGroup={(params) => {
 							return inputValue ? (
-								<li key={params.key}>
+								<li
+									key={params.key}
+									className='border-t-[2px] border-solid border-transparent border-t-black'
+								>
 									<div className='sticky top-[-8px] bg-primary px-[10px] py-[4px] text-gray'>
 										{'ผลลัพธ์การค้นหา'}
 									</div>
 									<ul className='p-0'>{params.children}</ul>
 								</li>
 							) : (
-								<li key={params.key}>
+								<li
+									key={params.key}
+									className='border-t-[2px] border-solid border-transparent border-t-black'
+								>
 									<div className='sticky top-[-8px] bg-primary px-[10px] py-[4px] text-gray'>
 										{params.group === 'favorite' ? 'พื้นที่ในรายการโปรด' : 'ค้นหาล่าสุด'}
 									</div>
