@@ -17,25 +17,6 @@ import { useTranslation } from '@/i18n/client'
 import LoadingButton from '@mui/lab/LoadingButton'
 import ResetPasswordForm from '@/components/shared/ResetPasswordForm'
 
-// const validationSchema = yup.object({
-// 	email: yup.string().required(),
-// 	password: yup
-// 		.string()
-// 		.required('กรุณากรอกรหัสผ่านใหม่')
-// 		.min(8, 'รหัสผ่านต้องมีขนาดอย่างน้อย 8 ตัวอักษร')
-// 		.matches(/^(?=.*[0-9])/, 'ต้องมีอย่างน้อย 1 หมายเลข')
-// 		.matches(/^(?=.*[a-z])/, 'ต้องมีตัวอักษรพิมพ์เล็กอย่างน้อย 1 ตัว')
-// 		.matches(/^(?=.*[A-Z])/, 'ต้องมีอักษรตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว')
-// 		.matches(/^(?=.*[!@#$%^&*()_+\-=\[\]{};:\\|,.<>~\/?])/, 'ต้องมีอักขระพิเศษอย่างน้อย 1 ตัว'),
-// 	confirmPassword: yup
-// 		.string()
-// 		.required('กรุณากรอกรหัสผ่านอีกครั้ง')
-// 		.oneOf([yup.ref('password')], 'รหัสผ่านต้องตรงกัน'),
-// 	confirmationCode: yup.string().required('กรุณากรอกรหัสยืนยันตัวตน'),
-// })
-
-// type ResetPasswordFormType = yup.InferType<typeof validationSchema>
-
 const ResetPasswordMain = () => {
 	const router = useRouter()
 	const searchParams = useSearchParams()

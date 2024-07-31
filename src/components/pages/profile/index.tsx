@@ -52,13 +52,6 @@ const defaultFormValues: FormValues = {
 	responsibleDistrictCode: '',
 }
 
-// const validationSchema = yup.object({
-// 	firstName: yup.string().required('กรุณากรอกชื่อ'),
-// 	lastName: yup.string().required('กรุณากรอกนามสกุล'),
-// 	email: yup.string().email('กรุณากรอกอีเมลให้ถูกต้อง').required('กรุณากรอกอีเมล'),
-// 	responsibleProvinceCode: yup.string().required('กรุณาเลือกจังหวัด'),
-// })
-
 const ProfileMain = () => {
 	const router = useRouter()
 	const queryClient = new QueryClient()
