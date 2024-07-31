@@ -1,10 +1,67 @@
 import { Box, Card, CardContent, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import clsx from 'clsx'
+import { useTranslation } from '@/i18n/client'
+import useLanguage from '@/store/language'
+import { AreaTypeKey, AreaUnitKey, Language } from '@/enum'
+import useAreaType from '@/store/area-type'
+import useAreaUnit from '@/store/area-unit'
 import { LossType } from '@/enum'
 import FieldLossCard from '../Card'
 
+interface LossPredictedType {
+	lossType: string
+	areaRai: number
+	areaPlot: number
+	precent: number
+}
+
+interface DataType {
+	updatedDate: string
+	actAreaRai: number
+	actAreaPlot: number
+	actAreaRaiNoGeom: number
+	actAreaPlotNoGeom: number
+	predictedAreaRai: number
+	predictedAreaPlot: number
+	lossPredicted: LossPredictedType[]
+	claimedAreaRai: number
+	claimedAreaPlot: number
+	lossAreaPercent: number
+}
+
+const data: DataType = {
+	updatedDate: '2022-07-19',
+	actAreaRai: 1200000.0,
+	actAreaPlot: 30968.0,
+	actAreaRaiNoGeom: 3000000.0,
+	actAreaPlotNoGeom: 30968.0,
+	predictedAreaRai: 450000.0,
+	predictedAreaPlot: 147.0,
+	lossPredicted: [
+		{
+			lossType: 'drought',
+			areaRai: 150000.0,
+			areaPlot: 51.0,
+			precent: 0.125,
+		},
+		{
+			lossType: 'flood',
+			areaRai: 300000.0,
+			areaPlot: 96.0,
+			precent: 0.25,
+		},
+	],
+	claimedAreaRai: 1125000.0,
+	claimedAreaPlot: 0,
+	lossAreaPercent: 0.375,
+}
+
 const FieldLossSummary = () => {
+	const { areaType, setAreaType } = useAreaType()
+	const { areaUnit } = useAreaUnit()
+	const { language } = useLanguage()
+	const { t } = useTranslation(language, 'default', 'fieldloss')
 	const [lossType, setLossType] = useState<LossType | string>('')
 	const [selectedCard, setSelecteeCard] = useState<number>(2)
 
@@ -55,8 +112,10 @@ const FieldLossSummary = () => {
 							พื้นที่ขึ้นทะเบียนเกษตรกรทั้งหมด
 						</Typography>
 						<div className='flex items-baseline justify-end gap-[4px]'>
-							<span className='text-lg font-semibold leading-[24px] text-[#575757]'>3,000,000</span>
-							<span className='text-sm leading-[20px]'>ไร่</span>
+							<span className='text-lg font-semibold leading-[24px] text-[#575757]'>
+								{data.actAreaRaiNoGeom.toLocaleString()}
+							</span>
+							<span className='text-sm leading-[20px]'>{t(areaUnit)}</span>
 						</div>
 						<span className='text-xs font-medium leading-[16px] text-[#7A7A7A]'>
 							อัปเดตล่าสุด 24 มี.ค. 2568
@@ -85,12 +144,15 @@ const FieldLossSummary = () => {
 								<div className='flex flex-col items-end gap-[4px]'>
 									<div className='flex items-baseline justify-end gap-[4px]'>
 										<span className='text-lg font-semibold leading-[24px] text-[#9F1853]'>
-											1,125,000
+											{data.claimedAreaRai.toLocaleString()}
 										</span>
 										<span className='text-sm leading-[20px]'>ไร่</span>
 									</div>
 									<p className='m-0 font-normal leading-[20px]'>
-										คิดเป็น <span className='font-semibold text-[#9F1853]'>37.5%</span>{' '}
+										คิดเป็น{' '}
+										<span className='font-semibold text-[#9F1853]'>
+											{(data.lossAreaPercent * 100).toFixed(1) + '%'}
+										</span>{' '}
 										ของพื้นที่ขึ้นทะเบียนทั้งหมด
 									</p>
 								</div>
@@ -113,10 +175,22 @@ const FieldLossSummary = () => {
 									พื้นที่เสียหายทั้งหมดจากการวิเคราะห์
 								</Typography>
 								<div className='flex items-baseline justify-end gap-[4px]'>
-									<span className='text-lg font-semibold leading-[24px] text-[#9F1853]'>450,000</span>
+									<span className='text-lg font-semibold leading-[24px] text-[#9F1853]'>
+										{data.predictedAreaRai.toLocaleString()}
+									</span>
 									<span className='text-sm leading-[20px]'>ไร่</span>
 								</div>
-								<FieldLossCard />
+								<div className='flex flex-col gap-[8px]'>
+									{data.lossPredicted.map((item) => {
+										return (
+											<FieldLossCard
+												key={item.lossType}
+												item={item}
+												actAreaRai={data.actAreaRai}
+											/>
+										)
+									})}
+								</div>
 								<span className='text-left text-xs font-medium leading-[16px] text-[#7A7A7A]'>
 									วิเคราะห์ข้อมูลล่าสุด 24 มี.ค. 2568
 								</span>
