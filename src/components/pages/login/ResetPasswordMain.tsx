@@ -10,8 +10,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
-import { ResetPasswordDtoOut } from '@/api/dto/auth/dto-out.dto'
-import { ResetPasswordDtoIn } from '@/api/dto/auth/dto-in.dto'
+import { ResetPasswordDtoOut } from '@/api/auth/dto-out.dto'
+import { ResetPasswordDtoIn } from '@/api/auth/dto-in.dto'
 import useLanguage from '@/store/language'
 import { useTranslation } from '@/i18n/client'
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -97,7 +97,7 @@ const ResetPasswordMain = () => {
 								formik={formik}
 								resetPassword={true}
 								loading={isPending}
-								isEmail={true}
+								isEmail={!!email}
 							/>
 							{/* {!email && <FormHelperText error>URL รีเซ็ตรหัสผ่านไม่ถูกต้อง</FormHelperText>} */}
 							<LoadingButton

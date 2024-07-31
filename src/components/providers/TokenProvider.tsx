@@ -47,11 +47,11 @@ const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 		)
 	}
 
-	if (apiAccessToken) {
+	// if (apiAccessToken) {
 		return children
-	}
+	// }
 
-	return <LoadingScreen />
+	// return <LoadingScreen />
 }
 
 export default TokenProvider

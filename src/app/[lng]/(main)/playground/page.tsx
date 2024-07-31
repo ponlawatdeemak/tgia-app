@@ -10,10 +10,19 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
 import useLanguage from '@/store/language'
 import { Language } from '@/enum'
 
+import service from '@/api'
+
 export default function PlaygroundPage() {
 	const [value, setValue] = React.useState<Dayjs | null>(dayjs('2022-04-07'))
 
 	const { language, setLanguage } = useLanguage()
+
+	React.useEffect(() => {
+		try {
+		} catch (error) {
+			throw new Error('Access Profile failed')
+		}
+	}, [])
 
 	return (
 		<main>
@@ -26,6 +35,22 @@ export default function PlaygroundPage() {
 			>
 				<DateCalendar />
 			</LocalizationProvider>
+
+			<Button
+				onClick={async () => {
+					const adminPoly = await service.fieldLoss.getSearchAdminPoly({ keyword: 'บาง' })
+					// .then((res) => {
+					// 	console.log('res ', res)
+					// })
+					// .catch((error) => {
+					// 	console.log('error ', error)
+					// })
+					console.log('adminPoly', adminPoly)
+				}}
+			>
+				Test Search
+			</Button>
+			<br />
 			<Button variant='contained'>Contained</Button>
 			<Button variant='outlined'>Outlined</Button>
 

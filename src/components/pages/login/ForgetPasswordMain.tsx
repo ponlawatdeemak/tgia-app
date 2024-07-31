@@ -11,11 +11,11 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
-import { ForgotPasswordDtoOut } from '@/api/dto/auth/dto-out.dto'
-import { ForgotPasswordDtoIn } from '@/api/dto/auth/dto-in.dto'
-import LoadingButton from '@mui/lab/LoadingButton'
-import { useTranslation } from '@/i18n/client'
+import { ForgotPasswordDtoOut } from '@/api/auth/dto-out.dto'
+import { ForgotPasswordDtoIn } from '@/api/auth/dto-in.dto'
 import useLanguage from '@/store/language'
+import { useTranslation } from '@/i18n/client'
+import LoadingButton from '@mui/lab/LoadingButton'
 
 const ForgotPasswordMain = () => {
 	const router = useRouter()
