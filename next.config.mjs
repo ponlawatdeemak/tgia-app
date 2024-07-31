@@ -12,6 +12,26 @@ const nextConfig = {
 		GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
 		GOOGLE_MAPS_API_MAP_ID: process.env.GOOGLE_MAPS_API_MAP_ID
 	},
+	async rewrites() {
+		return [
+		  {
+			source: '/th/disasterapis/:path*',
+			destination: 'https://apigw.tgia-dev.thaicom.io/:path*'
+		  }
+		]
+	  }
 }
+
+
+// module.exports = {
+// 	async rewrites() {
+// 	  return [
+// 		{
+// 		  source: '/disasterapis/:path*',
+// 		  destination: 'https://apigw.tgia-dev.thaicom.io/:path*'
+// 		}
+// 	  ]
+// 	}
+//   }
 
 export default nextConfig

@@ -16,15 +16,15 @@ export default withAuth(
 			return redirectWithLanguagePath(req)
 		}
 
-		console.log('req ', req.nextauth)
+		// console.log('req ', req.nextauth)
 
 		const token = req.nextauth.token
 		const isLoggedIn = !!token
 		const isAuthRoute = nextUrl.pathname.includes(authPathPrefix)
 
-		console.log('env ', process.env)
+		// console.log('env ', process.env)
 
-		console.log('token ', token)
+		// console.log('token ', token)
 
 		// console.log('isAuthRoute ', isAuthRoute)
 
