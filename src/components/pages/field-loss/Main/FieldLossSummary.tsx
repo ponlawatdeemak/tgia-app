@@ -1,13 +1,12 @@
 import { Box, Card, CardContent, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import clsx from 'clsx'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
 import { AreaTypeKey, AreaUnitKey, Language } from '@/enum'
 import useAreaType from '@/store/area-type'
 import useAreaUnit from '@/store/area-unit'
 import { LossType } from '@/enum'
 import FieldLossCard from '../Card'
+import { useTranslation } from 'react-i18next'
 
 interface LossPredictedType {
 	lossType: string
@@ -60,8 +59,7 @@ const data: DataType = {
 const FieldLossSummary = () => {
 	const { areaType, setAreaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'default', 'fieldloss')
+	const { t } = useTranslation(['default', 'fieldloss'])
 	const [lossType, setLossType] = useState<LossType | string>('')
 	const [selectedCard, setSelecteeCard] = useState<number>(2)
 
@@ -109,7 +107,7 @@ const FieldLossSummary = () => {
 				<Card className='box-border w-full bg-[#0000000A] px-[16px] py-[12px]'>
 					<CardContent className='flex flex-col gap-[12px] p-0'>
 						<Typography variant='body1' className='font-semibold'>
-							พื้นที่ขึ้นทะเบียนเกษตรกรทั้งหมด
+							{t('allRegisteredAreas', { ns: 'fieldloss' })}
 						</Typography>
 						<div className='flex items-baseline justify-end gap-[4px]'>
 							<span className='text-lg font-semibold leading-[24px] text-[#575757]'>
@@ -139,14 +137,14 @@ const FieldLossSummary = () => {
 						<Card className='w-full px-[16px] py-[12px]'>
 							<CardContent className='flex flex-col gap-[12px] p-0'>
 								<Typography variant='body1' className='text-left font-semibold'>
-									พื้นที่ประมาณการการเยียวยาจากพื้นที่ ลงทะเบียนเกษตรกรทั้งหมด
+									{t('estimatedRemediationArea', { ns: 'fieldloss' })}
 								</Typography>
 								<div className='flex flex-col items-end gap-[4px]'>
 									<div className='flex items-baseline justify-end gap-[4px]'>
 										<span className='text-lg font-semibold leading-[24px] text-[#9F1853]'>
 											{data.claimedAreaRai.toLocaleString()}
 										</span>
-										<span className='text-sm leading-[20px]'>ไร่</span>
+										<span className='text-sm leading-[20px]'>{t(areaUnit)}</span>
 									</div>
 									<p className='m-0 font-normal leading-[20px]'>
 										คิดเป็น{' '}
@@ -157,7 +155,7 @@ const FieldLossSummary = () => {
 									</p>
 								</div>
 								<span className='text-right text-xs font-normal leading-[16px] underline'>
-									วิธีการคำนวณ
+									{t('calculationMethod', { ns: 'fieldloss' })}
 								</span>
 							</CardContent>
 						</Card>
@@ -172,23 +170,21 @@ const FieldLossSummary = () => {
 						<Card className='w-full px-[16px] py-[12px]'>
 							<CardContent className='flex flex-col gap-[12px] p-0'>
 								<Typography variant='body1' className='text-left font-semibold'>
-									พื้นที่เสียหายทั้งหมดจากการวิเคราะห์
+									{t('totalDamagedArea', { ns: 'fieldloss' })}
 								</Typography>
 								<div className='flex items-baseline justify-end gap-[4px]'>
 									<span className='text-lg font-semibold leading-[24px] text-[#9F1853]'>
 										{data.predictedAreaRai.toLocaleString()}
 									</span>
-									<span className='text-sm leading-[20px]'>ไร่</span>
+									<span className='text-sm leading-[20px]'>{t(areaUnit)}</span>
 								</div>
 								<div className='flex flex-col gap-[8px]'>
 									{data.lossPredicted.map((item) => {
-										return (
-											<FieldLossCard
-												key={item.lossType}
-												item={item}
-												actAreaRai={data.actAreaRai}
-											/>
-										)
+										const actArea = {
+											areaRai: data.actAreaRai,
+											areaPlot: data.actAreaPlot,
+										}
+										return <FieldLossCard key={item.lossType} item={item} actArea={actArea} />
 									})}
 								</div>
 								<span className='text-left text-xs font-medium leading-[16px] text-[#7A7A7A]'>
