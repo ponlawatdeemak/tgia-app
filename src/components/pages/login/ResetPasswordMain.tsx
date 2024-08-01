@@ -1,27 +1,27 @@
 'use client'
 
 import service, { ResponseDto } from '@/api'
+import ResetPasswordForm from '@/components/shared/ResetPasswordForm'
 import { AppPath } from '@/config/app'
-import { Button, CircularProgress, FormHelperText, Typography } from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton'
+import { CircularProgress, Typography } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { useFormik } from 'formik'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
 import { ResetPasswordDtoOut } from '@/api/auth/dto-out.dto'
 import { ResetPasswordDtoIn } from '@/api/auth/dto-in.dto'
-import useLanguage from '@/store/language'
-import { useTranslation } from '@/i18n/client'
-import LoadingButton from '@mui/lab/LoadingButton'
-import ResetPasswordForm from '@/components/shared/ResetPasswordForm'
 
-const ResetPasswordMain = () => {
+interface ResetPasswordProps {}
+
+const ResetPasswordMain: React.FC<ResetPasswordProps> = () => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+	const { t } = useTranslation('appbar')
 
 	const validationSchema = yup.object({
 		email: yup.string().required(),

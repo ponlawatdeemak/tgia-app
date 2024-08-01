@@ -1,27 +1,27 @@
 'use client'
 
 import service from '@/api'
+import { ChangePasswordDtoIn } from '@/api/auth/dto-in.dto'
+import AlertConfirm from '@/components/common/dialog/AlertConfirm'
 import ResetPasswordForm from '@/components/shared/ResetPasswordForm'
 import { AppPath } from '@/config/app'
+import { mdiArrowLeft } from '@mdi/js'
+import Icon from '@mdi/react'
 import { Button, CircularProgress } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
 import { useFormik } from 'formik'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
-import { ChangePasswordDtoIn } from '@/api/auth/dto-in.dto'
-import useLanguage from '@/store/language'
-import { useSession } from 'next-auth/react'
-import { useTranslation } from '@/i18n/client'
-import AlertConfirm from '@/components/common/dialog/AlertConfirm'
-import Icon from '@mdi/react'
-import { mdiArrowLeft } from '@mdi/js'
 
-const PasswordResetMain = () => {
+interface PasswordResetMainProps {}
+
+const PasswordResetMain: React.FC<PasswordResetMainProps> = () => {
 	const router = useRouter()
 	const { data: session } = useSession()
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+	const { t } = useTranslation()
 
 	const [busy, setBusy] = useState<boolean>(false)
 	const [confirmOpen, setConfirmOpen] = useState<boolean>(false)

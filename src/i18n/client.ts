@@ -7,6 +7,7 @@ import { useCookies } from 'react-cookie'
 import resourcesToBackend from 'i18next-resources-to-backend'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import { getOptions, appLanguages, cookieName } from './settings'
+import { Language } from '@/enum'
 
 const runsOnServerSide = typeof window === 'undefined'
 
@@ -23,7 +24,9 @@ i18next
 		preload: runsOnServerSide ? appLanguages : [],
 	})
 
-export function useTranslation(lng: string, ns: string, options?: any) {
+export default i18next
+
+export function useSwitchLanguage(lng: Language, ns: string, options?: any) {
 	const [cookies, setCookie] = useCookies([cookieName])
 	const ret = useTranslationOrg(ns, options)
 	const { i18n } = ret
@@ -46,7 +49,7 @@ export function useTranslation(lng: string, ns: string, options?: any) {
 		useEffect(() => {
 			if (cookies.i18next === lng) return
 			setCookie(cookieName, lng, { path: '/' })
-		}, [lng, cookies.i18next])
+		}, [lng, cookies.i18next, setCookie])
 	}
 	return ret
 }
