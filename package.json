@@ -34,6 +34,8 @@
     "axios": "^1.7.2",
     "billboard.js": "^3.12.4",
     "classnames": "^2.5.1",
+    "d3": "^7.9.0",
+    "d3-geo": "^3.1.1",
     "dayjs": "^1.11.11",
     "formik": "^2.4.6",
     "i18next": "^23.11.5",
@@ -54,6 +56,9 @@
     "zustand": "^4.5.4"
   },
   "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "@types/d3-geo": "^3.1.0",
+    "@types/geojson": "^7946.0.14",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
