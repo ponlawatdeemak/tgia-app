@@ -48,10 +48,11 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 	const { data: session } = useSession()
 	const user = session?.user ?? null
 
+	const [image, setImage] = useState<string>(user?.image || '')
 	const [anchorOthersMenuEl, setAnchorOthersMenuEl] = React.useState<null | HTMLElement>(null)
 	const [anchorToggleMenuEl, setAnchorToggleMenuEl] = React.useState<null | HTMLElement>(null)
-	const [drawerOpen, setDrawerOpen] = useState(false)
-	const [toggle, setToggle] = useState(false)
+	const [drawerOpen, setDrawerOpen] = useState<boolean>(false)
+	const [toggle, setToggle] = useState<boolean>(false)
 	const [menuAreaString, setMenuAreaString] = useState<string>('')
 	const openOthersMenu = Boolean(anchorOthersMenuEl)
 	const openToggleMenu = Boolean(anchorToggleMenuEl)
@@ -61,6 +62,10 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 
 		setMenuAreaString(`${t(areaTypeString(areaType))} (${t(areaUnitString(areaUnit))})`)
 	}, [language, areaType, areaUnit])
+
+	useEffect(() => {
+		setImage(user?.image || '')
+	}, [user?.image])
 
 	const selectedMenuKey = useMemo(() => {
 		return appMenuConfig.find((menu) => {
@@ -99,6 +104,10 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 			const oldLanguage = pathname?.split('/')?.[1]
 			router.push(window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
 		}
+	}
+
+	const handleImageError = () => {
+		setImage('')
 	}
 
 	if (isDesktop) {
@@ -199,11 +208,12 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 						className='flex items-center gap-2 px-2 py-[4px] [&_>*]:m-0'
 						onClick={() => handleCloseNavMenu(profileMenuConfig.key)}
 					>
-						{user?.image ? (
+						{image ? (
 							<Avatar
-								src={user.image}
+								src={image}
 								alt='Profile Image'
 								className='h-[24px] w-[24px] bg-success-light'
+								onError={handleImageError}
 							/>
 						) : (
 							<Avatar className='h-[24px] w-[24px] bg-success-light'>
@@ -452,11 +462,12 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 							className='flex items-center gap-2 px-2 py-[4px] [&_>*]:m-0'
 							onClick={() => handleCloseNavMenu(profileMenuConfig.key)}
 						>
-							{user?.image ? (
+							{image ? (
 								<Avatar
-									src={user.image}
+									src={image}
 									alt='Profile Image'
 									className='h-[24px] w-[24px] bg-success-light'
+									onError={handleImageError}
 								/>
 							) : (
 								<Avatar className='h-[24px] w-[24px] bg-success-light'>
