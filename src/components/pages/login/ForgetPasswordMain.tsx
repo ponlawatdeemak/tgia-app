@@ -3,24 +3,24 @@
 import service, { ResponseDto } from '@/api'
 import FormInput from '@/components/common/input/FormInput'
 import { AppPath } from '@/config/app'
-import { Button, CircularProgress, FormHelperText, Link, Typography } from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton'
+import { CircularProgress, FormHelperText, Link, Typography } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
 import { ForgotPasswordDtoOut } from '@/api/auth/dto-out.dto'
 import { ForgotPasswordDtoIn } from '@/api/auth/dto-in.dto'
-import useLanguage from '@/store/language'
-import { useTranslation } from '@/i18n/client'
-import LoadingButton from '@mui/lab/LoadingButton'
 
-const ForgotPasswordMain = () => {
+interface ForgotPasswordMainProps {}
+
+const ForgotPasswordMain: React.FC<ForgotPasswordMainProps> = () => {
 	const router = useRouter()
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+	const { t } = useTranslation('appbar')
 	const {
 		isPending,
 		error,

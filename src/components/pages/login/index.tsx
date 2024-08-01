@@ -6,39 +6,33 @@ import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentL
 import ThaicomLogo from '@/components/svg/ThaicomLogo'
 import TriangleLogo from '@/components/svg/TriangleLogo'
 import { AppPath } from '@/config/app'
-import {
-	Button,
-	CircularProgress,
-	FormHelperText,
-	Link,
-	ToggleButton,
-	ToggleButtonGroup,
-	Typography,
-} from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton'
+import { CircularProgress, FormHelperText, Link, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import { signIn } from 'next-auth/react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
-import useLanguage from '@/store/language'
-import { useTranslation } from '@/i18n/client'
+import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
-import { Language } from '@/enum'
-import LoadingButton from '@mui/lab/LoadingButton'
+import LanguageSwitcher from './LanguageSwitcher'
 
-const LoginMain = () => {
+interface LoginMainProps {}
+
+const LoginMain: React.FC<LoginMainProps> = () => {
 	const searchParams = useSearchParams()
-	const { language, setLanguage } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
-	const pathname = usePathname()
-	const router = useRouter()
+	const { t } = useTranslation('appbar')
 	const callbackUrl = useMemo(() => searchParams?.get('callbackUrl'), [searchParams])
 	const error = useMemo(() => searchParams?.get('error'), [searchParams])
-	const [busy, setBusy] = useState<boolean>(false)
+	const [busy, setBusy] = useState(false)
 
-	const validationSchema = yup.object({
-		username: yup.string().required(t('warning.inputEmail')),
-		password: yup.string().required(t('warning.inputPassword')),
-	})
+	const validationSchema = useMemo(
+		() =>
+			yup.object({
+				username: yup.string().required(t('warning.inputEmail')),
+				password: yup.string().required(t('warning.inputPassword')),
+			}),
+		[t],
+	)
 
 	const errorMessage = useMemo(() => {
 		if (error) {
@@ -46,7 +40,7 @@ const LoginMain = () => {
 			return `${t('error.somethingWrong')}`
 		}
 		return null
-	}, [error])
+	}, [error, t])
 
 	const onSubmit = useCallback(
 		async (values: LoginDtoIn) => {
@@ -99,34 +93,7 @@ const LoginMain = () => {
 			</div>
 			<div className='flex h-full flex-col items-center justify-center bg-white'>
 				<div className='fixed right-4 top-4'>
-					<ToggleButtonGroup
-						className='box-border flex p-1'
-						value={language}
-						exclusive
-						color='primary'
-						onChange={(event: React.MouseEvent<HTMLElement>, newLanguage: Language) => {
-							if (newLanguage !== null) {
-								setLanguage(newLanguage)
-								const oldLanguage = pathname?.split('/')?.[1]
-								router.push(window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
-							}
-						}}
-					>
-						<ToggleButton
-							className='primary-color rounded px-3 py-0.5 text-sm'
-							value={Language.TH}
-							aria-label='left aligned'
-						>
-							TH
-						</ToggleButton>
-						<ToggleButton
-							className='rounded px-3 py-0.5 text-sm'
-							value={Language.EN}
-							aria-label='right aligned'
-						>
-							EN
-						</ToggleButton>
-					</ToggleButtonGroup>
+					<LanguageSwitcher />
 				</div>
 				<div className='mx-2 flex flex-col lg:w-[500px]'>
 					<div className='flex justify-center gap-1'>

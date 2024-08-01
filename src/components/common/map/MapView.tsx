@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 import classNames from 'classnames'
 import { ToggleButtonGroup, ToggleButton } from '@mui/material'
 import MapGoogle from './MapGoogle'
@@ -13,16 +13,17 @@ const INITIAL_VIEW_STATE: MapViewState = {
 	zoom: 5,
 }
 
-export default function MapView({ className = '' }: MapViewProps) {
+const MapView: React.FC<MapViewProps> = ({ className = '' }) => {
 	const [viewState, setViewState] = useState<MapViewState>(INITIAL_VIEW_STATE)
 	const [basemap, setBasemap] = useState('carto-light')
+
 	const onViewStateChange = useCallback((v: any) => {
 		setViewState(v)
 	}, [])
 
-	const handleChange = (event: React.MouseEvent<HTMLElement>, newBasemap: string) => {
+	const handleChange = useCallback((event: React.MouseEvent<HTMLElement>, newBasemap: string) => {
 		setBasemap((prev) => newBasemap || prev)
-	}
+	}, [])
 
 	return (
 		<div className={classNames('relative flex h-full flex-1 flex-col overflow-hidden', className)}>
@@ -50,3 +51,5 @@ export default function MapView({ className = '' }: MapViewProps) {
 		</div>
 	)
 }
+
+export default memo(MapView)

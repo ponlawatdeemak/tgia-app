@@ -1,13 +1,12 @@
 'use client'
 
 import { Box, Typography } from '@mui/material'
-import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined'
+import { WaterOutlined, WbSunnyOutlined } from '@mui/icons-material'
 import React from 'react'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
 import { AreaTypeKey, AreaUnitKey, Language } from '@/enum'
 import useAreaType from '@/store/area-type'
 import useAreaUnit from '@/store/area-unit'
+import { useTranslation } from 'react-i18next'
 
 interface LossPredictedType {
 	lossType: string
@@ -18,37 +17,46 @@ interface LossPredictedType {
 
 interface FieldLossCardProps {
 	item: LossPredictedType
-	actAreaRai: number
+	actArea: { [key: string]: number }
 }
 
-const FieldLossCard: React.FC<FieldLossCardProps> = ({ item, actAreaRai }) => {
+const FieldLossCard: React.FC<FieldLossCardProps> = ({ item, actArea }) => {
 	const { areaType, setAreaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'default')
+	const { t } = useTranslation(['default', 'fieldloss'])
 
 	return (
 		<Box className='flex flex-col gap-[4px] rounded-lg border-[1px] border-solid border-gray p-[8px]'>
 			<Box className='flex items-center justify-between'>
 				<div className='flex items-center gap-[4px]'>
-					<WbSunnyOutlinedIcon className='h-[20px] w-[20px] font-light text-[#FC8E59]' />
+					{item.lossType === 'drought' ? (
+						<WbSunnyOutlined className='h-[20px] w-[20px] font-light text-[#FC8E59]' />
+					) : (
+						<WaterOutlined className='h-[20px] w-[20px] font-light text-[#6BAED6]' />
+					)}
 					<div className='flex items-baseline gap-[4px]'>
-						<span className='leading-[20px] text-black'>{item.lossType}</span>
+						<span className='leading-[20px] text-black'>{t(item.lossType)}</span>
 						<span className='font-semibold leading-[16px] text-[#9F1853]'>
 							{(item.precent * 100).toFixed(1) + '%'}
 						</span>
 					</div>
 				</div>
 				<div className='flex items-baseline gap-[4px]'>
-					<span className='font-semibold leading-[16px] text-[#9F1853]'>{item.areaRai.toLocaleString()}</span>
-					<span className='font-normal leading-[20px] text-black'>ไร่</span>
+					<span className='font-semibold leading-[16px] text-[#9F1853]'>
+						{item[areaUnit].toLocaleString()}
+					</span>
+					<span className='font-normal leading-[20px] text-black'>{t(areaUnit)}</span>
 				</div>
 			</Box>
 			<Box className='flex items-center justify-between'>
-				<span className='font-normal leading-[20px] text-black'>พื้นที่ขึ้นทะเบียนที่มีขอบแปลง</span>
+				<span className='text-left font-normal leading-[20px] text-black'>
+					{t('boundaryRegisteredAreas', { ns: 'fieldloss' })}
+				</span>
 				<div className='flex items-baseline gap-[4px]'>
-					<span className='font-semibold leading-[16px] text-[#575757]'>{actAreaRai.toLocaleString()}</span>
-					<span className='font-normal leading-[20px] text-black'>ไร่</span>
+					<span className='font-semibold leading-[16px] text-[#575757]'>
+						{actArea[areaUnit].toLocaleString()}
+					</span>
+					<span className='font-normal leading-[20px] text-black'>{t(areaUnit)}</span>
 				</div>
 			</Box>
 		</Box>

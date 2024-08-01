@@ -1,4 +1,6 @@
 {
     "areaRai": "Rai",
-    "areaPlot": "LandPlot"
+    "areaPlot": "LandPlot",
+    "drought": "Drought",
+    "flood": "Flood"
 }

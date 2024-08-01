@@ -1,7 +1,7 @@
 'use client'
 
 import AlertConfirm from '@/components/common/dialog/AlertConfirm'
-import { Alert, Box, Button, CircularProgress, Snackbar } from '@mui/material'
+import { Alert, Box, Button, CircularProgress, Snackbar, Typography } from '@mui/material'
 import Icon from '@mdi/react'
 import { mdiLockReset } from '@mdi/js'
 import { useFormik } from 'formik'
@@ -10,14 +10,16 @@ import * as yup from 'yup'
 import service from '@/api'
 import { signOut, useSession } from 'next-auth/react'
 import { useQuery } from '@tanstack/react-query'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
+
 import { CreateProfileImageDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
 import { QueryClient, useMutation } from '@tanstack/react-query'
 import { AppPath } from '@/config/app'
 import { useRouter } from 'next/navigation'
 import { AlertInfoType, FormValues } from '@/components/shared/ProfileForm/interface'
 import ProfileForm from '@/components/shared/ProfileForm'
+
+import { useTranslation } from 'react-i18next'
+import { useSwitchLanguage } from '@/i18n/client'
 
 const defaultFormValues: FormValues = {
 	id: '',
@@ -32,13 +34,13 @@ const defaultFormValues: FormValues = {
 	responsibleDistrictCode: '',
 }
 
-const ProfileMain = () => {
+interface ProfileMainProps {}
+
+const ProfileMain: React.FC<ProfileMainProps> = () => {
 	const router = useRouter()
 	const queryClient = new QueryClient()
+	const { t, i18n } = useTranslation()
 	const { data: session, update } = useSession()
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
-
 	const [busy, setBusy] = useState<boolean>(false)
 	const [confirmOpenDialog, setConfirmOpenDialog] = useState<boolean>(false)
 	const [logoutOpenDialog, setLogoutOpenDialog] = useState<boolean>(false)
@@ -158,6 +160,7 @@ const ProfileMain = () => {
 
 	return (
 		<>
+			<Typography className='text-xl font-semibold text-black lg:text-md'>{t('profile.profile')}</Typography>
 			<form
 				onSubmit={formik.handleSubmit}
 				className='flex h-full flex-col justify-between max-lg:justify-start max-lg:gap-[32px]'

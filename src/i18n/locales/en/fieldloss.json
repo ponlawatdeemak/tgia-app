@@ -1,4 +1,7 @@
 {
-    "allFarmersRegisteredAreas": "All Farmers' Registered Areas",
-    "totalDamagedArea": "Total Damaged Area from Analysis"
+    "allRegisteredAreas": "All Farmers' Registered Areas",
+    "boundaryRegisteredAreas": "Registered Areas with Plot Boundaries",
+    "totalDamagedArea": "Total Damaged Area from Analysis",
+    "estimatedRemediationArea": "Estimated Remediation Area from All Registered Farmers",
+    "calculationMethod": "Calculation Method"
 }

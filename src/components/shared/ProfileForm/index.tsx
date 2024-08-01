@@ -9,8 +9,9 @@ import { FormikProps } from 'formik'
 import { useEffect } from 'react'
 import service from '@/api'
 import { useQuery } from '@tanstack/react-query'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
+import { useTranslation } from 'react-i18next'
+import { useSwitchLanguage } from '@/i18n/client'
+import { Language } from '@/enum'
 
 export interface ProfileFormProps {
 	formik: FormikProps<any>
@@ -18,8 +19,8 @@ export interface ProfileFormProps {
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) => {
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+	const { t, i18n } = useTranslation()
+	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 
 	const { data: provinceLookupData, isLoading: isProvinceDataLoading } = useQuery({
 		queryKey: ['getProvince'],
@@ -103,7 +104,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 									value: String(item.code),
 								})) || []
 							}
-							getOptionLabel={(option) => option.name[language]}
+							getOptionLabel={(option) => option.name[i18n.language]}
 							name='responsibleProvinceCode'
 							label={t('default.province')}
 							formik={formik}
@@ -118,7 +119,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 									value: String(item.code),
 								})) || []
 							}
-							getOptionLabel={(option) => option.name?.[language]}
+							getOptionLabel={(option) => option.name?.[i18n.language]}
 							name='responsibleDistrictCode'
 							label={t('default.amphor')}
 							formik={formik}
@@ -134,7 +135,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 									value: item.code,
 								})) || []
 							}
-							getOptionLabel={(option) => option.name[language]}
+							getOptionLabel={(option) => option.name[i18n.language]}
 							name='orgCode'
 							label={t('default.org')}
 							formik={formik}
@@ -148,7 +149,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 									value: item.code,
 								})) || []
 							}
-							getOptionLabel={(option) => option.name[language]}
+							getOptionLabel={(option) => option.name[i18n.language]}
 							name='role'
 							label={t('default.role')}
 							formik={formik}
