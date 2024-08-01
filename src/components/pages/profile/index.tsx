@@ -57,7 +57,16 @@ const ProfileMain = () => {
 
 	const { data: userData, isLoading: isUserDataLoading } = useQuery({
 		queryKey: ['getProfile'],
-		queryFn: () => service.um.getProfile(),
+		queryFn: async () => {
+			try {
+				setBusy(true)
+				return await service.um.getProfile()
+			} catch (error) {
+				console.log('Access Profile failed')
+			} finally {
+				setBusy(false)
+			}
+		},
 	})
 
 	const {
