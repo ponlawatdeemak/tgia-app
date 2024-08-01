@@ -10,16 +10,12 @@ import { useFormik } from 'formik'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import * as yup from 'yup'
-import AuthBreadcrumbs from './AuthBreadcrumbs'
+import AuthBreadcrumbs from './AuthBreadcrumbs' 
+import LoadingButton from '@mui/lab/LoadingButton'
+import { useTranslation } from '@/i18n/client'
+import useLanguage from '@/store/language'
 import { ForgotPasswordDtoOut } from '@/api/auth/dto-out.dto'
 import { ForgotPasswordDtoIn } from '@/api/auth/dto-in.dto'
-import useLanguage from '@/store/language'
-import { useTranslation } from '@/i18n/client'
-import LoadingButton from '@mui/lab/LoadingButton'
-
-// const validationSchema = yup.object({
-// 	email: yup.string().email('รูปแบบอีเมลไม่ถูกต้อง').required('กรุณากรอกอีเมล'),
-// })
 
 const ForgotPasswordMain = () => {
 	const router = useRouter()
