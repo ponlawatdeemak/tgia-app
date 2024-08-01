@@ -1,4 +1,8 @@
 {
+    "province": "จังหวัด",
+    "district": "อำเภอ",
+    "subDistrict": "ตำบล",
+    "village": "หมู่บ้าน",
     "areaRai": "ไร่",
     "areaPlot": "แปลง",
     "drought": "ภัยแล้ง",

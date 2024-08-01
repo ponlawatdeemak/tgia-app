@@ -1,6 +1,10 @@
 {
-    "areaRai": "Rai",
-    "areaPlot": "LandPlot",
-    "drought": "Drought",
-    "flood": "Flood"
+	"province": "Province",
+	"district": "District",
+	"subDistrict": "Sub District",
+	"village": "Village",
+	"areaRai": "Rai",
+	"areaPlot": "LandPlot",
+	"drought": "Drought",
+	"flood": "Flood"
 }

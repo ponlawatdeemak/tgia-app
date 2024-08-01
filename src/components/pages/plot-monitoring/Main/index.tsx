@@ -6,7 +6,7 @@ import PlotMonitoringSearchForm from './PlotMonitoringSearchForm'
 import PlotMonitoringFilter from './PlotMonitoringFilter'
 import PlotMonitoringList from './PlotMonitoringList'
 
-export const FieldLossMain = () => {
+export const PlotMonitoringMain = () => {
 	return (
 		<div className='flex flex-grow flex-col gap-y-[16px]'>
 			<PlotMonitoringSearchForm></PlotMonitoringSearchForm>
