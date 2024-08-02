@@ -1,3 +1,5 @@
+import { ResponseLanguage } from '..'
+
 export interface GetUmDtoOut {
 	id: string
 	username: string
@@ -29,6 +31,11 @@ export interface GetProfileDtoOut {
 	role: string
 	responsibleProvinceCode: any
 	responsibleDistrictCode: any
+	orgName: ResponseLanguage
+	roleName: ResponseLanguage
+	responsibleProvinceName: ResponseLanguage
+	responsibleDistrictName: ResponseLanguage
+	flagStatusName: ResponseLanguage
 }
 
 export interface PutProfileDtoOut {
