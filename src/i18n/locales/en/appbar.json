@@ -17,7 +17,8 @@
 		"org": "Organization",
 		"role": "Role",
 		"setting": "Setting",
-		"back": "Back"
+		"back": "Back",
+		"close": "Close"
 	},
 	"warning": {
 		"inputEmail": "Please enter your email.",
@@ -36,10 +37,13 @@
 		"inputLastName": "Please enter your last name.",
 		"inputProvince": "Please select your province."
 	},
-	"success": {},
+	"success": {
+		"profileUpdate": "Profile updated successfully"
+	},
 	"error": {
 		"somethingWrong": "Something went wrong. Please check the information again.",
-		"incorrectEmailOrPassword": "Incorrect email or password"
+		"incorrectEmailOrPassword": "Incorrect email or password",
+		"profileUpdate": "Profile update failed"
 	},
 	"auth": {
 		"title": "โครงการพัฒนาระบบเทคโนโลยี",
@@ -90,5 +94,11 @@
 	"common": {
 		"uploadImg": "Upload Image",
 		"conditionImg": "File size does not exceed 3 MB (jpg or png)"
+	},
+	"alert": {
+		"confirmUserUpdateTitle": "Confirm user account update",
+		"confirmUserUpdateContent": "Are you sure you want to update this user account?",
+		"confirmLogoutTitle": "Confirm logout",
+		"confirmLogoutContent": "Are you sure you want to log out?"
 	}
 }

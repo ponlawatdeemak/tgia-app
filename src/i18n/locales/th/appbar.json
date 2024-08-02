@@ -17,7 +17,8 @@
 		"org": "หน่วยงาน",
 		"role": "บทบาท",
 		"setting": "ตั้งค่า",
-		"back": "ย้อนกลับ"
+		"back": "ย้อนกลับ",
+		"close": "ปิด"
 	},
 	"warning": {
 		"inputEmail": "กรุณากรอกอีเมล",
@@ -36,12 +37,13 @@
 		"inputLastName": "กรุณากรอกนามสกุล",
 		"inputProvince": "กรุณาเลือกจังหวัด"
 	},
-	"success": {},
+	"success": {
+		"profileUpdate": "แก้ไขข้อมูลส่วนตัวสำเร็จ"
+	},
 	"error": {
 		"somethingWrong": "เกิดข้อผิดพลาด กรุณาตรวจสอบข้อมูลอีกครั้ง",
-		"incorrectEmailOrPassword": "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
-
-		
+		"incorrectEmailOrPassword": "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+		"profileUpdate": "แก้ไขข้อมูลส่วนตัวไม่สำเร็จ"
 	},
 	"auth": {
 		"title": "โครงการพัฒนาระบบเทคโนโลยี",
@@ -92,5 +94,11 @@
 	"common": {
 		"uploadImg": "อัปโหลดรูปภาพ",
 		"conditionImg": "ขนาดไฟล์ไม่เกิน 3 MB (jpg หรือ png)"
+	},
+	"alert": {
+		"confirmUserUpdateTitle": "บันทึกบัญชีผู้ใช้งาน",
+		"confirmUserUpdateContent": "ต้องการยืนยันการบันทึกบัญชีผู้ใช้งานนี้ใช่หรือไม่",
+		"confirmLogoutTitle": "ยืนยันการออกจากระบบ",
+		"confirmLogoutContent": "ต้องการยืนยันการออกจากระบบใช่หรือไม่"
 	}
 }

@@ -132,10 +132,10 @@ const ProfileMain = () => {
 				throw new Error('Failed to update session')
 			}
 
-			setAlertInfo({ open: true, severity: 'success', message: 'แก้ไขข้อมูลส่วนตัวสำเร็จ' })
+			setAlertInfo({ open: true, severity: 'success', message: t('success.profileUpdate') })
 		} catch (error: any) {
 			console.log('Error:', error.message)
-			setAlertInfo({ open: true, severity: 'error', message: 'แก้ไขข้อมูลส่วนตัวไม่สำเร็จ' })
+			setAlertInfo({ open: true, severity: 'error', message: t('error.profileUpdate') })
 		} finally {
 			setBusy(false)
 		}
@@ -195,8 +195,8 @@ const ProfileMain = () => {
 						</Button>
 						<AlertConfirm
 							open={confirmOpenDialog}
-							title='บันทึกบัญชีผู้ใช้งาน'
-							content='ต้องการยืนยันการบันทึกบัญชีผู้ใช้งานนี้ใช่หรือไม่'
+							title={t('alert.confirmUserUpdateTitle')}
+							content={t('alert.confirmUserUpdateContent')}
 							onClose={() => setConfirmOpenDialog(false)}
 							onConfirm={handleConfirmSubmit}
 						/>
@@ -225,8 +225,8 @@ const ProfileMain = () => {
 					</Button>
 					<AlertConfirm
 						open={logoutOpenDialog}
-						title='ยืนยันการออกจากระบบ'
-						content='ต้องการยืนยันการออกจากระบบของผู้ใช้งานนี้ใช่หรือไม่'
+						title={t('alert.confirmLogoutTitle')}
+						content={t('alert.confirmLogoutContent')}
 						onClose={() => setLogoutOpenDialog(false)}
 						onConfirm={logout}
 					/>
