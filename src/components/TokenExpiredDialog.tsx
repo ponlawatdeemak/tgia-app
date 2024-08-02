@@ -11,9 +11,9 @@ const TokenExpiredDialog: React.FC<TokenExpiredDialogProps> = () => {
 
 	return (
 		<Dialog open={true}>
-			<DialogTitle>{t('auth.tokenExpire')}</DialogTitle>
+			<DialogTitle>{t('auth.tokenExpire', { ns: 'appbar' })}</DialogTitle>
 			<DialogContent>
-				<DialogContentText>{t('auth.loginAgain')}</DialogContentText>
+				<DialogContentText>{t('auth.loginAgain', { ns: 'appbar' })}</DialogContentText>
 			</DialogContent>
 			<DialogActions>
 				<Button variant='contained' onClick={onClose}>
