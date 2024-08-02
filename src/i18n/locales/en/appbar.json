@@ -19,7 +19,9 @@
 		"headerResetPasswordSuccess": "Reset reset successful.",
 		"subHeaderResetPasswordSuccess": "Please use your new password to log in.",
 		"headerResetPasswordUnsuccess": "Reset reset unsuccessful.",
-		"subHeaderResetPasswordUnsuccess": "Please check the accuracy again."
+		"subHeaderResetPasswordUnsuccess": "Please check the accuracy again.",
+		"tokenExpire": "The Token has expired.",
+		"loginAgain": "Please Login again."
 	},
 	"menu": {
 		"fieldLoss": "Field Loss",

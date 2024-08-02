@@ -106,11 +106,11 @@ const LoginMain: React.FC<LoginMainProps> = () => {
 						{t('auth.subTitle')}
 					</Typography>
 					<form onSubmit={formik.handleSubmit} className='flex flex-col lg:mx-6'>
-						<FormInput disabled={busy} name='username' label={t('default.userName')} formik={formik} />
+						<FormInput disabled={busy} name='username' label={t('userName')} formik={formik} />
 						<PasswordInput
 							disabled={busy}
 							name='password'
-							label={t('default.password')}
+							label={t('password')}
 							formik={formik}
 							className='mt-4'
 						/>

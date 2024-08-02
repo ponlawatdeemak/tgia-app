@@ -39,7 +39,7 @@ interface ProfileMainProps {}
 const ProfileMain: React.FC<ProfileMainProps> = () => {
 	const router = useRouter()
 	const queryClient = new QueryClient()
-	const { t, i18n } = useTranslation()
+	const { t, i18n } = useTranslation(['appbar', 'default'])
 	const { data: session, update } = useSession()
 	const [busy, setBusy] = useState<boolean>(false)
 	const [confirmOpenDialog, setConfirmOpenDialog] = useState<boolean>(false)
@@ -185,7 +185,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 								) : null
 							}
 						>
-							{t('default.confirm')}
+							{t('confirm')}
 						</Button>
 						<AlertConfirm
 							open={confirmOpenDialog}
@@ -204,7 +204,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 								disabled={busy}
 								startIcon={<Icon path={mdiLockReset} size={'20px'} className='text-[#A6A6A6]' />}
 							>
-								{t('default.resetPassword')}
+								{t('resetPassword')}
 							</Button>
 						</div>
 					</div>

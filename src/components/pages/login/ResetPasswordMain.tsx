@@ -21,7 +21,7 @@ interface ResetPasswordProps {}
 const ResetPasswordMain: React.FC<ResetPasswordProps> = () => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
-	const { t } = useTranslation('appbar')
+	const { t } = useTranslation()
 
 	const validationSchema = yup.object({
 		email: yup.string().required(),
@@ -82,12 +82,12 @@ const ResetPasswordMain: React.FC<ResetPasswordProps> = () => {
 
 	return (
 		<>
-			<AuthBreadcrumbs name={t('default.resetPassword')} href={AppPath.Login} />
+			<AuthBreadcrumbs name={t('resetPassword')} href={AppPath.Login} />
 
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center lg:mt-32 lg:items-start'>
 					<div className='mx-2 flex w-full max-w-[500px] flex-col items-center'>
-						<Typography className='mb-8 text-2xl font-bold'>{t('default.resetPassword')}</Typography>
+						<Typography className='mb-8 text-2xl font-bold'>{t('resetPassword')}</Typography>
 						<form
 							onSubmit={formik.handleSubmit}
 							className='flex w-full max-w-[340px] flex-col sm:max-w-full'
@@ -109,7 +109,7 @@ const ResetPasswordMain: React.FC<ResetPasswordProps> = () => {
 								type='submit'
 								className='mt-10 [&_.MuiButton-startIcon]:m-0'
 							>
-								<span>{t('default.confirm')}</span>
+								<span>{t('confirm')}</span>
 							</LoadingButton>
 						</form>
 					</div>

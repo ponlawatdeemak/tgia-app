@@ -1,5 +1,4 @@
 {
- 
 	"auth": {
 		"title": "โครงการพัฒนาระบบเทคโนโลยี",
 		"subTitle": "เพื่องานประกันภัยข้าวนาปี",
@@ -20,7 +19,9 @@
 		"headerResetPasswordSuccess": "รีเซ็ตรหัสผ่านใหม่สำเร็จ",
 		"subHeaderResetPasswordSuccess": "โปรดใช้รหัสผ่านที่ตั้งขึ้นใหม่นี้ในการเข้าใช้งานระบบในครั้งต่อไป",
 		"headerResetPasswordUnsuccess": "รีเซ็ตรหัสผ่านใหม่ไม่สำเร็จ",
-		"subHeaderResetPasswordUnsuccess": "กรุณาตรวจเช็คความถูกต้องใหม่อีกครั้ง"
+		"subHeaderResetPasswordUnsuccess": "กรุณาตรวจเช็คความถูกต้องใหม่อีกครั้ง",
+		"tokenExpire": "ระยะเวลาการใช้งานหมดอายุ",
+		"loginAgain": "โปรดเข้าสู่ระบบอีกครั้ง"
 	},
 	"menu": {
 		"fieldLoss": "วิเคราะห์ความเสียหาย",
@@ -42,6 +43,5 @@
 			"rai": "ไร่",
 			"landPlot": "แปลง"
 		}
-	} 
-
+	}
 }
