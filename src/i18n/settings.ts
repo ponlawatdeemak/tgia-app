@@ -2,7 +2,7 @@ import { Language } from '@/enum'
 
 export const fallbackLng = Language.TH
 export const appLanguages = [fallbackLng, Language.EN]
-export const defaultNS = 'appbar'
+export const defaultNS = 'default'
 export const cookieName = 'i18next'
 
 export function getOptions(lng = fallbackLng, ns = defaultNS) {
