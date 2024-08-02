@@ -52,5 +52,11 @@
 	"common": {
 		"uploadImg": "อัปโหลดรูปภาพ",
 		"conditionImg": "ขนาดไฟล์ไม่เกิน 3 MB (jpg หรือ png)"
+	},
+	"alert": {
+		"confirmUserUpdateTitle": "บันทึกบัญชีผู้ใช้งาน",
+		"confirmUserUpdateContent": "ต้องการยืนยันการบันทึกบัญชีผู้ใช้งานนี้ใช่หรือไม่",
+		"confirmLogoutTitle": "ยืนยันการออกจากระบบ",
+		"confirmLogoutContent": "ต้องการยืนยันการออกจากระบบใช่หรือไม่"
 	}
 }

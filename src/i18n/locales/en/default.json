@@ -48,9 +48,14 @@
 		"somethingWrong": "Something went wrong. Please check the information again.",
 		"incorrectEmailOrPassword": "Incorrect email or password"
 	},
-	"alert": {},
 	"common": {
 		"uploadImg": "Upload Image",
 		"conditionImg": "File size does not exceed 3 MB (jpg or png)"
+	},
+	"alert": {
+		"confirmUserUpdateTitle": "Confirm user account update",
+		"confirmUserUpdateContent": "Are you sure you want to update this user account?",
+		"confirmLogoutTitle": "Confirm logout",
+		"confirmLogoutContent": "Are you sure you want to log out?"
 	}
 }
