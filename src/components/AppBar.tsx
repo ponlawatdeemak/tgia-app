@@ -222,7 +222,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 						)}
 
 						<span className='text-base font-medium text-black underline decoration-2 underline-offset-2'>
-							{`${user?.firstName} ${user?.lastName.charAt(0)}.`}
+							{`${user?.firstName || ''} ${user?.lastName.charAt(0).padEnd(2, '.') || ''}`}
 						</span>
 					</Button>
 					<div>
@@ -475,7 +475,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 								</Avatar>
 							)}
 							<span className='text-base font-normal text-black underline decoration-1 underline-offset-2'>
-								{`${user?.firstName} ${user?.lastName.charAt(0)}.`}
+								{`${user?.firstName || ''} ${user?.lastName.charAt(0).padEnd(2, '.') || ''}`}
 							</span>
 						</Button>
 						<div className='flex gap-3'>
