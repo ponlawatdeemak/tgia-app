@@ -57,16 +57,7 @@ const ProfileMain = () => {
 
 	const { data: userData, isLoading: isUserDataLoading } = useQuery({
 		queryKey: ['getProfile'],
-		queryFn: async () => {
-			try {
-				setBusy(true)
-				return await service.um.getProfile()
-			} catch (error) {
-				console.log('Access Profile failed')
-			} finally {
-				setBusy(false)
-			}
-		},
+		queryFn: async () => await service.um.getProfile(),
 	})
 
 	const {
@@ -172,7 +163,7 @@ const ProfileMain = () => {
 				className='flex h-full flex-col justify-between max-lg:justify-start max-lg:gap-[32px]'
 			>
 				<Box className='flex w-full gap-[16px] max-lg:flex-col lg:gap-[12px]'>
-					<ProfileForm formik={formik} loading={busy} />
+					<ProfileForm formik={formik} loading={busy || isUserDataLoading} />
 				</Box>
 				<Box className='flex items-center max-lg:flex-col max-lg:items-center max-lg:gap-[8px] lg:justify-between lg:px-[40px]'>
 					<div className='flex gap-[8px] max-lg:w-[250px] max-lg:flex-col lg:gap-[20px]'>
@@ -181,9 +172,9 @@ const ProfileMain = () => {
 							variant='contained'
 							onClick={handleConfirmOpen}
 							color='primary'
-							disabled={busy}
+							disabled={busy || isUserDataLoading}
 							startIcon={
-								busy ? (
+								busy || isUserDataLoading ? (
 									<CircularProgress
 										className='[&_.MuiCircularProgress-circle]:text-[#00000042]'
 										size={16}
@@ -207,7 +198,7 @@ const ProfileMain = () => {
 								variant='outlined'
 								onClick={() => router.push(AppPath.PasswordReset)}
 								color='primary'
-								disabled={busy}
+								disabled={busy || isUserDataLoading}
 								startIcon={<Icon path={mdiLockReset} size={'20px'} className='text-[#A6A6A6]' />}
 							>
 								{t('default.resetPassword')}
@@ -219,7 +210,7 @@ const ProfileMain = () => {
 						onClick={() => setLogoutOpenDialog(true)}
 						variant='outlined'
 						color='error'
-						disabled={busy}
+						disabled={busy || isUserDataLoading}
 					>
 						{t('auth.loginOut')}
 					</Button>
