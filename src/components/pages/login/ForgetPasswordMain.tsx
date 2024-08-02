@@ -66,7 +66,10 @@ const ForgotPasswordMain: React.FC<ForgotPasswordMainProps> = () => {
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center lg:mt-48 lg:items-start'>
 					<div className='mx-2 flex w-full max-w-[500px] flex-col items-center'>
-						<Typography className='mb-2 text-2xl font-bold'> {t('auth.headerForgotPassword')}</Typography>
+						<Typography className='mb-2 text-2xl font-bold'>
+							{' '}
+							{t('auth.headerForgotPassword', { ns: 'appbar' })}
+						</Typography>
 						<Typography className='text-center'>
 							{t('auth.subHeaderForgotPassword', { ns: 'appbar' })} <br className='lg:hidden' />
 							{t('auth.subHeaderSendLink', { ns: 'appbar' })}

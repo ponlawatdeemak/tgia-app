@@ -106,7 +106,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 							}
 							getOptionLabel={(option) => option.name[i18n.language]}
 							name='responsibleProvinceCode'
-							label={t('belongProvince')}
+							label={t('belongProvince', { ns: 'profile' })}
 							formik={formik}
 							disabled={isProvinceDataLoading || loading}
 							required
@@ -121,7 +121,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 							}
 							getOptionLabel={(option) => option.name?.[i18n.language]}
 							name='responsibleDistrictCode'
-							label={t('belongDistrict')}
+							label={t('belongDistrict', { ns: 'profile' })}
 							formik={formik}
 							disabled={isDistricDataLoading || loading}
 						/>
