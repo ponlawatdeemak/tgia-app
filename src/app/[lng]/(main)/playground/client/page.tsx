@@ -18,8 +18,8 @@ const ClientPage = () => {
 
 	// updateAccessToken(loginData?.tokens?.accessToken)
 	const { data: userData, isLoading } = useQuery({
-		queryKey: ['getUser'],
-		queryFn: () => service.um.getUser({ userId: '295a35cc-80c1-702c-72f1-ad596ac1718a' }),
+		queryKey: ['getUM'],
+		queryFn: () => service.um.getUM({ userId: '295a35cc-80c1-702c-72f1-ad596ac1718a' }),
 		enabled: !!loginData?.data,
 	})
 

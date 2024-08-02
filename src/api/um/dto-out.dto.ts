@@ -14,7 +14,7 @@ export interface GetUmDtoOut {
 	updatedAt: string
 }
 
-export interface CreateProfileImageDtoOut {
+export interface PostUploadFilesDtoOut {
 	download_file_url: string
 }
 

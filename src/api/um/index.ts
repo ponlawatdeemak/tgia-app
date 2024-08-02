@@ -1,11 +1,12 @@
 import { api } from '@/api/core'
-import { CreateProfileImageDtoOut, GetProfileDtoOut, GetUmDtoOut, PutProfileDtoOut } from '@/api/um/dto-out.dto'
-import { CreateProfileImageDtoIn, GetUmDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
+import { GetProfileDtoOut, GetUmDtoOut, PostUploadFilesDtoOut, PutProfileDtoOut } from '@/api/um/dto-out.dto'
+import { GetUmDtoIn, PostUploadFilesDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
 import { ResponseDto } from '@/api'
 
+// api for Profile and UM
 const um = {
-	getUser: async (payload: GetUmDtoIn): Promise<ResponseDto<GetUmDtoOut>> => await api.fetch(`/um/${payload.userId}`),
-	uploadImg: async (payload: CreateProfileImageDtoIn): Promise<ResponseDto<CreateProfileImageDtoOut>> => {
+	getUM: async (payload: GetUmDtoIn): Promise<ResponseDto<GetUmDtoOut>> => await api.fetch(`/um/${payload.userId}`),
+	postUploadFiles: async (payload: PostUploadFilesDtoIn): Promise<ResponseDto<PostUploadFilesDtoOut>> => {
 		const formData = new FormData()
 		formData.append('file', payload.file)
 		return await api.post('/files/upload', formData, {

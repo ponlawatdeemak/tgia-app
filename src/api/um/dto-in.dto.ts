@@ -2,7 +2,7 @@ export interface GetUmDtoIn {
 	userId: string
 }
 
-export interface CreateProfileImageDtoIn {
+export interface PostUploadFilesDtoIn {
 	file: File
 }
 

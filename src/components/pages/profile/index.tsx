@@ -1,7 +1,7 @@
 'use client'
 
 import service from '@/api'
-import { CreateProfileImageDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
+import { PostUploadFilesDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
 import AlertConfirm from '@/components/common/dialog/AlertConfirm'
 import AutocompleteInput from '@/components/common/input/AutocompleteInput'
 import FormInput from '@/components/common/input/FormInput'
@@ -93,12 +93,12 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 		try {
 			setBusy(true)
 			if (values.image instanceof File) {
-				const selectedImage: CreateProfileImageDtoIn = {
+				const selectedImage: PostUploadFilesDtoIn = {
 					file: values.image,
 				}
 				let imageUrl
 				try {
-					imageUrl = await service.um.uploadImg(selectedImage)
+					imageUrl = await service.um.postUploadFiles(selectedImage)
 				} catch (error) {
 					throw new Error('Image upload failed')
 				}
