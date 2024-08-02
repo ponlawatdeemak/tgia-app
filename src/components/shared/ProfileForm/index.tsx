@@ -39,6 +39,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 	useEffect(() => {
 		if (formik.values.responsibleProvinceCode) {
 			refetchDistricts()
+		} else {
+			formik.setFieldValue('responsibleDistrictCode', null)
 		}
 	}, [formik.values.responsibleProvinceCode, refetchDistricts])
 
@@ -122,7 +124,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 							name='responsibleDistrictCode'
 							label={t('default.amphor')}
 							formik={formik}
-							disabled={isDistricDataLoading || loading}
+							disabled={isDistricDataLoading || loading || !formik.values.responsibleProvinceCode}
 						/>
 					</div>
 					<div className='flex gap-[16px] max-lg:hidden max-lg:flex-col lg:gap-[12px]'>
