@@ -134,3 +134,34 @@ export const SummaryLineChartColor = {
 		},
 	},
 }
+
+export const TotalTileColor = {
+	level1: '#F2D8DE',
+	level2: '#E5B2BD',
+	level3: '#D47F92',
+	level4: '#B23B56',
+	level5: '#722637',
+}
+
+export const DroughtTileColor = {
+	level1: '#FFEFD9',
+	level2: '#FDCC8A',
+	level3: '#FC8E59',
+	level4: '#E34A33',
+	level5: '#B30100',
+}
+
+export const FolodTileColor = {
+	level1: '#EFF3FF',
+	level2: '#BDD7E7',
+	level3: '#6BAED6',
+	level4: '#3182BD',
+	level5: '#08519C',
+}
+
+export const TileLayerColor = {
+	disabled: '#E2E2E2',
+	flood: '#3182BD',
+	drought: '#E34A33',
+	rice: '#38A700',
+}
