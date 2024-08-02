@@ -93,3 +93,44 @@ export const appMenuConfig: {
 		children: othersMenuConfig,
 	},
 ]
+
+export const LossTypeColor = {
+	total: '#B23B56',
+	noData: '#38A700',
+	drought: '#E34A33',
+	flood: '#3182BD',
+}
+
+export const TextColor = {
+	text1: '#575757',
+	text2: '#9F1853',
+}
+
+export const SummaryBarChartColor = {
+	plant: {
+		type1: '#5F5F5F',
+		type2: '#9F9F9F',
+		type3: '#B23B56',
+		type4: '#E5B2BD',
+	},
+	rice: {
+		type1: '#5F5F5F',
+		type2: '#B23B56',
+	},
+	loss: {
+		type1: '#5F5F5F',
+		type2: '#B23B56',
+		type3: '#B23B56',
+	},
+}
+
+export const SummaryLineChartColor = {
+	...SummaryBarChartColor,
+	...{
+		loss: {
+			noData: '#5F5F5F',
+			drought: '#E34A33',
+			flood: '#3182BD',
+		},
+	},
+}
