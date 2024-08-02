@@ -1,5 +1,4 @@
 import { api } from '@/api/core'
-import { apiDisaster } from '@/api/core-disaster'
 import {
 	ChangePasswordDtoIn,
 	ForgotPasswordDtoIn,

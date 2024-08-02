@@ -3,7 +3,7 @@ import { GetProfileDtoOut, GetUmDtoOut, PostUploadFilesDtoOut, PutProfileDtoOut 
 import { GetUmDtoIn, PostUploadFilesDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
 import { ResponseDto } from '@/api'
 
-// api for Profile and UM
+// Api for Profile and UM
 const um = {
 	getUM: async (payload: GetUmDtoIn): Promise<ResponseDto<GetUmDtoOut>> => await api.fetch(`/um/${payload.userId}`),
 	postUploadFiles: async (payload: PostUploadFilesDtoIn): Promise<ResponseDto<PostUploadFilesDtoOut>> => {

@@ -39,7 +39,7 @@ const AppBar: React.FC<AppBarProps> = () => {
 	const pathname = usePathname()
 	const { areaType, setAreaType } = useAreaType()
 	const { areaUnit, setAreaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation()
+	const { t, i18n } = useTranslation('appbar')
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 	const { isDesktop } = useResponsive()
 	const { data: session } = useSession()

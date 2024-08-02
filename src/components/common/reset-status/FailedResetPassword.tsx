@@ -11,7 +11,7 @@ interface FailedResetPasswordProps {
 }
 
 const FailedResetPassword: React.FC<FailedResetPasswordProps> = ({ buttonLabel, buttonHref }) => {
-	const { t } = useTranslation()
+	const { t } = useTranslation('appbar')
 	return (
 		<div className='flex flex-col items-center gap-4'>
 			<div className='relative flex size-24 items-center justify-center overflow-hidden rounded-full'>

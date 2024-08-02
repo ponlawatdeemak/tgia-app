@@ -1,41 +1,25 @@
 'use client'
 
-import service from '@/api'
-import { PostUploadFilesDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
 import AlertConfirm from '@/components/common/dialog/AlertConfirm'
-import AutocompleteInput from '@/components/common/input/AutocompleteInput'
-import FormInput from '@/components/common/input/FormInput'
-import UploadImage from '@/components/common/upload/UploadImage'
-import { AppPath } from '@/config/app'
-import { mdiLockReset } from '@mdi/js'
-import Icon from '@mdi/react'
 import { Alert, Box, Button, CircularProgress, Snackbar, Typography } from '@mui/material'
-import { QueryClient, useMutation, useQuery } from '@tanstack/react-query'
+import Icon from '@mdi/react'
+import { mdiLockReset } from '@mdi/js'
 import { useFormik } from 'formik'
-import { signOut, useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useCallback, useState } from 'react'
 import * as yup from 'yup'
+import service from '@/api'
+import { signOut, useSession } from 'next-auth/react'
+import { useQuery } from '@tanstack/react-query'
 
-interface AlertInfoType {
-	open: boolean
-	severity: 'success' | 'error'
-	message: string
-}
+import { PostUploadFilesDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
+import { QueryClient, useMutation } from '@tanstack/react-query'
+import { AppPath } from '@/config/app'
+import { useRouter } from 'next/navigation'
+import { AlertInfoType, FormValues } from '@/components/shared/ProfileForm/interface'
+import ProfileForm from '@/components/shared/ProfileForm'
 
-interface FormValues {
-	id: string
-	username: string
-	firstName: string
-	lastName: string
-	email: string
-	image: File | string
-	orgCode: string
-	role: string
-	responsibleProvinceCode: string
-	responsibleDistrictCode: string
-}
+import { useTranslation } from 'react-i18next'
+import { useSwitchLanguage } from '@/i18n/client'
 
 const defaultFormValues: FormValues = {
 	id: '',
@@ -55,7 +39,7 @@ interface ProfileMainProps {}
 const ProfileMain: React.FC<ProfileMainProps> = () => {
 	const router = useRouter()
 	const queryClient = new QueryClient()
-	const { t, i18n } = useTranslation()
+	const { t, i18n } = useTranslation(['appbar', 'default'])
 	const { data: session, update } = useSession()
 	const [busy, setBusy] = useState<boolean>(false)
 	const [confirmOpenDialog, setConfirmOpenDialog] = useState<boolean>(false)
@@ -159,37 +143,6 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 		onSubmit,
 	})
 
-	const { data: provinceLookupData, isLoading: isProvinceDataLoading } = useQuery({
-		queryKey: ['getProvince'],
-		queryFn: () => service.lookup.get('provinces'),
-	})
-
-	const {
-		data: districtLookupData,
-		isLoading: isDistricDataLoading,
-		refetch: refetchDistricts,
-	} = useQuery({
-		queryKey: ['getDistrict'],
-		queryFn: () => service.lookup.get(`districts/${formik.values.responsibleProvinceCode}`),
-		enabled: !!formik.values.responsibleProvinceCode,
-	})
-
-	useEffect(() => {
-		if (formik.values.responsibleProvinceCode) {
-			refetchDistricts()
-		}
-	}, [formik.values.responsibleProvinceCode, refetchDistricts])
-
-	const { data: organizationLookupData, isLoading: isOrganizationDataLoading } = useQuery({
-		queryKey: ['getOrganization'],
-		queryFn: () => service.lookup.get('organizations'),
-	})
-
-	const { data: roleLookupData, isLoading: isRoleDataLoading } = useQuery({
-		queryKey: ['getRole'],
-		queryFn: () => service.lookup.get('roles'),
-	})
-
 	const handleConfirmOpen = () => {
 		formik.validateForm().then((errors) => {
 			if (Object.keys(errors).length === 0) {
@@ -213,109 +166,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 				className='flex h-full flex-col justify-between max-lg:justify-start max-lg:gap-[32px]'
 			>
 				<Box className='flex w-full gap-[16px] max-lg:flex-col lg:gap-[12px]'>
-					<div className='w-full lg:w-[214px]'>
-						<UploadImage
-							name='image'
-							formik={formik}
-							className='flex flex-col items-center gap-[12px] py-[16px]'
-							disabled={busy}
-						/>
-					</div>
-					<div className='flex flex-col gap-[16px]'>
-						<Box className='flex flex-col gap-[12px]'>
-							<div className='flex gap-[12px] max-lg:flex-col'>
-								<FormInput
-									className='w-full text-sm font-medium lg:w-[240px]'
-									name='firstName'
-									label={t('default.firstName')}
-									formik={formik}
-									required
-									disabled={busy}
-								/>
-								<FormInput
-									className='w-full text-sm font-medium lg:w-[240px]'
-									name='lastName'
-									label={t('default.lastName')}
-									formik={formik}
-									required
-									disabled={busy}
-								/>
-							</div>
-							<div className='flex gap-[12px] max-lg:flex-col'>
-								<FormInput
-									className='w-full text-sm font-medium lg:w-[240px]'
-									name='email'
-									label={t('default.email')}
-									formik={formik}
-									required
-									disabled
-								/>
-							</div>
-						</Box>
-						<Box className='flex flex-col gap-[16px] lg:gap-[12px]'>
-							<div className='flex gap-[16px] max-lg:flex-col lg:gap-[12px]'>
-								<AutocompleteInput
-									className='w-full text-sm font-medium lg:w-[240px]'
-									options={
-										provinceLookupData?.data?.map((item) => ({
-											...item,
-											value: String(item.code),
-										})) || []
-									}
-									getOptionLabel={(option) => option.name[i18n.language]}
-									name='responsibleProvinceCode'
-									label={t('default.province')}
-									formik={formik}
-									disabled={isProvinceDataLoading || busy}
-									required
-								/>
-								<AutocompleteInput
-									className='w-full text-sm font-medium lg:w-[240px]'
-									options={
-										districtLookupData?.data?.map((item) => ({
-											...item,
-											value: String(item.code),
-										})) || []
-									}
-									getOptionLabel={(option) => option.name?.[i18n.language]}
-									name='responsibleDistrictCode'
-									label={t('default.amphor')}
-									formik={formik}
-									disabled={isDistricDataLoading || busy}
-								/>
-							</div>
-							<div className='flex gap-[16px] max-lg:hidden max-lg:flex-col lg:gap-[12px]'>
-								<AutocompleteInput
-									className='w-full text-sm font-medium lg:w-[240px]'
-									options={
-										organizationLookupData?.data?.map((item) => ({
-											...item,
-											value: item.code,
-										})) || []
-									}
-									getOptionLabel={(option) => option.name[i18n.language]}
-									name='orgCode'
-									label={t('default.org')}
-									formik={formik}
-									disabled
-								/>
-								<AutocompleteInput
-									className='w-full text-sm font-medium lg:w-[240px]'
-									options={
-										roleLookupData?.data?.map((item) => ({
-											...item,
-											value: item.code,
-										})) || []
-									}
-									getOptionLabel={(option) => option.name[i18n.language]}
-									name='role'
-									label={t('default.role')}
-									formik={formik}
-									disabled
-								/>
-							</div>
-						</Box>
-					</div>
+					<ProfileForm formik={formik} loading={busy} />
 				</Box>
 				<Box className='flex items-center max-lg:flex-col max-lg:items-center max-lg:gap-[8px] lg:justify-between lg:px-[40px]'>
 					<div className='flex gap-[8px] max-lg:w-[250px] max-lg:flex-col lg:gap-[20px]'>
@@ -334,7 +185,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 								) : null
 							}
 						>
-							{t('default.confirm')}
+							{t('confirm')}
 						</Button>
 						<AlertConfirm
 							open={confirmOpenDialog}
@@ -353,7 +204,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 								disabled={busy}
 								startIcon={<Icon path={mdiLockReset} size={'20px'} className='text-[#A6A6A6]' />}
 							>
-								{t('default.resetPassword')}
+								{t('resetPassword')}
 							</Button>
 						</div>
 					</div>

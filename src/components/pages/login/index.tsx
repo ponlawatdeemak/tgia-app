@@ -15,12 +15,13 @@ import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
 import LanguageSwitcher from './LanguageSwitcher'
+import { Language } from '@/enum'
 
 interface LoginMainProps {}
 
 const LoginMain: React.FC<LoginMainProps> = () => {
 	const searchParams = useSearchParams()
-	const { t } = useTranslation('appbar')
+	const { t, i18n } = useTranslation(['appbar', 'default'])
 	const callbackUrl = useMemo(() => searchParams?.get('callbackUrl'), [searchParams])
 	const error = useMemo(() => searchParams?.get('error'), [searchParams])
 	const [busy, setBusy] = useState(false)
@@ -101,16 +102,22 @@ const LoginMain: React.FC<LoginMainProps> = () => {
 						<AgriculturalDepartmentLogo width={70} height={70} />
 					</div>
 					<Typography className='mb-6 mt-3 text-center text-2xl font-semibold sm:mx-10'>
-						{t('auth.title')}
-						<br />
-						{t('auth.subTitle')}
+						{t('appName', { ns: 'default' })}
+						{i18n.language === Language.TH ? (
+							<>
+								<br />
+							</>
+						) : (
+							<> </>
+						)}
+						{t('subAppName', { ns: 'default' })}
 					</Typography>
 					<form onSubmit={formik.handleSubmit} className='flex flex-col lg:mx-6'>
-						<FormInput disabled={busy} name='username' label={t('default.userName')} formik={formik} />
+						<FormInput disabled={busy} name='username' label={t('userName')} formik={formik} />
 						<PasswordInput
 							disabled={busy}
 							name='password'
-							label={t('default.password')}
+							label={t('password')}
 							formik={formik}
 							className='mt-4'
 						/>

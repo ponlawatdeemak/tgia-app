@@ -1,4 +1,4 @@
-import UserManagementMain from '@/components/pages/others/user-management'
+import { UserManagementMain } from '@/components/pages/others/user-management'
 import React from 'react'
 
 const UserManagementPage = () => {

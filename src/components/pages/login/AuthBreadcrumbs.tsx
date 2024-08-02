@@ -10,7 +10,7 @@ interface AuthBreadcrumbsProps {
 }
 
 const AuthBreadcrumbs: React.FC<AuthBreadcrumbsProps> = ({ name, href }) => {
-	const { t } = useTranslation()
+	const { t } = useTranslation('appbar')
 	return (
 		<Breadcrumbs className='border-0 border-b border-solid border-gray px-12 py-4 text-sm'>
 			<Link className='font-semibold' underline='always' href={href}>

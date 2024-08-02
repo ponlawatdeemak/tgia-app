@@ -12,7 +12,7 @@ import React from 'react'
 
 export interface AutocompleteInputProps extends Omit<AutocompleteProps<any, false, false, false>, 'renderInput'> {
 	name: string
-	formik: FormikProps<any>
+	formik?: FormikProps<any>
 	label: string
 	required?: boolean
 }
@@ -27,10 +27,10 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
 	required = false,
 	...props
 }) => {
-	const errorMessage = formik.touched[name] && formik.errors[name]
+	const errorMessage = formik?.touched[name] && formik?.errors[name]
 	return (
 		<FormControl className={className} required={required}>
-			<FormLabel id={`${name}-label`} className='[&_.MuiFormLabel-asterisk]:text-error mb-2'>
+			<FormLabel id={`${name}-label`} className='mb-2 [&_.MuiFormLabel-asterisk]:text-error'>
 				{label}
 			</FormLabel>
 			<Autocomplete
@@ -38,11 +38,11 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
 				options={options}
 				size={size}
 				PaperComponent={({ children }) => (
-					<Paper className='border-gray border-[1px] border-solid'>{children}</Paper>
+					<Paper className='border-[1px] border-solid border-gray'>{children}</Paper>
 				)}
-				value={options.find((option) => option.value === formik.values[name]) || null}
+				value={options.find((option) => option.value === formik?.values[name]) || null}
 				onChange={(event, newValue) => {
-					return formik.setFieldValue(name, newValue ? newValue.value : null)
+					return formik?.setFieldValue(name, newValue ? newValue.value : null)
 				}}
 				renderInput={(params) => {
 					const { InputLabelProps, InputProps, ...otherParams } = params
@@ -51,7 +51,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
 							{...otherParams}
 							{...params.InputProps}
 							id={`${name}-input`}
-							error={formik.touched[name] && Boolean(formik.errors[name])}
+							error={formik?.touched[name] && Boolean(formik?.errors[name])}
 						/>
 					)
 				}}
