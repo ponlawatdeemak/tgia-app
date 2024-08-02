@@ -81,7 +81,7 @@ const instanceTile = axios.create({
 })
 
 export const apiTile: AppAPI = instanceTile as AppAPI
-apiDisaster['fetch'] = async (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<ResponseDto<any>> => {
+apiTile['fetch'] = async (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<ResponseDto<any>> => {
 	const res = await fetch((process.env.API_URL_TILE ?? '') + input, {
 		...init,
 		headers: {
