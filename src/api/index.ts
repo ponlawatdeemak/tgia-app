@@ -11,6 +11,14 @@ export type ResponseDto<T = any> = {
 	error?: any
 }
 
+export interface ResponseLanguage {
+	th: string
+	en: string
+}
+export interface ResponseArea {
+	areaRai: number
+	areaPlot: number
+}
 export interface Tokens {
 	idToken: string
 	accessToken: string
