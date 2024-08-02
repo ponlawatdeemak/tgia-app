@@ -12,7 +12,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
 export interface AdminPolyProps {
-	formik: FormikProps<any>
+	formik?: FormikProps<any>
 	loading?: boolean
 }
 
@@ -72,7 +72,7 @@ const AdminPoly: React.FC<AdminPolyProps> = ({ formik, loading = false }) => {
 							getOptionLabel={(option) => option.name[i18n.language]}
 							name='provinceCode'
 							label={t('province')}
-							formik={formik || null}
+							formik={formik}
 							disabled={isProvinceDataLoading || loading}
 							required
 						/>
