@@ -9,6 +9,7 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
 import { Language } from '@/enum'
 
 import service from '@/api'
+import StackedProgressBar from '@/components/common/progress-bar/StackedProgressBar'
 
 export default function PlaygroundPage() {
 	const [value, setValue] = React.useState<Dayjs | null>(dayjs('2022-04-07'))
@@ -24,6 +25,27 @@ export default function PlaygroundPage() {
 			>
 				<DateCalendar />
 			</LocalizationProvider>
+
+			<div>
+				<div className='w-3/6'>
+					<StackedProgressBar
+						data={[
+							{
+								label: 'drought',
+								percent: 20,
+								color: '#E34A33',
+							},
+							{
+								label: 'flood',
+								percent: 30,
+								color: '#3182BD',
+							},
+						]}
+					></StackedProgressBar>
+				</div>
+
+				<div className='w-3/6'> sss </div>
+			</div>
 
 			<Button
 				onClick={async () => {
