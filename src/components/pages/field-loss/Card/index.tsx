@@ -23,7 +23,7 @@ interface FieldLossCardProps {
 const FieldLossCard: React.FC<FieldLossCardProps> = ({ item, actArea }) => {
 	const { areaType, setAreaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { t } = useTranslation(['default', 'fieldloss'])
+	const { t } = useTranslation(['default', 'field-loss'])
 
 	return (
 		<Box className='flex flex-col gap-[4px] rounded-lg border-[1px] border-solid border-gray p-[8px]'>
@@ -50,7 +50,7 @@ const FieldLossCard: React.FC<FieldLossCardProps> = ({ item, actArea }) => {
 			</Box>
 			<Box className='flex items-center justify-between'>
 				<span className='text-left font-normal leading-[20px] text-black'>
-					{t('boundaryRegisteredAreas', { ns: 'fieldloss' })}
+					{t('boundaryRegisteredAreas', { ns: 'field-loss' })}
 				</span>
 				<div className='flex items-baseline gap-[4px]'>
 					<span className='font-semibold leading-[16px] text-[#575757]'>

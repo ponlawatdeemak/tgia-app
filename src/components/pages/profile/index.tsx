@@ -11,7 +11,7 @@ import service from '@/api'
 import { signOut, useSession } from 'next-auth/react'
 import { useQuery } from '@tanstack/react-query'
 
-import { CreateProfileImageDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
+import { PostUploadFilesDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
 import { QueryClient, useMutation } from '@tanstack/react-query'
 import { AppPath } from '@/config/app'
 import { useRouter } from 'next/navigation'
@@ -77,12 +77,12 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 		try {
 			setBusy(true)
 			if (values.image instanceof File) {
-				const selectedImage: CreateProfileImageDtoIn = {
+				const selectedImage: PostUploadFilesDtoIn = {
 					file: values.image,
 				}
 				let imageUrl
 				try {
-					imageUrl = await service.um.uploadImg(selectedImage)
+					imageUrl = await service.um.postUploadFiles(selectedImage)
 				} catch (error) {
 					throw new Error('Image upload failed')
 				}

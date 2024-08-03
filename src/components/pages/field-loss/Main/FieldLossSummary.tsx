@@ -59,7 +59,7 @@ const data: DataType = {
 const FieldLossSummary = () => {
 	const { areaType, setAreaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { t } = useTranslation(['default', 'fieldloss'])
+	const { t } = useTranslation(['default', 'field-loss'])
 	const [lossType, setLossType] = useState<LossType | string>('')
 	const [selectedCard, setSelecteeCard] = useState<number>(2)
 
@@ -107,7 +107,7 @@ const FieldLossSummary = () => {
 				<Card className='box-border w-full bg-[#0000000A] px-[16px] py-[12px]'>
 					<CardContent className='flex flex-col gap-[12px] p-0'>
 						<Typography variant='body1' className='font-semibold'>
-							{t('allRegisteredAreas', { ns: 'fieldloss' })}
+							{t('allRegisteredAreas', { ns: 'field-loss' })}
 						</Typography>
 						<div className='flex items-baseline justify-end gap-[4px]'>
 							<span className='text-lg font-semibold leading-[24px] text-[#575757]'>
@@ -137,7 +137,7 @@ const FieldLossSummary = () => {
 						<Card className='w-full px-[16px] py-[12px]'>
 							<CardContent className='flex flex-col gap-[12px] p-0'>
 								<Typography variant='body1' className='text-left font-semibold'>
-									{t('estimatedRemediationArea', { ns: 'fieldloss' })}
+									{t('estimatedRemediationArea', { ns: 'field-loss' })}
 								</Typography>
 								<div className='flex flex-col items-end gap-[4px]'>
 									<div className='flex items-baseline justify-end gap-[4px]'>
@@ -155,7 +155,7 @@ const FieldLossSummary = () => {
 									</p>
 								</div>
 								<span className='text-right text-xs font-normal leading-[16px] underline'>
-									{t('calculationMethod', { ns: 'fieldloss' })}
+									{t('calculationMethod', { ns: 'field-loss' })}
 								</span>
 							</CardContent>
 						</Card>
@@ -170,7 +170,7 @@ const FieldLossSummary = () => {
 						<Card className='w-full px-[16px] py-[12px]'>
 							<CardContent className='flex flex-col gap-[12px] p-0'>
 								<Typography variant='body1' className='text-left font-semibold'>
-									{t('totalDamagedArea', { ns: 'fieldloss' })}
+									{t('totalDamagedArea', { ns: 'field-loss' })}
 								</Typography>
 								<div className='flex items-baseline justify-end gap-[4px]'>
 									<span className='text-lg font-semibold leading-[24px] text-[#9F1853]'>

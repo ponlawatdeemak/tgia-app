@@ -9,7 +9,7 @@ const ServerPage = async () => {
 	// console.log('loginData?.data : ', loginData)
 
 	// updateAccessToken(loginData?.tokens?.accessToken)
-	// const userData = await service.um.getUser({ userId: '295a35cc-80c1-702c-72f1-ad596ac1718a' })
+	// const userData = await service.um.getUM({ userId: '295a35cc-80c1-702c-72f1-ad596ac1718a' })
 	// console.log('userData:', userData)
 
 	return (
