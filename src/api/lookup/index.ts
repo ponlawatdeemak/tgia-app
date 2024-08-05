@@ -1,11 +1,11 @@
-import { GetProfileDtoOut } from '@/api/um/dto-out.dto'
-import { GetLookupOutDto } from '@/api/lookup/dto-out.dto'
-import { ResponseDto } from '@/api'
 import { api } from '@/api/core'
+import { ResponseDto } from '@/api/interface'
+import { GetLookupOutDto } from '@/api/lookup/dto-out.dto'
 
 const lookup = {
-	get: async (lookupName: string): Promise<ResponseDto<GetLookupOutDto[]>> =>
-		await api.fetch(`/lookup/${lookupName}`),
+	get: async (lookupName: string): Promise<ResponseDto<GetLookupOutDto[]>> => {
+		return await api.get(`/lookup/${lookupName}`)
+	},
 }
 
 export default lookup

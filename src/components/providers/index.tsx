@@ -10,7 +10,13 @@ import TokenProvider from './TokenProvider'
 interface ProvidersProps extends PropsWithChildren {}
 
 const Providers: React.FC<ProvidersProps> = ({ children }) => {
-	const queryClient = new QueryClient()
+	const queryClient = new QueryClient({
+		defaultOptions: {
+			queries: {
+				refetchOnWindowFocus: false,
+			},
+		},
+	})
 
 	return (
 		<SessionProvider>
