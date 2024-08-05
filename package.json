@@ -8,7 +8,6 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "proxy": "http://localhost:3000",
   "dependencies": {
     "@billboard.js/react": "^1.1.1",
     "@deck.gl/carto": "^9.0.24",
