@@ -14,6 +14,7 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
 		defaultOptions: {
 			queries: {
 				refetchOnWindowFocus: false,
+				retry: false,
 			},
 		},
 	})
