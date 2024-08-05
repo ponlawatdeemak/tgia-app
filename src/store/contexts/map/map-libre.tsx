@@ -54,7 +54,7 @@ export function useMapLibre(ref: React.RefObject<HTMLElement>, opts?: Omit<mapli
 	}, [])
 
 	useEffect(() => {
-		console.log('mapContext.map ', mapContext.map, navigateContol)
+		// console.log('mapContext.map ', mapContext.map, navigateContol)
 		if (!mapContext.map) return
 
 		if (!mapContext.map.hasControl(navigateContol)) {

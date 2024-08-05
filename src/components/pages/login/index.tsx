@@ -52,7 +52,7 @@ const LoginMain = () => {
 		async (values: LoginDtoIn) => {
 			try {
 				setBusy(true)
-				console.log('next-auth ', callbackUrl, AppPath.FieldLoss)
+				// console.log('next-auth ', callbackUrl, AppPath.FieldLoss)
 				await signIn('credentials', {
 					username: values.username,
 					password: values.password,

@@ -27,11 +27,11 @@ const authOptions: NextAuthOptions = {
 			},
 			async authorize(credentials) {
 				try {
-					console.log('credentials', credentials)
+					// console.log('credentials', credentials)
 					const { username, password } = credentials as any
-					console.log('route', username, password)
+					// console.log('route', username, password)
 					const res = await service.auth.login({ username, password })
-					console.log('route res', res)
+					// console.log('route res', res)
 					if (res.data?.id) return { ...res.data, tokens: res.tokens }
 					return null
 				} catch (error: any) {
