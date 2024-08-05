@@ -14,6 +14,8 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
 		defaultOptions: {
 			queries: {
 				refetchOnWindowFocus: false,
+				retry: false, // not retry when error
+				refetchInterval: 60000 * 30, // refetch every 30 minutes
 			},
 		},
 	})
