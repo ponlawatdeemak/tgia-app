@@ -59,7 +59,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 
 	const { data: userData, isLoading: isUserDataLoading } = useQuery({
 		queryKey: ['getProfile'],
-		queryFn: () => service.um.getProfile(),
+		queryFn: async () => await service.um.getProfile(),
 	})
 
 	const {
@@ -125,10 +125,10 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 				throw new Error('Failed to update session')
 			}
 
-			setAlertInfo({ open: true, severity: 'success', message: 'แก้ไขข้อมูลส่วนตัวสำเร็จ' })
+			setAlertInfo({ open: true, severity: 'success', message: t('success.profileUpdate') })
 		} catch (error: any) {
 			console.log('Error:', error.message)
-			setAlertInfo({ open: true, severity: 'error', message: 'แก้ไขข้อมูลส่วนตัวไม่สำเร็จ' })
+			setAlertInfo({ open: true, severity: 'error', message: t('error.profileUpdate') })
 		} finally {
 			setBusy(false)
 		}
@@ -166,7 +166,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 				className='flex h-full flex-col justify-between max-lg:justify-start max-lg:gap-[32px]'
 			>
 				<Box className='flex w-full gap-[16px] max-lg:flex-col lg:gap-[12px]'>
-					<ProfileForm formik={formik} loading={busy} />
+					<ProfileForm formik={formik} loading={busy || isUserDataLoading} />
 				</Box>
 				<Box className='flex items-center max-lg:flex-col max-lg:items-center max-lg:gap-[8px] lg:justify-between lg:px-[40px]'>
 					<div className='flex gap-[8px] max-lg:w-[250px] max-lg:flex-col lg:gap-[20px]'>
@@ -175,9 +175,9 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 							variant='contained'
 							onClick={handleConfirmOpen}
 							color='primary'
-							disabled={busy}
+							disabled={busy || isUserDataLoading}
 							startIcon={
-								busy ? (
+								busy || isUserDataLoading ? (
 									<CircularProgress
 										className='[&_.MuiCircularProgress-circle]:text-[#00000042]'
 										size={16}
@@ -189,8 +189,8 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 						</Button>
 						<AlertConfirm
 							open={confirmOpenDialog}
-							title='บันทึกบัญชีผู้ใช้งาน'
-							content='ต้องการยืนยันการบันทึกบัญชีผู้ใช้งานนี้ใช่หรือไม่'
+							title={t('alert.confirmUserUpdateTitle')}
+							content={t('alert.confirmUserUpdateContent')}
 							onClose={() => setConfirmOpenDialog(false)}
 							onConfirm={handleConfirmSubmit}
 						/>
@@ -201,7 +201,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 								variant='outlined'
 								onClick={() => router.push(AppPath.PasswordReset)}
 								color='primary'
-								disabled={busy}
+								disabled={busy || isUserDataLoading}
 								startIcon={<Icon path={mdiLockReset} size={'20px'} className='text-[#A6A6A6]' />}
 							>
 								{t('resetPassword')}
@@ -213,14 +213,14 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 						onClick={() => setLogoutOpenDialog(true)}
 						variant='outlined'
 						color='error'
-						disabled={busy}
+						disabled={busy || isUserDataLoading}
 					>
 						{t('auth.loginOut')}
 					</Button>
 					<AlertConfirm
 						open={logoutOpenDialog}
-						title='ยืนยันการออกจากระบบ'
-						content='ต้องการยืนยันการออกจากระบบของผู้ใช้งานนี้ใช่หรือไม่'
+						title={t('alert.confirmLogoutTitle')}
+						content={t('alert.confirmLogoutContent')}
 						onClose={() => setLogoutOpenDialog(false)}
 						onConfirm={logout}
 					/>
