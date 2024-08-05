@@ -14,7 +14,7 @@ const um = {
 			},
 		})
 	},
-	getProfile: async (): Promise<ResponseDto<GetProfileDtoOut>> => (await api.get('/profile')).data,
+	getProfile: async (): Promise<ResponseDto<GetProfileDtoOut>> => await api.get('/profile'),
 	putProfile: async (payload: PutProfileDtoIn): Promise<ResponseDto<PutProfileDtoOut>> =>
 		await api.put('/profile', payload),
 }
