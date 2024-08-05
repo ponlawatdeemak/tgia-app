@@ -1,6 +1,6 @@
 'use client'
-import { ErrorResponse } from '@/api'
 import { LoginDtoIn } from '@/api/auth/dto-in.dto'
+import { ErrorResponse } from '@/api/interface'
 import FormInput from '@/components/common/input/FormInput'
 import PasswordInput from '@/components/common/input/PasswordInput'
 import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentLogo'

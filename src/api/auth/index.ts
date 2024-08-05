@@ -7,7 +7,7 @@ import {
 	ResetPasswordDtoIn,
 } from './dto-in.dto'
 import { ForgotPasswordDtoOut, LoginDtoOut, RefreshTokenDtoOut, ResetPasswordDtoOut } from './dto-out.dto'
-import { ResponseDto } from '@/api'
+import { ResponseDto } from '@/api/interface'
 
 const auth = {
 	login: async (payload: LoginDtoIn): Promise<ResponseDto<LoginDtoOut>> =>

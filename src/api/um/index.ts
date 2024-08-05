@@ -1,14 +1,14 @@
 import { api } from '@/api/core'
-import { CreateProfileImageDtoOut, GetProfileDtoOut, GetUmDtoOut, PutProfileDtoOut } from '@/api/um/dto-out.dto'
+import { APIService, ResponseDto } from '@/api/interface'
 import { CreateProfileImageDtoIn, GetUmDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
-import { ResponseDto } from '@/api'
+import { CreateProfileImageDtoOut, GetProfileDtoOut, GetUmDtoOut, PutProfileDtoOut } from '@/api/um/dto-out.dto'
 
 const um = {
-	getUser: async (payload: GetUmDtoIn): Promise<ResponseDto<GetUmDtoOut>> => await api.fetch(`/um/${payload.userId}`),
+	getUser: async (payload: GetUmDtoIn): Promise<ResponseDto<GetUmDtoOut>> => await api.get(`/um/${payload.userId}`),
 	uploadImg: async (payload: CreateProfileImageDtoIn): Promise<ResponseDto<CreateProfileImageDtoOut>> => {
 		const formData = new FormData()
 		formData.append('file', payload.file)
-		return await api.post('/files/upload', formData, {
+		return await api.post('/files/upload', formData, APIService.WebAPI, {
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},

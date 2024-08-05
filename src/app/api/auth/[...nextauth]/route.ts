@@ -1,4 +1,4 @@
-import service, { ErrorResponse } from '@/api'
+import service from '@/api'
 import { refreshAccessToken, updateAccessToken } from '@/api/core'
 import { AppPath } from '@/config/app'
 import { UserSession } from '@/types/next-auth'
