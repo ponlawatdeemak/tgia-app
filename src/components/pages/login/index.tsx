@@ -1,4 +1,5 @@
 'use client'
+import { ErrorResponse } from '@/api'
 import { LoginDtoIn } from '@/api/auth/dto-in.dto'
 import FormInput from '@/components/common/input/FormInput'
 import PasswordInput from '@/components/common/input/PasswordInput'
@@ -6,24 +7,16 @@ import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentL
 import ThaicomLogo from '@/components/svg/ThaicomLogo'
 import TriangleLogo from '@/components/svg/TriangleLogo'
 import { AppPath } from '@/config/app'
-import {
-	Button,
-	CircularProgress,
-	FormHelperText,
-	Link,
-	ToggleButton,
-	ToggleButtonGroup,
-	Typography,
-} from '@mui/material'
+import { Language } from '@/enum'
+import { useTranslation } from '@/i18n/client'
+import useLanguage from '@/store/language'
+import LoadingButton from '@mui/lab/LoadingButton'
+import { CircularProgress, FormHelperText, Link, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import { signIn } from 'next-auth/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
-import useLanguage from '@/store/language'
-import { useTranslation } from '@/i18n/client'
 import * as yup from 'yup'
-import { Language } from '@/enum'
-import LoadingButton from '@mui/lab/LoadingButton'
 
 const LoginMain = () => {
 	const searchParams = useSearchParams()
@@ -32,40 +25,35 @@ const LoginMain = () => {
 	const pathname = usePathname()
 	const router = useRouter()
 	const callbackUrl = useMemo(() => searchParams?.get('callbackUrl'), [searchParams])
-	const error = useMemo(() => searchParams?.get('error'), [searchParams])
 	const [busy, setBusy] = useState<boolean>(false)
+	const [error, setError] = useState<ErrorResponse>()
 
 	const validationSchema = yup.object({
 		username: yup.string().required(t('warning.inputEmail')),
 		password: yup.string().required(t('warning.inputPassword')),
 	})
 
-	const errorMessage = useMemo(() => {
-		if (error) {
-			if (error === 'CredentialsSignin') return `${t('error.incorrectEmailOrPassword')}`
-			return `${t('error.somethingWrong')}`
-		}
-		return null
-	}, [error])
-
 	const onSubmit = useCallback(
 		async (values: LoginDtoIn) => {
 			try {
 				setBusy(true)
-				console.log('next-auth ', callbackUrl, AppPath.FieldLoss)
-				await signIn('credentials', {
+				const res = await signIn('credentials', {
 					username: values.username,
 					password: values.password,
-					redirect: true,
-					callbackUrl: callbackUrl ?? AppPath.FieldLoss,
+					redirect: false,
 				})
+				if (!res?.ok) {
+					setError(res?.error ? JSON.parse(res.error) : t('error.somethingWrong'))
+					return
+				}
+				router.push(callbackUrl || AppPath.FieldLoss)
 			} catch (error) {
 				console.log('Login failed', error)
 			} finally {
 				setBusy(false)
 			}
 		},
-		[callbackUrl],
+		[callbackUrl, router, t],
 	)
 
 	const formik = useFormik<LoginDtoIn>({
@@ -150,7 +138,7 @@ const LoginMain = () => {
 						<Link href={AppPath.ForgetPassword} className='mt-3 self-end font-medium no-underline'>
 							{t('auth.forgotPassword')}
 						</Link>
-						<FormHelperText error>{errorMessage}</FormHelperText>
+						<FormHelperText error>{error?.title}</FormHelperText>
 						<LoadingButton
 							fullWidth
 							loading={busy}

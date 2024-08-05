@@ -179,7 +179,12 @@ instance.interceptors.response.use(
 		// 		return Promise.reject(err)
 		// 	}
 		// }
-		return Promise.reject(error)
+		const errorData = error.response.data
+		return Promise.reject({
+			title: errorData.title,
+			status: errorData.status,
+			detail: errorData.detail,
+		})
 	},
 )
 

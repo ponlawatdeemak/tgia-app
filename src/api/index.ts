@@ -3,12 +3,18 @@ import um from '@/api/um'
 import lookup from '@/api/lookup'
 import fieldLoss from '@/api/field-loss'
 
+export type ErrorResponse = {
+	type?: string
+	title: string
+	status: number
+	detail: string
+}
+
 export type ResponseDto<T = any> = {
 	data?: T
 	message?: string
 	tokens?: Tokens
-	errorStatus?: number
-	error?: any
+	error?: ErrorResponse
 }
 
 export interface Tokens {
