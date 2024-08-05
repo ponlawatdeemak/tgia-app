@@ -36,6 +36,12 @@ export interface AppAPI {
 	) => Promise<AxiosResponse<any, any>>
 }
 
+export interface RetryQueueItem {
+	resolve: (value?: any) => void
+	reject: (error?: any) => void
+	config: AxiosRequestConfig
+}
+
 export type ErrorResponse = {
 	type?: string
 	title: string
