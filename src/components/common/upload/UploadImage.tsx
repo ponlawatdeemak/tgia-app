@@ -71,7 +71,6 @@ const UploadImage: React.FC<UploadImageProps> = ({
 		setImage(null)
 	}
 
-	console.log('image ', image)
 	return (
 		<div className={className}>
 			<>
