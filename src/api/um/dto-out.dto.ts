@@ -41,3 +41,7 @@ export interface GetProfileDtoOut {
 export interface PutProfileDtoOut {
 	id: string
 }
+
+export interface GetSearchUMDtoOut extends GetProfileDtoOut {
+	
+}

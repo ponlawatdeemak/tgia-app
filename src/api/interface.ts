@@ -1,4 +1,5 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { SortType } from '@/enum'
 
 export enum APIService {
 	WebAPI,
@@ -53,7 +54,9 @@ export type ResponseDto<T = any> = {
 	data?: T
 	message?: string
 	tokens?: Tokens
+	errorStatus?: number
 	error?: ErrorResponse
+	total?: number
 }
 
 export interface Tokens {
@@ -71,4 +74,11 @@ export interface ResponseLanguage {
 export interface ResponseArea {
 	areaRai: number
 	areaPlot: number
+}
+
+export interface TablePagination {
+	sortField: string
+	sortOrder: SortType
+	limit: number
+	offset: number
 }
