@@ -24,14 +24,21 @@ import { useSwitchLanguage } from '@/i18n/client'
 import { Language } from '@/enum'
 import { Button, PropTypes } from '@mui/material'
 import { GetSearchUMDtoOut } from '@/api/um/dto-out.dto'
+import { ResponseLanguage } from '@/api/interface'
+import { IconButton } from '@mui/material'
+import { mdiTrashCanOutline } from '@mdi/js'
+import Icon from '@mdi/react'
+import { mdiPencilOutline } from '@mdi/js'
+import Stack from '@mui/material/Stack'
 
 interface Data {
 	id: number
-	fullName: string
+	firstName: string
 	email: string
 	organization: string
 	role: string
 	status: string
+	control: string
 }
 
 // function createData(
@@ -105,7 +112,7 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
 	{
-		id: 'fullName',
+		id: 'firstName',
 		numeric: false,
 		disablePadding: true,
 		label: 'ชื่อ นามสกุล',
@@ -134,6 +141,12 @@ const headCells: readonly HeadCell[] = [
 		disablePadding: false,
 		label: 'สถานะ',
 	},
+	{
+		id: 'control',
+		numeric: false,
+		disablePadding: false,
+		label: '',
+	},
 ]
 
 interface UserManagementTableProps {
@@ -150,7 +163,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	setSearchToggle,
 }) => {
 	const [order, setOrder] = React.useState<SortType>(SortType.ASC)
-	const [orderBy, setOrderBy] = React.useState<keyof Data>('fullName')
+	const [orderBy, setOrderBy] = React.useState<keyof Data>('firstName')
 	const [selected, setSelected] = React.useState<readonly string[]>([])
 	const [page, setPage] = React.useState(0)
 	const [dense, setDense] = React.useState(false)
@@ -169,7 +182,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	})
 	React.useEffect(() => {
 		console.log(selected)
-	},[selected])
+	}, [selected])
 
 	React.useEffect(() => {
 		console.log(resData)
@@ -179,11 +192,27 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		}
 	}, [resData])
 
-	// const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
-	// 	const isAsc = orderBy === property && order === SortType.ASC
-	// 	setOrder(isAsc ? SortType.DESC : SortType.ASC)
-	// 	setOrderBy(property)
-	// }
+	React.useEffect(() => {
+		setSelected([])
+	}, [searchToggle])
+
+	React.useEffect(() => {
+		console.log(searchParams)
+	}, [searchParams])
+
+	const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
+		const isAsc = orderBy === property && order === SortType.ASC
+		// console.log(isAsc)
+		// console.log(property)
+		setSearchParams((prevSearch) => ({
+			...prevSearch,
+			sortField: property,
+			sortOrder: isAsc ? SortType.DESC : SortType.ASC,
+		}))
+		setSearchToggle(!searchToggle)
+		setOrder(isAsc ? SortType.DESC : SortType.ASC)
+		setOrderBy(property)
+	}
 
 	const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.checked) {
@@ -194,12 +223,11 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		setSelected([])
 	}
 
-	// const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-	// 	handleRequestSort(event, property)
-	// }
+	const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+		handleRequestSort(event, property)
+	}
 
 	const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-		console.log(id)
 		const selectedIndex = selected.indexOf(id)
 		let newSelected: readonly string[] = []
 
@@ -229,17 +257,9 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	// Avoid a layout jump when reaching the last page with empty rows.
 	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0
 
-	// const visibleRows = React.useMemo(
-	// 	() =>
-	// 		stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-	// 	[order, orderBy, page, rowsPerPage],
-	// )
-
 	return (
 		<div className='py-[16px]'>
 			<Paper className='flex flex-col gap-[8px] px-[24px] py-[16px]'>
-				{/* <p>total :: {total}</p>
-				<p>tableData :: {JSON.stringify(tableData)}</p> */}
 				<div className='flex items-baseline gap-[12px]'>
 					<Typography variant='body1' className='font-semibold'>
 						รายชื่อผู้ใช้งาน
@@ -257,7 +277,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 										<Checkbox
 											color='primary'
 											indeterminate={selected.length > 0 && selected.length < tableData.length}
-											checked={tableData.length > 0 && selected.length ===  tableData.length}
+											checked={tableData.length > 0 && selected.length === tableData.length}
 											onChange={handleSelectAllClick}
 											inputProps={{
 												'aria-label': 'select all desserts',
@@ -274,7 +294,10 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											<TableSortLabel
 												active={orderBy === headCell.id}
 												direction={orderBy === headCell.id ? order : SortType.ASC}
-												// onClick={createSortHandler(headCell.id)}
+												onClick={createSortHandler(headCell.id)}
+												// onClick={() => {
+												// 	console.log(headCell.id)
+												// }}
 											>
 												{headCell.label}
 												{orderBy === headCell.id ? (
@@ -318,9 +341,46 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 												{row.firstName} {row.lastName}
 											</TableCell>
 											<TableCell>{row.email}</TableCell>
-											{/* <TableCell>{row.organization}</TableCell> */}
-											<TableCell>{row.role}</TableCell>
-											{/* <TableCell>{row.status}</TableCell> */}
+											<TableCell>
+												{row.orgName[i18n.language as keyof ResponseLanguage]}
+											</TableCell>
+											<TableCell>
+												{row.roleName[i18n.language as keyof ResponseLanguage]}
+											</TableCell>
+											<TableCell>
+												{
+													// Placeholder for Active Status
+													<Typography
+														className={`text${row.flagStatus === 'A' ? '-success' : '-error'}`}
+													>
+														{row.flagStatusName[i18n.language as keyof ResponseLanguage]}
+													</Typography>
+												}
+											</TableCell>
+											<TableCell>
+												<Box>
+													<Stack direction='row' spacing={1}>
+														<IconButton
+															children={
+																<Icon
+																	path={mdiPencilOutline}
+																	size={1}
+																	color='var(--black-color)'
+																/>
+															}
+														/>
+														<IconButton
+															children={
+																<Icon
+																	path={mdiTrashCanOutline}
+																	size={1}
+																	color='var(--error-color-1)'
+																/>
+															}
+														/>
+													</Stack>
+												</Box>
+											</TableCell>
 										</TableRow>
 									)
 								})}
