@@ -1,3 +1,6 @@
+import { SortType } from "@/enum"
+import { TablePagination } from ".."
+
 export interface GetUmDtoIn {
 	userId: string
 }
@@ -14,4 +17,9 @@ export interface PutProfileDtoIn {
 	image: string
 	responsibleProvinceCode: string
 	responsibleDistrictCode: string
+}
+
+export interface GetSearchUMDtoIn extends TablePagination{
+	keyword : string,
+	firstName : string
 }

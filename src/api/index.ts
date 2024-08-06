@@ -2,6 +2,7 @@ import auth from '@/api/auth'
 import um from '@/api/um'
 import lookup from '@/api/lookup'
 import fieldLoss from '@/api/field-loss'
+import { SortType } from '@/enum'
 
 export type ResponseDto<T = any> = {
 	data?: T
@@ -9,6 +10,7 @@ export type ResponseDto<T = any> = {
 	tokens?: Tokens
 	errorStatus?: number
 	error?: any
+	total?: number
 }
 
 export interface ResponseLanguage {
@@ -24,6 +26,13 @@ export interface Tokens {
 	accessToken: string
 	refreshToken: string
 	expiresIn: number
+}
+
+export interface TablePagination {
+	sortField : string,
+	sortOrder : SortType, 
+	limit : number,
+	offset : number
 }
 
 const service = {
