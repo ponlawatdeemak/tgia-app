@@ -9,10 +9,8 @@ import { useCallback, useState } from 'react'
 import * as yup from 'yup'
 import service from '@/api'
 import { signOut, useSession } from 'next-auth/react'
-import { useQuery } from '@tanstack/react-query'
-
 import { PostUploadFilesDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
-import { QueryClient, useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AppPath } from '@/config/app'
 import { useRouter } from 'next/navigation'
 import { AlertInfoType, FormValues } from '@/components/shared/ProfileForm/interface'
@@ -38,8 +36,8 @@ interface ProfileMainProps {}
 
 const ProfileMain: React.FC<ProfileMainProps> = () => {
 	const router = useRouter()
-	const queryClient = new QueryClient()
-	const { t, i18n } = useTranslation(['appbar', 'default'])
+	const queryClient = useQueryClient()
+	const { t, i18n } = useTranslation(['appbar', 'default', 'profile'])
 	const { data: session, update } = useSession()
 	const [busy, setBusy] = useState<boolean>(false)
 	const [confirmOpenDialog, setConfirmOpenDialog] = useState<boolean>(false)
@@ -160,7 +158,9 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 
 	return (
 		<>
-			<Typography className='text-xl font-semibold text-black lg:text-md'>{t('profile.profile')}</Typography>
+			<Typography className='text-xl font-semibold text-black lg:text-md'>
+				{t('profile', { ns: 'profile' })}
+			</Typography>
 			<form
 				onSubmit={formik.handleSubmit}
 				className='flex h-full flex-col justify-between max-lg:justify-start max-lg:gap-[32px]'
