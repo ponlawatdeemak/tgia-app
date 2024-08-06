@@ -24,7 +24,7 @@ const ClientPage = () => {
 		error,
 	} = useQuery({
 		queryKey: ['getUser', { userId }],
-		queryFn: () => service.um.getUser({ userId }),
+		queryFn: () => service.um.getUM({ userId }),
 		// enabled: !!loginData?.data,
 	})
 
