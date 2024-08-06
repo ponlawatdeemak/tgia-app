@@ -33,6 +33,8 @@ const instance = axios.create({
 export const api: AppAPI = {
 	...instance,
 	get: async (url: string, service: APIService = APIService.WebAPI, config?: AxiosRequestConfig<any> | undefined) => {
+		console.log('APIConfigs ', APIConfigs, APIConfigs[service].baseURL)
+		console.log('process.env  ', process.env)
 		return (await instance.get(url, getConfig(service, config)))?.data
 	},
 	post: async (
