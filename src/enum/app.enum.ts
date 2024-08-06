@@ -20,7 +20,7 @@ export enum Language {
 
 export enum SortType {
 	ASC = 'asc',
-	DES = 'des',
+	DESC = 'desc',
 }
 
 export enum LossType {
