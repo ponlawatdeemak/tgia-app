@@ -43,5 +43,5 @@ export interface PutProfileDtoOut {
 }
 
 export interface GetSearchUMDtoOut extends GetProfileDtoOut {
-	
+	flagStatus: string
 }
