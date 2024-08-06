@@ -7,17 +7,19 @@ import { AreaTypeKey, AreaUnitKey, Language } from '@/enum'
 import useAreaType from '@/store/area-type'
 import useAreaUnit from '@/store/area-unit'
 import { useTranslation } from 'react-i18next'
+import { LossPredicted } from '@/api/field-loss/dto-out.dto'
+import { ResponseArea } from '@/api'
 
 interface LossPredictedType {
 	lossType: string
 	areaRai: number
 	areaPlot: number
-	precent: number
+	percent: number
 }
 
 interface FieldLossCardProps {
-	item: LossPredictedType
-	actArea: { [key: string]: number }
+	item: LossPredicted
+	actArea: ResponseArea | undefined
 }
 
 const FieldLossCard: React.FC<FieldLossCardProps> = ({ item, actArea }) => {
@@ -37,7 +39,8 @@ const FieldLossCard: React.FC<FieldLossCardProps> = ({ item, actArea }) => {
 					<div className='flex items-baseline gap-[4px]'>
 						<span className='leading-[20px] text-black'>{t(item.lossType)}</span>
 						<span className='font-semibold leading-[16px] text-[#9F1853]'>
-							{(item.precent * 100).toFixed(1) + '%'}
+							{/* {(item.precent * 100).toFixed(1) + '%'} */}
+							{item.percent + '%'}
 						</span>
 					</div>
 				</div>
@@ -54,7 +57,7 @@ const FieldLossCard: React.FC<FieldLossCardProps> = ({ item, actArea }) => {
 				</span>
 				<div className='flex items-baseline gap-[4px]'>
 					<span className='font-semibold leading-[16px] text-[#575757]'>
-						{actArea[areaUnit].toLocaleString()}
+						{actArea?.[areaUnit].toLocaleString()}
 					</span>
 					<span className='font-normal leading-[20px] text-black'>{t(areaUnit)}</span>
 				</div>
