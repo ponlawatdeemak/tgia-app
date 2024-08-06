@@ -1,11 +1,11 @@
+import { api } from '@/api/core'
+import { APIService, ResponseDto } from '@/api/interface'
 import { GetSearchAdminPolyDtoIn } from './dto-in.dto'
 import { GetSearchAdminPolyDtoOut } from './dto-out.dto'
-import { ResponseDto } from '@/api'
-import { apiDisaster } from '../core'
 
 const fieldLoss = {
 	getSearchAdminPoly: async (payload: GetSearchAdminPolyDtoIn): Promise<ResponseDto<GetSearchAdminPolyDtoOut>> =>
-		await apiDisaster.fetch(`/admin-poly/search?keyword=${payload.keyword}`),
+		await api.get(`/admin-poly/search?keyword=${payload.keyword}`, APIService.DisasterAPI),
 }
 
 export default fieldLoss

@@ -1,6 +1,9 @@
 'use client'
 
-import service, { ResponseDto } from '@/api'
+import service from '@/api'
+import { ForgotPasswordDtoIn } from '@/api/auth/dto-in.dto'
+import { ForgotPasswordDtoOut } from '@/api/auth/dto-out.dto'
+import { ResponseDto } from '@/api/interface'
 import FormInput from '@/components/common/input/FormInput'
 import { AppPath } from '@/config/app'
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -13,8 +16,6 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
-import { ForgotPasswordDtoOut } from '@/api/auth/dto-out.dto'
-import { ForgotPasswordDtoIn } from '@/api/auth/dto-in.dto'
 
 interface ForgotPasswordMainProps {}
 

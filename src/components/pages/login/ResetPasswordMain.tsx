@@ -1,6 +1,6 @@
 'use client'
 
-import service, { ResponseDto } from '@/api'
+import service from '@/api'
 import ResetPasswordForm from '@/components/shared/ResetPasswordForm'
 import { AppPath } from '@/config/app'
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -15,6 +15,7 @@ import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
 import { ResetPasswordDtoOut } from '@/api/auth/dto-out.dto'
 import { ResetPasswordDtoIn } from '@/api/auth/dto-in.dto'
+import { ResponseDto } from '@/api/interface'
 
 interface ResetPasswordProps {}
 
