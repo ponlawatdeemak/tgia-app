@@ -8,6 +8,7 @@ import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt'
 import React, { FormEvent, useState } from 'react'
 
 const UserManagementSearchForm = () => {
+	console.log("Hello World")
 	const [openForm, setOpenForm] = useState<boolean>(false)
 
 	const handleSubmitUser = async (event: FormEvent) => {
