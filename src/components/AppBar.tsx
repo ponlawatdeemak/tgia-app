@@ -31,10 +31,13 @@ import ThaicomLogo from './svg/ThaicomLogo'
 import TriangleLogo from './svg/TriangleLogo'
 import { useTranslation } from 'react-i18next'
 import { useSwitchLanguage } from '@/i18n/client'
+import classNames from 'classnames'
 
-interface AppBarProps {}
+interface AppBarProps {
+	className?: string
+}
 
-const AppBar: React.FC<AppBarProps> = () => {
+const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 	const router = useRouter()
 	const pathname = usePathname()
 	const { areaType, setAreaType } = useAreaType()
@@ -109,7 +112,7 @@ const AppBar: React.FC<AppBarProps> = () => {
 
 	if (isDesktop) {
 		return (
-			<div className='mb-4 flex items-center justify-between'>
+			<div className={classNames('mb-4 flex items-center justify-between', className)}>
 				<div className='flex items-center gap-4'>
 					<div className='ml-1 flex items-center gap-2 py-1'>
 						<TriangleLogo width={30} height={30} />
@@ -362,7 +365,7 @@ const AppBar: React.FC<AppBarProps> = () => {
 
 	return (
 		<div>
-			<div className='mb-2 flex items-center justify-between'>
+			<div className={classNames('mb-2 flex items-center justify-between', className)}>
 				<div className='ml-1 flex items-center gap-2 py-[4px]'>
 					<TriangleLogo width={24} height={24} />
 					<AgriculturalDepartmentLogo width={24} height={24} />

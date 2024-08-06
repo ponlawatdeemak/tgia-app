@@ -154,7 +154,7 @@ const SearchForm = () => {
 
 	return (
 		<>
-			<Paper className='flex gap-[6px] bg-[#D9E0EB] p-[6px]'>
+			<Paper className='mx-4 flex gap-[6px] bg-[#D9E0EB] p-[6px]'>
 				<FormControl fullWidth variant='standard' className='h-[40px] rounded-[8px] bg-white'>
 					<Autocomplete
 						blurOnSelect
