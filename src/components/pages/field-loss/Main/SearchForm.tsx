@@ -19,6 +19,7 @@ import service from '@/api'
 import { useQuery } from '@tanstack/react-query'
 import { useLocalStorage } from '@/hook/local-storage'
 import { useSession } from 'next-auth/react'
+import DateRangePicker from '@/components/shared/DateRangePicker'
 
 interface OptionType {
 	name: string
@@ -295,7 +296,7 @@ const SearchForm = () => {
 						}}
 					/>
 				</FormControl>
-				<Button
+				{/* <Button
 					className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
 					variant='contained'
 					startIcon={<GroupAddOutlined className='h-[24px] w-[24px]' />}
@@ -309,7 +310,8 @@ const SearchForm = () => {
 					startIcon={<SystemUpdateAlt className='h-[24px] w-[24px]' />}
 				>
 					นำเข้าผู้ใช้งาน
-				</Button>
+				</Button> */}
+				<DateRangePicker />
 			</Paper>
 		</>
 	)
