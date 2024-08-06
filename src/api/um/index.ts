@@ -19,7 +19,7 @@ const um = {
 	putProfile: async (payload: PutProfileDtoIn): Promise<ResponseDto<PutProfileDtoOut>> =>
 		await api.put('/profile', payload),
 	getSearchUM: async (payload: GetSearchUMDtoIn): Promise<ResponseDto<GetSearchUMDtoOut[]>> => 
-		(await api.get(`/um/search?keyword=${payload.keyword}&sortField=${payload.firstName}&sortOrder=${payload.sortOrder}&limit=${payload.limit}&offset=${payload.offset}`))?.data 
+		(await api.get(`/um/search?keyword=${payload.keyword}&sortField=${payload.firstName}&sortOrder=${payload.sortOrder}&limit=${payload.limit}&offset=${payload.offset}`)) 
 }
 
 export default um
