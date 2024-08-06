@@ -62,3 +62,13 @@ export interface Tokens {
 	refreshToken: string
 	expiresIn: number
 }
+
+export interface ResponseLanguage {
+	th: string
+	en: string
+}
+
+export interface ResponseArea {
+	areaRai: number
+	areaPlot: number
+}

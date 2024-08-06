@@ -1,4 +1,4 @@
-import { ResponseLanguage } from '..'
+import { ResponseLanguage } from '../interface'
 
 export interface GetUmDtoOut {
 	id: string

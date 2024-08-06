@@ -156,8 +156,8 @@ const Page = async () => {
 	}
 	return (
 		<>
-			{exampleData.map((item) => {
-				return <PolygonToImage polygon={item.geomerty as Polygon} fill={getColor(item.type)} />
+			{exampleData.map((item, index) => {
+				return <PolygonToImage key={index} polygon={item.geomerty as Polygon} fill={getColor(item.type)} />
 			})}
 		</>
 	)
