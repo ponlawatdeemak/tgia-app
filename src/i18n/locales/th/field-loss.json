@@ -3,5 +3,8 @@
     "boundaryRegisteredAreas": "พื้นที่ขึ้นทะเบียนที่มีขอบแปลง",
     "totalDamagedArea": "พื้นที่เสียหายทั้งหมดจากการวิเคราะห์",
     "estimatedRemediationArea": "พื้นที่ประมาณการการเยียวยาจากพื้นที่ ลงทะเบียนเกษตรกรทั้งหมด",
-    "calculationMethod": "วิธีการคำนวณ"
+    "calculationMethod": "วิธีการคำนวณ",
+    "percentTotalRegisteredAreas": "ของพื้นที่ขึ้นทะเบียนทั้งหมด",
+    "lastUpdated": "อัปเดตล่าสุด",
+    "latestDataAnalysis": "วิเคราะห์ข้อมูลล่าสุด"
 }

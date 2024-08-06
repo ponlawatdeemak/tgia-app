@@ -25,6 +25,7 @@
 	"role": "Role",
 	"setting": "Setting",
 	"back": "Back",
+	"allDisasters": "All Disasters",
 	"warning": {
 		"inputEmail": "Please enter your email.",
 		"inputPassword": "Please enter your password.",
