@@ -31,6 +31,8 @@ import Icon from '@mdi/react'
 import { mdiPencilOutline } from '@mdi/js'
 import Stack from '@mui/material/Stack'
 import { TotalTileColor } from '@/config/app'
+import TableFooter from '@mui/material/TableFooter'
+import { Pagination, PaginationItem } from '@mui/material'
 
 interface Data {
 	id: number
@@ -141,12 +143,6 @@ const headCells: readonly HeadCell[] = [
 		numeric: false,
 		disablePadding: false,
 		label: 'สถานะ',
-	},
-	{
-		id: 'control',
-		numeric: false,
-		disablePadding: false,
-		label: '',
 	},
 ]
 
@@ -356,6 +352,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											</TableSortLabel>
 										</TableCell>
 									))}
+									<TableCell />
 								</TableRow>
 							</TableHead>
 							<TableBody>
@@ -395,13 +392,8 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											</TableCell>
 											<TableCell>
 												{
-													// Placeholder for Active Status
 													<div
-														className={
-															row.flagStatus === 'A' ? 'bg-success-light' : 'bg-[#F2D8DE]'
-														}
-														// style={{ backgroundColor: TotalTileColor.level1 }}
-														// className={`bg-${row.flagStatus === 'A' && 'success-light'}`}
+														className={`flex items-center justify-center rounded-2xl ${row.flagStatus === 'A' ? 'bg-success-light' : 'bg-[#F2D8DE]'}`}
 													>
 														<Typography
 															className={`text-${row.flagStatus === 'A' ? 'success' : 'error'}`}
@@ -452,9 +444,19 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									</TableRow>
 								)}
 							</TableBody>
+							<TableFooter>
+								<TableRow>
+									<TableCell colSpan={7}>
+										<Box className={'flex w-full justify-between items-center'}>
+											<Typography >หน้า 1 จาก 10</Typography>
+											<Pagination count={10} variant='outlined' shape='rounded' />
+										</Box>
+									</TableCell>
+								</TableRow>
+							</TableFooter>
 						</Table>
 					</TableContainer>
-					<TablePagination
+					{/* <TablePagination
 						rowsPerPageOptions={[5, 10, 25]}
 						component='div'
 						count={tableData.length}
@@ -464,7 +466,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						// onRowsPerPageChange={handleChangeRowsPerPage}
 						onPageChange={() => {}}
 						onRowsPerPageChange={() => {}}
-					/>
+					/> */}
 				</Box>
 			</Paper>
 		</div>
