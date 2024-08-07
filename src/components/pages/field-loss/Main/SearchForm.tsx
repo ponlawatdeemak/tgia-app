@@ -66,6 +66,9 @@ interface SearchFormProps {
 // 	{ name: 'กำแพงเพชร', id: '62', searchType: 'history' },
 // ]
 
+const FavoriteLengthMax = 5
+const HistoryLengthMax = 5
+
 const SearchForm: React.FC<SearchFormProps> = ({
 	selectedOption,
 	startDate,
@@ -144,14 +147,14 @@ const SearchForm: React.FC<SearchFormProps> = ({
 				const isFavoriteDuplicate = favoriteList.map((item) => item.id).includes(newSelectedValue.id)
 				const isHistoryDuplicate = historyList.map((item) => item.id).includes(newSelectedValue.id)
 				if (!isHistoryDuplicate && !isFavoriteDuplicate) {
-					if (historyList.length === 5) {
+					if (historyList.length === HistoryLengthMax) {
 						historyList.pop()
 						historyList.unshift(newSelectedValue)
 						setHistory({
 							...history,
 							[userId]: historyList.map((history) => ({ ...history, searchType: 'history' })),
 						})
-					} else if (historyList.length < 5) {
+					} else if (historyList.length < HistoryLengthMax) {
 						historyList.unshift(newSelectedValue)
 						setHistory({
 							...history,
@@ -174,8 +177,8 @@ const SearchForm: React.FC<SearchFormProps> = ({
 				const isFavoriteDuplicate = favoriteList.map((item) => item.id).includes(selectedFavorite.id)
 				const isHistoryDuplicate = historyList.map((item) => item.id).includes(selectedFavorite.id)
 				if (!isFavoriteDuplicate) {
-					if (favoriteList.length === 5) return
-					if (favoriteList.length < 5) {
+					if (favoriteList.length === FavoriteLengthMax) return
+					if (favoriteList.length < FavoriteLengthMax) {
 						if (isHistoryDuplicate) {
 							const newhistoryList = historyList.filter((item) => item.id !== selectedFavorite.id)
 							setHistory({
