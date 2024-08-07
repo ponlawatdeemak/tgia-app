@@ -35,6 +35,7 @@ const config: Config = {
 				},
 				error: {
 					DEFAULT: 'var(--error-color-1)',
+					light: 'var(--error-color-2)',
 				},
 				gray: {
 					light: 'var(--lightest-gray-color)',

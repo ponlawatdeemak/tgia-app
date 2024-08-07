@@ -135,7 +135,6 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 										</Typography>
 									</MenuItem>
 									<Menu
-										id='basic-menu'
 										anchorEl={anchorOthersMenuEl}
 										open={openOthersMenu}
 										onClose={() => setAnchorOthersMenuEl(null)}

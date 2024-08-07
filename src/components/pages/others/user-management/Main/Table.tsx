@@ -15,7 +15,7 @@ import Paper from '@mui/material/Paper'
 import Checkbox from '@mui/material/Checkbox'
 import { visuallyHidden } from '@mui/utils'
 import { SortType } from '@/enum'
-import { Sort } from '@mui/icons-material'
+import { Delete, Sort } from '@mui/icons-material'
 import um from '@/api/um'
 import { GetSearchUMDtoIn } from '@/api/um/dto-in.dto'
 import { useQuery } from '@tanstack/react-query'
@@ -30,6 +30,9 @@ import { mdiTrashCanOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import { mdiPencilOutline } from '@mdi/js'
 import Stack from '@mui/material/Stack'
+import { TotalTileColor } from '@/config/app'
+import TableFooter from '@mui/material/TableFooter'
+import { Pagination, PaginationItem } from '@mui/material'
 
 interface Data {
 	id: number
@@ -140,12 +143,6 @@ const headCells: readonly HeadCell[] = [
 		numeric: false,
 		disablePadding: false,
 		label: 'สถานะ',
-	},
-	{
-		id: 'control',
-		numeric: false,
-		disablePadding: false,
-		label: '',
 	},
 ]
 
@@ -276,14 +273,46 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						รายชื่อผู้ใช้งาน
 					</Typography>
 					<Typography variant='body2' className='text-[#7A7A7A]'>
-						แสดง 1-10 จาก 160 รายการ
+						แสดง 1-10 จาก {total} รายการ
 					</Typography>
 				</div>
-				<Box>
-					<Typography>
-						กำลังเลือก {selected.length} รายชื่อ
-					</Typography>
-				</Box>
+				{selected.length > 0 && (
+					<Box
+						sx={{ display: 'inline-flex', backgroundColor: '#F8FAFD' }}
+						className='flex h-[48px] rounded-lg p-2'
+					>
+						<Typography className='m-4 flex items-center font-medium'>
+							กำลังเลือก{' '}
+							<span className='inline-block font-bold text-primary'>&nbsp;{selected.length}&nbsp;</span>{' '}
+							รายชื่อ
+						</Typography>
+						<Stack direction='row' spacing={1} className='flex items-center'>
+							<Button
+								className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
+								variant='contained'
+								color='primary'
+							>
+								เปิดใช้งาน
+							</Button>
+							<Button
+								className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
+								variant='contained'
+								color='primary'
+							>
+								ปิดใช้งาน
+							</Button>
+							<Button
+								className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
+								variant='contained'
+								color='primary'
+								startIcon={<Icon path={mdiTrashCanOutline} size={1} color='var(--black-color)' />}
+							>
+								ลบผู้ใช้งาน
+							</Button>
+						</Stack>
+					</Box>
+				)}
+
 				<Box className='flex flex-col gap-[16px]'>
 					<TableContainer>
 						<Table sx={{ minWidth: 750 }} aria-labelledby='tableTitle' size={dense ? 'small' : 'medium'}>
@@ -311,9 +340,6 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 												active={orderBy === headCell.id}
 												direction={orderBy === headCell.id ? order : SortType.ASC}
 												onClick={createSortHandler(headCell.id)}
-												// onClick={() => {
-												// 	console.log(headCell.id)
-												// }}
 											>
 												{headCell.label}
 												{orderBy === headCell.id ? (
@@ -326,6 +352,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											</TableSortLabel>
 										</TableCell>
 									))}
+									<TableCell />
 								</TableRow>
 							</TableHead>
 							<TableBody>
@@ -365,8 +392,9 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											</TableCell>
 											<TableCell>
 												{
-													// Placeholder for Active Status
-													<div className='bg-success-light'>
+													<div
+														className={`flex items-center justify-center rounded-2xl ${row.flagStatus === 'A' ? 'bg-success-light' : 'bg-[#F2D8DE]'}`}
+													>
 														<Typography
 															className={`text-${row.flagStatus === 'A' ? 'success' : 'error'}`}
 														>
@@ -416,9 +444,19 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									</TableRow>
 								)}
 							</TableBody>
+							<TableFooter>
+								<TableRow>
+									<TableCell colSpan={7}>
+										<Box className={'flex w-full justify-between items-center'}>
+											<Typography >หน้า 1 จาก 10</Typography>
+											<Pagination count={10} variant='outlined' shape='rounded' />
+										</Box>
+									</TableCell>
+								</TableRow>
+							</TableFooter>
 						</Table>
 					</TableContainer>
-					<TablePagination
+					{/* <TablePagination
 						rowsPerPageOptions={[5, 10, 25]}
 						component='div'
 						count={tableData.length}
@@ -428,7 +466,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						// onRowsPerPageChange={handleChangeRowsPerPage}
 						onPageChange={() => {}}
 						onRowsPerPageChange={() => {}}
-					/>
+					/> */}
 				</Box>
 			</Paper>
 		</div>
