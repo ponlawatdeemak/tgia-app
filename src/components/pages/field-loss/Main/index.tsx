@@ -1,12 +1,11 @@
 'use client'
 
-import MapView from '@/components/common/map/MapView'
 import { Paper } from '@mui/material'
 import SearchForm from './SearchForm'
-import FieldLossSummary from './FieldLossSummary'
+import FieldLossSummary from './Summary'
 import { useState } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
-import FieldLossDetail from './FieldLossDetail'
+import FieldLossDetail from './Detail'
 import { LossType } from '@/enum'
 
 interface OptionType {
