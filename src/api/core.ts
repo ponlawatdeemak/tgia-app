@@ -1,13 +1,27 @@
-import axios, { AxiosError, AxiosInstance } from 'axios'
-import service, { ResponseDto } from './index'
+import { APIConfigType, APIService, AppAPI, RetryQueueItem } from '@/api/interface'
+import axios, { AxiosRequestConfig } from 'axios'
+import service from './index'
 
-interface AppAPI extends AxiosInstance {
-	fetch: (input: URL | RequestInfo, init?: RequestInit | undefined) => Promise<ResponseDto<any>>
+const APIConfigs: { [key: string]: APIConfigType } = {
+	[APIService.WebAPI]: {
+		baseURL: process.env.API_URL,
+		apiKey: process.env.API_KEY,
+	},
+	[APIService.DisasterAPI]: {
+		baseURL: process.env.API_URL_DISASTER,
+		apiKey: process.env.API_KEY_DISASTER,
+	},
+	[APIService.TilesAPI]: {
+		baseURL: process.env.API_URL_TILE,
+		apiKey: process.env.API_KEY_TILE,
+	},
 }
 
 export let apiAccessToken: string | null = null
 let apiRefreshToken: string | null = null
 let apiUserId: string | null = null
+let isRefreshing = false
+const refreshAndRetryQueue: RetryQueueItem[] = []
 
 const instance = axios.create({
 	baseURL: process.env.API_URL,
@@ -16,96 +30,37 @@ const instance = axios.create({
 	},
 })
 
-export const api: AppAPI = instance as AppAPI
-
-api['fetch'] = async (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<ResponseDto<any>> => {
-	const res = await fetchAPI(input, init)
-
-	if (!res.ok) {
-		if (res.status === 403) {
-			try {
-				await refreshAccessToken()
-				const res = await fetchAPI(input, init)
-				if (!res.ok) {
-					return { errorStatus: res.status, error: await res.json() }
-				}
-				return await res.json()
-			} catch (error) {
-				forceLogout()
-			}
-		}
-		return { errorStatus: res.status, error: await res.json() }
-	}
-
-	return await res.json()
+export const api: AppAPI = {
+	...instance,
+	get: async (url: string, service: APIService = APIService.WebAPI, config?: AxiosRequestConfig<any> | undefined) => {
+		return (await instance.get(url, getConfig(service, config)))?.data
+	},
+	post: async (
+		url: string,
+		data: any,
+		service: APIService = APIService.WebAPI,
+		config?: AxiosRequestConfig<any> | undefined,
+	) => await instance.post(url, data, getConfig(service, config)),
+	put: async (
+		url: string,
+		data: any,
+		service: APIService = APIService.WebAPI,
+		config?: AxiosRequestConfig<any> | undefined,
+	) => await instance.put(url, data, getConfig(service, config)),
+	delete: async (
+		url: string,
+		service: APIService = APIService.WebAPI,
+		config?: AxiosRequestConfig<any> | undefined,
+	) => await instance.delete(url, getConfig(service, config)),
 }
 
-const instanceDisaster = axios.create({
-	baseURL: process.env.API_URL_DISASTER,
+const getConfig = (service: APIService, config: AxiosRequestConfig<any> | undefined) => ({
+	...config,
+	baseURL: APIConfigs[service].baseURL,
 	headers: {
-		'x-api-key': process.env.API_KEY_DISASTER || '',
+		'x-api-key': APIConfigs[service].apiKey || '',
 	},
 })
-export const apiDisaster: AppAPI = instanceDisaster as AppAPI
-apiDisaster['fetch'] = async (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<ResponseDto<any>> => {
-	const res = await fetch((process.env.API_URL_DISASTER ?? '') + input, {
-		...init,
-		headers: {
-			...init?.headers,
-			'x-api-key': process.env.API_KEY_DISASTER || '',
-			Authorization: `Bearer ${apiAccessToken}`,
-			// Authorization: `Bearer eyJraWQiOiI1Vzl6NmhXZmVNQjRhTXlUcGVNV01relk5UEJrakR1YjZsN1lLUTlVdmpnPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJhOWNhNTVlYy0yMDIxLTcwZGItZDc4OS0yMzQxOGMzNjdmMDUiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuYXAtc291dGhlYXN0LTEuYW1hem9uYXdzLmNvbVwvYXAtc291dGhlYXN0LTFfSUdMb3Fub2tNIiwiY2xpZW50X2lkIjoiNHA0MzBwMmRhbGEzYWxqbWloa2s3OWg4MmciLCJvcmlnaW5fanRpIjoiNjNjYzcyZjEtYmIyMC00OTExLTg3YjMtOGU5NTQyYmY2MjVmIiwiZXZlbnRfaWQiOiI2OGVlODk1ZC0zZWQxLTRkNWEtOGZmYS1mNzY2OTMyNGJiYzkiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNzIwNzkzOTU4LCJleHAiOjE3MjA4ODAzNTgsImlhdCI6MTcyMDc5Mzk1OCwianRpIjoiMDAxYTZjM2ItMWYzMS00NTQ1LThlZWMtYTkwMTUzZTZlZWQ1IiwidXNlcm5hbWUiOiJhOWNhNTVlYy0yMDIxLTcwZGItZDc4OS0yMzQxOGMzNjdmMDUifQ.GlheOYJ-MuaCAf-7U76gZ2qdjlgnfLhjeoI8OEYJ2PLGdxzrJ3CbHH1rhncKr9YxCEvSyMFDEwkgIvnt8Wf_pzHTm48qpAdoq6A3TIRQLbIYQo_aTyhs3j_hZ3wTwg3YGDa8f-8tdm4vfvQubID9YxkaZHw7hiI75vkJCNe-1dcePJ1WmSwisyxjsakYLREF1lWvluTc5NcRmLRC8kkFIwZpsuRHCsyNhOncb6-2mT2golLTijJfLWLldbuHVzcfybkplJDJz94M9Dytyjke2KwLBl2OYboGBouukipV-ep29jRcZH1_QKcvau1-0zyz-6_l9T87irM88kALkbtabg`,
-		},
-		cache: 'force-cache',
-	})
-
-	if (!res.ok) {
-		if (res.status === 403) {
-			try {
-				refreshAccessToken()
-			} catch (error) {
-				forceLogout()
-			}
-		}
-		return { errorStatus: res.status, error: await res.json() }
-	}
-
-	return await res.json()
-}
-
-const instanceTile = axios.create({
-	baseURL: process.env.API_URL_TILE,
-	headers: {
-		'x-api-key': process.env.API_KEY_TILE || '',
-	},
-})
-
-export const apiTile: AppAPI = instanceTile as AppAPI
-apiTile['fetch'] = async (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<ResponseDto<any>> => {
-	const res = await fetch((process.env.API_URL_TILE ?? '') + input, {
-		...init,
-		headers: {
-			...init?.headers,
-			'x-api-key': process.env.API_KEY_TILE || '',
-			Authorization: `Bearer ${apiAccessToken}`,
-			// Authorization: `Bearer eyJraWQiOiI1Vzl6NmhXZmVNQjRhTXlUcGVNV01relk5UEJrakR1YjZsN1lLUTlVdmpnPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJhOWNhNTVlYy0yMDIxLTcwZGItZDc4OS0yMzQxOGMzNjdmMDUiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuYXAtc291dGhlYXN0LTEuYW1hem9uYXdzLmNvbVwvYXAtc291dGhlYXN0LTFfSUdMb3Fub2tNIiwiY2xpZW50X2lkIjoiNHA0MzBwMmRhbGEzYWxqbWloa2s3OWg4MmciLCJvcmlnaW5fanRpIjoiNjNjYzcyZjEtYmIyMC00OTExLTg3YjMtOGU5NTQyYmY2MjVmIiwiZXZlbnRfaWQiOiI2OGVlODk1ZC0zZWQxLTRkNWEtOGZmYS1mNzY2OTMyNGJiYzkiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNzIwNzkzOTU4LCJleHAiOjE3MjA4ODAzNTgsImlhdCI6MTcyMDc5Mzk1OCwianRpIjoiMDAxYTZjM2ItMWYzMS00NTQ1LThlZWMtYTkwMTUzZTZlZWQ1IiwidXNlcm5hbWUiOiJhOWNhNTVlYy0yMDIxLTcwZGItZDc4OS0yMzQxOGMzNjdmMDUifQ.GlheOYJ-MuaCAf-7U76gZ2qdjlgnfLhjeoI8OEYJ2PLGdxzrJ3CbHH1rhncKr9YxCEvSyMFDEwkgIvnt8Wf_pzHTm48qpAdoq6A3TIRQLbIYQo_aTyhs3j_hZ3wTwg3YGDa8f-8tdm4vfvQubID9YxkaZHw7hiI75vkJCNe-1dcePJ1WmSwisyxjsakYLREF1lWvluTc5NcRmLRC8kkFIwZpsuRHCsyNhOncb6-2mT2golLTijJfLWLldbuHVzcfybkplJDJz94M9Dytyjke2KwLBl2OYboGBouukipV-ep29jRcZH1_QKcvau1-0zyz-6_l9T87irM88kALkbtabg`,
-		},
-		cache: 'force-cache',
-	})
-
-	if (!res.ok) {
-		if (res.status === 403) {
-			try {
-				refreshAccessToken()
-			} catch (error) {
-				forceLogout()
-			}
-		}
-		return { errorStatus: res.status, error: await res.json() }
-	}
-
-	return await res.json()
-}
 
 const fetchAPI = async (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response> => {
 	return await fetch((process.env.API_URL ?? '') + input, {
@@ -120,8 +75,6 @@ const fetchAPI = async (input: URL | RequestInfo, init?: RequestInit | undefined
 }
 
 export const refreshAccessToken = async () => {
-	// console.log('token expired!!!')
-	// ใช้ refresh token แลก access token ใหม่
 	const res = await service.auth.refreshToken({ userId: apiUserId || '', refreshToken: apiRefreshToken || '' })
 	const accessToken = res?.tokens?.accessToken === '' ? undefined : res?.tokens?.accessToken
 	const refreshToken = res?.tokens?.refreshToken === '' ? undefined : res?.tokens?.refreshToken
@@ -133,11 +86,15 @@ const forceLogout = () => {
 	// กรณีไม่สามารถต่ออายุ token ได้ จะบังคับ login ใหม่
 	const href = window.location.href
 	const query = href.split('?')?.[1]
-	window.location.href = href.includes('?')
-		? query?.includes('sessionExpired=1')
-			? href
-			: href + '&sessionExpired=1'
-		: href + '?sessionExpired=1'
+	window.history.pushState(
+		null,
+		'',
+		href.includes('?')
+			? query?.includes('sessionExpired=1')
+				? href
+				: href + '&sessionExpired=1'
+			: href + '?sessionExpired=1',
+	)
 }
 
 instance.interceptors.response.use(
@@ -145,27 +102,51 @@ instance.interceptors.response.use(
 		return response
 	},
 	async function (error) {
-		if (isAxiosError(error) && error.config && error.response?.status === 401) {
-			try {
-				const originalRequest = error.config as any
-				if (!originalRequest?._retry) {
-					originalRequest._retry = true
+		const errorData = error.response.data
+		const originalRequest: AxiosRequestConfig = error.config
+		if (error.response && error.response.status === 403) {
+			if (!isRefreshing) {
+				isRefreshing = true
+				try {
+					// Refresh the access token
 					const { accessToken } = await refreshAccessToken()
-					return instance({
-						...originalRequest,
-						headers: {
-							...originalRequest.headers,
-							authorization: `Bearer ${accessToken}`,
-						},
-					}).catch((err) => {
-						forceLogout()
+
+					// Update the request headers with the new access token
+					error.config.headers['Authorization'] = `Bearer ${accessToken}`
+
+					// Retry all requests in the queue with the new token
+					refreshAndRetryQueue.forEach(({ config, resolve, reject }) => {
+						instance
+							.request(config)
+							.then((response) => resolve(response))
+							.catch((err) => reject(err))
 					})
+
+					// Clear the queue
+					refreshAndRetryQueue.length = 0
+
+					// Retry the original request
+					return instance(originalRequest)
+				} catch (refreshError) {
+					// Handle token refresh error
+					// You can clear all storage and redirect the user to the login page
+					forceLogout()
+					throw refreshError
+				} finally {
+					isRefreshing = false
 				}
-			} catch (err) {
-				return Promise.reject(err)
 			}
+
+			// Add the original request to the queue
+			return new Promise<void>((resolve, reject) => {
+				refreshAndRetryQueue.push({ config: originalRequest, resolve, reject })
+			})
 		}
-		return Promise.reject(error)
+		return Promise.reject({
+			title: errorData.title,
+			status: errorData.status,
+			detail: errorData.detail,
+		})
 	},
 )
 
@@ -189,8 +170,4 @@ export function updateAccessToken({
 		apiRefreshToken = null
 		apiUserId = null
 	}
-}
-
-function isAxiosError<TInput = unknown, TOutput = any>(obj: unknown): obj is AxiosError<TInput, TOutput> {
-	return obj instanceof AxiosError
 }

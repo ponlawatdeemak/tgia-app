@@ -16,8 +16,6 @@ export default withAuth(
 			return redirectWithLanguagePath(req)
 		}
 
-		// console.log('req ', req.nextauth)
-
 		const token = req.nextauth.token
 		const isLoggedIn = !!token
 		const isAuthRoute = nextUrl.pathname.includes(authPathPrefix)
@@ -30,9 +28,8 @@ export default withAuth(
 		}
 
 		if (!isLoggedIn) {
-			const callback = nextUrl.href.includes('sessionExpired=1')
-				? nextUrl.href.replace('sessionExpired=1', '')
-				: nextUrl.href
+			const href = nextUrl.href.replace(nextUrl.host, req.headers.get('host')!)
+			const callback = href.includes('sessionExpired=1') ? href.replace('sessionExpired=1', '') : href
 			return responseWithLanguageCookie(
 				req,
 				new URL(`${AppPath.Login}/?callbackUrl=${encodeURI(callback)}`, nextUrl),
@@ -54,15 +51,8 @@ export default withAuth(
 
 const redirectWithLanguagePath = (req: NextRequestWithAuth) => {
 	let lng
-
-	// console.log('appLanguages', req.cookies, cookieName)
-	// console.log('acceptLanguage', acceptLanguage)
-
 	if (req.cookies.has(cookieName)) lng = acceptLanguage.get(req.cookies.get(cookieName)?.value)
-
 	if (!lng) lng = fallbackLng
-
-	// console.log('lng', lng)
 
 	// Redirect if lng in path is not supported
 	if (
@@ -73,14 +63,9 @@ const redirectWithLanguagePath = (req: NextRequestWithAuth) => {
 		const paramList = Object.entries(Object.fromEntries(urlSearchParams.entries()))
 		const query = []
 
-		// console.log('urlSearchParams', urlSearchParams)
-		// console.log('paramList', paramList)
-
 		for (const [key, value] of paramList) {
 			query.push(`${key}=${value}`)
 		}
-
-		// console.log('query', query)
 
 		return NextResponse.redirect(new URL(`/${lng}${req.nextUrl.pathname}?${query.join('&')}`, req.url))
 	}
@@ -89,14 +74,10 @@ const redirectWithLanguagePath = (req: NextRequestWithAuth) => {
 }
 
 const responseWithLanguageCookie = (req: NextRequestWithAuth, redirectUrl?: URL) => {
-	// console.log('responseWithLanguageCookie')
 	if (req.headers.has('referer')) {
-		// console.log('responseWithLanguageCookie', req.headers)
 		const refererUrl = new URL(req.headers.get('referer') as string)
 		const lngInReferer = appLanguages.find((l) => refererUrl.pathname.startsWith(`/${l}`))
 
-		// console.log('appLanguages', appLanguages)
-		// console.log('lngInReferer', lngInReferer)
 		if (lngInReferer) {
 			let response
 			if (redirectUrl) {

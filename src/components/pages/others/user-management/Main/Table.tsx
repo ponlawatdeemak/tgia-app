@@ -14,6 +14,16 @@ import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 import Checkbox from '@mui/material/Checkbox'
 import { visuallyHidden } from '@mui/utils'
+import { SortType } from '@/enum'
+import { Sort } from '@mui/icons-material'
+import um from '@/api/um'
+import { GetSearchUMDtoIn } from '@/api/um/dto-in.dto'
+import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
+import { useSwitchLanguage } from '@/i18n/client'
+import { Language } from '@/enum'
+import { Button, PropTypes } from '@mui/material'
+import { GetSearchUMDtoOut } from '@/api/um/dto-out.dto'
 
 interface Data {
 	id: number
@@ -24,69 +34,67 @@ interface Data {
 	status: string
 }
 
-function createData(
-	id: number,
-	fullName: string,
-	email: string,
-	organization: string,
-	role: string,
-	status: string,
-): Data {
-	return {
-		id,
-		fullName,
-		email,
-		organization,
-		role,
-		status,
-	}
-}
+// function createData(
+// 	id: number,
+// 	fullName: string,
+// 	email: string,
+// 	organization: string,
+// 	role: string,
+// 	status: string,
+// ): Data {
+// 	return {
+// 		id,
+// 		fullName,
+// 		email,
+// 		organization,
+// 		role,
+// 		status,
+// 	}
+// }
 
-const rows = [
-	createData(1, 'สมชาย ลำเพลมพัด', 'Somchai@gmail.com', 'Thaicom', 'Super Admin', 'open'),
-	createData(2, 'สิริกัญญา เมตตาทรัพย์', 'Sirikanya@gmail.com', 'TGIA', 'Admin', 'open'),
-	createData(3, 'ขวัญมณี เอี่ยมกำเนิด', 'Kwanmani@gmail.com', 'DOAE', 'Admin', 'open'),
-	createData(4, 'กษิดิษ เกษรศาสน์', 'Kasidit@gmail.com', 'TGIA', 'Admin', 'open'),
-	createData(5, 'เอกลักษณ์ ตั้งคงอยู่', 'Eklaksorn@gmail.com', 'TGIA', 'User', 'open'),
-	createData(6, 'สมาน ดำรงไทย', 'Saman@gmail.com', 'TGIA', 'User', 'close'),
-	createData(7, 'ดิเรก รักเกษตร', 'Direk@gmail.com', 'TGIA', 'User', 'close'),
-	createData(8, 'กฤษณา เยี่ยมอำไพ', 'Kritsana@gmail.com', 'TGIA', 'User', 'close'),
-	createData(9, 'เขมิกา สินเจริญสุข', 'Khemika@gmail.com', 'TGIA', 'User', 'close'),
-	createData(10, 'พรพิมา บุญสูงเนิน', 'Phonphima@gmail.com', 'TGIA', 'User', 'close'),
-]
+// const rows = [
+// 	createData(1, 'สมชาย ลำเพลมพัด', 'Somchai@gmail.com', 'Thaicom', 'Super Admin', 'open'),
+// 	createData(2, 'สิริกัญญา เมตตาทรัพย์', 'Sirikanya@gmail.com', 'TGIA', 'Admin', 'open'),
+// 	createData(3, 'ขวัญมณี เอี่ยมกำเนิด', 'Kwanmani@gmail.com', 'DOAE', 'Admin', 'open'),
+// 	createData(4, 'กษิดิษ เกษรศาสน์', 'Kasidit@gmail.com', 'TGIA', 'Admin', 'open'),
+// 	createData(5, 'เอกลักษณ์ ตั้งคงอยู่', 'Eklaksorn@gmail.com', 'TGIA', 'User', 'open'),
+// 	createData(6, 'สมาน ดำรงไทย', 'Saman@gmail.com', 'TGIA', 'User', 'close'),
+// 	createData(7, 'ดิเรก รักเกษตร', 'Direk@gmail.com', 'TGIA', 'User', 'close'),
+// 	createData(8, 'กฤษณา เยี่ยมอำไพ', 'Kritsana@gmail.com', 'TGIA', 'User', 'close'),
+// 	createData(9, 'เขมิกา สินเจริญสุข', 'Khemika@gmail.com', 'TGIA', 'User', 'close'),
+// 	createData(10, 'พรพิมา บุญสูงเนิน', 'Phonphima@gmail.com', 'TGIA', 'User', 'close'),
+// ]
 
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-	if (b[orderBy] < a[orderBy]) {
-		return -1
-	}
-	if (b[orderBy] > a[orderBy]) {
-		return 1
-	}
-	return 0
-}
+// function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
+// 	if (b[orderBy] < a[orderBy]) {
+// 		return -1
+// 	}
+// 	if (b[orderBy] > a[orderBy]) {
+// 		return 1
+// 	}
+// 	return 0
+// }
 
-type Order = 'asc' | 'desc'
+// function getComparator<Key extends keyof any>(
+// 	order: SortType,
+// 	orderBy: Key,
+// ): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
+// 	return order === SortType.DESC
+// 		? (a, b) => descendingComparator(a, b, orderBy)
+// 		: (a, b) => -descendingComparator(a, b, orderBy)
+// }
 
-function getComparator<Key extends keyof any>(
-	order: Order,
-	orderBy: Key,
-): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
-	return order === 'desc'
-		? (a, b) => descendingComparator(a, b, orderBy)
-		: (a, b) => -descendingComparator(a, b, orderBy)
-}
-
-function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
-	const stabilizedThis = array.map((el, index) => [el, index] as [T, number])
-	stabilizedThis.sort((a, b) => {
-		const order = comparator(a[0], b[0])
-		if (order !== 0) {
-			return order
-		}
-		return a[1] - b[1]
-	})
-	return stabilizedThis.map((el) => el[0])
-}
+// function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
+// 	const stabilizedThis = array.map((el, index) => [el, index] as [T, number])
+// 	stabilizedThis.sort((a, b) => {
+// 		const order = comparator(a[0], b[0])
+// 		if (order !== 0) {
+// 			return order
+// 		}
+// 		return a[1] - b[1]
+// 	})
+// 	return stabilizedThis.map((el) => el[0])
+// }
 
 interface HeadCell {
 	disablePadding: boolean
@@ -128,36 +136,72 @@ const headCells: readonly HeadCell[] = [
 	},
 ]
 
-const UserManagementTable = () => {
-	const [order, setOrder] = React.useState<Order>('asc')
+interface UserManagementTableProps {
+	searchParams: GetSearchUMDtoIn
+	setSearchParams: React.Dispatch<React.SetStateAction<GetSearchUMDtoIn>>
+	searchToggle: boolean
+	setSearchToggle: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const UserManagementTable: React.FC<UserManagementTableProps> = ({
+	searchParams,
+	setSearchParams,
+	searchToggle,
+	setSearchToggle,
+}) => {
+	const [order, setOrder] = React.useState<SortType>(SortType.ASC)
 	const [orderBy, setOrderBy] = React.useState<keyof Data>('fullName')
-	const [selected, setSelected] = React.useState<readonly number[]>([])
+	const [selected, setSelected] = React.useState<readonly string[]>([])
 	const [page, setPage] = React.useState(0)
 	const [dense, setDense] = React.useState(false)
 	const [rowsPerPage, setRowsPerPage] = React.useState(5)
 
-	const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
-		const isAsc = orderBy === property && order === 'asc'
-		setOrder(isAsc ? 'desc' : 'asc')
-		setOrderBy(property)
-	}
+	const { t, i18n } = useTranslation()
+	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
+
+	// TableData State
+	const [tableData, setTableData] = React.useState<GetSearchUMDtoOut[]>([])
+	const [total, setTotal] = React.useState<number>(0)
+
+	const { data: resData, isLoading: isTableDataLoading } = useQuery({
+		queryKey: ['getSearchUM', searchToggle],
+		queryFn: () => um.getSearchUM(searchParams),
+	})
+	React.useEffect(() => {
+		console.log(selected)
+	},[selected])
+
+	React.useEffect(() => {
+		console.log(resData)
+		if (resData) {
+			setTableData(resData.data || [])
+			setTotal(resData.total || 0)
+		}
+	}, [resData])
+
+	// const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
+	// 	const isAsc = orderBy === property && order === SortType.ASC
+	// 	setOrder(isAsc ? SortType.DESC : SortType.ASC)
+	// 	setOrderBy(property)
+	// }
 
 	const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.checked) {
-			const newSelected = rows.map((n) => n.id)
+			const newSelected = tableData.map((n) => n.id)
 			setSelected(newSelected)
 			return
 		}
 		setSelected([])
 	}
 
-	const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-		handleRequestSort(event, property)
-	}
+	// const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+	// 	handleRequestSort(event, property)
+	// }
 
-	const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+	const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
+		console.log(id)
 		const selectedIndex = selected.indexOf(id)
-		let newSelected: readonly number[] = []
+		let newSelected: readonly string[] = []
 
 		if (selectedIndex === -1) {
 			newSelected = newSelected.concat(selected, id)
@@ -171,29 +215,31 @@ const UserManagementTable = () => {
 		setSelected(newSelected)
 	}
 
-	const handleChangePage = (event: unknown, newPage: number) => {
-		setPage(newPage)
-	}
+	// const handleChangePage = (event: unknown, newPage: number) => {
+	// 	setPage(newPage)
+	// }
 
-	const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setRowsPerPage(parseInt(event.target.value, 10))
-		setPage(0)
-	}
+	// const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+	// 	setRowsPerPage(parseInt(event.target.value, 10))
+	// 	setPage(0)
+	// }
 
-	const isSelected = (id: number) => selected.indexOf(id) !== -1
+	const isSelected = (id: string) => selected.indexOf(id) !== -1
 
 	// Avoid a layout jump when reaching the last page with empty rows.
-	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
+	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0
 
-	const visibleRows = React.useMemo(
-		() =>
-			stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-		[order, orderBy, page, rowsPerPage],
-	)
+	// const visibleRows = React.useMemo(
+	// 	() =>
+	// 		stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+	// 	[order, orderBy, page, rowsPerPage],
+	// )
 
 	return (
 		<div className='py-[16px]'>
 			<Paper className='flex flex-col gap-[8px] px-[24px] py-[16px]'>
+				{/* <p>total :: {total}</p>
+				<p>tableData :: {JSON.stringify(tableData)}</p> */}
 				<div className='flex items-baseline gap-[12px]'>
 					<Typography variant='body1' className='font-semibold'>
 						รายชื่อผู้ใช้งาน
@@ -210,8 +256,8 @@ const UserManagementTable = () => {
 									<TableCell padding='checkbox'>
 										<Checkbox
 											color='primary'
-											indeterminate={selected.length > 0 && selected.length < rows.length}
-											checked={rows.length > 0 && selected.length === rows.length}
+											indeterminate={selected.length > 0 && selected.length < tableData.length}
+											checked={tableData.length > 0 && selected.length ===  tableData.length}
 											onChange={handleSelectAllClick}
 											inputProps={{
 												'aria-label': 'select all desserts',
@@ -227,13 +273,15 @@ const UserManagementTable = () => {
 										>
 											<TableSortLabel
 												active={orderBy === headCell.id}
-												direction={orderBy === headCell.id ? order : 'asc'}
-												onClick={createSortHandler(headCell.id)}
+												direction={orderBy === headCell.id ? order : SortType.ASC}
+												// onClick={createSortHandler(headCell.id)}
 											>
 												{headCell.label}
 												{orderBy === headCell.id ? (
 													<Box component='span' sx={visuallyHidden}>
-														{order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+														{order === SortType.DESC
+															? 'sorted descending'
+															: 'sorted ascending'}
 													</Box>
 												) : null}
 											</TableSortLabel>
@@ -242,7 +290,7 @@ const UserManagementTable = () => {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{visibleRows.map((row, index) => {
+								{tableData.map((row, index) => {
 									const isItemSelected = isSelected(row.id)
 									const labelId = `enhanced-table-checkbox-${index}`
 
@@ -267,12 +315,12 @@ const UserManagementTable = () => {
 												/>
 											</TableCell>
 											<TableCell component='th' id={labelId} scope='row' padding='none'>
-												{row.fullName}
+												{row.firstName} {row.lastName}
 											</TableCell>
 											<TableCell>{row.email}</TableCell>
-											<TableCell>{row.organization}</TableCell>
+											{/* <TableCell>{row.organization}</TableCell> */}
 											<TableCell>{row.role}</TableCell>
-											<TableCell>{row.status}</TableCell>
+											{/* <TableCell>{row.status}</TableCell> */}
 										</TableRow>
 									)
 								})}
@@ -291,11 +339,13 @@ const UserManagementTable = () => {
 					<TablePagination
 						rowsPerPageOptions={[5, 10, 25]}
 						component='div'
-						count={rows.length}
+						count={tableData.length}
 						rowsPerPage={rowsPerPage}
 						page={page}
-						onPageChange={handleChangePage}
-						onRowsPerPageChange={handleChangeRowsPerPage}
+						// onPageChange={handleChangePage}
+						// onRowsPerPageChange={handleChangeRowsPerPage}
+						onPageChange={() => {}}
+						onRowsPerPageChange={() => {}}
 					/>
 				</Box>
 			</Paper>

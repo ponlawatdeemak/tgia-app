@@ -5,14 +5,42 @@ import { FormMain } from '../Form'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
 import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt'
-import React, { FormEvent, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useState } from 'react'
+import { GetSearchUMDtoIn } from '@/api/um/dto-in.dto'
 
-const UserManagementSearchForm = () => {
+export interface UserManagementSearchFormProps {
+	searchParams: GetSearchUMDtoIn,
+	setSearchParams: React.Dispatch<React.SetStateAction<GetSearchUMDtoIn>>,
+	searchToggle: boolean,
+	setSearchToggle: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({ searchParams, setSearchParams, searchToggle, setSearchToggle }) => {
 	const [openForm, setOpenForm] = useState<boolean>(false)
-
+	// Change Event to useCallback
 	const handleSubmitUser = async (event: FormEvent) => {
 		console.log('Form submitted')
 		// Add your form submission logic here
+	}
+
+	const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setSearchParams((prevSearch) => ({
+			...prevSearch,
+			keyword: event.target.value,
+		}))
+	}
+
+	const handleOnBlur = (event : React.FocusEvent<HTMLInputElement>) => {
+		// Blur Will Toggle all the time
+		console.log("onBlur")
+		setSearchToggle(!searchToggle)
+	}
+
+	const handleEnter = (event : any) => {
+		// keyCode of Enter is 13
+		if(event.keyCode === 13){
+			(event.target as HTMLInputElement).blur()
+		}
 	}
 
 	return (
@@ -29,6 +57,9 @@ const UserManagementSearchForm = () => {
 								<SearchOutlinedIcon className='h-[24px] w-[24px] text-black' />
 							</InputAdornment>
 						}
+						onChange={handleSearchChange}
+						onBlur={handleOnBlur}
+						onKeyDown={handleEnter}
 						disableUnderline={true}
 					/>
 				</FormControl>

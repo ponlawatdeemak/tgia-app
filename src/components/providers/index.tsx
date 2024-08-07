@@ -17,7 +17,15 @@ interface ProvidersProps extends PropsWithChildren {
 }
 
 const Providers: React.FC<ProvidersProps> = ({ children, lng }) => {
-	const queryClient = new QueryClient()
+	const queryClient = new QueryClient({
+		defaultOptions: {
+			queries: {
+				refetchOnWindowFocus: false,
+				retry: false, // not retry when error
+				refetchInterval: 60000 * 30, // refetch every 30 minutes
+			},
+		},
+	})
 
 	const i18n = createInstance()
 	const language: Language = lng === Language.EN ? Language.EN : fallbackLng

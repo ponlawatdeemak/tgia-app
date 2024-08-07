@@ -56,7 +56,6 @@ export default function PlaygroundPage() {
 					// .catch((error) => {
 					// 	console.log('error ', error)
 					// })
-					console.log('adminPoly', adminPoly)
 				}}
 			>
 				Test Search

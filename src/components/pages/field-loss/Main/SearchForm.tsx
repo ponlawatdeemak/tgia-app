@@ -2,6 +2,7 @@
 
 import {
 	Autocomplete,
+	Box,
 	Button,
 	Divider,
 	FormControl,
@@ -12,14 +13,28 @@ import {
 	Paper,
 	Typography,
 } from '@mui/material'
-import { SearchOutlined, GroupAddOutlined, SystemUpdateAlt, StarBorder, Clear, Remove } from '@mui/icons-material'
+import {
+	SearchOutlined,
+	GroupAddOutlined,
+	SystemUpdateAlt,
+	StarBorder,
+	Clear,
+	Remove,
+	Fullscreen,
+} from '@mui/icons-material'
+import parse from 'autosuggest-highlight/parse'
+import match from 'autosuggest-highlight/match'
 import React, { ChangeEvent, ReactNode, useMemo, useState } from 'react'
 import clsx from 'clsx'
 import service from '@/api'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useLocalStorage } from '@/hook/local-storage'
 import { useSession } from 'next-auth/react'
-import DateRangePicker from '@/components/shared/DateRangePicker'
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import dayjs, { Dayjs } from 'dayjs'
 
 interface OptionType {
 	name: string
@@ -31,69 +46,113 @@ interface HistoryType {
 	[key: string]: OptionType[]
 }
 
-const options: OptionType[] = [
-	{ name: 'นครราชสีมา', id: '30', searchType: 'favorite' },
-	{ name: 'สุพรรณบุรี', id: '72', searchType: 'favorite' },
-	{ name: 'อ่างทอง', id: '15', searchType: 'favorite' },
-	{ name: 'ร้อยเอ็ด', id: '45', searchType: 'favorite' },
-	{ name: 'บุรีรัมย์', id: '31', searchType: 'favorite' },
-	{ name: 'นครศรีธรรมราช', id: '80', searchType: 'history' },
-	{ name: 'พระนครศรีอยุธยา', id: '14', searchType: 'history' },
-	{ name: 'กำแพงเพชร', id: '62', searchType: 'history' },
-]
+interface SearchFormProps {
+	selectedOption: OptionType | null
+	startDate: Dayjs | null
+	endDate: Dayjs | null
+	setSeletedOption: React.Dispatch<React.SetStateAction<OptionType | null>>
+	setStartDate: React.Dispatch<React.SetStateAction<Dayjs | null>>
+	setEndDate: React.Dispatch<React.SetStateAction<Dayjs | null>>
+}
 
-const SearchForm = () => {
+// const options: OptionType[] = [
+// 	{ name: 'นครราชสีมา', id: '30', searchType: 'favorite' },
+// 	{ name: 'สุพรรณบุรี', id: '72', searchType: 'favorite' },
+// 	{ name: 'อ่างทอง', id: '15', searchType: 'favorite' },
+// 	{ name: 'ร้อยเอ็ด', id: '45', searchType: 'favorite' },
+// 	{ name: 'บุรีรัมย์', id: '31', searchType: 'favorite' },
+// 	{ name: 'นครศรีธรรมราช', id: '80', searchType: 'history' },
+// 	{ name: 'พระนครศรีอยุธยา', id: '14', searchType: 'history' },
+// 	{ name: 'กำแพงเพชร', id: '62', searchType: 'history' },
+// ]
+
+const SearchForm: React.FC<SearchFormProps> = ({
+	selectedOption,
+	startDate,
+	endDate,
+	setSeletedOption,
+	setStartDate,
+	setEndDate,
+}) => {
+	const queryClient = useQueryClient()
 	const [isFocused, setIsFocused] = useState<boolean>(false)
 	const [inputValue, setInputValue] = useState<string>('')
-	const [selectedOption, setSeletedOption] = useState<OptionType | null>(null)
+
 	const [history, setHistory] = useLocalStorage<HistoryType>('fieldLoss.history', {})
 	const [favorite, setFavorite] = useLocalStorage<HistoryType>('fieldLoss.favorite', {})
-	const [optionList, setOptionList] = useState<OptionType[]>(options)
+	//const [optionList, setOptionList] = useState<OptionType[]>(options)
 	const { data: session } = useSession()
 	const userId = session?.user.id ?? null
+
+	const { data: searchData, isLoading: isSearchDataLoading } = useQuery({
+		queryKey: ['getSearchAdminPoly', inputValue],
+		queryFn: () => service.fieldLoss.getSearchAdminPoly({ keyword: inputValue }),
+		enabled: !!inputValue,
+	})
+
+	//console.log('searchData', searchData?.data)
+	// console.log('status', status)
+	// console.log('fetchStatus', fetchStatus)
 
 	const combinedOptions = useMemo(() => {
 		if (userId) {
 			const historyList = history[userId] || []
 			const favoriteList = favorite[userId] || []
-			return [...historyList, ...favoriteList]
+			const searchDataList: OptionType[] = searchData?.data
+				? searchData.data
+						.filter((data) => {
+							const historyIdList = historyList.map((history) => history.id)
+							const favoriteIdList = favoriteList.map((favorite) => favorite.id)
+							if (historyIdList.includes(data.id) || favoriteIdList.includes(data.id)) {
+								return false
+							} else {
+								return true
+							}
+						})
+						.map((data) => ({ ...data, searchType: 'zzz' }))
+				: []
+			return [...historyList, ...favoriteList, ...searchDataList]
 		}
 		return []
-	}, [history, favorite, userId])
+	}, [history, favorite, userId, searchData])
 
-	const highlightText = (text: string, highlight: string): ReactNode => {
-		const parts = text.split(new RegExp(`(${highlight})`, 'gi'))
-		return (
-			<>
-				{parts.map((part, index) =>
-					part.toLowerCase() === highlight.toLowerCase() ? (
-						<span key={index} className='font-semibold text-primary'>
-							{part}
-						</span>
-					) : (
-						part
-					),
-				)}
-			</>
-		)
-	}
+	//console.log('combinedOptions', combinedOptions)
+
+	// const highlightText = (text: string, highlight: string): ReactNode => {
+	// 	const parts = text.split(new RegExp(`(${highlight})`, 'gi'))
+	// 	return (
+	// 		<>
+	// 			{parts.map((part, index) =>
+	// 				part.toLowerCase() === highlight.toLowerCase() ? (
+	// 					<span key={index} className='font-semibold text-primary'>
+	// 						{part}
+	// 					</span>
+	// 				) : (
+	// 					part
+	// 				),
+	// 			)}
+	// 		</>
+	// 	)
+	// }
 
 	const handleSelectOption = (_event: ChangeEvent<{}>, newSelectedValue: OptionType | null) => {
 		setSeletedOption(newSelectedValue)
 		if (userId) {
+			const favoriteList = favorite[userId] || []
 			const historyList = history[userId] || []
 			if (newSelectedValue) {
-				const isDuplicate = historyList.map((item) => item.id).includes(newSelectedValue.id)
-				if (!isDuplicate) {
+				const isFavoriteDuplicate = favoriteList.map((item) => item.id).includes(newSelectedValue.id)
+				const isHistoryDuplicate = historyList.map((item) => item.id).includes(newSelectedValue.id)
+				if (!isHistoryDuplicate && !isFavoriteDuplicate) {
 					if (historyList.length === 5) {
-						historyList.shift()
-						historyList.push(newSelectedValue)
+						historyList.pop()
+						historyList.unshift(newSelectedValue)
 						setHistory({
 							...history,
 							[userId]: historyList.map((history) => ({ ...history, searchType: 'history' })),
 						})
 					} else if (historyList.length < 5) {
-						historyList.push(newSelectedValue)
+						historyList.unshift(newSelectedValue)
 						setHistory({
 							...history,
 							[userId]: historyList.map((history) => ({ ...history, searchType: 'history' })),
@@ -104,15 +163,26 @@ const SearchForm = () => {
 		}
 	}
 
+	//console.log('selectedOption', selectedOption)
+
 	const handleSelectFavorite = (event: React.MouseEvent, selectedFavorite: OptionType | null) => {
 		event.stopPropagation()
 		if (userId) {
 			const favoriteList = favorite[userId] || []
+			const historyList = history[userId] || []
 			if (selectedFavorite) {
-				const isDuplicate = favoriteList.map((item) => item.id).includes(selectedFavorite.id)
-				if (!isDuplicate) {
+				const isFavoriteDuplicate = favoriteList.map((item) => item.id).includes(selectedFavorite.id)
+				const isHistoryDuplicate = historyList.map((item) => item.id).includes(selectedFavorite.id)
+				if (!isFavoriteDuplicate) {
 					if (favoriteList.length === 5) return
 					if (favoriteList.length < 5) {
+						if (isHistoryDuplicate) {
+							const newhistoryList = historyList.filter((item) => item.id !== selectedFavorite.id)
+							setHistory({
+								...history,
+								[userId]: newhistoryList,
+							})
+						}
 						favoriteList.push(selectedFavorite)
 						setFavorite({
 							...favorite,
@@ -153,6 +223,9 @@ const SearchForm = () => {
 		setSeletedOption(null)
 	}
 
+	// console.log('startDate', startDate?.toISOString().split('T')[0])
+	// console.log('endDate', endDate?.toISOString().split('T')[0])
+
 	return (
 		<>
 			<Paper className='mx-4 flex gap-[6px] bg-[#D9E0EB] p-[6px]'>
@@ -162,6 +235,7 @@ const SearchForm = () => {
 						options={combinedOptions.sort((a, b) => a.searchType.localeCompare(b.searchType))}
 						groupBy={(option) => (!inputValue ? option.searchType : '')}
 						getOptionLabel={(option) => option.name}
+						isOptionEqualToValue={(option, value) => option.id === value.id}
 						PaperComponent={({ children }) => (
 							<Paper className='border-[1px] border-solid border-gray'>{children}</Paper>
 						)}
@@ -211,8 +285,14 @@ const SearchForm = () => {
 														onClick={(event) => handleSelectFavorite(event, selectedOption)}
 													>
 														<StarBorder
-															className={clsx('h-[24px] w-[24px] text-black', {
+															className={clsx('h-[24px] w-[24px]', {
 																'text-[#DCBA09]': combinedOptions
+																	.filter(
+																		(option) => option.searchType === 'favorite',
+																	)
+																	.map((option) => option.id)
+																	.includes(selectedOption?.id || ''),
+																'text-black': !combinedOptions
 																	.filter(
 																		(option) => option.searchType === 'favorite',
 																	)
@@ -256,15 +336,52 @@ const SearchForm = () => {
 								</li>
 							)
 						}}
-						renderOption={(props, option) => {
-							return option.searchType === 'favorite' ? (
-								<li {...props} key={`favorite-${option.id}`}>
+						renderOption={(props, option, { inputValue }) => {
+							const { key, ...optionProps } = props
+							const matches = match(option.name, inputValue, { insideWords: true })
+							const parts = parse(option.name, matches)
+							console.log('selectedOption', selectedOption?.name)
+							console.log('inputValue', inputValue)
+							return selectedOption?.name === inputValue ? (
+								option === selectedOption ? (
+									<li key={`selected-${key}`} {...optionProps}>
+										<div className='flex w-full items-center justify-between'>
+											<div>
+												{parts.map((part, index) => (
+													<span
+														key={index}
+														className={clsx('text-md', {
+															'font-bold text-primary': part.highlight,
+															'font-normal text-black': !part.highlight,
+														})}
+													>
+														{part.text}
+													</span>
+												))}
+											</div>
+										</div>
+									</li>
+								) : null
+							) : option.searchType === 'favorite' ? (
+								<li key={`favorite-${key}`} {...optionProps}>
 									<div className='flex w-full items-center justify-between'>
 										<div className='flex'>
 											<IconButton size='small'>
 												<StarBorder className='text-[#DCBA09]' />
 											</IconButton>
-											<Typography>{highlightText(option.name, inputValue)}</Typography>
+											<div>
+												{parts.map((part, index) => (
+													<span
+														key={index}
+														className={clsx('text-md', {
+															'font-bold text-primary': part.highlight,
+															'font-normal text-black': !part.highlight,
+														})}
+													>
+														{part.text}
+													</span>
+												))}
+											</div>
 										</div>
 										{!inputValue && (
 											<IconButton
@@ -278,9 +395,21 @@ const SearchForm = () => {
 									</div>
 								</li>
 							) : (
-								<li {...props} key={`history-${option.id}`}>
+								<li key={`history-${key}`} {...optionProps}>
 									<div className='flex w-full items-center justify-between'>
-										<Typography>{highlightText(option.name, inputValue)}</Typography>
+										<div>
+											{parts.map((part, index) => (
+												<span
+													key={index}
+													className={clsx('text-md', {
+														'font-bold text-primary': part.highlight,
+														'font-normal text-black': !part.highlight,
+													})}
+												>
+													{part.text}
+												</span>
+											))}
+										</div>
 										{!inputValue && (
 											<IconButton
 												className=''
@@ -302,16 +431,39 @@ const SearchForm = () => {
 					startIcon={<GroupAddOutlined className='h-[24px] w-[24px]' />}
 				>
 					เพิ่มผู้ใช้งาน
-				</Button>
+				</Button> */}
+				<div className='h-[40px] w-[250px] rounded-lg bg-white [&_.MuiStack-root]:p-0'>
+					<LocalizationProvider dateAdapter={AdapterDayjs}>
+						<DemoContainer
+							components={['DatePicker', 'DatePicker']}
+							sx={{ display: 'flex', flexDirection: 'row', width: '250px' }}
+						>
+							<div className='flex flex-row [&_.MuiInputBase-root>input]:h-[40px] [&_.MuiInputBase-root>input]:py-0 [&_.MuiInputBase-root]:h-[40px]'>
+								<Box className='[&_.MuiOutlinedInput-notchedOutline]:border-none'>
+									<DatePicker
+										//label='Start Date'
+										value={startDate}
+										onChange={(newValue) => setStartDate(newValue)}
+									/>
+								</Box>
+								<Box className='[&_.MuiOutlinedInput-notchedOutline]:border-none'>
+									<DatePicker
+										//label='End Date'
+										value={endDate}
+										onChange={(newValue) => setEndDate(newValue)}
+										sx={{ margin: 0 }}
+									/>
+								</Box>
+							</div>
+						</DemoContainer>
+					</LocalizationProvider>
+				</div>
 				<Button
-					className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
+					className='h-[40px] min-w-[40px] bg-white p-[8px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
 					variant='contained'
 					color='primary'
-					startIcon={<SystemUpdateAlt className='h-[24px] w-[24px]' />}
-				>
-					นำเข้าผู้ใช้งาน
-				</Button> */}
-				<DateRangePicker />
+					startIcon={<Fullscreen className='h-[24px] w-[24px]' />}
+				></Button>
 			</Paper>
 		</>
 	)
