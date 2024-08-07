@@ -59,6 +59,10 @@ export type ResponseDto<T = any> = {
 	total?: number
 }
 
+export type ResponseStatisticDto<T = any, T2 = any> = ResponseDto<T> & {
+	dataTotal?: T2
+}
+
 export interface Tokens {
 	idToken: string
 	accessToken: string
