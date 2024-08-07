@@ -30,7 +30,7 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 	}
 
 	const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setSearchString(event.target.value)
+		// setSearchString(event.target.value)
 		setSearchParams((prevSearch) => ({
 			...prevSearch,
 			keyword: event.target.value,
@@ -51,7 +51,7 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 			<Paper className='flex gap-[6px] bg-[#D9E0EB] p-[6px]'>
 				<form onSubmit={(event) => {
 					handleOnBlur(event)
-				}}>
+				}} className='w-full'>
 					<FormControl fullWidth variant='standard' className='h-[40px] rounded-[8px] bg-white'>
 						<Input
 							className='flex h-[40px] gap-[8px] px-[12px] py-[8px] [&_.MuiInputAdornment-positionStart]:m-0'
