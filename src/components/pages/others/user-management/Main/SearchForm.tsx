@@ -41,22 +41,9 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 		event: React.FocusEvent<HTMLInputElement> | React.FormEvent<Element>
 	) => {
 		// Blur Will Toggle all the time
-		console.log(event)
 		event.preventDefault()
 		console.log('onBlur')
 		setIsSearch(true)
-	}
-
-	const handlerOnFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-		setIsSearch(false)
-	}
-
-	const handleEnter = (event: any) => {
-		// keyCode of Enter is 13
-		// console.log("onkeypress")
-		// if(event.keyCode === 13){
-		// 	(event.target as HTMLInputElement).blur()
-		// }
 	}
 
 	return (
@@ -78,8 +65,6 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 							}
 							onChange={handleSearchChange}
 							onBlur={handleOnBlur}
-							// onFocus={handlerOnFocus}
-							// onKeyDown={handleEnter}
 							disableUnderline={true}
 						/>
 					</FormControl>

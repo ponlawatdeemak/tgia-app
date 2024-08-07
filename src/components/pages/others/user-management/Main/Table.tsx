@@ -184,12 +184,12 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			setIsSearch(false)
 			return res
 		},
-		enabled: isSearch
+		enabled: isSearch,
 	})
 
 	React.useEffect(() => {
 		setIsSearch(true)
-	},[])
+	}, [])
 
 	React.useEffect(() => {
 		console.log(selected)
@@ -279,6 +279,11 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						แสดง 1-10 จาก 160 รายการ
 					</Typography>
 				</div>
+				<Box>
+					<Typography>
+						กำลังเลือก {selected.length} รายชื่อ
+					</Typography>
+				</Box>
 				<Box className='flex flex-col gap-[16px]'>
 					<TableContainer>
 						<Table sx={{ minWidth: 750 }} aria-labelledby='tableTitle' size={dense ? 'small' : 'medium'}>
@@ -362,11 +367,15 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 												{
 													// Placeholder for Active Status
 													<div className='bg-success-light'>
-													<Typography
-														className={`text${row.flagStatus === 'A' ? '-success' : '-error'}`}
+														<Typography
+															className={`text-${row.flagStatus === 'A' ? 'success' : 'error'}`}
 														>
-														{row.flagStatusName[i18n.language as keyof ResponseLanguage]}
-													</Typography>
+															{
+																row.flagStatusName[
+																	i18n.language as keyof ResponseLanguage
+																]
+															}
+														</Typography>
 													</div>
 												}
 											</TableCell>
