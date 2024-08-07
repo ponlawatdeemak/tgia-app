@@ -1,4 +1,6 @@
-import React, { useCallback, useState } from 'react'
+'use client'
+
+import React, { useCallback, useEffect, useState } from 'react'
 import MapView from '@/components/common/map/MapView'
 import { Paper, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import TableDetail from '../Detail/TableDetail'
@@ -31,11 +33,29 @@ interface FieldLossDetailProps {
 	lossType: LossType | null
 }
 
+// enum SortFieldType {
+// 	1 =
+// }
+
 const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, startDate, endDate, lossType }) => {
 	const { areaType } = useAreaType()
 	const [areaDetail, setAreaDetail] = useState('summary-area')
-	const [order, setOrder] = useState<SortType>(SortType.DESC)
-	const [orderBy, setOrderBy] = useState<keyof Data>('totalPredicted')
+	const [sortType, setSortType] = useState<SortType>(SortType.DESC)
+	const [sortTypeField, setSortTypeField] = useState<keyof Data>('totalPredicted')
+
+	useEffect(() => {
+		if (lossType) {
+			if (lossType === LossType.Flood) {
+				setSortTypeField('floodPredicted')
+			} else if (lossType === LossType.Drought) {
+				setSortTypeField('droughtPredicted')
+			}
+		} else {
+			setSortTypeField('totalPredicted')
+		}
+	}, [lossType])
+
+	//console.log('lossType', lossType)
 
 	const { data: summaryAreaData, isLoading: isSummaryAreaDataLoading } = useQuery({
 		queryKey: ['getSummaryArea', startDate, endDate, areaType, selectedOption?.id],
@@ -50,15 +70,15 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, start
 	})
 
 	const { data: areaStatisticData, isLoading: isAreaStatisticData } = useQuery({
-		queryKey: ['getAreaStatistic', startDate, endDate, lossType, areaType, orderBy, order],
+		queryKey: ['getAreaStatistic', startDate, endDate, lossType, areaType, sortTypeField, sortType],
 		queryFn: () =>
 			service.fieldLoss.getAreaStatistic({
 				startDate: startDate?.toISOString().split('T')[0] || '',
 				endDate: endDate?.toISOString().split('T')[0] || '',
 				lossType: lossType || undefined,
 				registrationAreaType: areaType,
-				sort: orderBy,
-				sortType: order,
+				sort: sortTypeField,
+				sortType: sortType,
 			}),
 		enabled: areaDetail === 'area-statistic',
 	})
@@ -89,7 +109,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, start
 				size='small'
 				exclusive
 				color='primary'
-				className='absolute right-0 top-0 z-10 bg-white'
+				className='absolute right-3 top-3 z-10 bg-white max-lg:hidden'
 				value={areaDetail}
 				onChange={handleAreaDetailChange}
 			>
@@ -102,13 +122,19 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, start
 				<TableDetail
 					areaStatisticData={areaStatisticData?.data}
 					areaStatisticDataTotal={areaStatisticData?.dataTotal}
-					order={order}
-					orderBy={orderBy}
-					setOrder={setOrder}
-					setOrderBy={setOrderBy}
+					sortType={sortType}
+					sortTypeField={sortTypeField}
+					setSortType={setSortType}
+					setSortTypeField={setSortTypeField}
 				/>
 			)}
-			{areaDetail === 'time-statistic' && <ChartDetail />}
+			{areaDetail === 'time-statistic' && (
+				<ChartDetail
+					timeStatisticData={timeStatisticData?.data}
+					timeStatisticDataTotal={timeStatisticData?.dataTotal}
+					sortTypeField={sortTypeField}
+				/>
+			)}
 		</Paper>
 	)
 }
