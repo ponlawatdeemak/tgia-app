@@ -9,14 +9,20 @@ import React, { ChangeEvent, FormEvent, useState } from 'react'
 import { GetSearchUMDtoIn } from '@/api/um/dto-in.dto'
 
 export interface UserManagementSearchFormProps {
-	searchParams: GetSearchUMDtoIn,
-	setSearchParams: React.Dispatch<React.SetStateAction<GetSearchUMDtoIn>>,
-	searchToggle: boolean,
-	setSearchToggle: React.Dispatch<React.SetStateAction<boolean>>
+	searchParams: GetSearchUMDtoIn
+	setSearchParams: React.Dispatch<React.SetStateAction<GetSearchUMDtoIn>>
+	isSearch: boolean
+	setIsSearch: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({ searchParams, setSearchParams, searchToggle, setSearchToggle }) => {
+const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
+	searchParams,
+	setSearchParams,
+	isSearch,
+	setIsSearch,
+}) => {
 	const [openForm, setOpenForm] = useState<boolean>(false)
+	const [searchString, setSearchString] = useState<string>('')
 	// Change Event to useCallback
 	const handleSubmitUser = async (event: FormEvent) => {
 		console.log('Form submitted')
@@ -24,45 +30,45 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({ sea
 	}
 
 	const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setSearchString(event.target.value)
 		setSearchParams((prevSearch) => ({
 			...prevSearch,
 			keyword: event.target.value,
 		}))
 	}
 
-	const handleOnBlur = (event : React.FocusEvent<HTMLInputElement>) => {
+	const handleOnBlur = (
+		event: React.FocusEvent<HTMLInputElement> | React.FormEvent<Element>
+	) => {
 		// Blur Will Toggle all the time
-		console.log("onBlur")
-		setSearchToggle(!searchToggle)
-	}
-
-	const handleEnter = (event : any) => {
-		// keyCode of Enter is 13
-		if(event.keyCode === 13){
-			(event.target as HTMLInputElement).blur()
-		}
+		event.preventDefault()
+		console.log('onBlur')
+		setIsSearch(true)
 	}
 
 	return (
 		<>
 			<Paper className='flex gap-[6px] bg-[#D9E0EB] p-[6px]'>
-				<FormControl fullWidth variant='standard' className='h-[40px] rounded-[8px] bg-white'>
-					<Input
-						className='flex h-[40px] gap-[8px] px-[12px] py-[8px] [&_.MuiInputAdornment-positionStart]:m-0'
-						id='standard-search'
-						placeholder='ค้นหา ชื่อ, อีเมล, จังหวัด, อำเภอ'
-						type='search'
-						startAdornment={
-							<InputAdornment position='start'>
-								<SearchOutlinedIcon className='h-[24px] w-[24px] text-black' />
-							</InputAdornment>
-						}
-						onChange={handleSearchChange}
-						onBlur={handleOnBlur}
-						onKeyDown={handleEnter}
-						disableUnderline={true}
-					/>
-				</FormControl>
+				<form onSubmit={(event) => {
+					handleOnBlur(event)
+				}}>
+					<FormControl fullWidth variant='standard' className='h-[40px] rounded-[8px] bg-white'>
+						<Input
+							className='flex h-[40px] gap-[8px] px-[12px] py-[8px] [&_.MuiInputAdornment-positionStart]:m-0'
+							id='standard-search'
+							placeholder='ค้นหา ชื่อ, อีเมล, จังหวัด, อำเภอ'
+							type='search'
+							startAdornment={
+								<InputAdornment position='start'>
+									<SearchOutlinedIcon className='h-[24px] w-[24px] text-black' />
+								</InputAdornment>
+							}
+							onChange={handleSearchChange}
+							onBlur={handleOnBlur}
+							disableUnderline={true}
+						/>
+					</FormControl>
+				</form>
 				<Button
 					className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
 					variant='contained'
