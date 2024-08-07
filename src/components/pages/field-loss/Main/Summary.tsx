@@ -80,7 +80,7 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 	lossType,
 	setLossType,
 }) => {
-	const { areaType, setAreaType } = useAreaType()
+	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default', 'field-loss'])
 	const [selectedCard, setSelecteeCard] = useState<number>(2)

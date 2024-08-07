@@ -1,18 +1,27 @@
 import React, { useCallback, useState } from 'react'
 import MapView from '@/components/common/map/MapView'
 import { Paper, ToggleButton, ToggleButtonGroup } from '@mui/material'
-import FieldLossTableDetail from '../Detail/FieldLossTableDetail'
-import FieldLossChartDetail from '../Detail/FieldLossChartDetail'
+import TableDetail from '../Detail/TableDetail'
+import ChartDetail from '../Detail/ChartDetail'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import useAreaType from '@/store/area-type'
 import { Dayjs } from 'dayjs'
-import { LossType } from '@/enum'
+import { LossType, SortType } from '@/enum'
+import { time } from 'console'
+import { ResponseArea } from '@/api/interface'
 
 interface OptionType {
 	name: string
 	id: string
 	searchType: string
+}
+
+interface Data {
+	//id: number
+	totalPredicted: ResponseArea
+	droughtPredicted: ResponseArea
+	floodPredicted: ResponseArea
 }
 
 interface FieldLossDetailProps {
@@ -23,8 +32,10 @@ interface FieldLossDetailProps {
 }
 
 const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, startDate, endDate, lossType }) => {
-	const { areaType, setAreaType } = useAreaType()
+	const { areaType } = useAreaType()
 	const [areaDetail, setAreaDetail] = useState('summary-area')
+	const [order, setOrder] = useState<SortType>(SortType.DESC)
+	const [orderBy, setOrderBy] = useState<keyof Data>('totalPredicted')
 
 	const { data: summaryAreaData, isLoading: isSummaryAreaDataLoading } = useQuery({
 		queryKey: ['getSummaryArea', startDate, endDate, areaType, selectedOption?.id],
@@ -39,13 +50,15 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, start
 	})
 
 	const { data: areaStatisticData, isLoading: isAreaStatisticData } = useQuery({
-		queryKey: ['getAreaStatistic', startDate, endDate, lossType, areaType],
+		queryKey: ['getAreaStatistic', startDate, endDate, lossType, areaType, orderBy, order],
 		queryFn: () =>
 			service.fieldLoss.getAreaStatistic({
 				startDate: startDate?.toISOString().split('T')[0] || '',
 				endDate: endDate?.toISOString().split('T')[0] || '',
 				lossType: lossType || undefined,
 				registrationAreaType: areaType,
+				sort: orderBy,
+				sortType: order,
 			}),
 		enabled: areaDetail === 'area-statistic',
 	})
@@ -62,7 +75,9 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, start
 		enabled: areaDetail === 'time-statistic',
 	})
 
-	console.log('summaryAreaData', summaryAreaData)
+	// console.log('summaryAreaData', summaryAreaData)
+	// console.log('areaStatisticData', areaStatisticData)
+	// console.log('timeStatisticData', timeStatisticData)
 
 	const handleAreaDetailChange = useCallback((_event: React.MouseEvent<HTMLElement>, newAreaDetail: string) => {
 		setAreaDetail((prev) => newAreaDetail || prev)
@@ -83,8 +98,17 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, start
 				<ToggleButton value={'time-statistic'}>ตามช่วงเวลา</ToggleButton>
 			</ToggleButtonGroup>
 			{areaDetail === 'summary-area' && <MapView />}
-			{areaDetail === 'area-statistic' && <FieldLossTableDetail areaStatisticData={areaStatisticData as any} />}
-			{areaDetail === 'time-statistic' && <FieldLossChartDetail />}
+			{areaDetail === 'area-statistic' && (
+				<TableDetail
+					areaStatisticData={areaStatisticData?.data}
+					areaStatisticDataTotal={areaStatisticData?.dataTotal}
+					order={order}
+					orderBy={orderBy}
+					setOrder={setOrder}
+					setOrderBy={setOrderBy}
+				/>
+			)}
+			{areaDetail === 'time-statistic' && <ChartDetail />}
 		</Paper>
 	)
 }
