@@ -152,15 +152,15 @@ const headCells: readonly HeadCell[] = [
 interface UserManagementTableProps {
 	searchParams: GetSearchUMDtoIn
 	setSearchParams: React.Dispatch<React.SetStateAction<GetSearchUMDtoIn>>
-	searchToggle: boolean
-	setSearchToggle: React.Dispatch<React.SetStateAction<boolean>>
+	isSearch: boolean
+	setIsSearch: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	searchParams,
 	setSearchParams,
-	searchToggle,
-	setSearchToggle,
+	isSearch,
+	setIsSearch,
 }) => {
 	const [order, setOrder] = React.useState<SortType>(SortType.ASC)
 	const [orderBy, setOrderBy] = React.useState<keyof Data>('firstName')
@@ -177,9 +177,20 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	const [total, setTotal] = React.useState<number>(0)
 
 	const { data: resData, isLoading: isTableDataLoading } = useQuery({
-		queryKey: ['getSearchUM', searchToggle],
-		queryFn: () => um.getSearchUM(searchParams),
+		queryKey: ['getSearchUM', searchParams],
+		queryFn: () => {
+			console.log(searchParams)
+			const res = um.getSearchUM(searchParams)
+			setIsSearch(false)
+			return res
+		},
+		enabled: isSearch
 	})
+
+	React.useEffect(() => {
+		setIsSearch(true)
+	},[])
+
 	React.useEffect(() => {
 		console.log(selected)
 	}, [selected])
@@ -194,10 +205,10 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 
 	React.useEffect(() => {
 		setSelected([])
-	}, [searchToggle])
+	}, [isSearch])
 
 	React.useEffect(() => {
-		console.log(searchParams)
+		// console.log(searchParams)
 	}, [searchParams])
 
 	const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
@@ -209,7 +220,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			sortField: property,
 			sortOrder: isAsc ? SortType.DESC : SortType.ASC,
 		}))
-		setSearchToggle(!searchToggle)
+		setIsSearch(true)
 		setOrder(isAsc ? SortType.DESC : SortType.ASC)
 		setOrderBy(property)
 	}
@@ -350,11 +361,13 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											<TableCell>
 												{
 													// Placeholder for Active Status
+													<div className='bg-success-light'>
 													<Typography
 														className={`text${row.flagStatus === 'A' ? '-success' : '-error'}`}
-													>
+														>
 														{row.flagStatusName[i18n.language as keyof ResponseLanguage]}
 													</Typography>
+													</div>
 												}
 											</TableCell>
 											<TableCell>
