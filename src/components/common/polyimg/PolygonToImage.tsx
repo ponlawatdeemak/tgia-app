@@ -9,6 +9,7 @@ export interface PolygonToImageProps {
 	fill?: string
 	stroke?: string
 	fillOpacity?: number
+	strokeOpacity?: number
 	backgroundColor?: string
 	width?: number
 	height?: number
@@ -21,7 +22,8 @@ const PolygonToImage: React.FC<PolygonToImageProps> = ({
 	fill = '#03914d',
 	stroke = '#000000',
 	fillOpacity = 0.5,
-	backgroundColor = '#FFFFFF',
+	strokeOpacity = 0.5,
+	backgroundColor = '#F5F5F5',
 	width = 160,
 	height = 160,
 	padding = 10,
@@ -49,6 +51,7 @@ const PolygonToImage: React.FC<PolygonToImageProps> = ({
 					fill,
 					'fill-opacity': fillOpacity.toString(),
 					stroke,
+					'stroke-opacity': strokeOpacity.toString(),
 				},
 			}
 			const converter = new GeoJSON2SVG(options)
@@ -71,7 +74,10 @@ const PolygonToImage: React.FC<PolygonToImageProps> = ({
 			style={{ width: width, height: height, backgroundColor: backgroundColor }}
 		>
 			{!polygon || polygon.type !== 'Polygon' ? (
-				<h1>None</h1>
+				<div className='text-center'>
+					<h2>No Plot </h2>
+					<h2>Boundary</h2>
+				</div>
 			) : (
 				<svg ref={svgRef} width={svgWidth} height={svgHeight}></svg>
 			)}
