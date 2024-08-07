@@ -40,13 +40,13 @@ export const FieldLossMain = () => {
 					<RangePickerPage className='lg:hidden' />
 				) : (
 					<>
-						<FieldLossSummary
+						{/* <FieldLossSummary
 							selectedOption={selectedOption}
 							startDate={startDate}
 							endDate={endDate}
 							lossType={lossType}
 							setLossType={setLossType}
-						/>
+						/> */}
 						<FieldLossDetail
 							selectedOption={selectedOption}
 							startDate={startDate}

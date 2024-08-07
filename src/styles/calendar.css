@@ -1,0 +1,72 @@
+.rdrMonthAndYearWrapper {
+	padding: 0;
+	font-size: var(--font-size-base);
+	margin: 10px 0 10px 0;
+}
+
+.rdrWeekDays {
+	margin: 10px 0 10px 0;
+}
+
+.rdrDateDisplayWrapper {
+	display: none !important;
+}
+
+.rdrMonth {
+	width: unset;
+}
+
+.rdrWeekDays {
+	font-size: var(--font-size-sm);
+}
+
+.rdrDays {
+	font-size: var(--font-size-base);
+}
+
+button.rdrDay {
+	height: 80px !important;
+}
+
+.rdrEndEdge,
+.rdrInRange,
+.rdrStartEdge {
+	background-color: #e9eef6;
+}
+
+.rdrInRange {
+	border-radius: 0 !important;
+}
+
+.rdrDayNumber {
+	top: 0;
+	bottom: unset;
+}
+
+.rdrDayNumber > span {
+	color: #7a7a7a;
+	font-weight: 400;
+	height: fit-content;
+}
+
+.rdrDay:not(.rdrDayPassive) .rdrInRange ~ .rdrDayNumber span,
+.rdrDay:not(.rdrDayPassive) .rdrStartEdge ~ .rdrDayNumber span,
+.rdrDay:not(.rdrDayPassive) .rdrEndEdge ~ .rdrDayNumber span,
+.rdrDay:not(.rdrDayPassive) .rdrSelected ~ .rdrDayNumber span {
+	color: var(--black-color);
+	font-weight: 500;
+}
+
+.rdrDayToday .rdrDayNumber span:after {
+	display: none;
+}
+
+/* .rdrDay.rdrDayHovered .rdrDayStartPreview.rdrDayEndPreview {
+	border-color: var(--primary-color-1);
+} */
+
+.rdrDayStartPreview,
+.rdrDayInPreview,
+.rdrDayEndPreview {
+	border-color: var(--primary-color-1);
+}

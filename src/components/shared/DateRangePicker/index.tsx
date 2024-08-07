@@ -37,7 +37,7 @@ const DateRangePicker = () => {
 			<Button
 				variant='contained'
 				color='secondary'
-				className='hidden min-w-[250px] lg:flex'
+				className='hidden min-w-[280px] lg:flex'
 				startIcon={<Icon path={mdiCalendarMonthOutline} size={1} />}
 				onClick={handleClick}
 			>

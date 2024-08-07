@@ -35,6 +35,7 @@
     "axios": "^1.7.2",
     "billboard.js": "^3.12.4",
     "classnames": "^2.5.1",
+    "date-fns": "^3.6.0",
     "dayjs": "^1.11.11",
     "formik": "^2.4.6",
     "geojson2svg": "^2.0.1",
@@ -48,6 +49,7 @@
     "prettier-plugin-tailwindcss": "^0.6.5",
     "react": "^18",
     "react-cookie": "^7.1.4",
+    "react-date-range": "^2.0.1",
     "react-dom": "^18",
     "react-i18next": "^14.1.2",
     "react-map-gl": "^7.1.7",
@@ -56,10 +58,11 @@
     "zustand": "^4.5.4"
   },
   "devDependencies": {
-    "@types/geojson": "^7946.0.14",
     "@types/autosuggest-highlight": "^3.2.3",
+    "@types/geojson": "^7946.0.14",
     "@types/node": "^20",
     "@types/react": "^18",
+    "@types/react-date-range": "^1.4.9",
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
