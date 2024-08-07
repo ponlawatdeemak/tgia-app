@@ -59,19 +59,19 @@ const headCells: readonly HeadCell[] = [
 interface TableDetailProps {
 	areaStatisticData: GetAreaStatisticDtoOut[] | undefined
 	areaStatisticDataTotal: LossTypeAreaPredicted | undefined
-	order: SortType
-	orderBy: keyof Data
-	setOrder: React.Dispatch<React.SetStateAction<SortType>>
-	setOrderBy: React.Dispatch<React.SetStateAction<keyof Data>>
+	sortType: SortType
+	sortTypeField: keyof Data
+	setSortType: React.Dispatch<React.SetStateAction<SortType>>
+	setSortTypeField: React.Dispatch<React.SetStateAction<keyof Data>>
 }
 
 const TableDetail: React.FC<TableDetailProps> = ({
 	areaStatisticData,
 	areaStatisticDataTotal,
-	order,
-	orderBy,
-	setOrder,
-	setOrderBy,
+	sortType,
+	sortTypeField,
+	setSortType,
+	setSortTypeField,
 }) => {
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
@@ -82,38 +82,46 @@ const TableDetail: React.FC<TableDetailProps> = ({
 
 	const handleRequestSort = useCallback(
 		(_event: React.MouseEvent<HTMLSpanElement, MouseEvent>, property: keyof Data) => {
-			const isDesc = orderBy === property && order === SortType.DESC
-			setOrder(isDesc ? SortType.ASC : SortType.DESC)
-			setOrderBy(property)
+			const isDesc = sortTypeField === property && sortType === SortType.DESC
+			setSortType(isDesc ? SortType.ASC : SortType.DESC)
+			setSortTypeField(property)
 		},
-		[order, orderBy, setOrder, setOrderBy],
+		[sortType, sortTypeField, setSortType, setSortTypeField],
 	)
 
 	return (
-		<div className='relative flex h-full flex-1 flex-col overflow-hidden'>
-			<Typography>อันดับความเสียหายจากภัยพิบัติ</Typography>
+		<div className='flex h-full flex-1 flex-col gap-3 overflow-hidden p-4 pb-0'>
+			<Typography className='text-md font-semibold'>อันดับความเสียหายจากภัยพิบัติ</Typography>
 			<TableContainer>
 				<Table aria-labelledby='tableTitle'>
 					<TableHead>
-						<TableRow>
-							<TableCell align='left'>รวมทั้งหมด</TableCell>
-							<TableCell
-								className={clsx('', { 'text-secondary': orderBy === 'totalPredicted' })}
-								align='left'
-							>
-								{areaStatisticDataTotal?.totalPredicted[areaUnit]}
+						<TableRow className='h-10'>
+							<TableCell className='p-0 px-2.5 text-base font-semibold' align='left'>
+								รวมทั้งหมด
 							</TableCell>
 							<TableCell
-								className={clsx('', { 'text-secondary': orderBy === 'droughtPredicted' })}
-								align='left'
+								className={clsx('p-0 px-2.5 text-base font-semibold', {
+									'text-secondary': sortTypeField === 'totalPredicted',
+								})}
+								align='right'
 							>
-								{areaStatisticDataTotal?.droughtPredicted[areaUnit]}
+								{areaStatisticDataTotal?.totalPredicted[areaUnit].toLocaleString()}
 							</TableCell>
 							<TableCell
-								className={clsx('', { 'text-secondary': orderBy === 'floodPredicted' })}
-								align='left'
+								className={clsx('p-0 px-2.5 text-base font-semibold', {
+									'text-secondary': sortTypeField === 'droughtPredicted',
+								})}
+								align='right'
 							>
-								{areaStatisticDataTotal?.floodPredicted[areaUnit]}
+								{areaStatisticDataTotal?.droughtPredicted[areaUnit].toLocaleString()}
+							</TableCell>
+							<TableCell
+								className={clsx('p-0 px-2.5 text-base font-semibold', {
+									'text-secondary': sortTypeField === 'floodPredicted',
+								})}
+								align='right'
+							>
+								{areaStatisticDataTotal?.floodPredicted[areaUnit].toLocaleString()}
 							</TableCell>
 						</TableRow>
 						<TableRow>
@@ -123,17 +131,17 @@ const TableDetail: React.FC<TableDetailProps> = ({
 									key={headCell.id}
 									align={headCell.numeric ? 'right' : 'left'}
 									padding={headCell.disablePadding ? 'none' : 'normal'}
-									sortDirection={orderBy === headCell.id ? order : false}
+									sortDirection={sortTypeField === headCell.id ? sortType : false}
 								>
 									<TableSortLabel
-										active={orderBy === headCell.id}
-										direction={orderBy === headCell.id ? order : SortType.DESC}
+										active={sortTypeField === headCell.id}
+										direction={sortTypeField === headCell.id ? sortType : SortType.DESC}
 										onClick={(event) => handleRequestSort(event, headCell.id)}
 									>
 										{headCell.label}
-										{orderBy === headCell.id ? (
+										{sortTypeField === headCell.id ? (
 											<Box component='span' sx={visuallyHidden}>
-												{order === SortType.ASC ? 'sorted ascending' : 'sorted descending'}
+												{sortType === SortType.ASC ? 'sorted ascending' : 'sorted descending'}
 											</Box>
 										) : null}
 									</TableSortLabel>
@@ -152,16 +160,20 @@ const TableDetail: React.FC<TableDetailProps> = ({
 											<span>{row.name[language]}</span>
 										</div>
 									</TableCell>
-									<TableCell className={clsx('', { 'text-secondary': orderBy === 'totalPredicted' })}>
-										{row.totalPredicted[areaUnit]}
+									<TableCell
+										className={clsx('', { 'text-secondary': sortTypeField === 'totalPredicted' })}
+									>
+										{row.totalPredicted[areaUnit].toLocaleString()}
 									</TableCell>
 									<TableCell
-										className={clsx('', { 'text-secondary': orderBy === 'droughtPredicted' })}
+										className={clsx('', { 'text-secondary': sortTypeField === 'droughtPredicted' })}
 									>
-										{row.droughtPredicted[areaUnit]}
+										{row.droughtPredicted[areaUnit].toLocaleString()}
 									</TableCell>
-									<TableCell className={clsx('', { 'text-secondary': orderBy === 'floodPredicted' })}>
-										{row.floodPredicted[areaUnit]}
+									<TableCell
+										className={clsx('', { 'text-secondary': sortTypeField === 'floodPredicted' })}
+									>
+										{row.floodPredicted[areaUnit].toLocaleString()}
 									</TableCell>
 								</TableRow>
 							)
