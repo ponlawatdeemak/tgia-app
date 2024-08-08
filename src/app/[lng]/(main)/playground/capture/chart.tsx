@@ -2,6 +2,7 @@ import React from 'react'
 import bb, { bar, line } from 'billboard.js'
 import 'billboard.js/dist/billboard.css'
 import BillboardJS from '@billboard.js/react'
+import { Box } from '@mui/material'
 
 export default function App() {
 	const options = {
@@ -28,9 +29,9 @@ export default function App() {
 		},
 	}
 	return (
-		<>
+		<Box p={1}>
 			<BillboardJS bb={bb} options={options} className={'bb'} />
 			<BillboardJS bb={bb} options={options2} className={'bb'} />
-		</>
+		</Box>
 	)
 }

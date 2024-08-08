@@ -48,17 +48,15 @@ export default function Page() {
 						<Icon path={mdiFullscreen} size={1} />
 					</IconButton>
 				</Box>
-				<Box className='flex'>
-					<Box p={1} width={'50%'}>
+				<Box display='flex' sx={{ flexDirection: { xs: 'column', lg: 'row' } }}>
+					<Box p={1} flex={1} sx={{ width: { xs: '100%', lg: '50%' } }}>
 						<Box height={500} className='w-full p-1'>
 							<MapView />
 						</Box>
 						<StickyHeadTable />
-						<Box>
-							<QuiltedImageList />
-						</Box>
+						<QuiltedImageList />
 					</Box>
-					<Box p={1} width={'50%'}>
+					<Box p={1} flex={1} sx={{ width: { xs: '100%', lg: '50%' } }}>
 						<Chart />
 						<AlignItemsList />
 						<Box p={1} pt={4}>
