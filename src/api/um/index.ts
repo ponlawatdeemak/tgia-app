@@ -1,6 +1,6 @@
 import { api } from '@/api/core'
-import { GetProfileDtoOut, GetSearchUMDtoOut, GetUmDtoOut, PostUploadFilesDtoOut, PutProfileDtoOut } from '@/api/um/dto-out.dto'
-import { GetSearchUMDtoIn, GetUmDtoIn, PostUploadFilesDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
+import { GetProfileDtoOut, GetSearchUMDtoOut, GetUmDtoOut, PatchStatusDtoOut, PostUploadFilesDtoOut, PutProfileDtoOut } from '@/api/um/dto-out.dto'
+import { GetSearchUMDtoIn, GetUmDtoIn, PatchStatusDtoIn, PostUploadFilesDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
 import { APIService, ResponseDto } from '@/api/interface'
 
 // Api for Profile and UM
@@ -19,7 +19,9 @@ const um = {
 	putProfile: async (payload: PutProfileDtoIn): Promise<ResponseDto<PutProfileDtoOut>> =>
 		await api.put('/profile', payload),
 	getSearchUM: async (payload: GetSearchUMDtoIn): Promise<ResponseDto<GetSearchUMDtoOut[]>> => 
-		(await api.get(`/um/search?keyword=${payload.keyword}&sortField=${payload.sortField}&sortOrder=${payload.sortOrder}&limit=${payload.limit}&offset=${payload.offset}`)) 
+		(await api.get(`/um/search?keyword=${payload.keyword}&sortField=${payload.sortField}&sortOrder=${payload.sortOrder}&limit=${payload.limit}&offset=${payload.offset}`)),
+	patchStatus: async (payload: PatchStatusDtoIn) : Promise<ResponseDto<PatchStatusDtoOut>> =>
+		await api.patch(`/um/${payload.id}`,payload)
 }
 
 export default um
