@@ -13,6 +13,8 @@ export interface UserManagementSearchFormProps {
 	setSearchParams: React.Dispatch<React.SetStateAction<GetSearchUMDtoIn>>
 	isSearch: boolean
 	setIsSearch: React.Dispatch<React.SetStateAction<boolean>>
+	page: number
+	setPage: React.Dispatch<React.SetStateAction<number>>
 }
 
 const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
@@ -20,6 +22,8 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 	setSearchParams,
 	isSearch,
 	setIsSearch,
+	page,
+	setPage
 }) => {
 	const [openForm, setOpenForm] = useState<boolean>(false)
 	const [searchString, setSearchString] = useState<string>('')
@@ -33,8 +37,10 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 		// setSearchString(event.target.value)
 		setSearchParams((prevSearch) => ({
 			...prevSearch,
+			offset: 0,
 			keyword: event.target.value,
 		}))
+		setPage(1)
 	}
 
 	const handleOnBlur = (
