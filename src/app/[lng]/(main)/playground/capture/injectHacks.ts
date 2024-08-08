@@ -1,11 +1,14 @@
 // @ts-nocheck
-HTMLCanvasElement.prototype.getContext = (function (origFn) {
-	return function (type, attribs) {
-		attribs = attribs || {}
-		if (type === 'webgl2') { // google
-			attribs.preserveDrawingBuffer = true
+if (typeof window !== 'undefined') {
+	HTMLCanvasElement.prototype.getContext = (function (origFn) {
+		return function (type, attribs) {
+			attribs = attribs || {}
+			if (type === 'webgl2') {
+				// google
+				attribs.preserveDrawingBuffer = true
+			}
+			return origFn.call(this, type, attribs)
 		}
-		return origFn.call(this, type, attribs)
-	}
-})(HTMLCanvasElement.prototype.getContext)
+	})(HTMLCanvasElement.prototype.getContext)
+}
 export {}
