@@ -152,6 +152,8 @@ interface UserManagementTableProps {
 	setSearchParams: React.Dispatch<React.SetStateAction<GetSearchUMDtoIn>>
 	isSearch: boolean
 	setIsSearch: React.Dispatch<React.SetStateAction<boolean>>
+	page: number
+	setPage: React.Dispatch<React.SetStateAction<number>>
 }
 
 const UserManagementTable: React.FC<UserManagementTableProps> = ({
@@ -159,11 +161,13 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	setSearchParams,
 	isSearch,
 	setIsSearch,
+	page,
+	setPage
 }) => {
 	const [order, setOrder] = React.useState<SortType>(SortType.ASC)
 	const [orderBy, setOrderBy] = React.useState<keyof Data>('firstName')
 	const [selected, setSelected] = React.useState<readonly string[]>([])
-	const [page, setPage] = React.useState(1)
+	// const [page, setPage] = React.useState(1)
 	const [dense, setDense] = React.useState(false)
 	// const [rowsPerPage, setRowsPerPage] = React.useState(5)
 	const queryClient = useQueryClient()
@@ -532,6 +536,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 												siblingCount={0}
 												boundaryCount={3}
 												onChange={handlePagination}
+												page={page}
 											/>
 											{/* <Pagination
 												count={10}
