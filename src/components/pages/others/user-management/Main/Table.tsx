@@ -294,19 +294,44 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 				}
 			})
 			console.log('requestMap ', requestMap)
-
-			await mutatePatchStatus(requestMap[0])
-			console.log('invalidateQueries')
-			queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
-			setIsSearch(true)
-			setToggleSearch(!toggleSearch)
+			const promises = requestMap.map((request) => mutatePatchStatus(request))
+			Promise.all(promises)
+				.then((res) => {
+					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
+					setIsSearch(true)
+					setToggleSearch(!toggleSearch)
+				})
+				.catch((error) => {
+					console.log(error)
+				})
 		} catch (error) {
 			console.error(error)
 		}
 	}
 
 	const handleOnClickCloseUser = () => {
-		// flag status C
+		try {
+			const requestMap: PatchStatusDtoIn[] = selected.map((select) => {
+				return {
+					id: select,
+					flagStatus: 'C',
+				}
+			})
+			const promises = requestMap.map((request) => mutatePatchStatus(request))
+			Promise.all(promises)
+				.then((res) => {
+					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
+					setIsSearch(true)
+					setToggleSearch(!toggleSearch)
+					console.log(res)
+				})
+				.catch((error) => {
+					console.log(error)
+				})
+			// await mutatePatchStatus(requestMap[0])
+		} catch (error) {
+			console.error(error)
+		}
 	}
 
 	const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
