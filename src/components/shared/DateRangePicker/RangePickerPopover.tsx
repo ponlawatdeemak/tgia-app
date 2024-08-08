@@ -2,22 +2,29 @@ import FormInput from '@/components/common/input/FormInput'
 import { formatDate } from '@/utils/date'
 import { Button, Popover } from '@mui/material'
 import classNames from 'classnames'
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import RangeCalendar, { DateRangeTypes } from './RangeCalendar'
 import useRangePicker from './context'
+import useSearchFieldLoss from '@/components/pages/field-loss/Main/context'
 
 interface RangePickerPopoverProps {
 	anchorEl: HTMLButtonElement | null
 	setAnchorEl: Dispatch<SetStateAction<HTMLButtonElement | null>>
-	onChange: (ranges: DateRangeTypes) => void
 	className?: string
 }
 
-const RangePickerPopover: React.FC<RangePickerPopoverProps> = ({ anchorEl, setAnchorEl, onChange, className = '' }) => {
+const RangePickerPopover: React.FC<RangePickerPopoverProps> = ({ anchorEl, setAnchorEl, className = '' }) => {
 	const { i18n } = useTranslation()
-	const { open, setOpen } = useRangePicker()
+	const { open, setOpen, resetDateRanges } = useRangePicker()
+	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	const [ranges, setRanges] = useState<DateRangeTypes>()
+
+	useEffect(() => {
+		if (queryParams?.startDate && queryParams?.endDate) {
+			setRanges({ startDate: queryParams.startDate, endDate: queryParams.endDate })
+		}
+	}, [queryParams])
 
 	const handleClose = () => {
 		setAnchorEl(null)
@@ -30,12 +37,15 @@ const RangePickerPopover: React.FC<RangePickerPopoverProps> = ({ anchorEl, setAn
 	}
 
 	const onSubmit = () => {
-		if (ranges) onChange?.(ranges)
+		if (ranges?.startDate && ranges?.endDate) {
+			setQueryParams({ ...queryParams, startDate: ranges.startDate, endDate: ranges.endDate })
+		}
 		setOpen(false)
 	}
 
 	const onReset = () => {
-		setRanges({ startDate: undefined, endDate: undefined })
+		setQueryParams({ ...queryParams, startDate: resetDateRanges.startDate, endDate: resetDateRanges.endDate })
+		setRanges(resetDateRanges)
 	}
 
 	return (
@@ -58,7 +68,9 @@ const RangePickerPopover: React.FC<RangePickerPopoverProps> = ({ anchorEl, setAn
 			)}
 		>
 			<div className='flex'>
-				<RangeCalendar dateRange={ranges} onChange={handleChangeDateRanges} className='px-6 py-4' />
+				<div className='w-[500px]'>
+					<RangeCalendar dateRange={ranges} onChange={handleChangeDateRanges} className='px-6 py-4' />
+				</div>
 				<div className='w-[172px] border-0 border-l border-solid border-gray px-6 py-4'>
 					<FormInput
 						name='startDate'

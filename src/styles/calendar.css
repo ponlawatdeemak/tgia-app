@@ -14,6 +14,8 @@
 
 .rdrMonth {
 	width: unset;
+	padding-left: 0;
+	padding-right: 0;
 }
 
 .rdrWeekDays {
@@ -60,10 +62,6 @@ button.rdrDay {
 .rdrDayToday .rdrDayNumber span:after {
 	display: none;
 }
-
-/* .rdrDay.rdrDayHovered .rdrDayStartPreview.rdrDayEndPreview {
-	border-color: var(--primary-color-1);
-} */
 
 .rdrDayStartPreview,
 .rdrDayInPreview,
