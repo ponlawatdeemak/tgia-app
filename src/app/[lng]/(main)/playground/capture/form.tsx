@@ -21,22 +21,6 @@ export default function FormPropsTextFields() {
 					type='password'
 					autoComplete='current-password'
 				/>
-				<TextField
-					id='outlined-read-only-input'
-					label='Read Only'
-					defaultValue='Hello World'
-					InputProps={{
-						readOnly: true,
-					}}
-				/>
-				<TextField
-					id='outlined-number'
-					label='Number'
-					type='number'
-					InputLabelProps={{
-						shrink: true,
-					}}
-				/>
 				<TextField id='outlined-search' label='Search field' type='search' />
 				<TextField
 					id='outlined-helperText'
@@ -64,23 +48,6 @@ export default function FormPropsTextFields() {
 					}}
 					variant='filled'
 				/>
-				<TextField
-					id='filled-number'
-					label='Number'
-					type='number'
-					InputLabelProps={{
-						shrink: true,
-					}}
-					variant='filled'
-				/>
-				<TextField id='filled-search' label='Search field' type='search' variant='filled' />
-				<TextField
-					id='filled-helperText'
-					label='Helper text'
-					defaultValue='Default Value'
-					helperText='Some important text'
-					variant='filled'
-				/>
 			</div>
 			<div>
 				<TextField
@@ -95,22 +62,6 @@ export default function FormPropsTextFields() {
 					id='standard-disabled'
 					label='Disabled'
 					defaultValue='Hello World'
-					variant='standard'
-				/>
-				<TextField
-					id='standard-password-input'
-					label='Password'
-					type='password'
-					autoComplete='current-password'
-					variant='standard'
-				/>
-				<TextField
-					id='standard-read-only-input'
-					label='Read Only'
-					defaultValue='Hello World'
-					InputProps={{
-						readOnly: true,
-					}}
 					variant='standard'
 				/>
 				<TextField

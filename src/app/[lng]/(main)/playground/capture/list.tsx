@@ -48,33 +48,30 @@ export default function AlignItemsList() {
 	]
 
 	return (
-		<List className='overflow-auto' sx={{ width: '100%', maxHeight: 216, bgcolor: 'background.paper' }}>
-			{data.map((item) => {
+		<List className='capture overflow-y-auto' sx={{ width: '100%', maxHeight: 216, bgcolor: 'background.paper' }}>
+			{data.map((item, index) => {
 				return (
-					<>
-						<ListItem alignItems='flex-start'>
-							<ListItemAvatar>
-								<Avatar alt={item.name} src='/static/images/avatar/1.jpg' />
-							</ListItemAvatar>
-							<ListItemText
-								primary={item.title}
-								secondary={
-									<React.Fragment>
-										<Typography
-											sx={{ display: 'inline' }}
-											component='span'
-											variant='body2'
-											color='text.primary'
-										>
-											{item.subTitle}
-										</Typography>
-										{item.detail}
-									</React.Fragment>
-								}
-							/>
-						</ListItem>
-						<Divider variant='inset' component='li' />
-					</>
+					<ListItem key={index} alignItems='flex-start'>
+						<ListItemAvatar>
+							<Avatar alt={item.name} />
+						</ListItemAvatar>
+						<ListItemText
+							primary={item.title}
+							secondary={
+								<React.Fragment>
+									<Typography
+										sx={{ display: 'inline' }}
+										component='span'
+										variant='body2'
+										color='text.primary'
+									>
+										{item.subTitle}
+									</Typography>
+									{item.detail}
+								</React.Fragment>
+							}
+						/>
+					</ListItem>
 				)
 			})}
 		</List>

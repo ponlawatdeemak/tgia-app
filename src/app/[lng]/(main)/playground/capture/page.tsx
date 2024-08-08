@@ -26,6 +26,7 @@ export default function Page() {
 						</Box>
 					</Box>
 					<Box p={1} width={'50%'}>
+						<Chart />
 						<AlignItemsList />
 						<Box p={1} pt={4}>
 							<FormPropsTextFields />
