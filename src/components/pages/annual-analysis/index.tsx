@@ -5,7 +5,7 @@ const AnnualAnalysisMain = async () => {
 	try {
 		const data = await service.example.getVersion()
 	} catch (error) {
-		console.log(error)
+		// console.log(error)
 	}
 	return (
 		<>

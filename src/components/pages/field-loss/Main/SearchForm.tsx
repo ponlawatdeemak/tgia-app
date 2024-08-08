@@ -343,8 +343,6 @@ const SearchForm: React.FC<SearchFormProps> = ({
 							const { key, ...optionProps } = props
 							const matches = match(option.name, inputValue, { insideWords: true })
 							const parts = parse(option.name, matches)
-							console.log('selectedOption', selectedOption?.name)
-							console.log('inputValue', inputValue)
 							return selectedOption?.name === inputValue ? (
 								option === selectedOption ? (
 									<li key={`selected-${key}`} {...optionProps}>
