@@ -13,6 +13,7 @@ import { LossType, SortType } from '@/enum'
 import { time } from 'console'
 import { ResponseArea } from '@/api/interface'
 import clsx from 'clsx'
+import useResponsive from '@/hook/responsive'
 
 interface OptionType {
 	name: string
@@ -39,6 +40,7 @@ interface FieldLossDetailProps {
 // }
 
 const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, startDate, endDate, lossType }) => {
+	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const [areaDetail, setAreaDetail] = useState('summary-area')
 	const [sortType, setSortType] = useState<SortType>(SortType.DESC)
@@ -67,7 +69,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, start
 				registrationAreaType: areaType,
 				provinceId: selectedOption?.id ? parseInt(selectedOption.id) : undefined,
 			}),
-		enabled: areaDetail === 'summary-area',
+		enabled: areaDetail === 'summary-area' || !isDesktop,
 	})
 
 	const { data: areaStatisticData, isLoading: isAreaStatisticData } = useQuery({
@@ -81,7 +83,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, start
 				sort: sortTypeField,
 				sortType: sortType,
 			}),
-		enabled: areaDetail === 'area-statistic',
+		enabled: areaDetail === 'area-statistic' || !isDesktop,
 	})
 
 	const { data: timeStatisticData, isLoading: isTimeStatisticData } = useQuery({
@@ -93,7 +95,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, start
 				lossType: lossType || undefined,
 				registrationAreaType: areaType,
 			}),
-		enabled: areaDetail === 'time-statistic',
+		enabled: areaDetail === 'time-statistic' || !isDesktop,
 	})
 
 	// console.log('summaryAreaData', summaryAreaData)
@@ -105,7 +107,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, start
 	}, [])
 
 	return (
-		<Paper className='relative block flex-grow'>
+		<Paper className='relative max-lg:flex max-lg:flex-col max-lg:gap-3 max-lg:bg-gray-light lg:block lg:flex-grow'>
 			<ToggleButtonGroup
 				size='small'
 				exclusive
@@ -142,8 +144,12 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, start
 					ตามช่วงเวลา
 				</ToggleButton>
 			</ToggleButtonGroup>
-			{areaDetail === 'summary-area' && <MapView />}
-			{areaDetail === 'area-statistic' && (
+			{(areaDetail === 'summary-area' || !isDesktop) && (
+				<div className='h-[390px] w-full max-lg:overflow-hidden max-lg:rounded lg:h-full'>
+					<MapView />
+				</div>
+			)}
+			{(areaDetail === 'area-statistic' || !isDesktop) && (
 				<TableDetail
 					areaStatisticData={areaStatisticData?.data}
 					areaStatisticDataTotal={areaStatisticData?.dataTotal}
@@ -153,7 +159,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, start
 					setSortTypeField={setSortTypeField}
 				/>
 			)}
-			{areaDetail === 'time-statistic' && (
+			{(areaDetail === 'time-statistic' || !isDesktop) && (
 				<ChartDetail
 					timeStatisticData={timeStatisticData?.data}
 					timeStatisticDataTotal={timeStatisticData?.dataTotal}

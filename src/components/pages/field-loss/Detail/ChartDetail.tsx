@@ -94,7 +94,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ timeStatisticData, timeStatis
 	// console.log('sortTypeField', sortTypeField)
 
 	return (
-		<div className='flex h-full flex-1 flex-col gap-3 overflow-hidden p-6 pb-0'>
+		<div className='flex h-full flex-1 flex-col gap-3 overflow-hidden bg-white p-6 pb-0 max-lg:rounded'>
 			<Typography className='text-md font-semibold'>ความเสียหายจากภัยพิบัติ (รายเดือน)</Typography>
 			<TableContainer>
 				<Table aria-labelledby='tableTitle'>
