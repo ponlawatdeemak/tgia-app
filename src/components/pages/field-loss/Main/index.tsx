@@ -26,7 +26,7 @@ export const FieldLossMain = () => {
 	const { open } = useRangePicker()
 
 	return (
-		<div className='flex flex-grow flex-col gap-y-[16px]'>
+		<div className='flex flex-grow flex-col gap-4'>
 			<SearchForm
 				selectedOption={selectedOption}
 				startDate={startDate}
