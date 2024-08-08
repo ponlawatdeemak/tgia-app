@@ -14,21 +14,21 @@ export const UserManagementMain = () => {
 		limit: 10,
 		offset: 1,
 	})
-	const [searchToggle, setSearchToggle] = useState<boolean>(false)
+	const [isSearch, setIsSearch] = useState<boolean>(false)
 
 	return (
 		<div className='flex flex-col'>
 			<UserManagementSearchForm
 				searchParams={searchParams}
 				setSearchParams={setSearchParams}
-				searchToggle={searchToggle}
-				setSearchToggle={setSearchToggle}
+				isSearch={isSearch}
+				setIsSearch={setIsSearch}
 			/>
 			<UserManagementTable
 				searchParams={searchParams}
 				setSearchParams={setSearchParams}
-				searchToggle={searchToggle}
-				setSearchToggle={setSearchToggle}
+				isSearch={isSearch}
+				setIsSearch={setIsSearch}
 			/>
 		</div>
 	)
