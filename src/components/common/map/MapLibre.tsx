@@ -8,7 +8,7 @@ import { MapInterface } from './interface/map'
 
 function DeckGLOverlay() {
 	const layers = useLayerStore((state) => state.layers)
-	useControl<MapboxOverlay>(() => new MapboxOverlay({ layers }))
+	useControl<MapboxOverlay>(() => new MapboxOverlay({ layers, interleaved: true }))
 	return null
 }
 
@@ -24,6 +24,7 @@ export default function MapLibre({
 			{...props}
 			initialViewState={viewState}
 			mapStyle={mapStyle}
+			preserveDrawingBuffer={true}
 			onMove={(e) => onViewStateChange?.(e.viewState)}
 		>
 			<DeckGLOverlay />
