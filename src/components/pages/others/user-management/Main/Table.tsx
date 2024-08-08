@@ -17,8 +17,8 @@ import { visuallyHidden } from '@mui/utils'
 import { SortType } from '@/enum'
 import { Delete, Sort } from '@mui/icons-material'
 import um from '@/api/um'
-import { GetSearchUMDtoIn } from '@/api/um/dto-in.dto'
-import { useQuery } from '@tanstack/react-query'
+import { GetSearchUMDtoIn, PatchStatusDtoIn } from '@/api/um/dto-in.dto'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useSwitchLanguage } from '@/i18n/client'
 import { Language } from '@/enum'
@@ -30,9 +30,10 @@ import { mdiTrashCanOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import { mdiPencilOutline } from '@mdi/js'
 import Stack from '@mui/material/Stack'
-import { TotalTileColor } from '@/config/app'
 import TableFooter from '@mui/material/TableFooter'
-import { Pagination, PaginationItem } from '@mui/material'
+import Pagination from '@mui/material/Pagination'
+import service from '@/api'
+import { request } from 'http'
 
 interface Data {
 	id: number
@@ -162,12 +163,15 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	const [order, setOrder] = React.useState<SortType>(SortType.ASC)
 	const [orderBy, setOrderBy] = React.useState<keyof Data>('firstName')
 	const [selected, setSelected] = React.useState<readonly string[]>([])
-	const [page, setPage] = React.useState(0)
+	const [page, setPage] = React.useState(1)
 	const [dense, setDense] = React.useState(false)
 	const [rowsPerPage, setRowsPerPage] = React.useState(5)
+	const queryClient = useQueryClient()
 
 	const { t, i18n } = useTranslation()
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
+
+	const [toggleSearch, setToggleSearch] = React.useState(false)
 
 	// TableData State
 	const [tableData, setTableData] = React.useState<GetSearchUMDtoOut[]>([])
@@ -176,7 +180,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	const { data: resData, isLoading: isTableDataLoading } = useQuery({
 		queryKey: ['getSearchUM', searchParams],
 		queryFn: () => {
-			console.log(searchParams)
+			// console.log(searchParams)
 			const res = um.getSearchUM(searchParams)
 			setIsSearch(false)
 			return res
@@ -184,19 +188,38 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		enabled: isSearch,
 	})
 
+	const {
+		data,
+		error,
+		mutateAsync: mutatePatchStatus,
+	} = useMutation({
+		mutationFn: async (payload: PatchStatusDtoIn) => {
+			// Promise.all each payload um.patchStatus
+			//const res[] = await Promise.all[ eachpayload]
+			// console.log("await")
+			await um.patchStatus(payload)
+			// console.log("finish")
+		},
+		// onSuccess: () => {
+		// 	console.log('onSuccess')
+		// 	queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
+		// },
+	})
+	// console.log('data ', data)
+
 	React.useEffect(() => {
 		setIsSearch(true)
 	}, [])
 
 	React.useEffect(() => {
-		console.log(selected)
+		// console.log(selected)
 	}, [selected])
 
 	React.useEffect(() => {
-		console.log(resData)
+		// console.log(resData)
 		if (resData) {
 			setTableData(resData.data || [])
-			setTotal(resData.total || 0)
+			setTotal(resData.total || 1)
 		}
 	}, [resData])
 
@@ -260,10 +283,41 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	// 	setPage(0)
 	// }
 
+	const handleOnClickOpenUser = async () => {
+		// console.log(selected)
+		// flag status A
+		try {
+			const requestMap: PatchStatusDtoIn[] = selected.map((select) => {
+				return {
+					id: select,
+					flagStatus: 'A',
+				}
+			})
+			console.log('requestMap ', requestMap)
+
+			await mutatePatchStatus(requestMap[0])
+			console.log('invalidateQueries')
+			queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
+			setIsSearch(true)
+			setToggleSearch(!toggleSearch)
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	const handleOnClickCloseUser = () => {
+		// flag status C
+	}
+
+	const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
+		// console.log(value)
+		setPage(value)
+	}
+
 	const isSelected = (id: string) => selected.indexOf(id) !== -1
 
 	// Avoid a layout jump when reaching the last page with empty rows.
-	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0
+	// const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0
 
 	return (
 		<div className='py-[16px]'>
@@ -291,6 +345,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
 								variant='contained'
 								color='primary'
+								onClick={handleOnClickOpenUser}
 							>
 								เปิดใช้งาน
 							</Button>
@@ -298,6 +353,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
 								variant='contained'
 								color='primary'
+								onClick={handleOnClickCloseUser}
 							>
 								ปิดใช้งาน
 							</Button>
@@ -393,10 +449,10 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											<TableCell>
 												{
 													<div
-														className={`flex items-center justify-center rounded-2xl ${row.flagStatus === 'A' ? 'bg-success-light' : 'bg-[#F2D8DE]'}`}
+														className={`flex items-center justify-center rounded-2xl ${row.flagStatus === 'A' ? 'bg-success-light' : 'bg-error-light'}`}
 													>
 														<Typography
-															className={`text-${row.flagStatus === 'A' ? 'success' : 'error'}`}
+															className={`p-0.5 text-${row.flagStatus === 'A' ? 'success' : 'error'}`}
 														>
 															{
 																row.flagStatusName[
@@ -410,31 +466,27 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											<TableCell>
 												<Box>
 													<Stack direction='row' spacing={1}>
-														<IconButton
-															children={
-																<Icon
-																	path={mdiPencilOutline}
-																	size={1}
-																	color='var(--black-color)'
-																/>
-															}
-														/>
-														<IconButton
-															children={
-																<Icon
-																	path={mdiTrashCanOutline}
-																	size={1}
-																	color='var(--error-color-1)'
-																/>
-															}
-														/>
+														<IconButton>
+															<Icon
+																path={mdiPencilOutline}
+																size={1}
+																color='var(--black-color)'
+															/>
+														</IconButton>
+														<IconButton>
+															<Icon
+																path={mdiTrashCanOutline}
+																size={1}
+																color='var(--error-color-1)'
+															/>
+														</IconButton>
 													</Stack>
 												</Box>
 											</TableCell>
 										</TableRow>
 									)
 								})}
-								{emptyRows > 0 && (
+								{/* {emptyRows > 0 && (
 									<TableRow
 										style={{
 											height: (dense ? 33 : 53) * emptyRows,
@@ -442,14 +494,32 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									>
 										<TableCell colSpan={6} />
 									</TableRow>
-								)}
+								)} */}
 							</TableBody>
 							<TableFooter>
 								<TableRow>
 									<TableCell colSpan={7}>
-										<Box className={'flex w-full justify-between items-center'}>
-											<Typography >หน้า 1 จาก 10</Typography>
-											<Pagination count={10} variant='outlined' shape='rounded' />
+										<Box className={'flex w-full items-center justify-between'}>
+											<Typography>
+												หน้า {page} จาก {Math.ceil(total / 10)}
+											</Typography>
+											<Pagination
+												count={Math.ceil(total / 10)}
+												variant='outlined'
+												shape='rounded'
+												siblingCount={0}
+												boundaryCount={3}
+												onChange={handlePagination}
+											/>
+											{/* <Pagination
+												count={10}
+												renderItem={(item) => (
+													<PaginationItem
+														slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+														{...item}
+													/>
+												)}
+											/> */}
 										</Box>
 									</TableCell>
 								</TableRow>
