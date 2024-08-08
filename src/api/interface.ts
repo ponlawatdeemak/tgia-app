@@ -35,6 +35,12 @@ export interface AppAPI {
 		service?: APIService,
 		config?: AxiosRequestConfig<any> | undefined,
 	) => Promise<AxiosResponse<any, any>>
+	patch: (
+		url: string,
+		data: any,
+		service?: APIService,
+		config?: AxiosRequestConfig<any> | undefined,
+	) => Promise<AxiosResponse<any, any>>
 }
 
 export interface RetryQueueItem {
