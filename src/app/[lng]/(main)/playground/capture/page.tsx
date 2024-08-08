@@ -22,7 +22,7 @@ export default function Page() {
 			scrollX: 0,
 			scrollY: 0,
 			onclone: function (clone) {
-				clone.body.scrollIntoView
+				clone.body.style.height = 'unset'
 				const elements = clone.getElementsByClassName('capture')
 				for (let index = 0; index < elements.length; index++) {
 					const element = elements[index] as HTMLElement
