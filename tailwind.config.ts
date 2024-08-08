@@ -1,4 +1,4 @@
-import { LossTypeColor } from './src/config/color'
+import { DroughtTileColor, FloodTileColor, LossTypeColor } from './src/config/color'
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
@@ -57,6 +57,20 @@ const config: Config = {
 					drought: LossTypeColor.drought,
 					flood: LossTypeColor.flood,
 					noData: LossTypeColor.noData,
+				},
+				droughtTileColor: {
+					level1: DroughtTileColor.level1,
+					level2: DroughtTileColor.level2,
+					level3: DroughtTileColor.level3,
+					level4: DroughtTileColor.level4,
+					level5: DroughtTileColor.level5,
+				},
+				floodTileColor: {
+					level1: FloodTileColor.level1,
+					level2: FloodTileColor.level2,
+					level3: FloodTileColor.level3,
+					level4: FloodTileColor.level4,
+					level5: FloodTileColor.level5,
 				},
 			},
 		},
