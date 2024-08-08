@@ -1,4 +1,4 @@
-import { ResponseLanguage } from '..'
+import { ResponseLanguage } from '../interface'
 
 export interface GetUmDtoOut {
 	id: string
@@ -40,4 +40,12 @@ export interface GetProfileDtoOut {
 
 export interface PutProfileDtoOut {
 	id: string
+}
+
+export interface GetSearchUMDtoOut extends GetProfileDtoOut {
+	flagStatus: string
+}
+
+export interface PatchStatusDtoOut {
+	id : string,
 }

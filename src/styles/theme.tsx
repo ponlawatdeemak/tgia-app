@@ -8,9 +8,9 @@ const anuphan = Anuphan({ subsets: ['latin'] })
 const theme = createTheme({
 	typography: {
 		fontFamily: anuphan.style.fontFamily,
-		fontSize: 14,
+		fontSize: 16,
 		button: {
-			fontSize: 14,
+			fontSize: 16,
 		},
 	},
 	palette: {

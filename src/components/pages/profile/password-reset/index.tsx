@@ -74,7 +74,6 @@ const PasswordResetMain: React.FC<PasswordResetMainProps> = () => {
 
 				router.push(`${AppPath.PasswordReset}/?resetStatus=success`)
 			} catch (error) {
-				console.log('Password update failed')
 				router.push(`${AppPath.PasswordReset}/?resetStatus=failed`)
 			} finally {
 				setBusy(false)

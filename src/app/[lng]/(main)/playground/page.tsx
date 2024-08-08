@@ -10,9 +10,14 @@ import { Language } from '@/enum'
 
 import service from '@/api'
 import StackedProgressBar from '@/components/common/progress-bar/StackedProgressBar'
+import { LossTypeColor } from '@/config/color'
 
 export default function PlaygroundPage() {
 	const [value, setValue] = React.useState<Dayjs | null>(dayjs('2022-04-07'))
+
+	const text = `text-2xl text-[${LossTypeColor.drought}]`
+
+	const textFlood = `text-2xl text-[${LossTypeColor.flood}]`
 
 	return (
 		<main>
@@ -56,7 +61,6 @@ export default function PlaygroundPage() {
 					// .catch((error) => {
 					// 	console.log('error ', error)
 					// })
-					console.log('adminPoly', adminPoly)
 				}}
 			>
 				Test Search
@@ -65,13 +69,13 @@ export default function PlaygroundPage() {
 			<Button variant='contained'>Contained</Button>
 			<Button variant='outlined'>Outlined</Button>
 
-			<div className='text-2xs'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-xs'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-sm'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-base'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-lg'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-xl'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-2xl'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className={text}>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี test </div>
+			<div className='text-xs text-[#E34A33]'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className='text-lossType-drought text-sm'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className='text-lossType-flood text-base'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className='text-lossType text-lg'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className='text-xl text-[#3182BD]'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className={textFlood}>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี Flood</div>
 		</main>
 	)
 }

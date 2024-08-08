@@ -25,6 +25,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
 	...props
 }) => {
 	const { t } = useTranslation()
+	const maxImageSize = 3 * 1024 * 1024
 	const [image, setImage] = useState<string | null>(null)
 	const errorMessage = formik.touched[name] && formik.errors[name]
 	const { i18n, tReady, ...uploadProps } = props
@@ -46,7 +47,6 @@ const UploadImage: React.FC<UploadImageProps> = ({
 			const imageType = selectedImage.type
 			const imageSize = selectedImage.size
 			const validImageTypes = ['image/png', 'image/jpeg']
-			const maxImageSize = 3 * 1024 * 1024
 
 			if (validImageTypes.includes(imageType) && imageSize <= maxImageSize) {
 				formik.setFieldValue(name, selectedImage)
@@ -85,11 +85,14 @@ const UploadImage: React.FC<UploadImageProps> = ({
 						<Icon path={defaultImage} size={'90px'} className='text-primary' />
 					</Avatar>
 				)}
-				<div className='absolute box-border flex h-[120px] w-[120px] items-center justify-center rounded-[60px] bg-black opacity-0 transition hover:opacity-70'>
-					<div onClick={handleDeleteClick}>
-						<Icon path={mdiDeleteOutline} size={1} className='cursor-pointer text-white' />
+
+				{image && (
+					<div className='absolute box-border flex h-[120px] w-[120px] items-center justify-center rounded-[60px] bg-black opacity-0 transition hover:opacity-70'>
+						<div onClick={handleDeleteClick}>
+							<Icon path={mdiDeleteOutline} size={1} className='cursor-pointer text-white' />
+						</div>
 					</div>
-				</div>
+				)}
 			</>
 
 			<div className='[&_.Mui-disabled]:border-[#0000001f] [&_.Mui-disabled]:bg-transparent [&_.Mui-disabled]:text-[#00000042] [&_.Mui-disabled_.MuiButton-startIcon>svg]:text-[#00000042]'>

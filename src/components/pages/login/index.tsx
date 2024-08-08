@@ -1,5 +1,6 @@
 'use client'
 import { LoginDtoIn } from '@/api/auth/dto-in.dto'
+import { ErrorResponse } from '@/api/interface'
 import FormInput from '@/components/common/input/FormInput'
 import PasswordInput from '@/components/common/input/PasswordInput'
 import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentLogo'
@@ -10,7 +11,7 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import { CircularProgress, FormHelperText, Link, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import { signIn } from 'next-auth/react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
@@ -22,9 +23,10 @@ interface LoginMainProps {}
 const LoginMain: React.FC<LoginMainProps> = () => {
 	const searchParams = useSearchParams()
 	const { t, i18n } = useTranslation(['appbar', 'default'])
+	const router = useRouter()
 	const callbackUrl = useMemo(() => searchParams?.get('callbackUrl'), [searchParams])
-	const error = useMemo(() => searchParams?.get('error'), [searchParams])
-	const [busy, setBusy] = useState(false)
+	const [busy, setBusy] = useState<boolean>(false)
+	const [error, setError] = useState<ErrorResponse>()
 
 	const validationSchema = useMemo(
 		() =>
@@ -35,32 +37,27 @@ const LoginMain: React.FC<LoginMainProps> = () => {
 		[t],
 	)
 
-	const errorMessage = useMemo(() => {
-		if (error) {
-			if (error === 'CredentialsSignin') return `${t('error.incorrectEmailOrPassword')}`
-			return `${t('error.somethingWrong')}`
-		}
-		return null
-	}, [error, t])
-
 	const onSubmit = useCallback(
 		async (values: LoginDtoIn) => {
 			try {
 				setBusy(true)
-				console.log('next-auth ', callbackUrl, AppPath.FieldLoss)
-				await signIn('credentials', {
+				const res = await signIn('credentials', {
 					username: values.username,
 					password: values.password,
-					redirect: true,
-					callbackUrl: callbackUrl ?? AppPath.FieldLoss,
+					redirect: false,
 				})
+				if (!res?.ok) {
+					setError(res?.error ? JSON.parse(res.error) : t('error.somethingWrong'))
+					return
+				}
+				router.push(callbackUrl || AppPath.FieldLoss)
 			} catch (error) {
 				console.log('Login failed', error)
 			} finally {
 				setBusy(false)
 			}
 		},
-		[callbackUrl],
+		[callbackUrl, router, t],
 	)
 
 	const formik = useFormik<LoginDtoIn>({
@@ -124,7 +121,7 @@ const LoginMain: React.FC<LoginMainProps> = () => {
 						<Link href={AppPath.ForgetPassword} className='mt-3 self-end font-medium no-underline'>
 							{t('auth.forgotPassword')}
 						</Link>
-						<FormHelperText error>{errorMessage}</FormHelperText>
+						<FormHelperText error>{error?.title}</FormHelperText>
 						<LoadingButton
 							fullWidth
 							loading={busy}

@@ -25,6 +25,7 @@
 	"role": "บทบาท",
 	"setting": "ตั้งค่า",
 	"back": "ย้อนกลับ",
+	"allDisasters": "ภัยพิบัติทั้งหมด",
 	"warning": {
 		"inputEmail": "กรุณากรอกอีเมล",
 		"inputPassword": "กรุณากรอกรหัสผ่าน",
