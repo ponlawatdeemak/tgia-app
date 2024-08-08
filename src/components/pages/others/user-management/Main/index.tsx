@@ -9,10 +9,10 @@ export const UserManagementMain = () => {
 	const [searchParams, setSearchParams] = useState<GetSearchUMDtoIn>({
 		keyword: '',
 		firstName: '',
-		sortField: '',
+		sortField: 'firstName',
 		sortOrder: SortType.ASC,
 		limit: 10,
-		offset: 1,
+		offset: 0,
 	})
 	const [isSearch, setIsSearch] = useState<boolean>(false)
 

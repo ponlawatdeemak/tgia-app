@@ -165,7 +165,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	const [selected, setSelected] = React.useState<readonly string[]>([])
 	const [page, setPage] = React.useState(1)
 	const [dense, setDense] = React.useState(false)
-	const [rowsPerPage, setRowsPerPage] = React.useState(5)
+	// const [rowsPerPage, setRowsPerPage] = React.useState(5)
 	const queryClient = useQueryClient()
 
 	const { t, i18n } = useTranslation()
@@ -180,14 +180,13 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	const { data: resData, isLoading: isTableDataLoading } = useQuery({
 		queryKey: ['getSearchUM', searchParams],
 		queryFn: () => {
-			// console.log(searchParams)
+			console.log("SM :: ",searchParams)
 			const res = um.getSearchUM(searchParams)
 			setIsSearch(false)
 			return res
 		},
 		enabled: isSearch,
 	})
-
 	const {
 		data,
 		error,
@@ -196,16 +195,10 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		mutationFn: async (payload: PatchStatusDtoIn) => {
 			// Promise.all each payload um.patchStatus
 			//const res[] = await Promise.all[ eachpayload]
-			// console.log("await")
-			await um.patchStatus(payload)
+			return await um.patchStatus(payload)
 			// console.log("finish")
 		},
-		// onSuccess: () => {
-		// 	console.log('onSuccess')
-		// 	queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
-		// },
 	})
-	// console.log('data ', data)
 
 	React.useEffect(() => {
 		setIsSearch(true)
@@ -233,8 +226,6 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 
 	const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
 		const isAsc = orderBy === property && order === SortType.ASC
-		// console.log(isAsc)
-		// console.log(property)
 		setSearchParams((prevSearch) => ({
 			...prevSearch,
 			sortField: property,
@@ -293,10 +284,10 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					flagStatus: 'A',
 				}
 			})
-			console.log('requestMap ', requestMap)
 			const promises = requestMap.map((request) => mutatePatchStatus(request))
 			Promise.all(promises)
 				.then((res) => {
+					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
 					setToggleSearch(!toggleSearch)
@@ -309,7 +300,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		}
 	}
 
-	const handleOnClickCloseUser = () => {
+	const handleOnClickCloseUser = async () => {
 		try {
 			const requestMap: PatchStatusDtoIn[] = selected.map((select) => {
 				return {
@@ -320,15 +311,14 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			const promises = requestMap.map((request) => mutatePatchStatus(request))
 			Promise.all(promises)
 				.then((res) => {
+					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
 					setToggleSearch(!toggleSearch)
-					console.log(res)
 				})
 				.catch((error) => {
 					console.log(error)
 				})
-			// await mutatePatchStatus(requestMap[0])
 		} catch (error) {
 			console.error(error)
 		}
@@ -336,6 +326,13 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 
 	const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
 		// console.log(value)
+		console.log("currentValue :: ",page);
+		console.log("newValue :: ",value);
+		setSearchParams((prevSearch) => ({
+			...prevSearch,
+			offset: page < value ? prevSearch.offset+10 : prevSearch.offset-10,
+		}))
+		setIsSearch(true)
 		setPage(value)
 	}
 
