@@ -30,28 +30,20 @@ interface Data {
 
 interface HeadCell {
 	id: keyof Data
-	numeric: boolean
-	disablePadding: boolean
 	label: string
 }
 
 const headCells: readonly HeadCell[] = [
 	{
 		id: 'totalPredicted',
-		numeric: false,
-		disablePadding: true,
 		label: 'ภัยพิบัติทั้งหมด',
 	},
 	{
 		id: 'droughtPredicted',
-		numeric: false,
-		disablePadding: false,
 		label: 'ภัยแล้ง',
 	},
 	{
 		id: 'floodPredicted',
-		numeric: false,
-		disablePadding: false,
 		label: 'น้ำท่วม',
 	},
 ]
@@ -90,50 +82,53 @@ const TableDetail: React.FC<TableDetailProps> = ({
 	)
 
 	return (
-		<div className='flex h-full flex-1 flex-col gap-3 overflow-hidden p-4 pb-0'>
-			<Typography className='text-md font-semibold'>อันดับความเสียหายจากภัยพิบัติ</Typography>
+		<div className='flex h-full flex-1 flex-col gap-3 overflow-hidden p-6 pb-0'>
+			<Typography className='text-md font-semibold text-black-dark'>อันดับความเสียหายจากภัยพิบัติ</Typography>
 			<TableContainer>
 				<Table aria-labelledby='tableTitle'>
 					<TableHead>
-						<TableRow className='h-10'>
-							<TableCell className='p-0 px-2.5 text-base font-semibold' align='left'>
+						<TableRow className='[&_th]:border-gray [&_th]:p-2.5 [&_th]:text-base [&_th]:font-semibold'>
+							<TableCell className='text-black' align='left'>
 								รวมทั้งหมด
 							</TableCell>
 							<TableCell
-								className={clsx('p-0 px-2.5 text-base font-semibold', {
+								className={clsx('w-[20.5%] min-w-[120px]', {
 									'text-secondary': sortTypeField === 'totalPredicted',
+									'text-black-light': sortTypeField !== 'totalPredicted',
 								})}
 								align='right'
 							>
 								{areaStatisticDataTotal?.totalPredicted[areaUnit].toLocaleString()}
 							</TableCell>
 							<TableCell
-								className={clsx('p-0 px-2.5 text-base font-semibold', {
+								className={clsx('w-[20.5%] min-w-[100px]', {
 									'text-secondary': sortTypeField === 'droughtPredicted',
+									'text-black-light': sortTypeField !== 'droughtPredicted',
 								})}
 								align='right'
 							>
 								{areaStatisticDataTotal?.droughtPredicted[areaUnit].toLocaleString()}
 							</TableCell>
 							<TableCell
-								className={clsx('p-0 px-2.5 text-base font-semibold', {
+								className={clsx('w-[20.5%] min-w-[100px]', {
 									'text-secondary': sortTypeField === 'floodPredicted',
+									'text-black-light': sortTypeField !== 'floodPredicted',
 								})}
 								align='right'
 							>
 								{areaStatisticDataTotal?.floodPredicted[areaUnit].toLocaleString()}
 							</TableCell>
 						</TableRow>
-						<TableRow>
+						<TableRow className='[&_th]:border-gray [&_th]:px-2.5 [&_th]:py-2 [&_th]:text-sm [&_th]:font-semibold [&_th]:text-black'>
 							<TableCell align='left'>อันดับ</TableCell>
 							{headCells.map((headCell) => (
 								<TableCell
 									key={headCell.id}
-									align={headCell.numeric ? 'right' : 'left'}
-									padding={headCell.disablePadding ? 'none' : 'normal'}
+									className='[&_span.Mui-active>svg]:block [&_span>svg]:hidden'
 									sortDirection={sortTypeField === headCell.id ? sortType : false}
 								>
 									<TableSortLabel
+										className='flex flex-row items-center justify-end gap-1 [&_svg]:m-0 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:font-normal [&_svg]:text-black'
 										active={sortTypeField === headCell.id}
 										direction={sortTypeField === headCell.id ? sortType : SortType.DESC}
 										onClick={(event) => handleRequestSort(event, headCell.id)}
@@ -148,30 +143,56 @@ const TableDetail: React.FC<TableDetailProps> = ({
 								</TableCell>
 							))}
 						</TableRow>
+						<TableRow className='h-3'></TableRow>
 					</TableHead>
 					<TableBody>
 						{rows.map((row, index) => {
 							const labelId = `enhanced-table-checkbox-${index}`
 							return (
-								<TableRow hover role='checkbox' tabIndex={-1} key={row.id} sx={{ cursor: 'pointer' }}>
-									<TableCell component='th' id={labelId} scope='row' padding='none'>
-										<div className='m-4 flex flex-row gap-2'>
-											<span>{row.order}</span>
+								<TableRow
+									className='[&_td]:border-gray-light [&_td]:p-2.5 [&_td]:text-base'
+									hover
+									role='checkbox'
+									tabIndex={-1}
+									key={row.id}
+									sx={{ cursor: 'pointer' }}
+								>
+									<TableCell
+										className='border-gray-light p-2.5 text-base'
+										component='th'
+										id={labelId}
+										scope='row'
+										align='left'
+									>
+										<div className='flex flex-row gap-5 font-medium text-black'>
+											<span className='w-5'>{row.order}</span>
 											<span>{row.name[language]}</span>
 										</div>
 									</TableCell>
 									<TableCell
-										className={clsx('', { 'text-secondary': sortTypeField === 'totalPredicted' })}
+										align='right'
+										className={clsx('', {
+											'font-medium text-secondary': sortTypeField === 'totalPredicted',
+											'text-black-light font-normal': sortTypeField !== 'totalPredicted',
+										})}
 									>
 										{row.totalPredicted[areaUnit].toLocaleString()}
 									</TableCell>
 									<TableCell
-										className={clsx('', { 'text-secondary': sortTypeField === 'droughtPredicted' })}
+										align='right'
+										className={clsx('', {
+											'font-medium text-secondary': sortTypeField === 'droughtPredicted',
+											'text-black-light font-normal': sortTypeField !== 'droughtPredicted',
+										})}
 									>
 										{row.droughtPredicted[areaUnit].toLocaleString()}
 									</TableCell>
 									<TableCell
-										className={clsx('', { 'text-secondary': sortTypeField === 'floodPredicted' })}
+										align='right'
+										className={clsx('', {
+											'font-medium text-secondary': sortTypeField === 'floodPredicted',
+											'text-black-light font-normal': sortTypeField !== 'floodPredicted',
+										})}
 									>
 										{row.floodPredicted[areaUnit].toLocaleString()}
 									</TableCell>

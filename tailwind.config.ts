@@ -39,10 +39,15 @@ const config: Config = {
 				},
 				gray: {
 					light: 'var(--lightest-gray-color)',
+					light2: 'var(--lightest-gray-color2)',
+					light3: 'var(--lightest-gray-color3)',
 					DEFAULT: 'var(--light-gray-color)',
 					dark: 'var(--dark-gray-color)',
+					dark2: 'var(--dark-gray-color2)',
+					dark3: 'var(--dark-gray-color3)',
 				},
 				black: {
+					light: 'var(--light-black-color)',
 					DEFAULT: 'var(--black-color)',
 					dark: '#000000',
 				},
