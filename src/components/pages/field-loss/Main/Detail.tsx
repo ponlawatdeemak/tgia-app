@@ -12,6 +12,7 @@ import { Dayjs } from 'dayjs'
 import { LossType, SortType } from '@/enum'
 import { time } from 'console'
 import { ResponseArea } from '@/api/interface'
+import clsx from 'clsx'
 
 interface OptionType {
 	name: string
@@ -109,13 +110,37 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ selectedOption, start
 				size='small'
 				exclusive
 				color='primary'
-				className='absolute right-3 top-3 z-10 bg-white max-lg:hidden'
+				className='bg-gray-light3 absolute right-3 top-3 z-10 flex gap-2 rounded-lg p-1 max-lg:hidden [&_*]:px-3 [&_*]:py-1.5'
 				value={areaDetail}
 				onChange={handleAreaDetailChange}
 			>
-				<ToggleButton value={'summary-area'}>ตามแผนที่</ToggleButton>
-				<ToggleButton value={'area-statistic'}>ตามอันดับ</ToggleButton>
-				<ToggleButton value={'time-statistic'}>ตามช่วงเวลา</ToggleButton>
+				<ToggleButton
+					className={clsx('border border-solid text-base', {
+						'border-primary bg-white font-semibold text-primary': areaDetail === 'summary-area',
+						'text-gray-dark2 border-transparent font-medium': areaDetail !== 'summary-area',
+					})}
+					value={'summary-area'}
+				>
+					ตามแผนที่
+				</ToggleButton>
+				<ToggleButton
+					className={clsx('border border-solid text-base', {
+						'border-primary bg-white font-semibold text-primary': areaDetail === 'area-statistic',
+						'text-gray-dark2 border-transparent font-medium': areaDetail !== 'area-statistic',
+					})}
+					value={'area-statistic'}
+				>
+					ตามอันดับ
+				</ToggleButton>
+				<ToggleButton
+					className={clsx('border border-solid text-base', {
+						'border-primary bg-white font-semibold text-primary': areaDetail === 'time-statistic',
+						'text-gray-dark2 border-transparent font-medium': areaDetail !== 'time-statistic',
+					})}
+					value={'time-statistic'}
+				>
+					ตามช่วงเวลา
+				</ToggleButton>
 			</ToggleButtonGroup>
 			{areaDetail === 'summary-area' && <MapView />}
 			{areaDetail === 'area-statistic' && (
