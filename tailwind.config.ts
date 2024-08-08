@@ -1,4 +1,4 @@
-import { light } from '@mui/material/styles/createPalette'
+import { LossTypeColor } from './src/config/color'
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
@@ -47,6 +47,12 @@ const config: Config = {
 					dark: '#000000',
 				},
 				background: 'var(--background-color)',
+				lossType: {
+					DEFAULT: LossTypeColor.total,
+					drought: LossTypeColor.drought,
+					flood: LossTypeColor.flood,
+					noData: LossTypeColor.noData,
+				},
 			},
 		},
 	},
