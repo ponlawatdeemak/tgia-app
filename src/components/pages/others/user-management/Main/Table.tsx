@@ -176,7 +176,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 
 	React.useEffect(() => {
 		setIsSearch(true)
-	}, [])
+	}, [setIsSearch])
 
 	React.useEffect(() => {
 		if (resData) {
@@ -189,7 +189,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		setSelected([])
 	}, [isSearch])
 
-	const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
+	const handleRequestSort = React.useCallback((event: React.MouseEvent<unknown>, property: keyof Data) => {
 		const isAsc = orderBy === property && order === SortType.ASC
 		setSearchParams((prevSearch) => ({
 			...prevSearch,
@@ -199,22 +199,25 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		setIsSearch(true)
 		setOrder(isAsc ? SortType.DESC : SortType.ASC)
 		setOrderBy(property)
-	}
+	}, [order, orderBy, setIsSearch, setSearchParams])
 
-	const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const handleSelectAllClick = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.checked) {
 			const newSelected = tableData.filter((n) => n.id !== session?.user.id).map((n) => n.id)
 			setSelected(newSelected)
 		} else {
 			setSelected([])
 		}
-	}
+	}, [session?.user.id, tableData])
 
-	const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-		handleRequestSort(event, property)
-	}
+	const createSortHandler = React.useCallback(
+		(property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+			handleRequestSort(event, property)
+		},
+		[handleRequestSort],
+	)
 
-	const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
+	const handleClick = React.useCallback((event: React.MouseEvent<unknown>, id: string) => {
 		const selectedIndex = selected.indexOf(id)
 		let newSelected: readonly string[] = []
 		if (id === session?.user.id) {
@@ -230,10 +233,10 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1))
 		}
 		setSelected(newSelected)
-	}
+	}, [selected, session?.user.id])
 
 	// Case deleteOne
-	const handleOnClickConfirmDelete = async (id: string) => {
+	const handleOnClickConfirmDelete = React.useCallback(async (id: string) => {
 		try {
 			// filter out current session userid
 			if (id === session?.user.id) {
@@ -248,10 +251,10 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		} catch (error) {
 			console.error(error)
 		}
-	}
+	}, [mutateDeleteProfile, queryClient, searchParams, session?.user.id, setIsSearch, t])
 
 	// Case deleteMany
-	const handleOnClickDeleteUser = async () => {
+	const handleOnClickDeleteUser = React.useCallback(async () => {
 		try {
 			const requestMap: DeleteProfileDtoIn[] = selected
 				.filter((n) => n !== session?.user.id)
@@ -275,10 +278,10 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		} catch (error) {
 			setAlertInfo({ open: true, severity: 'error', message: t('error.profileDelete') })
 		}
-	}
+	}, [mutateDeleteProfile, queryClient, searchParams, selected, session?.user.id, setIsSearch, t])
 
 	// Case openMany
-	const handleOnClickOpenUser = async () => {
+	const handleOnClickOpenUser = React.useCallback(async () => {
 		try {
 			const requestMap: PatchStatusDtoIn[] = selected
 				.filter((n) => n !== session?.user.id)
@@ -303,10 +306,10 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			console.error(error)
 			setAlertInfo({ open: true, severity: 'error', message: t('error.profileUpdate') })
 		}
-	}
+	}, [mutatePatchStatus, queryClient, searchParams, selected, session?.user.id, setIsSearch, t])
 
 	// Case closeMany
-	const handleOnClickCloseUser = async () => {
+	const handleOnClickCloseUser = React.useCallback(async () => {
 		try {
 			const requestMap: PatchStatusDtoIn[] = selected
 				.filter((n) => n !== session?.user.id)
@@ -331,7 +334,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			console.error(error)
 			setAlertInfo({ open: true, severity: 'error', message: t('error.profileUpdate') })
 		}
-	}
+	}, [mutatePatchStatus, queryClient, searchParams, selected, session?.user.id, setIsSearch, t])
 
 	const handlePagination = React.useCallback(
 		(event: React.ChangeEvent<unknown>, value: number) => {
