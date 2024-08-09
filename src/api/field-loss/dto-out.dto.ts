@@ -30,28 +30,18 @@ export interface GetSummaryPredictedLossDtoOut {
 	lossPredicted: LossPredicted[]
 }
 
-interface LossTypeAreaPredicted {
+export interface LossTypeAreaPredicted {
 	totalPredicted: ResponseArea
 	floodPredicted: ResponseArea
 	droughtPredicted: ResponseArea
 }
 
-interface AreaStatisticType extends LossTypeAreaPredicted {
+export interface GetAreaStatisticDtoOut extends LossTypeAreaPredicted {
 	id: string
 	name: ResponseLanguage
 	order: number
 }
 
-export interface GetAreaStatisticDtoOut {
-	data: AreaStatisticType[]
-	dataTotal: LossTypeAreaPredicted
-}
-
-interface TimeStatisticType extends LossTypeAreaPredicted {
+export interface GetTimeStatisticDtoOut extends LossTypeAreaPredicted {
 	monthYear: ResponseLanguage
-}
-
-export interface GetTimeStatisticDtoOut {
-	data: TimeStatisticType[]
-	dataTotal: LossTypeAreaPredicted
 }

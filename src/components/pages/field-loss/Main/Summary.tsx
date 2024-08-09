@@ -24,47 +24,6 @@ interface LossPredictedType {
 	precent: number
 }
 
-interface DataType {
-	updatedDate: string
-	actAreaRai: number
-	actAreaPlot: number
-	actAreaRaiNoGeom: number
-	actAreaPlotNoGeom: number
-	predictedAreaRai: number
-	predictedAreaPlot: number
-	lossPredicted: LossPredictedType[]
-	claimedAreaRai: number
-	claimedAreaPlot: number
-	lossAreaPercent: number
-}
-
-// const data: DataType = {
-// 	updatedDate: '2022-07-19',
-// 	actAreaRai: 1200000.0,
-// 	actAreaPlot: 30968.0,
-// 	actAreaRaiNoGeom: 3000000.0,
-// 	actAreaPlotNoGeom: 30968.0,
-// 	predictedAreaRai: 450000.0,
-// 	predictedAreaPlot: 147.0,
-// 	lossPredicted: [
-// 		{
-// 			lossType: 'drought',
-// 			areaRai: 150000.0,
-// 			areaPlot: 51.0,
-// 			precent: 0.125,
-// 		},
-// 		{
-// 			lossType: 'flood',
-// 			areaRai: 300000.0,
-// 			areaPlot: 96.0,
-// 			precent: 0.25,
-// 		},
-// 	],
-// 	claimedAreaRai: 1125000.0,
-// 	claimedAreaPlot: 0,
-// 	lossAreaPercent: 0.375,
-// }
-
 interface FieldLossSummaryProps {
 	selectedOption: OptionType | null
 	startDate: Dayjs | null
@@ -80,7 +39,7 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 	lossType,
 	setLossType,
 }) => {
-	const { areaType, setAreaType } = useAreaType()
+	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default', 'field-loss'])
 	const [selectedCard, setSelecteeCard] = useState<number>(2)
@@ -113,53 +72,55 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 	}
 
 	return (
-		<div className='box-border flex w-[360px] flex-col gap-[16px] bg-[#F8FAFD] px-[24px] py-[16px]'>
+		<div className='lg:bg-gray-light2 box-border flex flex-col gap-0 bg-gray-light p-0 lg:w-[30%] lg:min-w-[360px] lg:max-w-[580px] lg:gap-4 lg:px-[22px] lg:py-4'>
 			<ToggleButtonGroup
 				value={lossType}
 				exclusive
 				onChange={handleLossTypeClick}
 				aria-label='loss-type'
-				className='flex gap-[4px] [&_*]:border-none [&_*]:px-[12px] [&_*]:py-[6px] [&_*]:leading-[20px]'
+				className='lg:border-gray-light2 flex gap-2 border-2 border-solid border-gray-light max-lg:py-3 lg:gap-1 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5'
 			>
 				<ToggleButton
-					className={clsx('text-[#7A7A7A]', {
+					className={clsx('text-base', {
 						'bg-primary font-semibold text-white': Boolean(lossType) === false,
+						'text-gray-dark2': Boolean(lossType) !== false,
 					})}
 					value={''}
 				>
 					{t('allDisasters')}
 				</ToggleButton>
 				<ToggleButton
-					className={clsx('text-[#7A7A7A]', {
+					className={clsx('text-base', {
 						'bg-primary font-semibold text-white': lossType === LossType.Drought,
+						'text-gray-dark2': lossType !== LossType.Drought,
 					})}
 					value={LossType.Drought}
 				>
 					{t('drought')}
 				</ToggleButton>
 				<ToggleButton
-					className={clsx('text-[#7A7A7A]', {
+					className={clsx('text-base', {
 						'bg-primary font-semibold text-white': lossType === LossType.Flood,
+						'text-gray-dark2': lossType !== LossType.Flood,
 					})}
 					value={LossType.Flood}
 				>
 					{t('flood')}
 				</ToggleButton>
 			</ToggleButtonGroup>
-			<Box className='flex flex-col gap-[8px]'>
-				<Card className='box-border w-full bg-[#0000000A] px-[16px] py-[12px]'>
-					<CardContent className='flex flex-col gap-[12px] p-0'>
-						<Typography variant='body1' className='font-semibold'>
+			<Box className='flex flex-col gap-3 lg:gap-2'>
+				<Card className='bg-gray-dark3 lg:border-gray-light2 box-border w-full border-2 border-solid border-gray-light px-4 py-3 max-lg:rounded'>
+					<CardContent className='flex flex-col gap-3 p-0'>
+						<Typography variant='body1' className='text-left text-md font-semibold text-black-dark'>
 							{t('allRegisteredAreas', { ns: 'field-loss' })}
 						</Typography>
-						<div className='flex items-baseline justify-end gap-[4px]'>
-							<span className='text-lg font-semibold leading-[24px] text-[#575757]'>
-								{/* {data.actAreaRaiNoGeom.toLocaleString()} */}
+						<div className='flex items-baseline justify-end gap-1'>
+							<span className='text-black-light text-xl font-semibold'>
 								{summaryData?.data?.actAreaNoGeom[areaUnit].toLocaleString()}
 							</span>
-							<span className='text-sm leading-[20px]'>{t(areaUnit)}</span>
+							<span className='text-base text-black-dark'>{t(areaUnit)}</span>
 						</div>
-						<span className='text-xs font-medium leading-[16px] text-[#7A7A7A]'>
+						<span className='text-gray-dark2 text-left text-sm font-medium'>
 							{t('lastUpdated', { ns: 'field-loss' })} 24 มี.ค. 2568
 						</span>
 					</CardContent>
@@ -169,38 +130,41 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 					exclusive
 					onChange={handleCardClick}
 					aria-label='card-toggle'
-					className='flex flex-col gap-[8px]'
+					className='flex flex-col gap-3 lg:gap-2'
 				>
 					<ToggleButton
 						value={1}
-						className={clsx('p-0', {
-							'border-[2px] border-primary': selectedCard === 1,
-							'border-[1px] border-[#F2F2F2]': selectedCard !== 1,
+						className={clsx('m-0 p-0 max-lg:rounded', {
+							'border-2 border-primary': selectedCard === 1,
+							'hover:border-gray-light2 border-2 border-transparent': selectedCard !== 1,
 						})}
 					>
-						<Card className='w-full px-[16px] py-[12px]'>
-							<CardContent className='flex flex-col gap-[12px] p-0'>
-								<Typography variant='body1' className='text-left font-semibold'>
+						<Card
+							className={clsx('w-full border-solid max-lg:rounded', {
+								'border border-transparent': selectedCard === 1,
+								'border border-gray-light': selectedCard !== 1,
+							})}
+						>
+							<CardContent className='flex flex-col gap-3 px-4 py-3'>
+								<Typography variant='body1' className='text-left text-md font-semibold text-black-dark'>
 									{t('estimatedRemediationArea', { ns: 'field-loss' })}
 								</Typography>
-								<div className='flex flex-col items-end gap-[4px]'>
-									<div className='flex items-baseline justify-end gap-[4px]'>
-										<span className='text-lg font-semibold leading-[24px] text-[#9F1853]'>
-											{/* {data.claimedAreaRai.toLocaleString()} */}
+								<div className='flex flex-col items-end gap-1'>
+									<div className='flex items-baseline justify-end gap-1'>
+										<span className='text-xl font-semibold text-secondary'>
 											{summaryData?.data?.claimedArea[areaUnit].toLocaleString()}
 										</span>
-										<span className='text-sm leading-[20px]'>{t(areaUnit)}</span>
+										<span className='text-base text-black-dark'>{t(areaUnit)}</span>
 									</div>
-									<p className='m-0 font-normal leading-[20px]'>
+									<p className='m-0 text-base font-normal text-black-dark'>
 										{i18n.language === 'th' && 'คิดเป็น'}{' '}
-										<span className='font-semibold text-[#9F1853]'>
-											{/* {(data.lossAreaPercent * 100).toFixed(1) + '%'} */}
-											{summaryData?.data?.claimedArea.percent + '%'}
+										<span className='text-base font-semibold text-secondary'>
+											{(summaryData?.data?.claimedArea.percent || '') + '%'}
 										</span>{' '}
 										{t('percentTotalRegisteredAreas', { ns: 'field-loss' })}
 									</p>
 								</div>
-								<span className='text-right text-xs font-normal leading-[16px] underline'>
+								<span className='text-right text-sm font-normal text-black-dark underline'>
 									{t('calculationMethod', { ns: 'field-loss' })}
 								</span>
 							</CardContent>
@@ -208,31 +172,28 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 					</ToggleButton>
 					<ToggleButton
 						value={2}
-						className={clsx('p-0', {
-							'border-[2px] border-primary': selectedCard === 2,
-							'border-[1px] border-[#F2F2F2]': selectedCard !== 2,
+						className={clsx('m-0 p-0 max-lg:rounded', {
+							'border-2 border-primary': selectedCard === 2,
+							'hover:border-gray-light2 border-2 border-transparent': selectedCard !== 2,
 						})}
 					>
-						<Card className='w-full px-[16px] py-[12px]'>
-							<CardContent className='flex flex-col gap-[12px] p-0'>
-								<Typography variant='body1' className='text-left font-semibold'>
+						<Card
+							className={clsx('w-full border-solid max-lg:rounded', {
+								'border border-transparent': selectedCard === 2,
+								'border border-gray-light': selectedCard !== 2,
+							})}
+						>
+							<CardContent className='flex flex-col gap-3 px-[15px] py-3'>
+								<Typography variant='body1' className='text-left text-md font-semibold text-black-dark'>
 									{t('totalDamagedArea', { ns: 'field-loss' })}
 								</Typography>
-								<div className='flex items-baseline justify-end gap-[4px]'>
-									<span className='text-lg font-semibold leading-[24px] text-[#9F1853]'>
-										{/* {data.predictedAreaRai.toLocaleString()} */}
+								<div className='flex items-baseline justify-end gap-1'>
+									<span className='text-xl font-semibold text-secondary'>
 										{summaryData?.data?.predictedArea[areaUnit].toLocaleString()}
 									</span>
-									<span className='text-sm leading-[20px]'>{t(areaUnit)}</span>
+									<span className='text-base text-black-dark'>{t(areaUnit)}</span>
 								</div>
-								<div className='flex flex-col gap-[8px]'>
-									{/* {data.lossPredicted.map((item) => {
-										const actArea = {
-											areaRai: data.actAreaRai,
-											areaPlot: data.actAreaPlot,
-										}
-										return <FieldLossCard key={item.lossType} item={item} actArea={actArea} />
-									})} */}
+								<div className='flex flex-col gap-2'>
 									{summaryData?.data?.lossPredicted.map((item) => (
 										<FieldLossCard
 											key={item.lossType}
@@ -241,7 +202,7 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 										/>
 									))}
 								</div>
-								<span className='text-left text-xs font-medium leading-[16px] text-[#7A7A7A]'>
+								<span className='text-gray-dark2 text-left text-sm font-medium'>
 									{t('latestDataAnalysis', { ns: 'field-loss' })} 24 มี.ค. 2568
 								</span>
 							</CardContent>

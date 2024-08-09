@@ -35,6 +35,12 @@ export interface AppAPI {
 		service?: APIService,
 		config?: AxiosRequestConfig<any> | undefined,
 	) => Promise<AxiosResponse<any, any>>
+	patch: (
+		url: string,
+		data: any,
+		service?: APIService,
+		config?: AxiosRequestConfig<any> | undefined,
+	) => Promise<AxiosResponse<any, any>>
 }
 
 export interface RetryQueueItem {
@@ -57,6 +63,10 @@ export type ResponseDto<T = any> = {
 	errorStatus?: number
 	error?: ErrorResponse
 	total?: number
+}
+
+export type ResponseStatisticDto<T = any, T2 = any> = ResponseDto<T> & {
+	dataTotal?: T2
 }
 
 export interface Tokens {

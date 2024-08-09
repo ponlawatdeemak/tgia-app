@@ -23,3 +23,9 @@ export interface GetSearchUMDtoIn extends TablePagination{
 	keyword : string,
 	firstName : string
 }
+
+export interface PatchStatusDtoIn {
+	id : string,
+	flagStatus : string
+}
+

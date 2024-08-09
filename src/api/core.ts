@@ -52,6 +52,12 @@ export const api: AppAPI = {
 		service: APIService = APIService.WebAPI,
 		config?: AxiosRequestConfig<any> | undefined,
 	) => await instance.delete(url, getConfig(service, config)),
+	patch: async (
+		url: string,
+		data: any,
+		service: APIService = APIService.WebAPI,
+		config?: AxiosRequestConfig<any> | undefined,
+	) => await instance.patch(url, data, getConfig(service, config)),
 }
 
 const getConfig = (service: APIService, config: AxiosRequestConfig<any> | undefined) => ({

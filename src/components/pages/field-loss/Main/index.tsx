@@ -1,17 +1,17 @@
 'use client'
 
-import RangePickerPage from '@/components/shared/DateRangePicker/RangePickerPage'
-import useRangePicker from '@/components/shared/DateRangePicker/context'
-import { LossType } from '@/enum'
-import useResponsive from '@/hook/responsive'
 import { Paper } from '@mui/material'
-import { addDays } from 'date-fns'
-import dayjs, { Dayjs } from 'dayjs'
-import { useEffect, useState } from 'react'
-import FieldLossDetail from './FieldLossDetail'
-import FieldLossSummary from './FieldLossSummary'
 import SearchForm from './SearchForm'
+import FieldLossSummary from './Summary'
+import { useEffect, useState } from 'react'
+import dayjs, { Dayjs } from 'dayjs'
+import FieldLossDetail from './Detail'
+import { LossType } from '@/enum'
+import RangePickerPage from '@/components/shared/DateRangePicker/RangePickerPage'
+import useResponsive from '@/hook/responsive'
+import useRangePicker from '@/components/shared/DateRangePicker/context'
 import useSearchFieldLoss from './context'
+import { addDays } from 'date-fns'
 
 interface OptionType {
 	name: string
@@ -33,7 +33,7 @@ export const FieldLossMain = () => {
 	}, [setQueryParams])
 
 	return (
-		<div className='flex flex-grow flex-col gap-y-[16px]'>
+		<div className='flex flex-grow flex-col gap-4'>
 			<SearchForm
 				selectedOption={selectedOption}
 				startDate={startDate}
@@ -42,7 +42,7 @@ export const FieldLossMain = () => {
 				setStartDate={setStartDate}
 				setEndDate={setEndDate}
 			/>
-			<Paper className='flex h-full overflow-hidden rounded-none px-4 lg:mx-4 lg:mb-4 lg:rounded-lg lg:px-0'>
+			<Paper className='mb-4 flex h-full overflow-hidden rounded-none px-4 max-lg:flex-col max-lg:gap-3 max-lg:bg-gray-light lg:mx-4 lg:rounded-lg lg:px-0'>
 				{open && !isDesktop ? (
 					<RangePickerPage />
 				) : (

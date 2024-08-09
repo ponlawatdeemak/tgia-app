@@ -1,4 +1,4 @@
-import { light } from '@mui/material/styles/createPalette'
+import { DroughtTileColor, FloodTileColor, LossTypeColor } from './src/config/color'
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
@@ -35,17 +35,43 @@ const config: Config = {
 				},
 				error: {
 					DEFAULT: 'var(--error-color-1)',
+					light: 'var(--error-color-2)',
 				},
 				gray: {
 					light: 'var(--lightest-gray-color)',
+					light2: 'var(--lightest-gray-color2)',
+					light3: 'var(--lightest-gray-color3)',
 					DEFAULT: 'var(--light-gray-color)',
 					dark: 'var(--dark-gray-color)',
+					dark2: 'var(--dark-gray-color2)',
+					dark3: 'var(--dark-gray-color3)',
 				},
 				black: {
+					light: 'var(--light-black-color)',
 					DEFAULT: 'var(--black-color)',
 					dark: '#000000',
 				},
 				background: 'var(--background-color)',
+				lossType: {
+					DEFAULT: LossTypeColor.total,
+					drought: LossTypeColor.drought,
+					flood: LossTypeColor.flood,
+					noData: LossTypeColor.noData,
+				},
+				droughtTileColor: {
+					level1: DroughtTileColor.level1,
+					level2: DroughtTileColor.level2,
+					level3: DroughtTileColor.level3,
+					level4: DroughtTileColor.level4,
+					level5: DroughtTileColor.level5,
+				},
+				floodTileColor: {
+					level1: FloodTileColor.level1,
+					level2: FloodTileColor.level2,
+					level3: FloodTileColor.level3,
+					level4: FloodTileColor.level4,
+					level5: FloodTileColor.level5,
+				},
 			},
 		},
 	},

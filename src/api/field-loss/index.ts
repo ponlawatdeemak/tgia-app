@@ -11,8 +11,9 @@ import {
 	GetSummaryAreaDtoOut,
 	GetSummaryPredictedLossDtoOut,
 	GetTimeStatisticDtoOut,
+	LossTypeAreaPredicted,
 } from './dto-out.dto'
-import { APIService, ResponseDto } from '@/api/interface'
+import { APIService, ResponseDto, ResponseStatisticDto } from '@/api/interface'
 import { api } from '../core'
 
 const fieldLoss = {
@@ -45,7 +46,9 @@ const fieldLoss = {
 
 		return await api.get(`/predicted-loss/summary-area?${params}`, APIService.DisasterAPI)
 	},
-	getAreaStatistic: async (payload: GetAreaStatisticDtoIn): Promise<ResponseDto<GetAreaStatisticDtoOut>> => {
+	getAreaStatistic: async (
+		payload: GetAreaStatisticDtoIn,
+	): Promise<ResponseStatisticDto<GetAreaStatisticDtoOut[], LossTypeAreaPredicted>> => {
 		const params = new URLSearchParams()
 
 		if (payload.startDate) params.append('startDate', payload.startDate)
@@ -58,7 +61,9 @@ const fieldLoss = {
 
 		return await api.get(`/predicted-loss/area-statistic?${params}`, APIService.DisasterAPI)
 	},
-	getTimeStatistic: async (payload: GetTimeStatisticDtoIn): Promise<ResponseDto<GetTimeStatisticDtoOut>> => {
+	getTimeStatistic: async (
+		payload: GetTimeStatisticDtoIn,
+	): Promise<ResponseStatisticDto<GetTimeStatisticDtoOut[], LossTypeAreaPredicted>> => {
 		const params = new URLSearchParams()
 
 		if (payload.startDate) params.append('startDate', payload.startDate)
