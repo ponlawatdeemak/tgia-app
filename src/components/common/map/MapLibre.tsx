@@ -39,6 +39,7 @@ export default function MapLibre({
 			initialViewState={viewState}
 			mapStyle={mapStyle}
 			preserveDrawingBuffer={true}
+			zoom={viewState?.zoom}
 			onMove={(e) => onViewStateChange?.(e.viewState)}
 		>
 			<DeckGLOverlay />

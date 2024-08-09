@@ -36,6 +36,7 @@ export default function MapGoogle({ viewState, onViewStateChange }: MapInterface
 				mapTypeControl={false}
 				fullscreenControl={false}
 				zoomControl={false}
+				zoom={viewState?.zoom}
 				streetViewControl={false}
 				mapTypeId='hybrid'
 				onBoundsChanged={(evt) =>
