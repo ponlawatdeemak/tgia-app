@@ -1,6 +1,6 @@
 'use client'
 
-import './injectHacks'
+// import './inject'
 import MapView from '@/components/common/map/MapView'
 import { Box, IconButton, Container } from '@mui/material'
 import { Paper } from '@mui/material'
