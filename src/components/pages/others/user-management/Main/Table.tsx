@@ -17,7 +17,7 @@ import { visuallyHidden } from '@mui/utils'
 import { SortType } from '@/enum'
 import { Delete, Sort } from '@mui/icons-material'
 import um from '@/api/um'
-import { GetSearchUMDtoIn, PatchStatusDtoIn } from '@/api/um/dto-in.dto'
+import { DeleteProfileDtoIn, GetSearchUMDtoIn, PatchStatusDtoIn } from '@/api/um/dto-in.dto'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useSwitchLanguage } from '@/i18n/client'
@@ -40,12 +40,18 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import CloseIcon from '@mui/icons-material/Close'
+import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
+import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar'
+import Alert from '@mui/material/Alert'
+import { useSession } from 'next-auth/react'
 
 interface Data {
 	id: number
 	firstName: string
 	email: string
 	organization: string
+	responsibleProvinceName: string
+	responsibleDistrictName: string
 	role: string
 	status: string
 	control: string
@@ -57,39 +63,6 @@ interface HeadCell {
 	label: string
 	numeric: boolean
 }
-
-const headCells: readonly HeadCell[] = [
-	{
-		id: 'firstName',
-		numeric: false,
-		disablePadding: true,
-		label: 'ชื่อ นามสกุล',
-	},
-	{
-		id: 'email',
-		numeric: false,
-		disablePadding: false,
-		label: 'อีเมล',
-	},
-	{
-		id: 'organization',
-		numeric: false,
-		disablePadding: false,
-		label: 'หน่วยงาน',
-	},
-	{
-		id: 'role',
-		numeric: false,
-		disablePadding: false,
-		label: 'บทบาท',
-	},
-	{
-		id: 'status',
-		numeric: false,
-		disablePadding: false,
-		label: 'สถานะ',
-	},
-]
 
 interface UserManagementTableProps {
 	searchParams: GetSearchUMDtoIn
@@ -104,12 +77,12 @@ interface ConfirmModalProps {
 	isOpen: boolean
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 	mode: string
-	id: string | string[]
+	id: string
+	handleOnClickConfirmDelete: (id: string) => Promise<void>
 }
 
-const ConfirmModal: React.FC<ConfirmModalProps> = ({ isOpen, setIsOpen, mode, id }) => {
+const ConfirmModal: React.FC<ConfirmModalProps> = ({ isOpen, setIsOpen, mode, id, handleOnClickConfirmDelete }) => {
 	const { t, i18n } = useTranslation('default')
-	console.log(id)
 	const handleClose = () => {
 		setIsOpen(false)
 	}
@@ -144,7 +117,12 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({ isOpen, setIsOpen, mode, id
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={handleClose}>{t('cancel')}</Button>
-				<Button onClick={handleClose} autoFocus>
+				<Button
+					onClick={() => {
+						handleOnClickConfirmDelete(id)
+						handleClose()
+					}}
+				>
 					{t('confirm')}
 				</Button>
 			</DialogActions>
@@ -160,22 +138,73 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	page,
 	setPage,
 }) => {
+	const { data: session } = useSession()
 	const [order, setOrder] = React.useState<SortType>(SortType.ASC)
 	const [orderBy, setOrderBy] = React.useState<keyof Data>('firstName')
 	const [selected, setSelected] = React.useState<readonly string[]>([])
-	// const [page, setPage] = React.useState(1)
 	const [dense, setDense] = React.useState(false)
-	// const [rowsPerPage, setRowsPerPage] = React.useState(5)
 	const queryClient = useQueryClient()
 
-	const { t, i18n } = useTranslation()
+	const { t, i18n } = useTranslation(['default', 'profile'])
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
+
+	// Define TableHead
+	const headCells: readonly HeadCell[] = [
+		{
+			id: 'firstName',
+			numeric: false,
+			disablePadding: true,
+			label: t('firstName') + ' ' + t('lastName'),
+		},
+		{
+			id: 'email',
+			numeric: false,
+			disablePadding: false,
+			label: t('email'),
+		},
+		{
+			id: 'organization',
+			numeric: false,
+			disablePadding: false,
+			label: t('org'),
+		},
+		{
+			id: 'role',
+			numeric: false,
+			disablePadding: false,
+			label: t('role'),
+		},
+		{
+			id: 'responsibleProvinceName',
+			numeric: false,
+			disablePadding: false,
+			label: t('belongProvince', { ns: 'profile' }),
+		},
+		{
+			id: 'responsibleDistrictName',
+			numeric: false,
+			disablePadding: false,
+			label: t('belongDistrict', { ns: 'profile' }),
+		},
+		{
+			id: 'status',
+			numeric: false,
+			disablePadding: false,
+			label: 'สถานะ',
+		},
+	]
 
 	// TableData State
 	const [tableData, setTableData] = React.useState<GetSearchUMDtoOut[]>([])
 	const [total, setTotal] = React.useState<number>(0)
 	const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = React.useState<boolean>(false)
 	const [currentDeleteId, setCurrentDeleteId] = React.useState<string>('')
+	const [isSelectAll, setIsSelectAll] = React.useState<boolean>(false)
+	const [alertInfo, setAlertInfo] = React.useState<AlertInfoType>({
+		open: false,
+		severity: 'success',
+		message: '',
+	})
 
 	const { data: resData, isLoading: isTableDataLoading } = useQuery({
 		queryKey: ['getSearchUM', searchParams],
@@ -187,8 +216,8 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		enabled: isSearch,
 	})
 	const {
-		data,
-		error,
+		data: patchStatusData,
+		error: patchStatusError,
 		mutateAsync: mutatePatchStatus,
 	} = useMutation({
 		mutationFn: async (payload: PatchStatusDtoIn) => {
@@ -199,16 +228,25 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		},
 	})
 
+	const {
+		data: deleteProfileData,
+		error: deleteProfileError,
+		mutateAsync: mutateDeleteProfile,
+	} = useMutation({
+		mutationFn: async (payload: DeleteProfileDtoIn) => {
+			return await um.deleteProfile(payload)
+		},
+	})
+
 	React.useEffect(() => {
 		setIsSearch(true)
 	}, [])
 
-	React.useEffect(() => {
-		// console.log(selected)
-	}, [selected])
+	// React.useEffect(() => {
+	// 	console.log(selected)
+	// }, [selected])
 
 	React.useEffect(() => {
-		// console.log(resData)
 		if (resData) {
 			setTableData(resData.data || [])
 			setTotal(resData.total || 1)
@@ -237,11 +275,11 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 
 	const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.checked) {
-			const newSelected = tableData.map((n) => n.id)
+			const newSelected = tableData.filter((n) => n.id !== session?.user.id).map((n) => n.id)
 			setSelected(newSelected)
-			return
+		} else {
+			setSelected([])
 		}
-		setSelected([])
 	}
 
 	const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
@@ -251,7 +289,9 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
 		const selectedIndex = selected.indexOf(id)
 		let newSelected: readonly string[] = []
-
+		if (id === session?.user.id) {
+			return
+		}
 		if (selectedIndex === -1) {
 			newSelected = newSelected.concat(selected, id)
 		} else if (selectedIndex === 0) {
@@ -264,31 +304,49 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		setSelected(newSelected)
 	}
 
-	// const handleChangePage = (event: unknown, newPage: number) => {
-	// 	setPage(newPage)
-	// }
-
-	// const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-	// 	setRowsPerPage(parseInt(event.target.value, 10))
-	// 	setPage(0)
-	// }
+	const handleOnClickConfirmDelete = async (id: string) => {
+		try {
+			// filter out current session userid
+			if (id === session?.user.id) {
+				return
+			}
+			const payload: DeleteProfileDtoIn = { id: id }
+			const res = await mutateDeleteProfile(payload)
+			queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
+			setIsSearch(true)
+			// setAlertInfo
+			console.log(res)
+		} catch (error) {
+			console.error(error)
+		}
+	}
 
 	const handleOnClickOpenUser = async () => {
 		// console.log(selected)
 		// flag status A
 		try {
-			const requestMap: PatchStatusDtoIn[] = selected.map((select) => {
-				return {
-					id: select,
-					flagStatus: 'A',
-				}
-			})
+			const requestMap: PatchStatusDtoIn[] = selected
+				.filter((n) => n !== session?.user.id)
+				.map((n) => {
+					return {
+						id: n,
+						flagStatus: 'A',
+					}
+				})
+			// const requestMap: PatchStatusDtoIn[] = selected.map((select) => {
+			// 	// filter out current session userId
+			// 	return {
+			// 		id: select,
+			// 		flagStatus: 'A',
+			// 	}
+			// })
 			const promises = requestMap.map((request) => mutatePatchStatus(request))
 			Promise.all(promises)
 				.then((res) => {
 					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
+					setAlertInfo({ open: true, severity: 'success', message: t('success.profileUpdate') })
 				})
 				.catch((error) => {
 					console.log(error)
@@ -300,18 +358,21 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 
 	const handleOnClickCloseUser = async () => {
 		try {
-			const requestMap: PatchStatusDtoIn[] = selected.map((select) => {
-				return {
-					id: select,
-					flagStatus: 'C',
-				}
-			})
+			const requestMap: PatchStatusDtoIn[] = selected
+				.filter((n) => n !== session?.user.id)
+				.map((n) => {
+					return {
+						id: n,
+						flagStatus: 'C',
+					}
+				})
 			const promises = requestMap.map((request) => mutatePatchStatus(request))
 			Promise.all(promises)
 				.then((res) => {
 					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
+					setAlertInfo({ open: true, severity: 'success', message: t('success.profileUpdate') })
 				})
 				.catch((error) => {
 					console.log(error)
@@ -321,10 +382,29 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		}
 	}
 
+	const handleOnClickDeleteUser = async () => {
+		try {
+			//filter currentuserid
+			const requestMap: DeleteProfileDtoIn[] = selected.map((select) => {
+				return {
+					id: select,
+				}
+			})
+			const promises = requestMap.map((request) => mutateDeleteProfile(request))
+			Promise.all(promises)
+				.then((res) => {
+					console.log(res)
+					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
+					setIsSearch(true)
+					setAlertInfo({ open: true, severity: 'success', message: t('success.profileDelete') })
+				})
+				.catch((error) => {
+					console.log(error)
+				})
+		} catch (error) {}
+	}
+
 	const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
-		// console.log(value)
-		console.log('currentValue :: ', page)
-		console.log('newValue :: ', value)
 		setSearchParams((prevSearch) => ({
 			...prevSearch,
 			offset: page < value ? prevSearch.offset + 10 : prevSearch.offset - 10,
@@ -346,7 +426,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						รายชื่อผู้ใช้งาน
 					</Typography>
 					<Typography variant='body2' className='text-[#7A7A7A]'>
-						แสดง 1-10 จาก {total} รายการ
+						แสดง {(page - 1) * 10 + 1}-{Math.min(page * 10, total)} จาก {total} รายการ
 					</Typography>
 				</div>
 				{selected.length > 0 && (
@@ -381,6 +461,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								variant='contained'
 								color='primary'
 								startIcon={<Icon path={mdiTrashCanOutline} size={1} color='var(--black-color)' />}
+								onClick={handleOnClickDeleteUser}
 							>
 								ลบผู้ใช้งาน
 							</Button>
@@ -396,8 +477,13 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									<TableCell padding='checkbox'>
 										<Checkbox
 											color='primary'
-											indeterminate={selected.length > 0 && selected.length < tableData.length}
-											checked={tableData.length > 0 && selected.length === tableData.length}
+											indeterminate={
+												selected.length > 0 && selected.length < tableData.length - 1
+											}
+											checked={
+												selected.length ===
+												tableData.filter((n) => n.id !== session?.user.id).length
+											}
 											onChange={handleSelectAllClick}
 											inputProps={{
 												'aria-label': 'select all desserts',
@@ -453,6 +539,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 													inputProps={{
 														'aria-labelledby': labelId,
 													}}
+													disabled={session?.user.id === row.id}
 												/>
 											</TableCell>
 											<TableCell component='th' id={labelId} scope='row' padding='none'>
@@ -464,6 +551,12 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											</TableCell>
 											<TableCell>
 												{row.roleName[i18n.language as keyof ResponseLanguage]}
+											</TableCell>
+											<TableCell>
+												{row.responsibleProvinceName[i18n.language as keyof ResponseLanguage]}
+											</TableCell>
+											<TableCell>
+												{row.responsibleDistrictName[i18n.language as keyof ResponseLanguage]}
 											</TableCell>
 											<TableCell>
 												{
@@ -485,7 +578,11 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											<TableCell>
 												<Box>
 													<Stack direction='row' spacing={1}>
-														<IconButton>
+														<IconButton
+															onClick={(e) => {
+																e.stopPropagation()
+															}}
+														>
 															<Icon
 																path={mdiPencilOutline}
 																size={1}
@@ -493,15 +590,22 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 															/>
 														</IconButton>
 														<IconButton
-															onClick={() => {
+															onClick={(e) => {
+																// stop event propagation to prevent row select
+																e.stopPropagation()
 																setCurrentDeleteId(row.id)
 																setIsConfirmDeleteOpen(true)
 															}}
+															disabled={session?.user.id === row.id}
 														>
 															<Icon
 																path={mdiTrashCanOutline}
 																size={1}
-																color='var(--error-color-1)'
+																color={
+																	session?.user.id === row.id
+																		? 'var(--dark-gray-color)'
+																		: 'var(--error-color-1)'
+																}
 															/>
 														</IconButton>
 													</Stack>
@@ -522,7 +626,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 							</TableBody>
 							<TableFooter>
 								<TableRow>
-									<TableCell colSpan={7}>
+									<TableCell colSpan={9}>
 										<Box className={'flex w-full items-center justify-between'}>
 											<Typography>
 												หน้า {page} จาก {Math.ceil(total / 10)}
@@ -551,17 +655,6 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 							</TableFooter>
 						</Table>
 					</TableContainer>
-					{/* <TablePagination
-						rowsPerPageOptions={[5, 10, 25]}
-						component='div'
-						count={tableData.length}
-						rowsPerPage={rowsPerPage}
-						page={page}
-						// onPageChange={handleChangePage}
-						// onRowsPerPageChange={handleChangeRowsPerPage}
-						onPageChange={() => {}}
-						onRowsPerPageChange={() => {}}
-					/> */}
 				</Box>
 			</Paper>
 			<ConfirmModal
@@ -569,7 +662,23 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 				setIsOpen={setIsConfirmDeleteOpen}
 				mode={'delete'}
 				id={currentDeleteId}
+				handleOnClickConfirmDelete={handleOnClickConfirmDelete}
 			/>
+			<Snackbar
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+				open={alertInfo.open}
+				autoHideDuration={6000}
+				onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+				className='w-[300px]'
+			>
+				<Alert
+					onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+					severity={alertInfo.severity}
+					className='w-full'
+				>
+					{alertInfo.message}
+				</Alert>
+			</Snackbar>
 		</div>
 	)
 }
