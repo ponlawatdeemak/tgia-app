@@ -29,3 +29,7 @@ export interface PatchStatusDtoIn {
 	flagStatus : string
 }
 
+export interface DeleteProfileDtoIn {
+	id : string
+}
+

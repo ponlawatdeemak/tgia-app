@@ -1,6 +1,6 @@
 import { api } from '@/api/core'
-import { GetProfileDtoOut, GetSearchUMDtoOut, GetUmDtoOut, PatchStatusDtoOut, PostUploadFilesDtoOut, PutProfileDtoOut } from '@/api/um/dto-out.dto'
-import { GetSearchUMDtoIn, GetUmDtoIn, PatchStatusDtoIn, PostUploadFilesDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
+import { DeleteProfileDtoOut, GetProfileDtoOut, GetSearchUMDtoOut, GetUmDtoOut, PatchStatusDtoOut, PostUploadFilesDtoOut, PutProfileDtoOut } from '@/api/um/dto-out.dto'
+import { DeleteProfileDtoIn, GetSearchUMDtoIn, GetUmDtoIn, PatchStatusDtoIn, PostUploadFilesDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
 import { APIService, ResponseDto } from '@/api/interface'
 
 // Api for Profile and UM
@@ -21,7 +21,8 @@ const um = {
 	getSearchUM: async (payload: GetSearchUMDtoIn): Promise<ResponseDto<GetSearchUMDtoOut[]>> => 
 		(await api.get(`/um/search?keyword=${payload.keyword}&sortField=${payload.sortField}&sortOrder=${payload.sortOrder}&limit=${payload.limit}&offset=${payload.offset}`)),
 	patchStatus: async (payload: PatchStatusDtoIn) : Promise<ResponseDto<PatchStatusDtoOut>> =>
-		await api.patch(`/um/${payload.id}`,payload)
+		await api.patch(`/um/${payload.id}`,payload),
+	deleteProfile: async (payload: DeleteProfileDtoIn) : Promise<ResponseDto<DeleteProfileDtoOut>> => await api.delete(`/um/${payload.id}`)
 }
 
 export default um

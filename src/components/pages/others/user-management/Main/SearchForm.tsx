@@ -46,9 +46,7 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 	const handleOnBlur = (
 		event: React.FocusEvent<HTMLInputElement> | React.FormEvent<Element>
 	) => {
-		// Blur Will Toggle all the time
 		event.preventDefault()
-		console.log('onBlur')
 		setIsSearch(true)
 	}
 
