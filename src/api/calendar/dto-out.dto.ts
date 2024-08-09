@@ -1,10 +1,9 @@
 export interface GetCalendarDtoOut {
 	dateTime: string
 	lossType: string
-	lossPredicted: LossPredicted
+	lossPredicted: LossPredictedType
 }
-
-interface LossPredicted {
+export interface LossPredictedType {
 	areaRai: number
 	areaPlot: number
 }

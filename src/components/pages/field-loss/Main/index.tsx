@@ -9,6 +9,7 @@ import { addDays } from 'date-fns'
 import dayjs, { Dayjs } from 'dayjs'
 import { useEffect, useState } from 'react'
 import FieldLossDetail from './FieldLossDetail'
+import FieldLossSummary from './FieldLossSummary'
 import SearchForm from './SearchForm'
 import useSearchFieldLoss from './context'
 
@@ -21,7 +22,7 @@ interface OptionType {
 export const FieldLossMain = () => {
 	const { isDesktop } = useResponsive()
 	const { open } = useRangePicker()
-	const { queryParams, setQueryParams } = useSearchFieldLoss()
+	const { setQueryParams } = useSearchFieldLoss()
 	const [selectedOption, setSeletedOption] = useState<OptionType | null>(null)
 	const [startDate, setStartDate] = useState<Dayjs | null>(dayjs(new Date()))
 	const [endDate, setEndDate] = useState<Dayjs | null>(dayjs(new Date().setDate(new Date().getDate() + 15)))
@@ -43,16 +44,16 @@ export const FieldLossMain = () => {
 			/>
 			<Paper className='flex h-full overflow-hidden rounded-none px-4 lg:mx-4 lg:mb-4 lg:rounded-lg lg:px-0'>
 				{open && !isDesktop ? (
-					<RangePickerPage className='flex flex-grow lg:hidden' />
+					<RangePickerPage />
 				) : (
 					<>
-						{/* <FieldLossSummary
+						<FieldLossSummary
 							selectedOption={selectedOption}
 							startDate={startDate}
 							endDate={endDate}
 							lossType={lossType}
 							setLossType={setLossType}
-						/> */}
+						/>
 						<FieldLossDetail
 							selectedOption={selectedOption}
 							startDate={startDate}

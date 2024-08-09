@@ -6,20 +6,23 @@ import '@/styles/calendar.css'
 
 import service from '@/api'
 import useSearchFieldLoss from '@/components/pages/field-loss/Main/context'
-import { Language } from '@/enum'
+import { AreaTypeKey, AreaUnitKey, Language } from '@/enum'
 import useAreaType from '@/store/area-type'
+import useAreaUnit from '@/store/area-unit'
 import { formatDate } from '@/utils/date'
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import Icon from '@mdi/react'
 import { IconButton, Typography } from '@mui/material'
+import { useQuery } from '@tanstack/react-query'
 import classNames from 'classnames'
-import { addDays, endOfMonth, format, startOfMonth } from 'date-fns'
+import { addDays, endOfMonth, format, isWithinInterval, startOfMonth } from 'date-fns'
 import { enUS, th } from 'date-fns/locale'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { DateRange, Range, RangeKeyDict } from 'react-date-range'
 import { useTranslation } from 'react-i18next'
 import useRangePicker from './context'
-import { useQuery } from '@tanstack/react-query'
+import { GetCalendarDtoOut, LossPredictedType } from '@/api/calendar/dto-out.dto'
+import humanFormat from 'human-format'
 
 export type DateRangeTypes = {
 	startDate: Date
@@ -32,17 +35,36 @@ export interface RangeCalendarProps {
 	className?: string
 }
 
-const RangeCalendar: React.FC<RangeCalendarProps> = ({
-	dateRange = { startDate: new Date(), endDate: new Date() },
-	onChange,
-	className,
-}) => {
+interface FilterType {
+	startDate: string
+	endDate: string
+	registrationAreaType: AreaTypeKey
+	provinceId: number | undefined
+	districtId: number | undefined
+}
+
+interface MappedDataType {
+	[key: string]: {
+		[LossType.Drought]?: LossPredictedType
+		[LossType.Flood]?: LossPredictedType
+		[LossType.NoData]?: boolean
+	}
+}
+
+enum LossType {
+	Drought = 'drought',
+	Flood = 'flood',
+	NoData = 'noData',
+}
+
+const RangeCalendar: React.FC<RangeCalendarProps> = ({ dateRange = undefined, onChange, className }) => {
 	const { i18n } = useTranslation()
 	const { open } = useRangePicker()
-	const { queryParams, setQueryParams } = useSearchFieldLoss()
+	const { queryParams } = useSearchFieldLoss()
 	const { areaType } = useAreaType()
+	const { areaUnit } = useAreaUnit()
 	const [ranges, setRanges] = useState<Range[]>([{ ...dateRange, key: 'selection' }])
-	const [filter, setFilter] = useState<any>({
+	const [filter, setFilter] = useState<FilterType>({
 		startDate: queryParams.startDate ? format(addDays(startOfMonth(new Date()), -7), 'yyyy-MM-dd') : '',
 		endDate: queryParams.endDate ? format(addDays(endOfMonth(new Date()), 7), 'yyyy-MM-dd') : '',
 		registrationAreaType: areaType,
@@ -50,15 +72,32 @@ const RangeCalendar: React.FC<RangeCalendarProps> = ({
 		districtId: queryParams.districtId,
 	})
 
-	const { data, isLoading } = useQuery({
+	const { data } = useQuery({
 		queryKey: ['calendar', filter],
 		queryFn: () => service.calendar.getCalendar(filter),
 		enabled: open,
 	})
-	console.log('TLOG ~ data:', data)
+
+	const mappedData = useMemo(() => {
+		const mappedData: MappedDataType = {}
+		data?.data?.forEach((item: GetCalendarDtoOut) => {
+			if (!mappedData[item.dateTime]) {
+				mappedData[item.dateTime] = {}
+			}
+			const lossType = item.lossType as LossType
+			if (lossType === LossType.NoData) {
+				mappedData[item.dateTime][lossType] = true
+			} else {
+				mappedData[item.dateTime][lossType] = item.lossPredicted
+			}
+		})
+		return mappedData
+	}, [data])
 
 	useEffect(() => {
-		setRanges([{ ...dateRange, key: 'selection' }])
+		if (dateRange) {
+			setRanges([{ ...dateRange, key: 'selection' }])
+		}
 	}, [dateRange])
 
 	const handleChange = async (values: RangeKeyDict) => {
@@ -100,6 +139,59 @@ const RangeCalendar: React.FC<RangeCalendarProps> = ({
 		)
 	}
 
+	const renderCalendarDay = (date: Date) => {
+		const data = mappedData[format(date, 'yyyy-MM-dd')]
+		const drought = data?.[LossType.Drought]
+		const flood = data?.[LossType.Flood]
+		const noData = data?.[LossType.NoData] || false
+		const droughtValue =
+			areaUnit === AreaUnitKey.LandPlot ? drought?.[AreaUnitKey.LandPlot] : drought?.[AreaUnitKey.Rai]
+		const floodValue = areaUnit === AreaUnitKey.LandPlot ? flood?.[AreaUnitKey.LandPlot] : flood?.[AreaUnitKey.Rai]
+		const [{ startDate, endDate }] = ranges
+		let isInRange = true
+		if (startDate && endDate) {
+			isInRange = isWithinInterval(date, {
+				start: startDate,
+				end: endDate,
+			})
+		}
+
+		return (
+			<div className={classNames('!h-full w-full', { 'bg-[#F5F5F5]': noData && !isInRange })}>
+				<div
+					className={classNames('absolute left-0 right-0 top-0 mt-3 text-base text-inherit', {
+						'!text-[#959595]': noData,
+					})}
+				>
+					{date.getDate()}
+				</div>
+				<div className='mt-10 flex flex-col items-center'>
+					{droughtValue && (
+						<div className='flex items-center gap-1'>
+							<div className='size-1.5 rounded-full bg-[#E34A33]' />
+							<div className='text-xs !text-secondary'>
+								{humanFormat(droughtValue, {
+									maxDecimals: 2,
+								}).replace(' ', '')}
+							</div>
+						</div>
+					)}
+					{floodValue && (
+						<div className='flex items-center gap-1'>
+							<div className='size-1.5 rounded-full bg-[#3182BD]' />
+							<div className='text-xs !text-secondary'>
+								{humanFormat(floodValue, {
+									maxDecimals: 2,
+								}).replace(' ', '')}
+							</div>
+						</div>
+					)}
+					{noData && <div className='text-xs !text-[#959595]'>ไม่มีข้อมูล</div>}
+				</div>
+			</div>
+		)
+	}
+
 	return (
 		<DateRange
 			locale={i18n.language === Language.EN ? enUS : th}
@@ -109,7 +201,7 @@ const RangeCalendar: React.FC<RangeCalendarProps> = ({
 			navigatorRenderer={renderCalendarNavigator}
 			showMonthAndYearPickers={false}
 			moveRangeOnFirstSelection={false}
-			// disabledDates={[]}
+			dayContentRenderer={renderCalendarDay}
 			className={classNames('h-fit w-full min-w-[288px]', className)}
 		/>
 	)

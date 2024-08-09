@@ -1,4 +1,5 @@
 import FormInput from '@/components/common/input/FormInput'
+import useSearchFieldLoss from '@/components/pages/field-loss/Main/context'
 import { formatDate } from '@/utils/date'
 import { Button, Popover } from '@mui/material'
 import classNames from 'classnames'
@@ -6,7 +7,6 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import RangeCalendar, { DateRangeTypes } from './RangeCalendar'
 import useRangePicker from './context'
-import useSearchFieldLoss from '@/components/pages/field-loss/Main/context'
 
 interface RangePickerPopoverProps {
 	anchorEl: HTMLButtonElement | null
@@ -21,10 +21,10 @@ const RangePickerPopover: React.FC<RangePickerPopoverProps> = ({ anchorEl, setAn
 	const [ranges, setRanges] = useState<DateRangeTypes>()
 
 	useEffect(() => {
-		if (queryParams?.startDate && queryParams?.endDate) {
+		if (open && queryParams?.startDate && queryParams?.endDate) {
 			setRanges({ startDate: queryParams.startDate, endDate: queryParams.endDate })
 		}
-	}, [queryParams])
+	}, [queryParams, open])
 
 	const handleClose = () => {
 		setAnchorEl(null)
@@ -32,7 +32,6 @@ const RangePickerPopover: React.FC<RangePickerPopoverProps> = ({ anchorEl, setAn
 	}
 
 	const handleChangeDateRanges = (values: DateRangeTypes) => {
-		console.log('values:', values)
 		setRanges(values)
 	}
 
@@ -44,7 +43,6 @@ const RangePickerPopover: React.FC<RangePickerPopoverProps> = ({ anchorEl, setAn
 	}
 
 	const onReset = () => {
-		setQueryParams({ ...queryParams, startDate: resetDateRanges.startDate, endDate: resetDateRanges.endDate })
 		setRanges(resetDateRanges)
 	}
 
