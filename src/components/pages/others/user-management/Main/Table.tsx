@@ -34,6 +34,12 @@ import TableFooter from '@mui/material/TableFooter'
 import Pagination from '@mui/material/Pagination'
 import service from '@/api'
 import { request } from 'http'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import CloseIcon from '@mui/icons-material/Close'
 
 interface Data {
 	id: number
@@ -44,68 +50,6 @@ interface Data {
 	status: string
 	control: string
 }
-
-// function createData(
-// 	id: number,
-// 	fullName: string,
-// 	email: string,
-// 	organization: string,
-// 	role: string,
-// 	status: string,
-// ): Data {
-// 	return {
-// 		id,
-// 		fullName,
-// 		email,
-// 		organization,
-// 		role,
-// 		status,
-// 	}
-// }
-
-// const rows = [
-// 	createData(1, 'สมชาย ลำเพลมพัด', 'Somchai@gmail.com', 'Thaicom', 'Super Admin', 'open'),
-// 	createData(2, 'สิริกัญญา เมตตาทรัพย์', 'Sirikanya@gmail.com', 'TGIA', 'Admin', 'open'),
-// 	createData(3, 'ขวัญมณี เอี่ยมกำเนิด', 'Kwanmani@gmail.com', 'DOAE', 'Admin', 'open'),
-// 	createData(4, 'กษิดิษ เกษรศาสน์', 'Kasidit@gmail.com', 'TGIA', 'Admin', 'open'),
-// 	createData(5, 'เอกลักษณ์ ตั้งคงอยู่', 'Eklaksorn@gmail.com', 'TGIA', 'User', 'open'),
-// 	createData(6, 'สมาน ดำรงไทย', 'Saman@gmail.com', 'TGIA', 'User', 'close'),
-// 	createData(7, 'ดิเรก รักเกษตร', 'Direk@gmail.com', 'TGIA', 'User', 'close'),
-// 	createData(8, 'กฤษณา เยี่ยมอำไพ', 'Kritsana@gmail.com', 'TGIA', 'User', 'close'),
-// 	createData(9, 'เขมิกา สินเจริญสุข', 'Khemika@gmail.com', 'TGIA', 'User', 'close'),
-// 	createData(10, 'พรพิมา บุญสูงเนิน', 'Phonphima@gmail.com', 'TGIA', 'User', 'close'),
-// ]
-
-// function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-// 	if (b[orderBy] < a[orderBy]) {
-// 		return -1
-// 	}
-// 	if (b[orderBy] > a[orderBy]) {
-// 		return 1
-// 	}
-// 	return 0
-// }
-
-// function getComparator<Key extends keyof any>(
-// 	order: SortType,
-// 	orderBy: Key,
-// ): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
-// 	return order === SortType.DESC
-// 		? (a, b) => descendingComparator(a, b, orderBy)
-// 		: (a, b) => -descendingComparator(a, b, orderBy)
-// }
-
-// function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
-// 	const stabilizedThis = array.map((el, index) => [el, index] as [T, number])
-// 	stabilizedThis.sort((a, b) => {
-// 		const order = comparator(a[0], b[0])
-// 		if (order !== 0) {
-// 			return order
-// 		}
-// 		return a[1] - b[1]
-// 	})
-// 	return stabilizedThis.map((el) => el[0])
-// }
 
 interface HeadCell {
 	disablePadding: boolean
@@ -156,13 +100,65 @@ interface UserManagementTableProps {
 	setPage: React.Dispatch<React.SetStateAction<number>>
 }
 
+interface ConfirmModalProps {
+	isOpen: boolean
+	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+	mode: string
+	id: string | string[]
+}
+
+const ConfirmModal: React.FC<ConfirmModalProps> = ({ isOpen, setIsOpen, mode, id }) => {
+	const { t, i18n } = useTranslation('default')
+	console.log(id)
+	const handleClose = () => {
+		setIsOpen(false)
+	}
+	return (
+		<Dialog
+			open={isOpen}
+			onClose={handleClose}
+			aria-labelledby='alert-dialog-title'
+			aria-describedby='alert-dialog-description'
+		>
+			<DialogTitle id='alert-dialog-title'>
+				{i18n.language === 'th' ? 'ลบบัญชีผู้ใช้งาน' : 'Delete User'}
+			</DialogTitle>
+			<IconButton
+				aria-label='close'
+				onClick={handleClose}
+				sx={{
+					position: 'absolute',
+					right: 8,
+					top: 8,
+					color: (theme) => theme.palette.grey[500],
+				}}
+			>
+				<CloseIcon />
+			</IconButton>
+			<DialogContent>
+				<DialogContentText id='alert-dialog-description'>
+					{i18n.language === 'th'
+						? 'ต้องการยืนยันการลบบัญชีผู้ใช้งานนี้ใช่หรือไม่'
+						: 'Are you sure you want to delete this user ?'}
+				</DialogContentText>
+			</DialogContent>
+			<DialogActions>
+				<Button onClick={handleClose}>{t('cancel')}</Button>
+				<Button onClick={handleClose} autoFocus>
+					{t('confirm')}
+				</Button>
+			</DialogActions>
+		</Dialog>
+	)
+}
+
 const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	searchParams,
 	setSearchParams,
 	isSearch,
 	setIsSearch,
 	page,
-	setPage
+	setPage,
 }) => {
 	const [order, setOrder] = React.useState<SortType>(SortType.ASC)
 	const [orderBy, setOrderBy] = React.useState<keyof Data>('firstName')
@@ -175,16 +171,15 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	const { t, i18n } = useTranslation()
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 
-	const [toggleSearch, setToggleSearch] = React.useState(false)
-
 	// TableData State
 	const [tableData, setTableData] = React.useState<GetSearchUMDtoOut[]>([])
 	const [total, setTotal] = React.useState<number>(0)
+	const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = React.useState<boolean>(false)
+	const [currentDeleteId, setCurrentDeleteId] = React.useState<string>('')
 
 	const { data: resData, isLoading: isTableDataLoading } = useQuery({
 		queryKey: ['getSearchUM', searchParams],
 		queryFn: () => {
-			console.log("SM :: ",searchParams)
 			const res = um.getSearchUM(searchParams)
 			setIsSearch(false)
 			return res
@@ -294,7 +289,6 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
-					setToggleSearch(!toggleSearch)
 				})
 				.catch((error) => {
 					console.log(error)
@@ -318,7 +312,6 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
-					setToggleSearch(!toggleSearch)
 				})
 				.catch((error) => {
 					console.log(error)
@@ -330,11 +323,11 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 
 	const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
 		// console.log(value)
-		console.log("currentValue :: ",page);
-		console.log("newValue :: ",value);
+		console.log('currentValue :: ', page)
+		console.log('newValue :: ', value)
 		setSearchParams((prevSearch) => ({
 			...prevSearch,
-			offset: page < value ? prevSearch.offset+10 : prevSearch.offset-10,
+			offset: page < value ? prevSearch.offset + 10 : prevSearch.offset - 10,
 		}))
 		setIsSearch(true)
 		setPage(value)
@@ -499,7 +492,12 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 																color='var(--black-color)'
 															/>
 														</IconButton>
-														<IconButton>
+														<IconButton
+															onClick={() => {
+																setCurrentDeleteId(row.id)
+																setIsConfirmDeleteOpen(true)
+															}}
+														>
 															<Icon
 																path={mdiTrashCanOutline}
 																size={1}
@@ -566,6 +564,12 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					/> */}
 				</Box>
 			</Paper>
+			<ConfirmModal
+				isOpen={isConfirmDeleteOpen}
+				setIsOpen={setIsConfirmDeleteOpen}
+				mode={'delete'}
+				id={currentDeleteId}
+			/>
 		</div>
 	)
 }
