@@ -32,9 +32,9 @@ const FieldLossCard: React.FC<FieldLossCardProps> = ({ item, actArea }) => {
 			<Box className='flex items-center justify-between'>
 				<div className='flex items-center gap-1'>
 					{item.lossType === 'drought' ? (
-						<WbSunnyOutlined className='h-5 w-5 font-light text-[#FC8E59]' />
+						<WbSunnyOutlined className='text-droughtTileColor-level3 h-5 w-5 font-light' />
 					) : (
-						<WaterOutlined className='h-5 w-5 font-light text-[#6BAED6]' />
+						<WaterOutlined className='text-floodTileColor-level3 h-5 w-5 font-light' />
 					)}
 					<div className='flex items-baseline gap-1'>
 						<span className='text-base text-black'>{t(item.lossType)}</span>

@@ -35,7 +35,7 @@ export const FieldLossMain = () => {
 				setStartDate={setStartDate}
 				setEndDate={setEndDate}
 			/>
-			<Paper className='flex h-full overflow-hidden rounded-none px-4 lg:mx-4 lg:mb-4 lg:rounded-lg lg:px-0'>
+			<Paper className='mb-4 flex h-full overflow-hidden rounded-none px-4 max-lg:flex-col max-lg:gap-3 max-lg:bg-gray-light lg:mx-4 lg:rounded-lg lg:px-0'>
 				{open && !isDesktop ? (
 					<RangePickerPage className='lg:hidden' />
 				) : (

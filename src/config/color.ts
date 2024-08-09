@@ -55,7 +55,7 @@ export const DroughtTileColor = {
 	level5: '#B30100',
 }
 
-export const FolodTileColor = {
+export const FloodTileColor = {
 	level1: '#EFF3FF',
 	level2: '#BDD7E7',
 	level3: '#6BAED6',

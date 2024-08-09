@@ -72,13 +72,13 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 	}
 
 	return (
-		<div className='bg-gray-light2 box-border flex w-[30%] min-w-[360px] max-w-[580px] flex-col gap-4 px-[22px] py-4'>
+		<div className='lg:bg-gray-light2 box-border flex flex-col gap-0 bg-gray-light p-0 lg:w-[30%] lg:min-w-[360px] lg:max-w-[580px] lg:gap-4 lg:px-[22px] lg:py-4'>
 			<ToggleButtonGroup
 				value={lossType}
 				exclusive
 				onChange={handleLossTypeClick}
 				aria-label='loss-type'
-				className='border-gray-light2 flex gap-1 border-2 border-solid [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5'
+				className='lg:border-gray-light2 flex gap-2 border-2 border-solid border-gray-light max-lg:py-3 lg:gap-1 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5'
 			>
 				<ToggleButton
 					className={clsx('text-base', {
@@ -108,8 +108,8 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 					{t('flood')}
 				</ToggleButton>
 			</ToggleButtonGroup>
-			<Box className='flex flex-col gap-2'>
-				<Card className='bg-gray-dark3 box-border w-full border-2 border-solid border-[#F8FAFD] px-4 py-3'>
+			<Box className='flex flex-col gap-3 lg:gap-2'>
+				<Card className='bg-gray-dark3 lg:border-gray-light2 box-border w-full border-2 border-solid border-gray-light px-4 py-3 max-lg:rounded'>
 					<CardContent className='flex flex-col gap-3 p-0'>
 						<Typography variant='body1' className='text-left text-md font-semibold text-black-dark'>
 							{t('allRegisteredAreas', { ns: 'field-loss' })}
@@ -130,17 +130,17 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 					exclusive
 					onChange={handleCardClick}
 					aria-label='card-toggle'
-					className='flex flex-col gap-2'
+					className='flex flex-col gap-3 lg:gap-2'
 				>
 					<ToggleButton
 						value={1}
-						className={clsx('m-0 p-0', {
+						className={clsx('m-0 p-0 max-lg:rounded', {
 							'border-2 border-primary': selectedCard === 1,
 							'hover:border-gray-light2 border-2 border-transparent': selectedCard !== 1,
 						})}
 					>
 						<Card
-							className={clsx('w-full border-solid', {
+							className={clsx('w-full border-solid max-lg:rounded', {
 								'border border-transparent': selectedCard === 1,
 								'border border-gray-light': selectedCard !== 1,
 							})}
@@ -172,13 +172,13 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 					</ToggleButton>
 					<ToggleButton
 						value={2}
-						className={clsx('m-0 p-0', {
+						className={clsx('m-0 p-0 max-lg:rounded', {
 							'border-2 border-primary': selectedCard === 2,
 							'hover:border-gray-light2 border-2 border-transparent': selectedCard !== 2,
 						})}
 					>
 						<Card
-							className={clsx('w-full border-solid', {
+							className={clsx('w-full border-solid max-lg:rounded', {
 								'border border-transparent': selectedCard === 2,
 								'border border-gray-light': selectedCard !== 2,
 							})}
