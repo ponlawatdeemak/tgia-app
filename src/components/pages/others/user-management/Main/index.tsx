@@ -9,12 +9,13 @@ export const UserManagementMain = () => {
 	const [searchParams, setSearchParams] = useState<GetSearchUMDtoIn>({
 		keyword: '',
 		firstName: '',
-		sortField: '',
+		sortField: 'firstName',
 		sortOrder: SortType.ASC,
 		limit: 10,
-		offset: 1,
+		offset: 0,
 	})
 	const [isSearch, setIsSearch] = useState<boolean>(false)
+	const [page, setPage] = useState<number>(1)
 
 	return (
 		<div className='flex flex-col'>
@@ -23,12 +24,16 @@ export const UserManagementMain = () => {
 				setSearchParams={setSearchParams}
 				isSearch={isSearch}
 				setIsSearch={setIsSearch}
+				page={page}
+				setPage={setPage}
 			/>
 			<UserManagementTable
 				searchParams={searchParams}
 				setSearchParams={setSearchParams}
 				isSearch={isSearch}
 				setIsSearch={setIsSearch}
+				page={page}
+				setPage={setPage}
 			/>
 		</div>
 	)
