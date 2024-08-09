@@ -11,6 +11,8 @@ import { createInstance } from 'i18next'
 import { initI18next } from '@/i18n'
 import { Language } from '@/enum'
 import { fallbackLng } from '@/i18n/settings'
+import { enUS, th } from 'date-fns/locale'
+import { setDefaultOptions } from 'date-fns'
 
 interface ProvidersProps extends PropsWithChildren {
 	lng: string
@@ -29,6 +31,7 @@ const Providers: React.FC<ProvidersProps> = ({ children, lng }) => {
 
 	const i18n = createInstance()
 	const language: Language = lng === Language.EN ? Language.EN : fallbackLng
+	setDefaultOptions({ locale: language === Language.TH ? th : enUS })
 	initI18next(language, 'appbar', i18n)
 
 	return (

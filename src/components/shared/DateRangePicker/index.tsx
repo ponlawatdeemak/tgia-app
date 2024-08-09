@@ -1,16 +1,23 @@
 'use client'
 
+import useSearchFieldLoss from '@/components/pages/field-loss/Main/context'
 import useResponsive from '@/hook/responsive'
+import { formatDate } from '@/utils/date'
 import { mdiCalendarMonthOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import { Button, IconButton } from '@mui/material'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import RangePickerPopover from './RangePickerPopover'
 import useRangePicker from './context'
 
-const DateRangePicker = () => {
+interface DateRangePickerProps {}
+
+const DateRangePicker: React.FC<DateRangePickerProps> = () => {
 	const { open, setOpen } = useRangePicker()
+	const { queryParams } = useSearchFieldLoss()
 	const { isDesktop } = useResponsive()
+	const { i18n } = useTranslation()
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -22,9 +29,10 @@ const DateRangePicker = () => {
 		}
 	}
 
-	const handleDateChange = () => {
-		//
-	}
+	const formatDateRange =
+		queryParams.startDate && queryParams.endDate
+			? `${formatDate(queryParams.startDate, 'dd MMM yyyy', i18n.language)} - ${formatDate(queryParams.endDate, 'dd MMM yyyy', i18n.language)}`
+			: ''
 
 	return (
 		<>
@@ -37,18 +45,13 @@ const DateRangePicker = () => {
 			<Button
 				variant='contained'
 				color='secondary'
-				className='hidden min-w-[250px] lg:flex'
+				className='hidden min-w-[280px] lg:flex'
 				startIcon={<Icon path={mdiCalendarMonthOutline} size={1} />}
 				onClick={handleClick}
 			>
-				01 เม.ย. 2567 – 15 เม.ย. 2567
+				{formatDateRange}
 			</Button>
-			<RangePickerPopover
-				anchorEl={anchorEl}
-				setAnchorEl={setAnchorEl}
-				onChange={handleDateChange}
-				className='hidden lg:flex'
-			/>
+			<RangePickerPopover anchorEl={anchorEl} setAnchorEl={setAnchorEl} className='hidden lg:flex' />
 		</>
 	)
 }

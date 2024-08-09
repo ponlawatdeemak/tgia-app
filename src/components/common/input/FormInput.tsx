@@ -15,6 +15,7 @@ const FormInput: React.FC<FormInputProps> = ({
 	className,
 	required = false,
 	fullWidth = true,
+	value,
 	...props
 }) => {
 	const errorMessage = formik?.touched[name] && formik?.errors[name]
@@ -28,7 +29,7 @@ const FormInput: React.FC<FormInputProps> = ({
 				id={`${name}-input`}
 				name={name}
 				size='small'
-				value={formik?.values[name]}
+				value={formik?.values[name] || value}
 				onChange={formik?.handleChange}
 				error={formik?.touched[name] && Boolean(formik?.errors[name])}
 			/>

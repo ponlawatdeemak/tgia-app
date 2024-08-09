@@ -35,6 +35,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs, { Dayjs } from 'dayjs'
+import DateRangePicker from '@/components/shared/DateRangePicker'
 
 interface OptionType {
 	name: string
@@ -433,7 +434,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
 				>
 					เพิ่มผู้ใช้งาน
 				</Button> */}
-				<div className='h-[40px] w-[250px] rounded-lg bg-white [&_.MuiStack-root]:p-0'>
+				{/* <div className='h-[40px] w-[250px] rounded-lg bg-white [&_.MuiStack-root]:p-0'>
 					<LocalizationProvider dateAdapter={AdapterDayjs}>
 						<DemoContainer
 							components={['DatePicker', 'DatePicker']}
@@ -458,7 +459,8 @@ const SearchForm: React.FC<SearchFormProps> = ({
 							</div>
 						</DemoContainer>
 					</LocalizationProvider>
-				</div>
+				</div> */}
+				<DateRangePicker />
 				<Button
 					className='h-[40px] min-w-[40px] bg-white p-[8px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
 					variant='contained'

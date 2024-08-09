@@ -1,23 +1,21 @@
-import { Dayjs } from 'dayjs'
+import { addDays } from 'date-fns'
 import { create } from 'zustand'
 
-export interface DateRangeType {
-	startDate: Dayjs | null
-	endDate: Dayjs | null
+export interface DateRangesType {
+	startDate: Date
+	endDate: Date
 }
 
 interface RangePickerContextType {
 	open: boolean
 	setOpen: (open: boolean) => void
-	dateRange: DateRangeType
-	setDateRange: (dateRange: DateRangeType) => void
+	resetDateRanges: DateRangesType
 }
 
 const useRangePicker = create<RangePickerContextType>((set) => ({
 	open: false,
 	setOpen: (open: boolean) => set({ open }),
-	dateRange: { startDate: null, endDate: null },
-	setDateRange: (dateRange: DateRangeType) => set({ dateRange }),
+	resetDateRanges: { startDate: new Date(), endDate: addDays(new Date(), 15) },
 }))
 
 export default useRangePicker
