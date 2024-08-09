@@ -42,11 +42,13 @@ export const FieldLossMain = () => {
 				setStartDate={setStartDate}
 				setEndDate={setEndDate}
 			/>
-			<Paper className='mb-4 flex h-full overflow-hidden rounded-none px-4 max-lg:flex-col max-lg:gap-3 max-lg:bg-gray-light lg:mx-4 lg:rounded-lg lg:px-0'>
+			<Paper className='mb-4 flex h-full overflow-hidden rounded-none lg:mx-4 lg:rounded-lg'>
 				{open && !isDesktop ? (
-					<RangePickerPage />
+					<div className='flex flex-grow bg-white px-4 lg:hidden lg:px-0'>
+						<RangePickerPage />
+					</div>
 				) : (
-					<>
+					<div className='flex w-full px-4 max-lg:flex-col max-lg:gap-3 max-lg:bg-gray-light lg:px-0'>
 						<FieldLossSummary
 							selectedOption={selectedOption}
 							startDate={startDate}
@@ -60,7 +62,7 @@ export const FieldLossMain = () => {
 							endDate={endDate}
 							lossType={lossType}
 						/>
-					</>
+					</div>
 				)}
 			</Paper>
 		</div>

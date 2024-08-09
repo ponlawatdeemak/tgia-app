@@ -35,7 +35,7 @@ const RangePickerPage: React.FC<RangePickerPageProps> = () => {
 	}
 
 	return (
-		<div className='flex flex-grow flex-col pt-6 lg:hidden'>
+		<div className='flex flex-grow flex-col pt-6'>
 			<div className='flex flex-grow'>
 				<RangeCalendar dateRange={ranges} onChange={handleChangeDateRanges} />
 			</div>
