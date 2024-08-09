@@ -7,7 +7,6 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
-import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import Typography from '@mui/material/Typography'
@@ -15,14 +14,13 @@ import Paper from '@mui/material/Paper'
 import Checkbox from '@mui/material/Checkbox'
 import { visuallyHidden } from '@mui/utils'
 import { SortType } from '@/enum'
-import { Delete, Sort } from '@mui/icons-material'
 import um from '@/api/um'
 import { DeleteProfileDtoIn, GetSearchUMDtoIn, PatchStatusDtoIn } from '@/api/um/dto-in.dto'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useSwitchLanguage } from '@/i18n/client'
 import { Language } from '@/enum'
-import { Button, PropTypes } from '@mui/material'
+import { Button } from '@mui/material'
 import { GetSearchUMDtoOut } from '@/api/um/dto-out.dto'
 import { ResponseLanguage } from '@/api/interface'
 import { IconButton } from '@mui/material'
@@ -32,18 +30,12 @@ import { mdiPencilOutline } from '@mdi/js'
 import Stack from '@mui/material/Stack'
 import TableFooter from '@mui/material/TableFooter'
 import Pagination from '@mui/material/Pagination'
-import service from '@/api'
-import { request } from 'http'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import DialogTitle from '@mui/material/DialogTitle'
-import CloseIcon from '@mui/icons-material/Close'
 import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
 import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
 import { useSession } from 'next-auth/react'
+import { isSea } from 'node:sea'
+import AlertConfirm from '@/components/common/dialog/AlertConfirm'
 
 interface Data {
 	id: number
@@ -71,136 +63,6 @@ interface UserManagementTableProps {
 	setIsSearch: React.Dispatch<React.SetStateAction<boolean>>
 	page: number
 	setPage: React.Dispatch<React.SetStateAction<number>>
-}
-
-interface ConfirmModalProps {
-	isOpen: boolean
-	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-	action: string
-	id: string
-	handleOnClickConfirmDelete: (id: string) => Promise<void>
-	handleOnClickDeleteUser: () => Promise<void>
-	handleOnClickOpenUser: () => Promise<void>
-	handleOnClickCloseUser: () => Promise<void>
-}
-
-const ConfirmModal: React.FC<ConfirmModalProps> = ({
-	isOpen,
-	setIsOpen,
-	action,
-	id,
-	handleOnClickConfirmDelete,
-	handleOnClickDeleteUser,
-	handleOnClickOpenUser,
-	handleOnClickCloseUser,
-}) => {
-	const { t, i18n } = useTranslation('default')
-	const handleClose = () => {
-		setIsOpen(false)
-	}
-
-	const handleClick = () => {
-		switch (action) {
-			case 'deleteOne': {
-				handleOnClickConfirmDelete(id)
-				break
-			}
-			case 'deleteMany': {
-				handleOnClickDeleteUser()
-				break
-			}
-			case 'openMany': {
-				handleOnClickOpenUser()
-				break
-			}
-			case 'closeMany': {
-				handleOnClickCloseUser()
-				break
-			}
-			default: {
-				console.error('No function found for action :: ', action)
-				break
-			}
-		}
-		handleClose()
-	}
-
-	const getTitle = () => {
-		switch (action) {
-			case 'deleteOne': {
-				return i18n.language === 'th' ? 'ลบบัญชีผู้ใช้งาน' : 'Delete User'
-			}
-			case 'deleteMany': {
-				return i18n.language === 'th' ? 'ลบบัญชีผู้ใช้งาน' : 'Delete Users'
-			}
-			case 'openMany': {
-				return i18n.language === 'th' ? 'เปิดผู้ใช้งาน' : 'Open Users'
-			}
-			case 'closeMany': {
-				return i18n.language === 'th' ? 'ปิดผู้ใช้งาน' : 'Close Users'
-			}
-			default: {
-				return 'Default Title'
-			}
-		}
-	}
-
-	const getBody = () => {
-		switch (action) {
-			case 'deleteOne': {
-				return i18n.language === 'th'
-					? 'ต้องการยืนยันการลบบัญชีผู้ใช้งานนี้ใช่หรือไม่'
-					: 'Are you sure you want to delete this user ?'
-			}
-			case 'deleteMany': {
-				return i18n.language === 'th'
-					? 'ต้องการยืนยันการลบบัญชีผู้ใช้งานนี้ใช่หรือไม่'
-					: 'Are you sure you want to delete this user ?'
-			}
-			case 'openMany': {
-				return i18n.language === 'th'
-					? 'ต้องการยืนยันการเปิดใช้งานบัญชีผู้ใช้งานนี้ใช่หรือไม่'
-					: 'Are you sure you want to open these users ?'
-			}
-			case 'closeMany': {
-				return i18n.language === 'th'
-					? 'ต้องการยืนยันการปิดใช้งานบัญชีผู้ใช้งานนี้ใช่หรือไม่'
-					: 'Are you sure you want to close these users ?'
-			}
-			default: {
-				return 'Default Body Text'
-			}
-		}
-	}
-	return (
-		<Dialog
-			open={isOpen}
-			onClose={handleClose}
-			aria-labelledby='alert-dialog-title'
-			aria-describedby='alert-dialog-description'
-		>
-			<DialogTitle id='alert-dialog-title'>{getTitle()}</DialogTitle>
-			<IconButton
-				aria-label='close'
-				onClick={handleClose}
-				sx={{
-					position: 'absolute',
-					right: 8,
-					top: 8,
-					color: (theme) => theme.palette.grey[500],
-				}}
-			>
-				<CloseIcon />
-			</IconButton>
-			<DialogContent>
-				<DialogContentText id='alert-dialog-description'>{getBody()}</DialogContentText>
-			</DialogContent>
-			<DialogActions>
-				<Button onClick={handleClose}>{t('cancel')}</Button>
-				<Button onClick={handleClick}>{t('confirm')}</Button>
-			</DialogActions>
-		</Dialog>
-	)
 }
 
 const UserManagementTable: React.FC<UserManagementTableProps> = ({
@@ -270,17 +132,18 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	// TableData State
 	const [tableData, setTableData] = React.useState<GetSearchUMDtoOut[]>([])
 	const [total, setTotal] = React.useState<number>(0)
-	const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = React.useState<boolean>(false)
 	const [currentDeleteId, setCurrentDeleteId] = React.useState<string>('')
-	const [isSelectAll, setIsSelectAll] = React.useState<boolean>(false)
 	const [alertInfo, setAlertInfo] = React.useState<AlertInfoType>({
 		open: false,
 		severity: 'success',
 		message: '',
 	})
+	const [isConfirmDeleteOneOpen, setIsConfirmDeleteOneOpen] = React.useState<boolean>(false)
+	const [isConfirmDeleteManyOpen, setIsConfirmDeleteManyOpen] = React.useState<boolean>(false)
+	const [isConfirmOpenManyOpen, setIsConfirmOpenManyOpen] = React.useState<boolean>(false)
+	const [isConfirmCloseManyOpen, setIsConfirmCloseManyOpen] = React.useState<boolean>(false)
 
 	// ModalAction
-	const [action, setAction] = React.useState<string>('')
 
 	const { data: resData, isLoading: isTableDataLoading } = useQuery({
 		queryKey: ['getSearchUM', searchParams],
@@ -380,7 +243,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			const res = await mutateDeleteProfile(payload)
 			queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 			setIsSearch(true)
-			// setAlertInfo
+			setAlertInfo({ open: true, severity: 'success', message: t('success.profileDelete') })
 			console.log(res)
 		} catch (error) {
 			console.error(error)
@@ -470,14 +333,17 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		}
 	}
 
-	const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
-		setSearchParams((prevSearch) => ({
-			...prevSearch,
-			offset: page < value ? prevSearch.offset + 10 : prevSearch.offset - 10,
-		}))
-		setIsSearch(true)
-		setPage(value)
-	}
+	const handlePagination = React.useCallback(
+		(event: React.ChangeEvent<unknown>, value: number) => {
+			setSearchParams((prevSearch) => ({
+				...prevSearch,
+				offset: page < value ? prevSearch.offset + 10 : prevSearch.offset - 10,
+			}))
+			setIsSearch(true)
+			setPage(value)
+		},
+		[setSearchParams, setIsSearch, setPage, page],
+	)
 
 	const isSelected = (id: string) => selected.indexOf(id) !== -1
 
@@ -511,8 +377,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								variant='contained'
 								color='primary'
 								onClick={() => {
-									setAction('openMany')
-									setIsConfirmDeleteOpen(true)
+									setIsConfirmOpenManyOpen(true)
 								}}
 							>
 								เปิดใช้งาน
@@ -522,8 +387,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								variant='contained'
 								color='primary'
 								onClick={() => {
-									setAction('closeMany')
-									setIsConfirmDeleteOpen(true)
+									setIsConfirmCloseManyOpen(true)
 								}}
 							>
 								ปิดใช้งาน
@@ -534,8 +398,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								color='primary'
 								startIcon={<Icon path={mdiTrashCanOutline} size={1} color='var(--black-color)' />}
 								onClick={() => {
-									setAction('deleteMany')
-									setIsConfirmDeleteOpen(true)
+									setIsConfirmDeleteManyOpen(true)
 								}}
 							>
 								ลบผู้ใช้งาน
@@ -595,7 +458,6 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								{tableData.map((row, index) => {
 									const isItemSelected = isSelected(row.id)
 									const labelId = `enhanced-table-checkbox-${index}`
-
 									return (
 										<TableRow
 											hover
@@ -669,8 +531,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 																// stop event propagation to prevent row select
 																e.stopPropagation()
 																setCurrentDeleteId(row.id)
-																setAction('deleteOne')
-																setIsConfirmDeleteOpen(true)
+																setIsConfirmDeleteOneOpen(true)
 															}}
 															disabled={session?.user.id === row.id}
 														>
@@ -733,15 +594,58 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					</TableContainer>
 				</Box>
 			</Paper>
-			<ConfirmModal
-				isOpen={isConfirmDeleteOpen}
-				setIsOpen={setIsConfirmDeleteOpen}
-				action={action}
-				id={currentDeleteId}
-				handleOnClickConfirmDelete={handleOnClickConfirmDelete}
-				handleOnClickDeleteUser={handleOnClickDeleteUser}
-				handleOnClickOpenUser={handleOnClickOpenUser}
-				handleOnClickCloseUser={handleOnClickCloseUser}
+			{/* <AlertConfirm/> x 4 forEach function */}
+			{/* Alert Confirm DeleteOne */}
+			<AlertConfirm
+				open={isConfirmDeleteOneOpen}
+				title={i18n.language === 'th' ? 'ลบบัญชีผู้ใช้งาน' : 'Delete User'}
+				content='Delete One'
+				onClose={() => {
+					setIsConfirmDeleteOneOpen(false)
+				}}
+				onConfirm={() => {
+					handleOnClickConfirmDelete(currentDeleteId)
+					setIsConfirmDeleteOneOpen(false)
+				}}
+			/>
+			{/* Alert Confirm Delete Many */}
+			<AlertConfirm
+				open={isConfirmDeleteManyOpen}
+				title={i18n.language === 'th' ? 'ลบบัญชีผู้ใช้งาน' : 'Delete Users'}
+				content='Delete Many'
+				onClose={() => {
+					setIsConfirmDeleteManyOpen(false)
+				}}
+				onConfirm={() => {
+					handleOnClickDeleteUser()
+					setIsConfirmDeleteManyOpen(false)
+				}}
+			/>
+			{/* Alert Confirm Open Many */}
+			<AlertConfirm
+				open={isConfirmOpenManyOpen}
+				title={i18n.language === 'th' ? 'เปิดผู้ใช้งาน' : 'Open Users'}
+				content='Open Many'
+				onClose={() => {
+					setIsConfirmOpenManyOpen(false)
+				}}
+				onConfirm={() => {
+					handleOnClickOpenUser()
+					setIsConfirmOpenManyOpen(false)
+				}}
+			/>
+			{/* Alert Confirm Close Many */}
+			<AlertConfirm
+				open={isConfirmCloseManyOpen}
+				title={i18n.language === 'th' ? 'ปิดผู้ใช้งาน' : 'Close Users'}
+				content='Close Many'
+				onClose={() => {
+					setIsConfirmCloseManyOpen(false)
+				}}
+				onConfirm={() => {
+					handleOnClickCloseUser()
+					setIsConfirmCloseManyOpen(false)
+				}}
 			/>
 			<Snackbar
 				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
