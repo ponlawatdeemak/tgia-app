@@ -1,4 +1,4 @@
-import { LayersList } from '@deck.gl/core'
+import { Layer, LayersList } from '@deck.gl/core'
 
 import { PropsWithChildren } from 'react'
 
@@ -14,5 +14,5 @@ export interface MapViewState {
 }
 
 export interface MapViewProps extends PropsWithChildren {
-	className?: string
+	className?: string 
 }
