@@ -49,3 +49,7 @@ export interface GetSearchUMDtoOut extends GetProfileDtoOut {
 export interface PatchStatusDtoOut {
 	id : string,
 }
+
+export interface DeleteProfileDtoOut {
+	id: string
+}
