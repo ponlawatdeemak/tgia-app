@@ -100,7 +100,7 @@ const MapTools: React.FC<MapToolsProps> = ({ onBasemapChange, onZoomIn, onZoomOu
 									value={item.value}
 								>
 									<img src={item.image} className='w-full' />
-									<Typography variant={'body2'} align='center'>
+									<Typography variant={'body2'} align='center' className='text-sm'>
 										{item.label}
 									</Typography>
 								</ToggleButton>
