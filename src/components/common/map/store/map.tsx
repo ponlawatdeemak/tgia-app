@@ -43,6 +43,7 @@ export const useLayerStore = create<LayerStore>()((set) => ({
 			getLineWidth: 10,
 			radiusScale: 6,
 			pickable: true,
+			
 		}),
 	],
 }))
