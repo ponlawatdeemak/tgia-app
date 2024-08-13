@@ -29,7 +29,7 @@ export default function RootLayout({
 		<html lang={lng}>
 			<body className={anuphan.className}>
 				<AppRouterCacheProvider options={{ enableCssLayer: true }}>
-					<Providers>
+					<Providers lng={lng}>
 						<div className='flex h-full flex-1 flex-col bg-background'>{children}</div>
 					</Providers>
 				</AppRouterCacheProvider>

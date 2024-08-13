@@ -13,8 +13,7 @@ import {
 import React from 'react'
 import { mdiClose } from '@mdi/js'
 import Icon from '@mdi/react'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
+import { useTranslation } from 'react-i18next'
 
 export interface AlertConfirmProps {
 	open: boolean
@@ -43,8 +42,7 @@ const AlertConfirm: React.FC<AlertConfirmProps> = ({
 	onClose,
 	onConfirm,
 }) => {
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+	const { t } = useTranslation(['default'])
 
 	return (
 		<Dialog open={open} onClose={onClose} className='[&_.MuiDialog-paper]:w-[560px]'>
@@ -68,7 +66,7 @@ const AlertConfirm: React.FC<AlertConfirmProps> = ({
 						size='large'
 						className='h-[40px] border-gray px-[15px] text-base font-semibold text-black'
 					>
-						{cancelTitle || t('default.cancel')}
+						{cancelTitle || t('cancel')}
 					</Button>
 					<Button
 						onClick={onConfirm}
@@ -76,7 +74,7 @@ const AlertConfirm: React.FC<AlertConfirmProps> = ({
 						size='large'
 						className='h-[40px] px-[16px] text-base font-semibold'
 					>
-						{confirmTitle || t('default.confirm')}
+						{confirmTitle || t('confirm')}
 					</Button>
 				</DialogActions>
 			) : (
@@ -87,7 +85,7 @@ const AlertConfirm: React.FC<AlertConfirmProps> = ({
 						size='large'
 						className='h-[40px] bg-error px-[16px] text-base font-semibold'
 					>
-						{confirmTitle || t('default.close')}
+						{confirmTitle || t('close')}
 					</Button>
 				</DialogActions>
 			)}

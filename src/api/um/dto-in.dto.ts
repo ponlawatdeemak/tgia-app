@@ -1,8 +1,11 @@
+import { SortType } from "@/enum"
+import { TablePagination } from "../interface"
+
 export interface GetUmDtoIn {
 	userId: string
 }
 
-export interface CreateProfileImageDtoIn {
+export interface PostUploadFilesDtoIn {
 	file: File
 }
 
@@ -15,3 +18,18 @@ export interface PutProfileDtoIn {
 	responsibleProvinceCode: string
 	responsibleDistrictCode: string
 }
+
+export interface GetSearchUMDtoIn extends TablePagination{
+	keyword : string,
+	firstName : string
+}
+
+export interface PatchStatusDtoIn {
+	id : string,
+	flagStatus : string
+}
+
+export interface DeleteProfileDtoIn {
+	id : string
+}
+

@@ -8,8 +8,9 @@ import { useFormik } from 'formik'
 import service from '@/api'
 import { useQuery } from '@tanstack/react-query'
 import * as yup from 'yup'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
+import { useTranslation } from 'react-i18next'
+import { useSwitchLanguage } from '@/i18n/client'
+import { Language } from '@/enum'
 
 export interface UserManagementProps {
 	open: boolean
@@ -31,8 +32,8 @@ const defaultFormValues: FormValues = {
 }
 
 export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+	const { t, i18n } = useTranslation(['default','um'])
+	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 
 	const handleSubmitUser = async (event: FormEvent) => {
 		console.log('Form submitted')
@@ -127,7 +128,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 				fullWidth
 				scroll='paper'
 			>
-				<DialogTitle>เพิ่มผู้ใช้งาน</DialogTitle>
+				<DialogTitle>{t('addUser', {ns : 'um'})}</DialogTitle>
 				<DialogContent className='h-[492px]' dividers={true}>
 					<ProfileForm formik={formik}></ProfileForm>
 

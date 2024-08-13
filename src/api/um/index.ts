@@ -1,11 +1,12 @@
 import { api } from '@/api/core'
+import { DeleteProfileDtoOut, GetProfileDtoOut, GetSearchUMDtoOut, GetUmDtoOut, PatchStatusDtoOut, PostUploadFilesDtoOut, PutProfileDtoOut } from '@/api/um/dto-out.dto'
+import { DeleteProfileDtoIn, GetSearchUMDtoIn, GetUmDtoIn, PatchStatusDtoIn, PostUploadFilesDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
 import { APIService, ResponseDto } from '@/api/interface'
-import { CreateProfileImageDtoIn, GetUmDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
-import { CreateProfileImageDtoOut, GetProfileDtoOut, GetUmDtoOut, PutProfileDtoOut } from '@/api/um/dto-out.dto'
 
+// Api for Profile and UM
 const um = {
-	getUser: async (payload: GetUmDtoIn): Promise<ResponseDto<GetUmDtoOut>> => await api.get(`/um/${payload.userId}`),
-	uploadImg: async (payload: CreateProfileImageDtoIn): Promise<ResponseDto<CreateProfileImageDtoOut>> => {
+	getUM: async (payload: GetUmDtoIn): Promise<ResponseDto<GetUmDtoOut>> => await api.get(`/um/${payload.userId}`),
+	postUploadFiles: async (payload: PostUploadFilesDtoIn): Promise<ResponseDto<PostUploadFilesDtoOut>> => {
 		const formData = new FormData()
 		formData.append('file', payload.file)
 		return await api.post('/files/upload', formData, APIService.WebAPI, {
@@ -17,6 +18,11 @@ const um = {
 	getProfile: async (): Promise<ResponseDto<GetProfileDtoOut>> => await api.get('/profile'),
 	putProfile: async (payload: PutProfileDtoIn): Promise<ResponseDto<PutProfileDtoOut>> =>
 		await api.put('/profile', payload),
+	getSearchUM: async (payload: GetSearchUMDtoIn): Promise<ResponseDto<GetSearchUMDtoOut[]>> => 
+		(await api.get(`/um/search?keyword=${payload.keyword}&sortField=${payload.sortField}&sortOrder=${payload.sortOrder}&limit=${payload.limit}&offset=${payload.offset}`)),
+	patchStatus: async (payload: PatchStatusDtoIn) : Promise<ResponseDto<PatchStatusDtoOut>> =>
+		await api.patch(`/um/${payload.id}`,payload),
+	deleteProfile: async (payload: DeleteProfileDtoIn) : Promise<ResponseDto<DeleteProfileDtoOut>> => await api.delete(`/um/${payload.id}`)
 }
 
 export default um

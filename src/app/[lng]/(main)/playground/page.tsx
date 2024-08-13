@@ -6,23 +6,18 @@ import TextField from '@mui/material/TextField'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
-// import { useBearStore, useLanguageTest } from '@/store/languageTest'
-import useLanguage from '@/store/language'
 import { Language } from '@/enum'
 
 import service from '@/api'
+import StackedProgressBar from '@/components/common/progress-bar/StackedProgressBar'
+import { LossTypeColor } from '@/config/color'
 
 export default function PlaygroundPage() {
 	const [value, setValue] = React.useState<Dayjs | null>(dayjs('2022-04-07'))
 
-	const { language, setLanguage } = useLanguage()
+	const text = `text-2xl text-[${LossTypeColor.drought}]`
 
-	React.useEffect(() => {
-		try {
-		} catch (error) {
-			throw new Error('Access Profile failed')
-		}
-	}, [])
+	const textFlood = `text-2xl text-[${LossTypeColor.flood}]`
 
 	return (
 		<main>
@@ -36,6 +31,27 @@ export default function PlaygroundPage() {
 				<DateCalendar />
 			</LocalizationProvider>
 
+			<div>
+				<div className='w-3/6'>
+					<StackedProgressBar
+						data={[
+							{
+								label: 'drought',
+								percent: 20,
+								color: '#E34A33',
+							},
+							{
+								label: 'flood',
+								percent: 30,
+								color: '#3182BD',
+							},
+						]}
+					></StackedProgressBar>
+				</div>
+
+				<div className='w-3/6'> sss </div>
+			</div>
+
 			<Button
 				onClick={async () => {
 					const adminPoly = await service.fieldLoss.getSearchAdminPoly({ keyword: 'บาง' })
@@ -45,7 +61,6 @@ export default function PlaygroundPage() {
 					// .catch((error) => {
 					// 	console.log('error ', error)
 					// })
-					console.log('adminPoly', adminPoly)
 				}}
 			>
 				Test Search
@@ -54,37 +69,13 @@ export default function PlaygroundPage() {
 			<Button variant='contained'>Contained</Button>
 			<Button variant='outlined'>Outlined</Button>
 
-			<Button
-				onClick={() => {
-					setLanguage(Language.TH)
-				}}
-			>
-				{' '}
-				TH{' '}
-			</Button>
-			<Button
-				onClick={() => {
-					setLanguage(Language.EN)
-				}}
-			>
-				{' '}
-				EN{' '}
-			</Button>
-			<Button
-				onClick={() => {
-					console.log('languageTest ', language)
-				}}
-			>
-				show
-			</Button>
-
-			<div className='text-2xs'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-xs'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-sm'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-base'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-lg'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-xl'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-2xl'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className={text}>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี test </div>
+			<div className='text-xs text-[#E34A33]'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className='text-sm text-lossType-drought'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className='text-base text-lossType-flood'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className='text-lg text-lossType'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className='text-xl text-[#3182BD]'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className={textFlood}>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี Flood</div>
 
 			<div>NEXT_PUBLIC_API_URL_DISASTER {process.env.NEXT_PUBLIC_API_URL_DISASTER}</div>
 

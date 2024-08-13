@@ -94,7 +94,6 @@ const responseWithLanguageCookie = (req: NextRequestWithAuth, redirectUrl?: URL)
 	}
 	return NextResponse.next()
 }
-
 export const config = {
 	matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
 }

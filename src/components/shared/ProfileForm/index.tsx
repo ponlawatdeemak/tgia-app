@@ -9,8 +9,9 @@ import { FormikProps } from 'formik'
 import { useEffect } from 'react'
 import service from '@/api'
 import { useQuery } from '@tanstack/react-query'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
+import { useTranslation } from 'react-i18next'
+import { useSwitchLanguage } from '@/i18n/client'
+import { Language } from '@/enum'
 
 export interface ProfileFormProps {
 	formik: FormikProps<any>
@@ -18,8 +19,8 @@ export interface ProfileFormProps {
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) => {
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+	const { t, i18n } = useTranslation(['default', 'um'])
+	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 
 	const { data: provinceLookupData, isLoading: isProvinceDataLoading } = useQuery({
 		queryKey: ['getProvince'],
@@ -70,7 +71,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 						<FormInput
 							className='w-full text-sm font-medium lg:w-[240px]'
 							name='firstName'
-							label={t('default.firstName')}
+							label={t('firstName')}
 							formik={formik}
 							required
 							disabled={loading}
@@ -78,7 +79,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 						<FormInput
 							className='w-full text-sm font-medium lg:w-[240px]'
 							name='lastName'
-							label={t('default.lastName')}
+							label={t('lastName')}
 							formik={formik}
 							required
 							disabled={loading}
@@ -88,7 +89,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 						<FormInput
 							className='w-full text-sm font-medium lg:w-[240px]'
 							name='email'
-							label={t('default.email')}
+							label={t('email')}
 							formik={formik}
 							required
 							disabled
@@ -105,9 +106,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 									value: String(item.code),
 								})) || []
 							}
-							getOptionLabel={(option) => option.name[language]}
+							getOptionLabel={(option) => option.name[i18n.language]}
 							name='responsibleProvinceCode'
-							label={t('default.province')}
+							label={t('belongProvince', { ns: 'um' })}
 							formik={formik}
 							disabled={isProvinceDataLoading || loading}
 							required
@@ -120,9 +121,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 									value: String(item.code),
 								})) || []
 							}
-							getOptionLabel={(option) => option.name?.[language]}
+							getOptionLabel={(option) => option.name?.[i18n.language]}
 							name='responsibleDistrictCode'
-							label={t('default.amphor')}
+							label={t('belongDistrict', { ns: 'um' })}
 							formik={formik}
 							disabled={isDistricDataLoading || loading || !formik.values.responsibleProvinceCode}
 						/>
@@ -136,9 +137,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 									value: item.code,
 								})) || []
 							}
-							getOptionLabel={(option) => option.name[language]}
+							getOptionLabel={(option) => option.name[i18n.language]}
 							name='orgCode'
-							label={t('default.org')}
+							label={t('org')}
 							formik={formik}
 							disabled
 						/>
@@ -150,9 +151,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 									value: item.code,
 								})) || []
 							}
-							getOptionLabel={(option) => option.name[language]}
+							getOptionLabel={(option) => option.name[i18n.language]}
 							name='role'
-							label={t('default.role')}
+							label={t('role')}
 							formik={formik}
 							disabled
 						/>

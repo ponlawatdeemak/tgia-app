@@ -1,4 +1,4 @@
-import { UserRole } from '@/enum/um.enum'
+import { UserRole } from '../enum/um.enum'
 
 export enum AuthPath {
 	Login = '/auth/login',
