@@ -7,31 +7,35 @@ import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentL
 import ThaicomLogo from '@/components/svg/ThaicomLogo'
 import TriangleLogo from '@/components/svg/TriangleLogo'
 import { AppPath } from '@/config/app'
-import { Language } from '@/enum'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
 import LoadingButton from '@mui/lab/LoadingButton'
-import { CircularProgress, FormHelperText, Link, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { CircularProgress, FormHelperText, Link, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import { signIn } from 'next-auth/react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
+import LanguageSwitcher from './LanguageSwitcher'
+import { Language } from '@/enum'
 
-const LoginMain = () => {
+interface LoginMainProps {}
+
+const LoginMain: React.FC<LoginMainProps> = () => {
 	const searchParams = useSearchParams()
-	const { language, setLanguage } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
-	const pathname = usePathname()
+	const { t, i18n } = useTranslation(['appbar', 'default'])
 	const router = useRouter()
 	const callbackUrl = useMemo(() => searchParams?.get('callbackUrl'), [searchParams])
 	const [busy, setBusy] = useState<boolean>(false)
 	const [error, setError] = useState<ErrorResponse>()
 
-	const validationSchema = yup.object({
-		username: yup.string().required(t('warning.inputEmail')),
-		password: yup.string().required(t('warning.inputPassword')),
-	})
+	const validationSchema = useMemo(
+		() =>
+			yup.object({
+				username: yup.string().required(t('warning.inputEmail')),
+				password: yup.string().required(t('warning.inputPassword')),
+			}),
+		[t],
+	)
 
 	const onSubmit = useCallback(
 		async (values: LoginDtoIn) => {
@@ -87,34 +91,7 @@ const LoginMain = () => {
 			</div>
 			<div className='flex h-full flex-col items-center justify-center bg-white'>
 				<div className='fixed right-4 top-4'>
-					<ToggleButtonGroup
-						className='box-border flex p-1'
-						value={language}
-						exclusive
-						color='primary'
-						onChange={(event: React.MouseEvent<HTMLElement>, newLanguage: Language) => {
-							if (newLanguage !== null) {
-								setLanguage(newLanguage)
-								const oldLanguage = pathname?.split('/')?.[1]
-								router.push(window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
-							}
-						}}
-					>
-						<ToggleButton
-							className='primary-color rounded px-3 py-0.5 text-sm'
-							value={Language.TH}
-							aria-label='left aligned'
-						>
-							TH
-						</ToggleButton>
-						<ToggleButton
-							className='rounded px-3 py-0.5 text-sm'
-							value={Language.EN}
-							aria-label='right aligned'
-						>
-							EN
-						</ToggleButton>
-					</ToggleButtonGroup>
+					<LanguageSwitcher />
 				</div>
 				<div className='mx-2 flex flex-col lg:w-[500px]'>
 					<div className='flex justify-center gap-1'>
@@ -122,16 +99,22 @@ const LoginMain = () => {
 						<AgriculturalDepartmentLogo width={70} height={70} />
 					</div>
 					<Typography className='mb-6 mt-3 text-center text-2xl font-semibold sm:mx-10'>
-						{t('auth.title')}
-						<br />
-						{t('auth.subTitle')}
+						{t('appName', { ns: 'default' })}
+						{i18n.language === Language.TH ? (
+							<>
+								<br />
+							</>
+						) : (
+							<> </>
+						)}
+						{t('subAppName', { ns: 'default' })}
 					</Typography>
 					<form onSubmit={formik.handleSubmit} className='flex flex-col lg:mx-6'>
-						<FormInput disabled={busy} name='username' label={t('default.userName')} formik={formik} />
+						<FormInput disabled={busy} name='username' label={t('userName')} formik={formik} />
 						<PasswordInput
 							disabled={busy}
 							name='password'
-							label={t('default.password')}
+							label={t('password')}
 							formik={formik}
 							className='mt-4'
 						/>

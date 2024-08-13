@@ -5,6 +5,8 @@ const nextConfig = {
 		API_KEY: process.env.API_KEY,
 		NEXT_PUBLIC_API_URL_DISASTER: process.env.NEXT_PUBLIC_API_URL_DISASTER,
 		API_KEY_DISASTER: process.env.API_KEY_DISASTER,
+		API_URL_TILE: process.env.API_URL_TILE,
+		API_KEY_TILE: process.env.API_KEY_TILE,
 		NEXTAUTH_URL: process.env.NEXTAUTH_URL,
 		NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
 		APP_USERNAME: process.env.APP_USERNAME || '',

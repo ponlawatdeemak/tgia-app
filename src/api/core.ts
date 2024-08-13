@@ -33,8 +33,6 @@ const instance = axios.create({
 export const api: AppAPI = {
 	...instance,
 	get: async (url: string, service: APIService = APIService.WebAPI, config?: AxiosRequestConfig<any> | undefined) => {
-		console.log('APIConfigs ', APIConfigs, APIConfigs[service].baseURL)
-		console.log('process.env  ', process.env)
 		return (await instance.get(url, getConfig(service, config)))?.data
 	},
 	post: async (
@@ -54,6 +52,12 @@ export const api: AppAPI = {
 		service: APIService = APIService.WebAPI,
 		config?: AxiosRequestConfig<any> | undefined,
 	) => await instance.delete(url, getConfig(service, config)),
+	patch: async (
+		url: string,
+		data: any,
+		service: APIService = APIService.WebAPI,
+		config?: AxiosRequestConfig<any> | undefined,
+	) => await instance.patch(url, data, getConfig(service, config)),
 }
 
 const getConfig = (service: APIService, config: AxiosRequestConfig<any> | undefined) => ({
@@ -63,6 +67,18 @@ const getConfig = (service: APIService, config: AxiosRequestConfig<any> | undefi
 		'x-api-key': APIConfigs[service].apiKey || '',
 	},
 })
+
+const fetchAPI = async (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response> => {
+	return await fetch((process.env.API_URL ?? '') + input, {
+		...init,
+		headers: {
+			...init?.headers,
+			'x-api-key': process.env.API_KEY || '',
+			Authorization: `Bearer ${apiAccessToken}`,
+		},
+		cache: 'force-cache',
+	})
+}
 
 export const refreshAccessToken = async () => {
 	const res = await service.auth.refreshToken({ userId: apiUserId || '', refreshToken: apiRefreshToken || '' })

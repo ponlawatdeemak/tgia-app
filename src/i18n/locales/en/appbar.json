@@ -1,50 +1,4 @@
 {
-	"default": {
-		"ok": "Confirm",
-		"confirm": "Confirm",
-		"cancel": "Cancel",
-		"edit": "Edit",
-		"resetPassword": "Reset Password",
-		"userName": "Username",
-		"password": "Password",
-		"passwordNew": "New Password",
-		"passwordConfirm": "Confirm Password",
-		"email": "E-mail",
-		"firstName": "First Name",
-		"lastName": "Last Name",
-		"province": "Province",
-		"amphor": "District",
-		"org": "Organization",
-		"role": "Role",
-		"setting": "Setting",
-		"back": "Back",
-		"close": "Close"
-	},
-	"warning": {
-		"inputEmail": "Please enter your email.",
-		"inputPassword": "Please enter your password.",
-		"inputNewPassword": "Please enter a new password.",
-		"inputConfirmPassword": "Please enter your confirm password.",
-		"inputVerificationCode": "Please enter the verification code.",
-		"invalidPasswordMatch": "Password must be the same.",
-		"invalidEmailFormat": "Invalid email format.",
-		"minPasswordCharacters": "Password must be at least 8 characters.",
-		"minPasswordNumber": "Password must contain at least 1 number.",
-		"minPasswordLowercaseLetter": "Password must contain at least 1 lowercase letter.",
-		"minPasswordUppercaseLetter": "Password must contain at least 1 uppercase letter.",
-		"minPasswordSymbol": "Password must contain at least 1 special symbol.",
-		"inputFirstName": "Please enter your first name.",
-		"inputLastName": "Please enter your last name.",
-		"inputProvince": "Please select your province."
-	},
-	"success": {
-		"profileUpdate": "Profile updated successfully"
-	},
-	"error": {
-		"somethingWrong": "Something went wrong. Please check the information again.",
-		"incorrectEmailOrPassword": "Incorrect email or password",
-		"profileUpdate": "Profile update failed"
-	},
 	"auth": {
 		"title": "โครงการพัฒนาระบบเทคโนโลยี",
 		"subTitle": "เพื่องานประกันภัยข้าวนาปี",
@@ -65,7 +19,9 @@
 		"headerResetPasswordSuccess": "Reset reset successful.",
 		"subHeaderResetPasswordSuccess": "Please use your new password to log in.",
 		"headerResetPasswordUnsuccess": "Reset reset unsuccessful.",
-		"subHeaderResetPasswordUnsuccess": "Please check the accuracy again."
+		"subHeaderResetPasswordUnsuccess": "Please check the accuracy again.",
+		"tokenExpire": "The Token has expired.",
+		"loginAgain": "Please Login again."
 	},
 	"menu": {
 		"fieldLoss": "Field Loss",
@@ -87,18 +43,5 @@
 			"rai": "Rai",
 			"landPlot": "Land Plot"
 		}
-	},
-	"profile": {
-		"profile": "Profile"
-	},
-	"common": {
-		"uploadImg": "Upload Image",
-		"conditionImg": "File size does not exceed 3 MB (jpg or png)"
-	},
-	"alert": {
-		"confirmUserUpdateTitle": "Confirm user account update",
-		"confirmUserUpdateContent": "Are you sure you want to update this user account?",
-		"confirmLogoutTitle": "Confirm logout",
-		"confirmLogoutContent": "Are you sure you want to log out?"
 	}
 }

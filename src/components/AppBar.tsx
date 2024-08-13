@@ -1,7 +1,11 @@
 'use client'
 
 import { AppPath, appMenuConfig, profileMenuConfig } from '@/config/app'
+import { AreaTypeKey, AreaUnitKey, Language } from '@/enum'
 import useResponsive from '@/hook/responsive'
+import useAreaType from '@/store/area-type'
+import useAreaUnit from '@/store/area-unit'
+import { areaTypeString, areaUnitString } from '@/utils/area-string'
 import { mdiAccountOutline, mdiClose, mdiMenu, mdiTune } from '@mdi/js'
 import Icon from '@mdi/react'
 import {
@@ -25,25 +29,21 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import AgriculturalDepartmentLogo from './svg/AgriculturalDepartmentLogo'
 import ThaicomLogo from './svg/ThaicomLogo'
 import TriangleLogo from './svg/TriangleLogo'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
-import { AreaTypeKey, AreaUnitKey, Language } from '@/enum'
-import useAreaType from '@/store/area-type'
-import useAreaUnit from '@/store/area-unit'
-import { areaTypeString, areaUnitString } from '@/utils/area-string'
-import { useLocalStorage } from '@/hook/local-storage'
+import { useTranslation } from 'react-i18next'
+import { useSwitchLanguage } from '@/i18n/client'
+import classNames from 'classnames'
 
 interface AppBarProps {
-	lng: string
+	className?: string
 }
 
-const AppBar: React.FC<AppBarProps> = ({ lng }) => {
+const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 	const router = useRouter()
 	const pathname = usePathname()
 	const { areaType, setAreaType } = useAreaType()
 	const { areaUnit, setAreaUnit } = useAreaUnit()
-	const { language, setLanguage } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+	const { t, i18n } = useTranslation('appbar')
+	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 	const { isDesktop } = useResponsive()
 	const { data: session } = useSession()
 	const user = session?.user ?? null
@@ -58,10 +58,10 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 	const openToggleMenu = Boolean(anchorToggleMenuEl)
 
 	useEffect(() => {
-		if (!(areaType && areaUnit && language)) return
+		if (!(areaType && areaUnit && i18n.language)) return
 
 		setMenuAreaString(`${t(areaTypeString(areaType))} (${t(areaUnitString(areaUnit))})`)
-	}, [language, areaType, areaUnit])
+	}, [i18n.language, areaType, areaUnit, t])
 
 	useEffect(() => {
 		setImage(user?.image || '')
@@ -100,9 +100,9 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 
 	const handleLanguageChange = (event: React.MouseEvent<HTMLElement>, newLanguage: Language) => {
 		if (newLanguage !== null) {
-			setLanguage(newLanguage)
+			i18nWithCookie.changeLanguage(newLanguage)
 			const oldLanguage = pathname?.split('/')?.[1]
-			router.push(window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
+			window.history.pushState(null, '', window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
 		}
 	}
 
@@ -112,7 +112,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 
 	if (isDesktop) {
 		return (
-			<div className='mb-4 flex items-center justify-between'>
+			<div className={classNames('mb-4 flex items-center justify-between', className)}>
 				<div className='flex items-center gap-4'>
 					<div className='ml-1 flex items-center gap-2 py-1'>
 						<TriangleLogo width={30} height={30} />
@@ -135,7 +135,6 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 										</Typography>
 									</MenuItem>
 									<Menu
-										id='basic-menu'
 										anchorEl={anchorOthersMenuEl}
 										open={openOthersMenu}
 										onClose={() => setAnchorOthersMenuEl(null)}
@@ -332,7 +331,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 								<Typography className='text-sm'> {t('menu.language')} </Typography>
 								<ToggleButtonGroup
 									className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
-									value={language}
+									value={i18n.language}
 									exclusive
 									onChange={handleLanguageChange}
 								>
@@ -365,7 +364,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 
 	return (
 		<div>
-			<div className='mb-2 flex items-center justify-between'>
+			<div className={classNames('mb-2 flex items-center justify-between', className)}>
 				<div className='ml-1 flex items-center gap-2 py-[4px]'>
 					<TriangleLogo width={24} height={24} />
 					<AgriculturalDepartmentLogo width={24} height={24} />
@@ -486,7 +485,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 									onClick={() => setToggle(!toggle)}
 									startIcon={<Icon path={mdiTune} size={1} />}
 								>
-									{t('default.setting')}
+									{t('setting')}
 								</Button>
 							</div>
 							<div className='flex flex-col'>
@@ -550,7 +549,7 @@ const AppBar: React.FC<AppBarProps> = ({ lng }) => {
 									<Typography className='text-sm font-medium'>ภาษา</Typography>
 									<ToggleButtonGroup
 										className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
-										value={language}
+										value={i18n.language}
 										exclusive
 										onChange={handleLanguageChange}
 									>

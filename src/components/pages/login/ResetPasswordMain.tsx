@@ -1,13 +1,8 @@
 'use client'
 
 import service from '@/api'
-import { ResetPasswordDtoIn } from '@/api/auth/dto-in.dto'
-import { ResetPasswordDtoOut } from '@/api/auth/dto-out.dto'
-import { ResponseDto } from '@/api/interface'
 import ResetPasswordForm from '@/components/shared/ResetPasswordForm'
 import { AppPath } from '@/config/app'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { CircularProgress, Typography } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
@@ -15,14 +10,19 @@ import { AxiosError } from 'axios'
 import { useFormik } from 'formik'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
+import { ResetPasswordDtoOut } from '@/api/auth/dto-out.dto'
+import { ResetPasswordDtoIn } from '@/api/auth/dto-in.dto'
+import { ResponseDto } from '@/api/interface'
 
-const ResetPasswordMain = () => {
+interface ResetPasswordProps {}
+
+const ResetPasswordMain: React.FC<ResetPasswordProps> = () => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+	const { t } = useTranslation()
 
 	const validationSchema = yup.object({
 		email: yup.string().required(),
@@ -83,12 +83,12 @@ const ResetPasswordMain = () => {
 
 	return (
 		<>
-			<AuthBreadcrumbs name={t('default.resetPassword')} href={AppPath.Login} />
+			<AuthBreadcrumbs name={t('resetPassword')} href={AppPath.Login} />
 
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center lg:mt-32 lg:items-start'>
 					<div className='mx-2 flex w-full max-w-[500px] flex-col items-center'>
-						<Typography className='mb-8 text-2xl font-bold'>{t('default.resetPassword')}</Typography>
+						<Typography className='mb-8 text-2xl font-bold'>{t('resetPassword')}</Typography>
 						<form
 							onSubmit={formik.handleSubmit}
 							className='flex w-full max-w-[340px] flex-col sm:max-w-full'
@@ -110,7 +110,7 @@ const ResetPasswordMain = () => {
 								type='submit'
 								className='mt-10 [&_.MuiButton-startIcon]:m-0'
 							>
-								<span>{t('default.confirm')}</span>
+								<span>{t('confirm')}</span>
 							</LoadingButton>
 						</form>
 					</div>

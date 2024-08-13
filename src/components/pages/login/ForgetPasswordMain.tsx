@@ -6,8 +6,6 @@ import { ForgotPasswordDtoOut } from '@/api/auth/dto-out.dto'
 import { ResponseDto } from '@/api/interface'
 import FormInput from '@/components/common/input/FormInput'
 import { AppPath } from '@/config/app'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { CircularProgress, FormHelperText, Link, Typography } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
@@ -15,13 +13,15 @@ import { AxiosError } from 'axios'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
 import AuthBreadcrumbs from './AuthBreadcrumbs'
 
-const ForgotPasswordMain = () => {
+interface ForgotPasswordMainProps {}
+
+const ForgotPasswordMain: React.FC<ForgotPasswordMainProps> = () => {
 	const router = useRouter()
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+	const { t } = useTranslation(['default', 'appbar'])
 	const {
 		isPending,
 		error,
@@ -62,15 +62,18 @@ const ForgotPasswordMain = () => {
 
 	return (
 		<>
-			<AuthBreadcrumbs name={t('auth.forgotPassword')} href={AppPath.Login} />
+			<AuthBreadcrumbs name={t('auth.forgotPassword', { ns: 'appbar' })} href={AppPath.Login} />
 
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center lg:mt-48 lg:items-start'>
 					<div className='mx-2 flex w-full max-w-[500px] flex-col items-center'>
-						<Typography className='mb-2 text-2xl font-bold'> {t('auth.headerForgotPassword')}</Typography>
+						<Typography className='mb-2 text-2xl font-bold'>
+							{' '}
+							{t('auth.headerForgotPassword', { ns: 'appbar' })}
+						</Typography>
 						<Typography className='text-center'>
-							{t('auth.subHeaderForgotPassword')} <br className='lg:hidden' />
-							{t('auth.subHeaderSendLink')}
+							{t('auth.subHeaderForgotPassword', { ns: 'appbar' })} <br className='lg:hidden' />
+							{t('auth.subHeaderSendLink', { ns: 'appbar' })}
 						</Typography>
 
 						<form
@@ -81,7 +84,7 @@ const ForgotPasswordMain = () => {
 							<FormInput
 								disabled={isPending}
 								name='email'
-								label={t('default.email')}
+								label={t('email')}
 								formik={formik}
 								className='mt-8'
 							/>
@@ -95,11 +98,11 @@ const ForgotPasswordMain = () => {
 								type='submit'
 								className='mt-8 [&_.MuiButton-startIcon]:m-0'
 							>
-								<span>{t('default.ok')}</span>
+								<span>{t('ok')}</span>
 							</LoadingButton>
 						</form>
 						<Link href={AppPath.Login} className='mt-8'>
-							{t('auth.returnLogin')}
+							{t('auth.returnLogin', { ns: 'appbar' })}
 						</Link>
 					</div>
 				</div>

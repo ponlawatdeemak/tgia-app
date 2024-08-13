@@ -1,3 +1,5 @@
+import { ResponseLanguage } from '../interface'
+
 export interface GetUmDtoOut {
 	id: string
 	username: string
@@ -14,7 +16,7 @@ export interface GetUmDtoOut {
 	updatedAt: string
 }
 
-export interface CreateProfileImageDtoOut {
+export interface PostUploadFilesDtoOut {
 	download_file_url: string
 }
 
@@ -29,8 +31,25 @@ export interface GetProfileDtoOut {
 	role: string
 	responsibleProvinceCode: any
 	responsibleDistrictCode: any
+	orgName: ResponseLanguage
+	roleName: ResponseLanguage
+	responsibleProvinceName: ResponseLanguage
+	responsibleDistrictName: ResponseLanguage
+	flagStatusName: ResponseLanguage
 }
 
 export interface PutProfileDtoOut {
+	id: string
+}
+
+export interface GetSearchUMDtoOut extends GetProfileDtoOut {
+	flagStatus: string
+}
+
+export interface PatchStatusDtoOut {
+	id : string,
+}
+
+export interface DeleteProfileDtoOut {
 	id: string
 }

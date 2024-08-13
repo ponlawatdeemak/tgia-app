@@ -1,7 +1,7 @@
 'use client'
 
 import AlertConfirm from '@/components/common/dialog/AlertConfirm'
-import { Alert, Box, Button, CircularProgress, Snackbar } from '@mui/material'
+import { Alert, Box, Button, CircularProgress, Snackbar, Typography } from '@mui/material'
 import Icon from '@mdi/react'
 import { mdiLockReset } from '@mdi/js'
 import { useFormik } from 'formik'
@@ -9,15 +9,15 @@ import { useCallback, useState } from 'react'
 import * as yup from 'yup'
 import service from '@/api'
 import { signOut, useSession } from 'next-auth/react'
-import { useQuery } from '@tanstack/react-query'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
-import { CreateProfileImageDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
-import { QueryClient, useMutation } from '@tanstack/react-query'
+import { PostUploadFilesDtoIn, PutProfileDtoIn } from '@/api/um/dto-in.dto'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AppPath } from '@/config/app'
 import { useRouter } from 'next/navigation'
 import { AlertInfoType, FormValues } from '@/components/shared/ProfileForm/interface'
 import ProfileForm from '@/components/shared/ProfileForm'
+
+import { useTranslation } from 'react-i18next'
+import { useSwitchLanguage } from '@/i18n/client'
 
 const defaultFormValues: FormValues = {
 	id: '',
@@ -32,13 +32,13 @@ const defaultFormValues: FormValues = {
 	responsibleDistrictCode: '',
 }
 
-const ProfileMain = () => {
-	const router = useRouter()
-	const queryClient = new QueryClient()
-	const { data: session, update } = useSession()
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+interface ProfileMainProps {}
 
+const ProfileMain: React.FC<ProfileMainProps> = () => {
+	const router = useRouter()
+	const queryClient = useQueryClient()
+	const { t, i18n } = useTranslation(['appbar', 'default', 'um'])
+	const { data: session, update } = useSession()
 	const [busy, setBusy] = useState<boolean>(false)
 	const [confirmOpenDialog, setConfirmOpenDialog] = useState<boolean>(false)
 	const [logoutOpenDialog, setLogoutOpenDialog] = useState<boolean>(false)
@@ -75,12 +75,12 @@ const ProfileMain = () => {
 		try {
 			setBusy(true)
 			if (values.image instanceof File) {
-				const selectedImage: CreateProfileImageDtoIn = {
+				const selectedImage: PostUploadFilesDtoIn = {
 					file: values.image,
 				}
 				let imageUrl
 				try {
-					imageUrl = await service.um.uploadImg(selectedImage)
+					imageUrl = await service.um.postUploadFiles(selectedImage)
 				} catch (error) {
 					throw new Error('Image upload failed')
 				}
@@ -158,6 +158,9 @@ const ProfileMain = () => {
 
 	return (
 		<>
+			<Typography className='text-xl font-semibold text-black lg:text-md'>
+				{t('um', { ns: 'um' })}
+			</Typography>
 			<form
 				onSubmit={formik.handleSubmit}
 				className='flex h-full flex-col justify-between max-lg:justify-start max-lg:gap-[32px]'
@@ -182,7 +185,7 @@ const ProfileMain = () => {
 								) : null
 							}
 						>
-							{t('default.confirm')}
+							{t('confirm')}
 						</Button>
 						<AlertConfirm
 							open={confirmOpenDialog}
@@ -201,7 +204,7 @@ const ProfileMain = () => {
 								disabled={busy || isUserDataLoading}
 								startIcon={<Icon path={mdiLockReset} size={'20px'} className='text-[#A6A6A6]' />}
 							>
-								{t('default.resetPassword')}
+								{t('resetPassword')}
 							</Button>
 						</div>
 					</div>

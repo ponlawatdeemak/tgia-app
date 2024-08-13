@@ -1,4 +1,5 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { SortType } from '@/enum'
 
 export enum APIService {
 	WebAPI,
@@ -34,6 +35,12 @@ export interface AppAPI {
 		service?: APIService,
 		config?: AxiosRequestConfig<any> | undefined,
 	) => Promise<AxiosResponse<any, any>>
+	patch: (
+		url: string,
+		data: any,
+		service?: APIService,
+		config?: AxiosRequestConfig<any> | undefined,
+	) => Promise<AxiosResponse<any, any>>
 }
 
 export interface RetryQueueItem {
@@ -53,7 +60,13 @@ export type ResponseDto<T = any> = {
 	data?: T
 	message?: string
 	tokens?: Tokens
+	errorStatus?: number
 	error?: ErrorResponse
+	total?: number
+}
+
+export type ResponseStatisticDto<T = any, T2 = any> = ResponseDto<T> & {
+	dataTotal?: T2
 }
 
 export interface Tokens {
@@ -61,4 +74,21 @@ export interface Tokens {
 	accessToken: string
 	refreshToken: string
 	expiresIn: number
+}
+
+export interface ResponseLanguage {
+	th: string
+	en: string
+}
+
+export interface ResponseArea {
+	areaRai: number
+	areaPlot: number
+}
+
+export interface TablePagination {
+	sortField: string
+	sortOrder: SortType
+	limit: number
+	offset: number
 }

@@ -1,12 +1,11 @@
 'use client'
 
-import React, { useState, ChangeEvent, useEffect } from 'react'
-import { FormikProps } from 'formik'
-import { Button, Avatar, FormHelperText } from '@mui/material'
+import { mdiAccountOutline, mdiDeleteOutline, mdiTrayArrowUp } from '@mdi/js'
 import Icon from '@mdi/react'
-import { mdiTrayArrowUp, mdiAccountOutline, mdiDeleteOutline } from '@mdi/js'
-import { useTranslation } from '@/i18n/client'
-import useLanguage from '@/store/language'
+import { Avatar, Button, FormHelperText } from '@mui/material'
+import { FormikProps } from 'formik'
+import React, { ChangeEvent, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export interface UploadImageProps {
 	name: string
@@ -25,11 +24,11 @@ const UploadImage: React.FC<UploadImageProps> = ({
 	disabled = false,
 	...props
 }) => {
-	const { language } = useLanguage()
-	const { t } = useTranslation(language, 'appbar')
+	const { t } = useTranslation()
 	const maxImageSize = 3 * 1024 * 1024
 	const [image, setImage] = useState<string | null>(null)
 	const errorMessage = formik.touched[name] && formik.errors[name]
+	const { i18n, tReady, ...uploadProps } = props
 
 	useEffect(() => {
 		const formikValue = formik.values[name]
@@ -112,7 +111,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
 						accept='image/png, image/jpeg'
 						className='absolute bottom-0 left-0 h-full w-full cursor-pointer opacity-0'
 						onChange={handleImageChange}
-						{...props}
+						{...uploadProps}
 					/>
 				</Button>
 			</div>

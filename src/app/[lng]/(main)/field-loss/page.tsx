@@ -1,4 +1,4 @@
-import FieldLossMain from '@/components/pages/field-loss'
+import { FieldLossMain } from '@/components/pages/field-loss'
 import React from 'react'
 
 interface FieldLossPageProps {
