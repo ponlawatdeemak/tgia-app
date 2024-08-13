@@ -1,5 +1,5 @@
 import { Language } from '@/enum'
-import { addYears, format } from 'date-fns'
+import { addDays, addYears, format, isAfter } from 'date-fns'
 import { enUS, th } from 'date-fns/locale'
 
 interface DateOptions {
@@ -24,4 +24,14 @@ export const formatDate = (
 		optionsWithLocale['locale'] = enUS
 	}
 	return format(date, dateFormat, optionsWithLocale)
+}
+
+export const getDateInRange = (startDate: Date, endDate: Date) => {
+	let currentDate = new Date(startDate)
+	const dates = []
+	while (!isAfter(currentDate, endDate)) {
+		dates.push(currentDate)
+		currentDate = addDays(currentDate, 1)
+	}
+	return dates
 }

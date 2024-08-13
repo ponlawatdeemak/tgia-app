@@ -7,7 +7,6 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
-import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import Typography from '@mui/material/Typography'
@@ -15,14 +14,13 @@ import Paper from '@mui/material/Paper'
 import Checkbox from '@mui/material/Checkbox'
 import { visuallyHidden } from '@mui/utils'
 import { SortType } from '@/enum'
-import { Delete, Sort } from '@mui/icons-material'
 import um from '@/api/um'
-import { GetSearchUMDtoIn, PatchStatusDtoIn } from '@/api/um/dto-in.dto'
+import { DeleteProfileDtoIn, GetSearchUMDtoIn, PatchStatusDtoIn } from '@/api/um/dto-in.dto'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useSwitchLanguage } from '@/i18n/client'
 import { Language } from '@/enum'
-import { Button, PropTypes } from '@mui/material'
+import { Button } from '@mui/material'
 import { GetSearchUMDtoOut } from '@/api/um/dto-out.dto'
 import { ResponseLanguage } from '@/api/interface'
 import { IconButton } from '@mui/material'
@@ -32,80 +30,24 @@ import { mdiPencilOutline } from '@mdi/js'
 import Stack from '@mui/material/Stack'
 import TableFooter from '@mui/material/TableFooter'
 import Pagination from '@mui/material/Pagination'
-import service from '@/api'
-import { request } from 'http'
+import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
+import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar'
+import Alert from '@mui/material/Alert'
+import { useSession } from 'next-auth/react'
+import { isSea } from 'node:sea'
+import AlertConfirm from '@/components/common/dialog/AlertConfirm'
 
 interface Data {
 	id: number
 	firstName: string
 	email: string
 	organization: string
+	responsibleProvinceName: string
+	responsibleDistrictName: string
 	role: string
 	status: string
 	control: string
 }
-
-// function createData(
-// 	id: number,
-// 	fullName: string,
-// 	email: string,
-// 	organization: string,
-// 	role: string,
-// 	status: string,
-// ): Data {
-// 	return {
-// 		id,
-// 		fullName,
-// 		email,
-// 		organization,
-// 		role,
-// 		status,
-// 	}
-// }
-
-// const rows = [
-// 	createData(1, 'สมชาย ลำเพลมพัด', 'Somchai@gmail.com', 'Thaicom', 'Super Admin', 'open'),
-// 	createData(2, 'สิริกัญญา เมตตาทรัพย์', 'Sirikanya@gmail.com', 'TGIA', 'Admin', 'open'),
-// 	createData(3, 'ขวัญมณี เอี่ยมกำเนิด', 'Kwanmani@gmail.com', 'DOAE', 'Admin', 'open'),
-// 	createData(4, 'กษิดิษ เกษรศาสน์', 'Kasidit@gmail.com', 'TGIA', 'Admin', 'open'),
-// 	createData(5, 'เอกลักษณ์ ตั้งคงอยู่', 'Eklaksorn@gmail.com', 'TGIA', 'User', 'open'),
-// 	createData(6, 'สมาน ดำรงไทย', 'Saman@gmail.com', 'TGIA', 'User', 'close'),
-// 	createData(7, 'ดิเรก รักเกษตร', 'Direk@gmail.com', 'TGIA', 'User', 'close'),
-// 	createData(8, 'กฤษณา เยี่ยมอำไพ', 'Kritsana@gmail.com', 'TGIA', 'User', 'close'),
-// 	createData(9, 'เขมิกา สินเจริญสุข', 'Khemika@gmail.com', 'TGIA', 'User', 'close'),
-// 	createData(10, 'พรพิมา บุญสูงเนิน', 'Phonphima@gmail.com', 'TGIA', 'User', 'close'),
-// ]
-
-// function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-// 	if (b[orderBy] < a[orderBy]) {
-// 		return -1
-// 	}
-// 	if (b[orderBy] > a[orderBy]) {
-// 		return 1
-// 	}
-// 	return 0
-// }
-
-// function getComparator<Key extends keyof any>(
-// 	order: SortType,
-// 	orderBy: Key,
-// ): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
-// 	return order === SortType.DESC
-// 		? (a, b) => descendingComparator(a, b, orderBy)
-// 		: (a, b) => -descendingComparator(a, b, orderBy)
-// }
-
-// function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
-// 	const stabilizedThis = array.map((el, index) => [el, index] as [T, number])
-// 	stabilizedThis.sort((a, b) => {
-// 		const order = comparator(a[0], b[0])
-// 		if (order !== 0) {
-// 			return order
-// 		}
-// 		return a[1] - b[1]
-// 	})
-// 	return stabilizedThis.map((el) => el[0])
-// }
 
 interface HeadCell {
 	disablePadding: boolean
@@ -113,39 +55,6 @@ interface HeadCell {
 	label: string
 	numeric: boolean
 }
-
-const headCells: readonly HeadCell[] = [
-	{
-		id: 'firstName',
-		numeric: false,
-		disablePadding: true,
-		label: 'ชื่อ นามสกุล',
-	},
-	{
-		id: 'email',
-		numeric: false,
-		disablePadding: false,
-		label: 'อีเมล',
-	},
-	{
-		id: 'organization',
-		numeric: false,
-		disablePadding: false,
-		label: 'หน่วยงาน',
-	},
-	{
-		id: 'role',
-		numeric: false,
-		disablePadding: false,
-		label: 'บทบาท',
-	},
-	{
-		id: 'status',
-		numeric: false,
-		disablePadding: false,
-		label: 'สถานะ',
-	},
-]
 
 interface UserManagementTableProps {
 	searchParams: GetSearchUMDtoIn
@@ -162,29 +71,83 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	isSearch,
 	setIsSearch,
 	page,
-	setPage
+	setPage,
 }) => {
+	const { data: session } = useSession()
 	const [order, setOrder] = React.useState<SortType>(SortType.ASC)
 	const [orderBy, setOrderBy] = React.useState<keyof Data>('firstName')
 	const [selected, setSelected] = React.useState<readonly string[]>([])
-	// const [page, setPage] = React.useState(1)
 	const [dense, setDense] = React.useState(false)
-	// const [rowsPerPage, setRowsPerPage] = React.useState(5)
 	const queryClient = useQueryClient()
 
-	const { t, i18n } = useTranslation()
+	const { t, i18n } = useTranslation(['default', 'profile'])
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 
-	const [toggleSearch, setToggleSearch] = React.useState(false)
+	// Define TableHead
+	const headCells: readonly HeadCell[] = [
+		{
+			id: 'firstName',
+			numeric: false,
+			disablePadding: true,
+			label: t('firstName') + ' ' + t('lastName'),
+		},
+		{
+			id: 'email',
+			numeric: false,
+			disablePadding: false,
+			label: t('email'),
+		},
+		{
+			id: 'organization',
+			numeric: false,
+			disablePadding: false,
+			label: t('org'),
+		},
+		{
+			id: 'role',
+			numeric: false,
+			disablePadding: false,
+			label: t('role'),
+		},
+		{
+			id: 'responsibleProvinceName',
+			numeric: false,
+			disablePadding: false,
+			label: t('belongProvince', { ns: 'profile' }),
+		},
+		{
+			id: 'responsibleDistrictName',
+			numeric: false,
+			disablePadding: false,
+			label: t('belongDistrict', { ns: 'profile' }),
+		},
+		{
+			id: 'status',
+			numeric: false,
+			disablePadding: false,
+			label: 'สถานะ',
+		},
+	]
 
 	// TableData State
 	const [tableData, setTableData] = React.useState<GetSearchUMDtoOut[]>([])
 	const [total, setTotal] = React.useState<number>(0)
+	const [currentDeleteId, setCurrentDeleteId] = React.useState<string>('')
+	const [alertInfo, setAlertInfo] = React.useState<AlertInfoType>({
+		open: false,
+		severity: 'success',
+		message: '',
+	})
+	const [isConfirmDeleteOneOpen, setIsConfirmDeleteOneOpen] = React.useState<boolean>(false)
+	const [isConfirmDeleteManyOpen, setIsConfirmDeleteManyOpen] = React.useState<boolean>(false)
+	const [isConfirmOpenManyOpen, setIsConfirmOpenManyOpen] = React.useState<boolean>(false)
+	const [isConfirmCloseManyOpen, setIsConfirmCloseManyOpen] = React.useState<boolean>(false)
+
+	// ModalAction
 
 	const { data: resData, isLoading: isTableDataLoading } = useQuery({
 		queryKey: ['getSearchUM', searchParams],
 		queryFn: () => {
-			console.log("SM :: ",searchParams)
 			const res = um.getSearchUM(searchParams)
 			setIsSearch(false)
 			return res
@@ -192,28 +155,30 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		enabled: isSearch,
 	})
 	const {
-		data,
-		error,
+		data: patchStatusData,
+		error: patchStatusError,
 		mutateAsync: mutatePatchStatus,
 	} = useMutation({
 		mutationFn: async (payload: PatchStatusDtoIn) => {
-			// Promise.all each payload um.patchStatus
-			//const res[] = await Promise.all[ eachpayload]
 			return await um.patchStatus(payload)
-			// console.log("finish")
+		},
+	})
+
+	const {
+		data: deleteProfileData,
+		error: deleteProfileError,
+		mutateAsync: mutateDeleteProfile,
+	} = useMutation({
+		mutationFn: async (payload: DeleteProfileDtoIn) => {
+			return await um.deleteProfile(payload)
 		},
 	})
 
 	React.useEffect(() => {
 		setIsSearch(true)
-	}, [])
+	}, [setIsSearch])
 
 	React.useEffect(() => {
-		// console.log(selected)
-	}, [selected])
-
-	React.useEffect(() => {
-		// console.log(resData)
 		if (resData) {
 			setTableData(resData.data || [])
 			setTotal(resData.total || 1)
@@ -224,11 +189,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		setSelected([])
 	}, [isSearch])
 
-	React.useEffect(() => {
-		// console.log(searchParams)
-	}, [searchParams])
-
-	const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
+	const handleRequestSort = React.useCallback((event: React.MouseEvent<unknown>, property: keyof Data) => {
 		const isAsc = orderBy === property && order === SortType.ASC
 		setSearchParams((prevSearch) => ({
 			...prevSearch,
@@ -238,25 +199,30 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		setIsSearch(true)
 		setOrder(isAsc ? SortType.DESC : SortType.ASC)
 		setOrderBy(property)
-	}
+	}, [order, orderBy, setIsSearch, setSearchParams])
 
-	const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const handleSelectAllClick = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.checked) {
-			const newSelected = tableData.map((n) => n.id)
+			const newSelected = tableData.filter((n) => n.id !== session?.user.id).map((n) => n.id)
 			setSelected(newSelected)
-			return
+		} else {
+			setSelected([])
 		}
-		setSelected([])
-	}
+	}, [session?.user.id, tableData])
 
-	const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-		handleRequestSort(event, property)
-	}
+	const createSortHandler = React.useCallback(
+		(property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+			handleRequestSort(event, property)
+		},
+		[handleRequestSort],
+	)
 
-	const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
+	const handleClick = React.useCallback((event: React.MouseEvent<unknown>, id: string) => {
 		const selectedIndex = selected.indexOf(id)
 		let newSelected: readonly string[] = []
-
+		if (id === session?.user.id) {
+			return
+		}
 		if (selectedIndex === -1) {
 			newSelected = newSelected.concat(selected, id)
 		} else if (selectedIndex === 0) {
@@ -267,78 +233,120 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1))
 		}
 		setSelected(newSelected)
-	}
+	}, [selected, session?.user.id])
 
-	// const handleChangePage = (event: unknown, newPage: number) => {
-	// 	setPage(newPage)
-	// }
-
-	// const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-	// 	setRowsPerPage(parseInt(event.target.value, 10))
-	// 	setPage(0)
-	// }
-
-	const handleOnClickOpenUser = async () => {
-		// console.log(selected)
-		// flag status A
+	// Case deleteOne
+	const handleOnClickConfirmDelete = React.useCallback(async (id: string) => {
 		try {
-			const requestMap: PatchStatusDtoIn[] = selected.map((select) => {
-				return {
-					id: select,
-					flagStatus: 'A',
-				}
-			})
+			// filter out current session userid
+			if (id === session?.user.id) {
+				return
+			}
+			const payload: DeleteProfileDtoIn = { id: id }
+			const res = await mutateDeleteProfile(payload)
+			queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
+			setIsSearch(true)
+			setAlertInfo({ open: true, severity: 'success', message: t('success.profileDelete') })
+			console.log(res)
+		} catch (error) {
+			console.error(error)
+		}
+	}, [mutateDeleteProfile, queryClient, searchParams, session?.user.id, setIsSearch, t])
+
+	// Case deleteMany
+	const handleOnClickDeleteUser = React.useCallback(async () => {
+		try {
+			const requestMap: DeleteProfileDtoIn[] = selected
+				.filter((n) => n !== session?.user.id)
+				.map((n) => {
+					return {
+						id: n,
+					}
+				})
+
+			const promises = requestMap.map((request) => mutateDeleteProfile(request))
+			Promise.all(promises)
+				.then((res) => {
+					console.log(res)
+					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
+					setIsSearch(true)
+					setAlertInfo({ open: true, severity: 'success', message: t('success.profileDelete') })
+				})
+				.catch((error) => {
+					console.log(error)
+				})
+		} catch (error) {
+			setAlertInfo({ open: true, severity: 'error', message: t('error.profileDelete') })
+		}
+	}, [mutateDeleteProfile, queryClient, searchParams, selected, session?.user.id, setIsSearch, t])
+
+	// Case openMany
+	const handleOnClickOpenUser = React.useCallback(async () => {
+		try {
+			const requestMap: PatchStatusDtoIn[] = selected
+				.filter((n) => n !== session?.user.id)
+				.map((n) => {
+					return {
+						id: n,
+						flagStatus: 'A',
+					}
+				})
 			const promises = requestMap.map((request) => mutatePatchStatus(request))
 			Promise.all(promises)
 				.then((res) => {
 					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
-					setToggleSearch(!toggleSearch)
+					setAlertInfo({ open: true, severity: 'success', message: t('success.profileUpdate') })
 				})
 				.catch((error) => {
 					console.log(error)
 				})
 		} catch (error) {
 			console.error(error)
+			setAlertInfo({ open: true, severity: 'error', message: t('error.profileUpdate') })
 		}
-	}
+	}, [mutatePatchStatus, queryClient, searchParams, selected, session?.user.id, setIsSearch, t])
 
-	const handleOnClickCloseUser = async () => {
+	// Case closeMany
+	const handleOnClickCloseUser = React.useCallback(async () => {
 		try {
-			const requestMap: PatchStatusDtoIn[] = selected.map((select) => {
-				return {
-					id: select,
-					flagStatus: 'C',
-				}
-			})
+			const requestMap: PatchStatusDtoIn[] = selected
+				.filter((n) => n !== session?.user.id)
+				.map((n) => {
+					return {
+						id: n,
+						flagStatus: 'C',
+					}
+				})
 			const promises = requestMap.map((request) => mutatePatchStatus(request))
 			Promise.all(promises)
 				.then((res) => {
 					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
-					setToggleSearch(!toggleSearch)
+					setAlertInfo({ open: true, severity: 'success', message: t('success.profileUpdate') })
 				})
 				.catch((error) => {
 					console.log(error)
 				})
 		} catch (error) {
 			console.error(error)
+			setAlertInfo({ open: true, severity: 'error', message: t('error.profileUpdate') })
 		}
-	}
+	}, [mutatePatchStatus, queryClient, searchParams, selected, session?.user.id, setIsSearch, t])
 
-	const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
-		// console.log(value)
-		console.log("currentValue :: ",page);
-		console.log("newValue :: ",value);
-		setSearchParams((prevSearch) => ({
-			...prevSearch,
-			offset: page < value ? prevSearch.offset+10 : prevSearch.offset-10,
-		}))
-		setIsSearch(true)
-		setPage(value)
-	}
+	const handlePagination = React.useCallback(
+		(event: React.ChangeEvent<unknown>, value: number) => {
+			setSearchParams((prevSearch) => ({
+				...prevSearch,
+				offset: page < value ? prevSearch.offset + 10 : prevSearch.offset - 10,
+			}))
+			setIsSearch(true)
+			setPage(value)
+		},
+		[setSearchParams, setIsSearch, setPage, page],
+	)
 
 	const isSelected = (id: string) => selected.indexOf(id) !== -1
 
@@ -353,7 +361,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						รายชื่อผู้ใช้งาน
 					</Typography>
 					<Typography variant='body2' className='text-[#7A7A7A]'>
-						แสดง 1-10 จาก {total} รายการ
+						แสดง {(page - 1) * 10 + 1}-{Math.min(page * 10, total)} จาก {total} รายการ
 					</Typography>
 				</div>
 				{selected.length > 0 && (
@@ -371,7 +379,9 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
 								variant='contained'
 								color='primary'
-								onClick={handleOnClickOpenUser}
+								onClick={() => {
+									setIsConfirmOpenManyOpen(true)
+								}}
 							>
 								เปิดใช้งาน
 							</Button>
@@ -379,7 +389,9 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
 								variant='contained'
 								color='primary'
-								onClick={handleOnClickCloseUser}
+								onClick={() => {
+									setIsConfirmCloseManyOpen(true)
+								}}
 							>
 								ปิดใช้งาน
 							</Button>
@@ -388,6 +400,9 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								variant='contained'
 								color='primary'
 								startIcon={<Icon path={mdiTrashCanOutline} size={1} color='var(--black-color)' />}
+								onClick={() => {
+									setIsConfirmDeleteManyOpen(true)
+								}}
 							>
 								ลบผู้ใช้งาน
 							</Button>
@@ -403,8 +418,13 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									<TableCell padding='checkbox'>
 										<Checkbox
 											color='primary'
-											indeterminate={selected.length > 0 && selected.length < tableData.length}
-											checked={tableData.length > 0 && selected.length === tableData.length}
+											indeterminate={
+												selected.length > 0 && selected.length < tableData.length - 1
+											}
+											checked={
+												selected.length ===
+												tableData.filter((n) => n.id !== session?.user.id).length
+											}
 											onChange={handleSelectAllClick}
 											inputProps={{
 												'aria-label': 'select all desserts',
@@ -441,7 +461,6 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								{tableData.map((row, index) => {
 									const isItemSelected = isSelected(row.id)
 									const labelId = `enhanced-table-checkbox-${index}`
-
 									return (
 										<TableRow
 											hover
@@ -460,6 +479,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 													inputProps={{
 														'aria-labelledby': labelId,
 													}}
+													disabled={session?.user.id === row.id}
 												/>
 											</TableCell>
 											<TableCell component='th' id={labelId} scope='row' padding='none'>
@@ -471,6 +491,12 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											</TableCell>
 											<TableCell>
 												{row.roleName[i18n.language as keyof ResponseLanguage]}
+											</TableCell>
+											<TableCell>
+												{row.responsibleProvinceName[i18n.language as keyof ResponseLanguage]}
+											</TableCell>
+											<TableCell>
+												{row.responsibleDistrictName[i18n.language as keyof ResponseLanguage]}
 											</TableCell>
 											<TableCell>
 												{
@@ -492,18 +518,34 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											<TableCell>
 												<Box>
 													<Stack direction='row' spacing={1}>
-														<IconButton>
+														<IconButton
+															onClick={(e) => {
+																e.stopPropagation()
+															}}
+														>
 															<Icon
 																path={mdiPencilOutline}
 																size={1}
 																color='var(--black-color)'
 															/>
 														</IconButton>
-														<IconButton>
+														<IconButton
+															onClick={(e) => {
+																// stop event propagation to prevent row select
+																e.stopPropagation()
+																setCurrentDeleteId(row.id)
+																setIsConfirmDeleteOneOpen(true)
+															}}
+															disabled={session?.user.id === row.id}
+														>
 															<Icon
 																path={mdiTrashCanOutline}
 																size={1}
-																color='var(--error-color-1)'
+																color={
+																	session?.user.id === row.id
+																		? 'var(--dark-gray-color)'
+																		: 'var(--error-color-1)'
+																}
 															/>
 														</IconButton>
 													</Stack>
@@ -524,7 +566,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 							</TableBody>
 							<TableFooter>
 								<TableRow>
-									<TableCell colSpan={7}>
+									<TableCell colSpan={9}>
 										<Box className={'flex w-full items-center justify-between'}>
 											<Typography>
 												หน้า {page} จาก {Math.ceil(total / 10)}
@@ -553,19 +595,76 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 							</TableFooter>
 						</Table>
 					</TableContainer>
-					{/* <TablePagination
-						rowsPerPageOptions={[5, 10, 25]}
-						component='div'
-						count={tableData.length}
-						rowsPerPage={rowsPerPage}
-						page={page}
-						// onPageChange={handleChangePage}
-						// onRowsPerPageChange={handleChangeRowsPerPage}
-						onPageChange={() => {}}
-						onRowsPerPageChange={() => {}}
-					/> */}
 				</Box>
 			</Paper>
+			{/* <AlertConfirm/> x 4 forEach function */}
+			{/* Alert Confirm DeleteOne */}
+			<AlertConfirm
+				open={isConfirmDeleteOneOpen}
+				title={i18n.language === 'th' ? 'ลบบัญชีผู้ใช้งาน' : 'Delete User'}
+				content='Delete One'
+				onClose={() => {
+					setIsConfirmDeleteOneOpen(false)
+				}}
+				onConfirm={() => {
+					handleOnClickConfirmDelete(currentDeleteId)
+					setIsConfirmDeleteOneOpen(false)
+				}}
+			/>
+			{/* Alert Confirm Delete Many */}
+			<AlertConfirm
+				open={isConfirmDeleteManyOpen}
+				title={i18n.language === 'th' ? 'ลบบัญชีผู้ใช้งาน' : 'Delete Users'}
+				content='Delete Many'
+				onClose={() => {
+					setIsConfirmDeleteManyOpen(false)
+				}}
+				onConfirm={() => {
+					handleOnClickDeleteUser()
+					setIsConfirmDeleteManyOpen(false)
+				}}
+			/>
+			{/* Alert Confirm Open Many */}
+			<AlertConfirm
+				open={isConfirmOpenManyOpen}
+				title={i18n.language === 'th' ? 'เปิดผู้ใช้งาน' : 'Open Users'}
+				content='Open Many'
+				onClose={() => {
+					setIsConfirmOpenManyOpen(false)
+				}}
+				onConfirm={() => {
+					handleOnClickOpenUser()
+					setIsConfirmOpenManyOpen(false)
+				}}
+			/>
+			{/* Alert Confirm Close Many */}
+			<AlertConfirm
+				open={isConfirmCloseManyOpen}
+				title={i18n.language === 'th' ? 'ปิดผู้ใช้งาน' : 'Close Users'}
+				content='Close Many'
+				onClose={() => {
+					setIsConfirmCloseManyOpen(false)
+				}}
+				onConfirm={() => {
+					handleOnClickCloseUser()
+					setIsConfirmCloseManyOpen(false)
+				}}
+			/>
+			<Snackbar
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+				open={alertInfo.open}
+				autoHideDuration={6000}
+				onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+				className='w-[300px]'
+			>
+				<Alert
+					onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+					severity={alertInfo.severity}
+					className='w-full'
+				>
+					{alertInfo.message}
+				</Alert>
+			</Snackbar>
 		</div>
 	)
 }
