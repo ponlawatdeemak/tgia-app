@@ -96,15 +96,15 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			disablePadding: true,
 			label: t('nameSurname'),
 			maxWidth: '',
-			minWidth: '',
+			minWidth: '292px',
 		},
 		{
 			id: 'email',
 			numeric: false,
 			disablePadding: false,
 			label: t('email'),
-			maxWidth: '200px',
-			minWidth: '100px',
+			maxWidth: '220px',
+			minWidth: '220px',
 		},
 		{
 			id: 'organization',
@@ -112,7 +112,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			disablePadding: false,
 			label: t('org'),
 			maxWidth: '120px',
-			minWidth: '80px',
+			minWidth: '120px',
 		},
 		{
 			id: 'role',
@@ -120,23 +120,23 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			disablePadding: false,
 			label: t('role'),
 			maxWidth: '120px',
-			minWidth: '80px',
+			minWidth: '120px',
 		},
 		{
 			id: 'responsibleProvinceName',
 			numeric: false,
 			disablePadding: false,
 			label: t('belongProvince', { ns: 'um' }),
-			maxWidth: '176px',
-			minWidth: '100px',
+			maxWidth: '120px',
+			minWidth: '180px',
 		},
 		{
 			id: 'responsibleDistrictName',
 			numeric: false,
 			disablePadding: false,
 			label: t('belongDistrict', { ns: 'um' }),
-			maxWidth: '176px',
-			minWidth: '100px',
+			maxWidth: '120px',
+			minWidth: '180px',
 		},
 		{
 			id: 'status',
@@ -144,7 +144,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			disablePadding: false,
 			label: t('status'),
 			maxWidth: '176px',
-			minWidth: '80px',
+			minWidth: '100px',
 		},
 	]
 
@@ -402,9 +402,9 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						className='flex h-[48px] rounded-lg p-2'
 					>
 						<Typography className='m-4 flex items-center font-medium'>
-							{t('selecting', {ns : 'um'})}{' '}
+							{t('selecting', { ns: 'um' })}{' '}
 							<span className='inline-block font-bold text-primary'>&nbsp;{selected.length}&nbsp;</span>{' '}
-							{t('names', {ns : 'um'})}
+							{t('names', { ns: 'um' })}
 						</Typography>
 						<Stack direction='row' spacing={1} className='flex items-center'>
 							<Button
@@ -443,13 +443,17 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 				)}
 
 				<Box className='flex flex-col gap-[16px]'>
-					<TableContainer sx={{ maxHeight: 512 }}>
+					<TableContainer className='max-h-[512px] overflow-y-auto' sx={{ maxHeight: '90%' }}>
 						<Table
-							// sx={{ minWidth: 1024, minHeight: 680 }}
 							aria-labelledby='tableTitle'
 							size={dense ? 'small' : 'medium'}
 							stickyHeader
 							aria-label='sticky table'
+							sx={{
+								// tableLayout: 'auto',
+								width: '100%',
+								height: '90%',
+							}}
 						>
 							<TableHead>
 								<TableRow>
@@ -472,13 +476,13 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									{headCells.map((headCell) => (
 										<TableCell
 											key={headCell.id}
-											align={headCell.numeric ? 'right' : 'left'}
+											// align={headCell.id === "status" ? 'center':'left'}
+											align={'left'}
 											padding={headCell.disablePadding ? 'none' : 'normal'}
 											sortDirection={orderBy === headCell.id ? order : false}
-											// className={`w-[${headCell.width}]`}
-											style={{
+											className={`text-sm font-semibold`}
+											sx={{
 												minWidth: headCell.minWidth,
-												// maxWidth : headCell.maxWidth
 											}}
 										>
 											<TableSortLabel
@@ -513,7 +517,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											tabIndex={-1}
 											key={row.id}
 											selected={isItemSelected}
-											sx={{ cursor: 'pointer', minHeight: '40px' }}
+											sx={{ cursor: 'pointer' }}
 										>
 											<TableCell padding='checkbox'>
 												<Checkbox
@@ -544,10 +548,10 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											<TableCell>
 												{
 													<div
-														className={`flex items-center justify-center rounded-2xl ${row.flagStatus === 'A' ? 'bg-success-light' : 'bg-error-light'}`}
+														className={`flex items-center justify-center rounded-2xl ${row.flagStatus === 'A' ? 'bg-success-light' : 'bg-error-light'} w-[61px] h-[25px]`}
 													>
 														<Typography
-															className={`p-0.5 text-${row.flagStatus === 'A' ? 'success' : 'error'} text-base`}
+															className={`p-0.5 text-${row.flagStatus === 'A' ? 'success' : 'error'} text-sm`}
 														>
 															{
 																row.flagStatusName[
@@ -607,65 +611,47 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									</TableRow>
 								)} */}
 							</TableBody>
-							<TableFooter>
-								<TableRow>
-									<TableCell colSpan={9}>
-										<Box className={'flex w-full items-center justify-between'}>
-											<Typography>
-												{t('page', { ns: 'um' })} {page} {t('of', { ns: 'um' })}{' '}
-												{Math.ceil(total / 10)}
-											</Typography>
-											{/* <Pagination
-												count={Math.ceil(total / 10)}
-												variant='outlined'
-												shape='rounded'
-												siblingCount={0}
-												boundaryCount={3}
-												onChange={handlePagination}
-												page={page}
-											/> */}
-											<Pagination
-												count={Math.ceil(total / 10)}
-												variant='outlined'
-												shape='rounded'
-												siblingCount={0}
-												boundaryCount={3}
-												onChange={handlePagination}
-												page={page}
-												renderItem={(item) => (
-													<PaginationItem
-														slots={{
-															previous: () => (
-																<>
-																	<ArrowBackIcon className='h-[12] w-[12]' />{' '}
-																	{t('previous')}
-																</>
-															),
-															next: () => (
-																<>
-																	{t('next')}{' '}
-																	<ArrowForwardIcon className='h-[12] w-[12]' />
-																</>
-															),
-														}}
-														{...item}
-													/>
-												)}
-											/>
-										</Box>
-									</TableCell>
-								</TableRow>
-							</TableFooter>
 						</Table>
 					</TableContainer>
+					<Box className={'flex w-full items-center justify-between'}>
+						<Typography className='text-base font-normal'>
+							{t('page', { ns: 'um' })} {page} {t('of', { ns: 'um' })} {Math.ceil(total / 10)}
+						</Typography>
+						<Pagination
+							count={Math.ceil(total / 10)}
+							variant='outlined'
+							shape='rounded'
+							siblingCount={0}
+							boundaryCount={3}
+							onChange={handlePagination}
+							page={page}
+							renderItem={(item) => (
+								<PaginationItem
+									slots={{
+										previous: () => (
+											<>
+												<ArrowBackIcon className='h-[12] w-[12]' /> {t('previous')}
+											</>
+										),
+										next: () => (
+											<>
+												{t('next')} <ArrowForwardIcon className='h-[12] w-[12]' />
+											</>
+										),
+									}}
+									{...item}
+								/>
+							)}
+						/>
+					</Box>
 				</Box>
 			</Paper>
 			{/* <AlertConfirm/> x 4 forEach function */}
 			{/* Alert Confirm DeleteOne */}
 			<AlertConfirm
 				open={isConfirmDeleteOneOpen}
-				title={i18n.language === 'th' ? 'ลบบัญชีผู้ใช้งาน' : 'Delete User'}
-				content='Delete One'
+				title={t('alert.deleteUserProfile', { ns: 'um' })}
+				content={t('alert.confirmDeleteUserProfile', { ns: 'um' })}
 				onClose={() => {
 					setIsConfirmDeleteOneOpen(false)
 				}}
