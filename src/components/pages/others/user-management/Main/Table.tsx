@@ -369,10 +369,17 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 
 	const handlePagination = React.useCallback(
 		(event: React.ChangeEvent<unknown>, value: number) => {
-			setSearchParams((prevSearch) => ({
-				...prevSearch,
-				offset: page < value ? prevSearch.offset + 10 : prevSearch.offset - 10,
-			}))
+			if(value === page + 1 || value === page - 1){
+				setSearchParams((prevSearch) => ({
+					...prevSearch,
+					offset: page < value ? prevSearch.offset + 10 : prevSearch.offset - 10,
+				}))
+			}else{
+				setSearchParams((prevSearch) =>({
+					...prevSearch,
+					offset: (value-1)*10
+				}))
+			}
 			setIsSearch(true)
 			setPage(value)
 		},
@@ -383,7 +390,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 
 	// Avoid a layout jump when reaching the last page with empty rows.
 	const emptyRows = page > Math.ceil(total / 10) - 1 ? Math.max(0, (1 + page) * 2 - tableData.length) : 0
-	console.log(emptyRows)
+	// console.log(emptyRows)
 
 	return (
 		<div className='py-[16px]'>
