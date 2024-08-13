@@ -8,7 +8,7 @@ import { Layer, LayersList } from '@deck.gl/core'
 
 import type { MapboxOverlay } from '@deck.gl/mapbox'
 import type { GoogleMapsOverlay } from '@deck.gl/google-maps'
-// import { ScatterplotLayer, IconLayer } from '@deck.gl/layers'
+import { ScatterplotLayer } from '@deck.gl/layers'
 
 export type LayerStore = {
 	overlay?: MapboxOverlay | GoogleMapsOverlay
