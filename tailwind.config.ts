@@ -46,6 +46,7 @@ const config: Config = {
 					dark: 'var(--dark-gray-color)',
 					dark2: 'var(--dark-gray-color2)',
 					dark3: 'var(--dark-gray-color3)',
+					dark4: 'var(--dark-gray-color4)',
 				},
 				black: {
 					light: 'var(--light-black-color)',
