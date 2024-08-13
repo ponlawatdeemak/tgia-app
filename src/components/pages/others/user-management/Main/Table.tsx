@@ -128,7 +128,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			disablePadding: false,
 			label: t('belongProvince', { ns: 'um' }),
 			maxWidth: '120px',
-			minWidth: '180px',
+			minWidth: '160px',
 		},
 		{
 			id: 'responsibleDistrictName',
@@ -136,7 +136,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			disablePadding: false,
 			label: t('belongDistrict', { ns: 'um' }),
 			maxWidth: '120px',
-			minWidth: '180px',
+			minWidth: '160px',
 		},
 		{
 			id: 'status',
@@ -443,7 +443,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					</Box>
 				)}
 
-				<Box className='flex min-h-[100%] flex-col gap-[16px]'>
+				<Box className='flex min-h-[90%] flex-col gap-[16px]'>
 					<TableContainer
 						className='flex h-full max-h-[512px] flex-col overflow-y-auto'
 						sx={{ minHeight: '90%' }}
@@ -552,7 +552,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											<TableCell>
 												{
 													<div
-														className={`flex items-center justify-center rounded-2xl ${row.flagStatus === 'A' ? 'bg-success-light' : 'bg-error-light'} h-[25px] w-[61px]`}
+														className={`flex items-center justify-center rounded-2xl ${row.flagStatus === 'A' ? 'bg-success-light' : 'bg-error-light'} h-[25px] w-[64px]`}
 													>
 														<Typography
 															className={`p-0.5 text-${row.flagStatus === 'A' ? 'success' : 'error'} text-sm`}
@@ -611,7 +611,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											height: (dense ? 33 : 53) * emptyRows,
 										}}
 									>
-										<TableCell colSpan={6} />
+										<TableCell colSpan={10} />
 									</TableRow>
 								)}
 							</TableBody>
@@ -622,24 +622,28 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 							{t('page', { ns: 'um' })} {page} {t('of', { ns: 'um' })} {Math.ceil(total / 10)}
 						</Typography>
 						<Pagination
+							className="um-table-pagination"
 							count={Math.ceil(total / 10)}
 							variant='outlined'
 							shape='rounded'
-							siblingCount={0}
-							boundaryCount={3}
+							siblingCount={1}
+							boundaryCount={1}
 							onChange={handlePagination}
 							page={page}
+							sx={{
+								gap: 0
+							}}
 							renderItem={(item) => (
 								<PaginationItem
 									slots={{
 										previous: () => (
 											<>
-												<ArrowBackIcon className='h-[12] w-[12]' /> {t('previous')}
+												<ArrowBackIcon className='h-[20px] w-[20px]' />  {t('previous')}
 											</>
 										),
 										next: () => (
 											<>
-												{t('next')} <ArrowForwardIcon className='h-[12] w-[12]' />
+												{t('next')}  <ArrowForwardIcon className='h-[20px] w-[20px]' />
 											</>
 										),
 									}}
