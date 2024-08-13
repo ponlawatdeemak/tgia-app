@@ -35,18 +35,18 @@ export const useLayerStore = create<LayerStore>()((set) => ({
 			getLineWidth: 4,
 			pickable: true,
 		}),
-		new ScatterplotLayer({
-			data: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/bart-stations.json',
-			stroked: true,
-			getPosition: (d) => d.coordinates,
-			getRadius: (d) => Math.sqrt(d.exits),
-			getFillColor: [255, 140, 0],
-			getLineColor: [0, 0, 0],
-			getLineWidth: 10,
-			radiusScale: 6,
-			pickable: true,
-			
-		}),
+		// ,
+		// new ScatterplotLayer({
+		// 	data: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/bart-stations.json',
+		// 	stroked: true,
+		// 	getPosition: (d) => d.coordinates,
+		// 	getRadius: (d) => Math.sqrt(d.exits),
+		// 	getFillColor: [255, 140, 0],
+		// 	getLineColor: [0, 0, 0],
+		// 	getLineWidth: 10,
+		// 	radiusScale: 6,
+		// 	pickable: true,
+		// }),
 	],
 	setLayers: (layers1) =>
 		set((state) => {
