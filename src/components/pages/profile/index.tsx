@@ -37,7 +37,7 @@ interface ProfileMainProps {}
 const ProfileMain: React.FC<ProfileMainProps> = () => {
 	const router = useRouter()
 	const queryClient = useQueryClient()
-	const { t, i18n } = useTranslation(['appbar', 'default', 'profile'])
+	const { t, i18n } = useTranslation(['appbar', 'default', 'um'])
 	const { data: session, update } = useSession()
 	const [busy, setBusy] = useState<boolean>(false)
 	const [confirmOpenDialog, setConfirmOpenDialog] = useState<boolean>(false)
@@ -159,7 +159,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 	return (
 		<>
 			<Typography className='text-xl font-semibold text-black lg:text-md'>
-				{t('profile', { ns: 'profile' })}
+				{t('um', { ns: 'um' })}
 			</Typography>
 			<form
 				onSubmit={formik.handleSubmit}

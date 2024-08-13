@@ -32,7 +32,7 @@ const defaultFormValues: FormValues = {
 }
 
 export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
-	const { t, i18n } = useTranslation()
+	const { t, i18n } = useTranslation(['default','um'])
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 
 	const handleSubmitUser = async (event: FormEvent) => {
@@ -128,7 +128,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 				fullWidth
 				scroll='paper'
 			>
-				<DialogTitle>เพิ่มผู้ใช้งาน</DialogTitle>
+				<DialogTitle>{t('addUser', {ns : 'um'})}</DialogTitle>
 				<DialogContent className='h-[492px]' dividers={true}>
 					<ProfileForm formik={formik}></ProfileForm>
 

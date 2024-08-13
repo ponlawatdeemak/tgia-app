@@ -36,6 +36,9 @@ import Alert from '@mui/material/Alert'
 import { useSession } from 'next-auth/react'
 import { isSea } from 'node:sea'
 import AlertConfirm from '@/components/common/dialog/AlertConfirm'
+import PaginationItem from '@mui/material/PaginationItem'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
 interface Data {
 	id: number
@@ -54,6 +57,8 @@ interface HeadCell {
 	id: keyof Data
 	label: string
 	numeric: boolean
+	minWidth: string
+	maxWidth: string
 }
 
 interface UserManagementTableProps {
@@ -80,7 +85,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	const [dense, setDense] = React.useState(false)
 	const queryClient = useQueryClient()
 
-	const { t, i18n } = useTranslation(['default', 'profile'])
+	const { t, i18n } = useTranslation(['default', 'um'])
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 
 	// Define TableHead
@@ -89,43 +94,57 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			id: 'firstName',
 			numeric: false,
 			disablePadding: true,
-			label: t('firstName') + ' ' + t('lastName'),
+			label: t('nameSurname'),
+			maxWidth: '',
+			minWidth: '',
 		},
 		{
 			id: 'email',
 			numeric: false,
 			disablePadding: false,
 			label: t('email'),
+			maxWidth: '200px',
+			minWidth: '100px',
 		},
 		{
 			id: 'organization',
 			numeric: false,
 			disablePadding: false,
 			label: t('org'),
+			maxWidth: '120px',
+			minWidth: '80px',
 		},
 		{
 			id: 'role',
 			numeric: false,
 			disablePadding: false,
 			label: t('role'),
+			maxWidth: '120px',
+			minWidth: '80px',
 		},
 		{
 			id: 'responsibleProvinceName',
 			numeric: false,
 			disablePadding: false,
-			label: t('belongProvince', { ns: 'profile' }),
+			label: t('belongProvince', { ns: 'um' }),
+			maxWidth: '176px',
+			minWidth: '100px',
 		},
 		{
 			id: 'responsibleDistrictName',
 			numeric: false,
 			disablePadding: false,
-			label: t('belongDistrict', { ns: 'profile' }),
+			label: t('belongDistrict', { ns: 'um' }),
+			maxWidth: '176px',
+			minWidth: '100px',
 		},
 		{
 			id: 'status',
 			numeric: false,
 			disablePadding: false,
-			label: 'สถานะ',
+			label: t('status'),
+			maxWidth: '176px',
+			minWidth: '80px',
 		},
 	]
 
@@ -189,26 +208,32 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		setSelected([])
 	}, [isSearch])
 
-	const handleRequestSort = React.useCallback((event: React.MouseEvent<unknown>, property: keyof Data) => {
-		const isAsc = orderBy === property && order === SortType.ASC
-		setSearchParams((prevSearch) => ({
-			...prevSearch,
-			sortField: property,
-			sortOrder: isAsc ? SortType.DESC : SortType.ASC,
-		}))
-		setIsSearch(true)
-		setOrder(isAsc ? SortType.DESC : SortType.ASC)
-		setOrderBy(property)
-	}, [order, orderBy, setIsSearch, setSearchParams])
+	const handleRequestSort = React.useCallback(
+		(event: React.MouseEvent<unknown>, property: keyof Data) => {
+			const isAsc = orderBy === property && order === SortType.ASC
+			setSearchParams((prevSearch) => ({
+				...prevSearch,
+				sortField: property,
+				sortOrder: isAsc ? SortType.DESC : SortType.ASC,
+			}))
+			setIsSearch(true)
+			setOrder(isAsc ? SortType.DESC : SortType.ASC)
+			setOrderBy(property)
+		},
+		[order, orderBy, setIsSearch, setSearchParams],
+	)
 
-	const handleSelectAllClick = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-		if (event.target.checked) {
-			const newSelected = tableData.filter((n) => n.id !== session?.user.id).map((n) => n.id)
-			setSelected(newSelected)
-		} else {
-			setSelected([])
-		}
-	}, [session?.user.id, tableData])
+	const handleSelectAllClick = React.useCallback(
+		(event: React.ChangeEvent<HTMLInputElement>) => {
+			if (event.target.checked) {
+				const newSelected = tableData.filter((n) => n.id !== session?.user.id).map((n) => n.id)
+				setSelected(newSelected)
+			} else {
+				setSelected([])
+			}
+		},
+		[session?.user.id, tableData],
+	)
 
 	const createSortHandler = React.useCallback(
 		(property: keyof Data) => (event: React.MouseEvent<unknown>) => {
@@ -217,41 +242,47 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 		[handleRequestSort],
 	)
 
-	const handleClick = React.useCallback((event: React.MouseEvent<unknown>, id: string) => {
-		const selectedIndex = selected.indexOf(id)
-		let newSelected: readonly string[] = []
-		if (id === session?.user.id) {
-			return
-		}
-		if (selectedIndex === -1) {
-			newSelected = newSelected.concat(selected, id)
-		} else if (selectedIndex === 0) {
-			newSelected = newSelected.concat(selected.slice(1))
-		} else if (selectedIndex === selected.length - 1) {
-			newSelected = newSelected.concat(selected.slice(0, -1))
-		} else if (selectedIndex > 0) {
-			newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1))
-		}
-		setSelected(newSelected)
-	}, [selected, session?.user.id])
-
-	// Case deleteOne
-	const handleOnClickConfirmDelete = React.useCallback(async (id: string) => {
-		try {
-			// filter out current session userid
+	const handleClick = React.useCallback(
+		(event: React.MouseEvent<unknown>, id: string) => {
+			const selectedIndex = selected.indexOf(id)
+			let newSelected: readonly string[] = []
 			if (id === session?.user.id) {
 				return
 			}
-			const payload: DeleteProfileDtoIn = { id: id }
-			const res = await mutateDeleteProfile(payload)
-			queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
-			setIsSearch(true)
-			setAlertInfo({ open: true, severity: 'success', message: t('success.profileDelete') })
-			console.log(res)
-		} catch (error) {
-			console.error(error)
-		}
-	}, [mutateDeleteProfile, queryClient, searchParams, session?.user.id, setIsSearch, t])
+			if (selectedIndex === -1) {
+				newSelected = newSelected.concat(selected, id)
+			} else if (selectedIndex === 0) {
+				newSelected = newSelected.concat(selected.slice(1))
+			} else if (selectedIndex === selected.length - 1) {
+				newSelected = newSelected.concat(selected.slice(0, -1))
+			} else if (selectedIndex > 0) {
+				newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1))
+			}
+			setSelected(newSelected)
+		},
+		[selected, session?.user.id],
+	)
+
+	// Case deleteOne
+	const handleOnClickConfirmDelete = React.useCallback(
+		async (id: string) => {
+			try {
+				// filter out current session userid
+				if (id === session?.user.id) {
+					return
+				}
+				const payload: DeleteProfileDtoIn = { id: id }
+				const res = await mutateDeleteProfile(payload)
+				queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
+				setIsSearch(true)
+				setAlertInfo({ open: true, severity: 'success', message: t('success.profileDelete') })
+				console.log(res)
+			} catch (error) {
+				console.error(error)
+			}
+		},
+		[mutateDeleteProfile, queryClient, searchParams, session?.user.id, setIsSearch, t],
+	)
 
 	// Case deleteMany
 	const handleOnClickDeleteUser = React.useCallback(async () => {
@@ -297,7 +328,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
-					setAlertInfo({ open: true, severity: 'success', message: t('success.profileUpdate') })
+					setAlertInfo({ open: true, severity: 'success', message: t('alert.profileUpdate') })
 				})
 				.catch((error) => {
 					console.log(error)
@@ -325,7 +356,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
-					setAlertInfo({ open: true, severity: 'success', message: t('success.profileUpdate') })
+					setAlertInfo({ open: true, severity: 'success', message: t('alert.profileUpdate') })
 				})
 				.catch((error) => {
 					console.log(error)
@@ -358,10 +389,11 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			<Paper className='flex flex-col gap-[8px] px-[24px] py-[16px]'>
 				<div className='flex items-baseline gap-[12px]'>
 					<Typography variant='body1' className='font-semibold'>
-						รายชื่อผู้ใช้งาน
+						{t('userList', { ns: 'um' })}
 					</Typography>
 					<Typography variant='body2' className='text-[#7A7A7A]'>
-						แสดง {(page - 1) * 10 + 1}-{Math.min(page * 10, total)} จาก {total} รายการ
+						{t('showing', { ns: 'um' })} {(page - 1) * 10 + 1}-{Math.min(page * 10, total)}{' '}
+						{t('of', { ns: 'um' })} {total} {t('item', { ns: 'um' })}
 					</Typography>
 				</div>
 				{selected.length > 0 && (
@@ -370,9 +402,9 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						className='flex h-[48px] rounded-lg p-2'
 					>
 						<Typography className='m-4 flex items-center font-medium'>
-							กำลังเลือก{' '}
+							{t('selecting', {ns : 'um'})}{' '}
 							<span className='inline-block font-bold text-primary'>&nbsp;{selected.length}&nbsp;</span>{' '}
-							รายชื่อ
+							{t('names', {ns : 'um'})}
 						</Typography>
 						<Stack direction='row' spacing={1} className='flex items-center'>
 							<Button
@@ -383,7 +415,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									setIsConfirmOpenManyOpen(true)
 								}}
 							>
-								เปิดใช้งาน
+								{t('enableUser', { ns: 'um' })}
 							</Button>
 							<Button
 								className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
@@ -393,7 +425,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									setIsConfirmCloseManyOpen(true)
 								}}
 							>
-								ปิดใช้งาน
+								{t('disableUser', { ns: 'um' })}
 							</Button>
 							<Button
 								className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
@@ -404,15 +436,21 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									setIsConfirmDeleteManyOpen(true)
 								}}
 							>
-								ลบผู้ใช้งาน
+								{t('deleteUser', { ns: 'um' })}
 							</Button>
 						</Stack>
 					</Box>
 				)}
 
 				<Box className='flex flex-col gap-[16px]'>
-					<TableContainer>
-						<Table sx={{ minWidth: 750 }} aria-labelledby='tableTitle' size={dense ? 'small' : 'medium'}>
+					<TableContainer sx={{ maxHeight: 512 }}>
+						<Table
+							// sx={{ minWidth: 1024, minHeight: 680 }}
+							aria-labelledby='tableTitle'
+							size={dense ? 'small' : 'medium'}
+							stickyHeader
+							aria-label='sticky table'
+						>
 							<TableHead>
 								<TableRow>
 									<TableCell padding='checkbox'>
@@ -437,6 +475,11 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											align={headCell.numeric ? 'right' : 'left'}
 											padding={headCell.disablePadding ? 'none' : 'normal'}
 											sortDirection={orderBy === headCell.id ? order : false}
+											// className={`w-[${headCell.width}]`}
+											style={{
+												minWidth: headCell.minWidth,
+												// maxWidth : headCell.maxWidth
+											}}
 										>
 											<TableSortLabel
 												active={orderBy === headCell.id}
@@ -457,7 +500,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									<TableCell />
 								</TableRow>
 							</TableHead>
-							<TableBody>
+							<TableBody className='overflow-y max-h-[40px] min-h-[40px]'>
 								{tableData.map((row, index) => {
 									const isItemSelected = isSelected(row.id)
 									const labelId = `enhanced-table-checkbox-${index}`
@@ -470,7 +513,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											tabIndex={-1}
 											key={row.id}
 											selected={isItemSelected}
-											sx={{ cursor: 'pointer' }}
+											sx={{ cursor: 'pointer', minHeight: '40px' }}
 										>
 											<TableCell padding='checkbox'>
 												<Checkbox
@@ -504,7 +547,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 														className={`flex items-center justify-center rounded-2xl ${row.flagStatus === 'A' ? 'bg-success-light' : 'bg-error-light'}`}
 													>
 														<Typography
-															className={`p-0.5 text-${row.flagStatus === 'A' ? 'success' : 'error'}`}
+															className={`p-0.5 text-${row.flagStatus === 'A' ? 'success' : 'error'} text-base`}
 														>
 															{
 																row.flagStatusName[
@@ -569,8 +612,18 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									<TableCell colSpan={9}>
 										<Box className={'flex w-full items-center justify-between'}>
 											<Typography>
-												หน้า {page} จาก {Math.ceil(total / 10)}
+												{t('page', { ns: 'um' })} {page} {t('of', { ns: 'um' })}{' '}
+												{Math.ceil(total / 10)}
 											</Typography>
+											{/* <Pagination
+												count={Math.ceil(total / 10)}
+												variant='outlined'
+												shape='rounded'
+												siblingCount={0}
+												boundaryCount={3}
+												onChange={handlePagination}
+												page={page}
+											/> */}
 											<Pagination
 												count={Math.ceil(total / 10)}
 												variant='outlined'
@@ -579,16 +632,26 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 												boundaryCount={3}
 												onChange={handlePagination}
 												page={page}
-											/>
-											{/* <Pagination
-												count={10}
 												renderItem={(item) => (
 													<PaginationItem
-														slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+														slots={{
+															previous: () => (
+																<>
+																	<ArrowBackIcon className='h-[12] w-[12]' />{' '}
+																	{t('previous')}
+																</>
+															),
+															next: () => (
+																<>
+																	{t('next')}{' '}
+																	<ArrowForwardIcon className='h-[12] w-[12]' />
+																</>
+															),
+														}}
 														{...item}
 													/>
 												)}
-											/> */}
+											/>
 										</Box>
 									</TableCell>
 								</TableRow>
