@@ -48,7 +48,7 @@ export const FieldLossMain = () => {
 						<RangePickerPage />
 					</div>
 				) : (
-					<div className='flex w-full px-4 max-lg:flex-col max-lg:gap-3 max-lg:bg-gray-light lg:px-0'>
+					<div className='box-border flex w-full px-4 max-lg:flex-col max-lg:gap-3 max-lg:bg-gray-light lg:px-0'>
 						<FieldLossSummary
 							selectedOption={selectedOption}
 							startDate={startDate}
