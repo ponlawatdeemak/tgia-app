@@ -107,7 +107,7 @@ interface DatePickerHorizontalProps {
 }
 
 const DatePickerHorizontal: React.FC<DatePickerHorizontalProps> = ({ startDate, endDate }) => {
-	let monthSliderRef = useRef(null)
+	let monthSliderRef = useRef<Slider>(null)
 	let dateSliderRef = useRef(null)
 	const [slideIndex, setSlideIndex] = useState(0)
 
@@ -133,9 +133,9 @@ const DatePickerHorizontal: React.FC<DatePickerHorizontalProps> = ({ startDate, 
 					{...settings}
 					className='slider variable-width px-[25px]'
 					draggable={false}
-					ref={(slider) => {
-						monthSliderRef = slider
-					}}
+					// ref={(slider) => {
+					// 	monthSliderRef = slider
+					// }}
 				>
 					{dateRanges.map((date, index) => (
 						<div
@@ -164,12 +164,12 @@ const DatePickerHorizontal: React.FC<DatePickerHorizontalProps> = ({ startDate, 
 					<Slider
 						{...settings}
 						className='slider variable-width calendar-slider min-w-0'
-						ref={(slider) => {
-							dateSliderRef = slider
-						}}
+						// ref={(slider) => {
+						// 	dateSliderRef = slider
+						// }}
 						afterChange={(index) => {
 							setSlideIndex(index)
-							monthSliderRef.slickGoTo(index, true)
+							// monthSliderRef.slickGoTo(index, true)
 						}}
 					>
 						{dateRanges.map((date, index) => (
@@ -185,7 +185,7 @@ const DatePickerHorizontal: React.FC<DatePickerHorizontalProps> = ({ startDate, 
 					{slideIndex !== 0 && (
 						<IconButton
 							className='absolute bottom-0 left-0 top-0 rounded-none border-0 border-r border-solid border-[#D6D6D6] bg-white p-0'
-							onClick={() => dateSliderRef.slickPrev()}
+							// onClick={() => dateSliderRef.slickPrev()}
 						>
 							<Icon path={mdiChevronLeft} size={1} className='text-black' />
 						</IconButton>
@@ -193,7 +193,7 @@ const DatePickerHorizontal: React.FC<DatePickerHorizontalProps> = ({ startDate, 
 					{slideIndex < dateRanges.length - 1 && (
 						<IconButton
 							className='absolute bottom-0 right-0 top-0 rounded-none border-0 border-l border-solid border-[#D6D6D6] bg-white p-0'
-							onClick={() => dateSliderRef.slickNext()}
+							// onClick={() => dateSliderRef.slickNext()}
 						>
 							<Icon path={mdiChevronRight} size={1} className='text-black' />
 						</IconButton>
