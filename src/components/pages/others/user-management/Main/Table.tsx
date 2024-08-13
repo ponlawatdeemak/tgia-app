@@ -120,7 +120,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			disablePadding: false,
 			label: t('role'),
 			maxWidth: '120px',
-			minWidth: '120px',
+			minWidth: '140px',
 		},
 		{
 			id: 'responsibleProvinceName',
@@ -382,7 +382,8 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	const isSelected = (id: string) => selected.indexOf(id) !== -1
 
 	// Avoid a layout jump when reaching the last page with empty rows.
-	// const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0
+	const emptyRows = page > Math.ceil(total / 10) - 1 ? Math.max(0, (1 + page) * 2 - tableData.length) : 0
+	console.log(emptyRows)
 
 	return (
 		<div className='py-[16px]'>
@@ -442,8 +443,11 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					</Box>
 				)}
 
-				<Box className='flex flex-col gap-[16px]'>
-					<TableContainer className='max-h-[512px] overflow-y-auto' sx={{ maxHeight: '90%' }}>
+				<Box className='flex min-h-[100%] flex-col gap-[16px]'>
+					<TableContainer
+						className='flex h-full max-h-[512px] flex-col overflow-y-auto'
+						sx={{ minHeight: '90%' }}
+					>
 						<Table
 							aria-labelledby='tableTitle'
 							size={dense ? 'small' : 'medium'}
@@ -548,7 +552,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											<TableCell>
 												{
 													<div
-														className={`flex items-center justify-center rounded-2xl ${row.flagStatus === 'A' ? 'bg-success-light' : 'bg-error-light'} w-[61px] h-[25px]`}
+														className={`flex items-center justify-center rounded-2xl ${row.flagStatus === 'A' ? 'bg-success-light' : 'bg-error-light'} h-[25px] w-[61px]`}
 													>
 														<Typography
 															className={`p-0.5 text-${row.flagStatus === 'A' ? 'success' : 'error'} text-sm`}
@@ -601,7 +605,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 										</TableRow>
 									)
 								})}
-								{/* {emptyRows > 0 && (
+								{emptyRows > 0 && (
 									<TableRow
 										style={{
 											height: (dense ? 33 : 53) * emptyRows,
@@ -609,7 +613,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									>
 										<TableCell colSpan={6} />
 									</TableRow>
-								)} */}
+								)}
 							</TableBody>
 						</Table>
 					</TableContainer>
