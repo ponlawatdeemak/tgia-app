@@ -402,9 +402,9 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						className='flex h-[48px] rounded-lg p-2'
 					>
 						<Typography className='m-4 flex items-center font-medium'>
-							กำลังเลือก{' '}
+							{t('selecting', {ns : 'um'})}{' '}
 							<span className='inline-block font-bold text-primary'>&nbsp;{selected.length}&nbsp;</span>{' '}
-							รายชื่อ
+							{t('names', {ns : 'um'})}
 						</Typography>
 						<Stack direction='row' spacing={1} className='flex items-center'>
 							<Button
@@ -443,7 +443,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 				)}
 
 				<Box className='flex flex-col gap-[16px]'>
-					<TableContainer sx={{ maxHeight: 624 }}>
+					<TableContainer sx={{ maxHeight: 512 }}>
 						<Table
 							// sx={{ minWidth: 1024, minHeight: 680 }}
 							aria-labelledby='tableTitle'
@@ -637,12 +637,14 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 														slots={{
 															previous: () => (
 																<>
-																	<ArrowBackIcon className='h-[12] w-[12]' /> {t('previous')}
+																	<ArrowBackIcon className='h-[12] w-[12]' />{' '}
+																	{t('previous')}
 																</>
 															),
 															next: () => (
 																<>
-																	{t('next')} <ArrowForwardIcon className='h-[12] w-[12]' />
+																	{t('next')}{' '}
+																	<ArrowForwardIcon className='h-[12] w-[12]' />
 																</>
 															),
 														}}

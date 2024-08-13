@@ -15,5 +15,7 @@
 	"of" : "of",
 	"page" : "Page",
 	"search" : "Search",
-	"name" : "Name"
+	"name" : "Name",
+	"selecting" : "Selecting",
+	"names" : "Names"
 }
