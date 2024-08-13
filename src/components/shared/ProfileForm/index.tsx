@@ -19,7 +19,7 @@ export interface ProfileFormProps {
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) => {
-	const { t, i18n } = useTranslation(['default', 'profile'])
+	const { t, i18n } = useTranslation(['default', 'um'])
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 
 	const { data: provinceLookupData, isLoading: isProvinceDataLoading } = useQuery({
@@ -108,7 +108,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 							}
 							getOptionLabel={(option) => option.name[i18n.language]}
 							name='responsibleProvinceCode'
-							label={t('belongProvince', { ns: 'profile' })}
+							label={t('belongProvince', { ns: 'um' })}
 							formik={formik}
 							disabled={isProvinceDataLoading || loading}
 							required
@@ -123,7 +123,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 							}
 							getOptionLabel={(option) => option.name?.[i18n.language]}
 							name='responsibleDistrictCode'
-							label={t('belongDistrict', { ns: 'profile' })}
+							label={t('belongDistrict', { ns: 'um' })}
 							formik={formik}
 							disabled={isDistricDataLoading || loading || !formik.values.responsibleProvinceCode}
 						/>

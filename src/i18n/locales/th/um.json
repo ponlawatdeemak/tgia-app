@@ -1,4 +1,6 @@
 {
+	"profileUpdate": "บันทึกสำเร็จ",
+	"profileDelete": "ลบผู้ใช้งานสำเร็จ",
 	"profile": "ข้อมูลส่วนตัว",
 	"belongProvince": "สังกัดจังหวัด",
 	"belongDistrict": "สังกัดอำเภอ"

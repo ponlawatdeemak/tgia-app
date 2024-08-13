@@ -1,7 +1,7 @@
 {
+	"profileUpdate": "Updated successfully",
+	"profileDelete": "User delete succesfully",
 	"profile": "Profile",
-
-
 	"belongProvince": "Province",
 	"belongDistrict": "District"
 }
