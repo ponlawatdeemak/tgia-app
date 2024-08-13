@@ -18,7 +18,7 @@ export const UserManagementMain = () => {
 	const [page, setPage] = useState<number>(1)
 
 	return (
-		<div className='flex flex-col'>
+		<div className='flex flex-col pl-[32px] pr-[32px]'>
 			<UserManagementSearchForm
 				searchParams={searchParams}
 				setSearchParams={setSearchParams}

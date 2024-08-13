@@ -27,6 +27,9 @@
 	"back": "Back",
 	"allDisasters": "All Disasters",
 	"status": "Status",
+	"nameSurname": "Name Surname",
+	"previous": "Previous",
+	"next": "Next",
 	"warning": {
 		"inputEmail": "Please enter your email.",
 		"inputPassword": "Please enter your password.",

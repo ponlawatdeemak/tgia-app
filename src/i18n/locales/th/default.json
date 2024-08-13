@@ -27,6 +27,9 @@
 	"back": "ย้อนกลับ",
 	"allDisasters": "ภัยพิบัติทั้งหมด",
 	"status" : "สถานะ",
+	"nameSurname": "ชื่อ นามสกุล",
+	"previous": "ก่อนหน้า",
+	"next": "ถัดไป",
 	"warning": {
 		"inputEmail": "กรุณากรอกอีเมล",
 		"inputPassword": "กรุณากรอกรหัสผ่าน",

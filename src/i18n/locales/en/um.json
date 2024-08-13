@@ -3,5 +3,17 @@
 	"profileDelete": "User delete succesfully",
 	"profile": "Profile",
 	"belongProvince": "Province",
-	"belongDistrict": "District"
+	"belongDistrict": "District",
+	"enableUser": "Enable",
+	"disableUser" : "Disable",
+	"deleteUser": "Delete User",
+	"addUser" : "Add User",
+	"importUser" : "Import Users",
+	"userList" : "User List",
+	"item" : "Item",
+	"showing" : "Showing",
+	"of" : "of",
+	"page" : "Page",
+	"search" : "Search",
+	"name" : "Name"
 }

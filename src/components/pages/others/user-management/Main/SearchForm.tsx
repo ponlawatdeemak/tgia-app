@@ -7,6 +7,7 @@ import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
 import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt'
 import React, { ChangeEvent, FormEvent, useState } from 'react'
 import { GetSearchUMDtoIn } from '@/api/um/dto-in.dto'
+import { useTranslation } from 'react-i18next'
 
 export interface UserManagementSearchFormProps {
 	searchParams: GetSearchUMDtoIn
@@ -27,6 +28,8 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 }) => {
 	const [openForm, setOpenForm] = useState<boolean>(false)
 	const [searchString, setSearchString] = useState<string>('')
+	const { t, i18n } = useTranslation(['default','um'])
+
 	// Change Event to useCallback
 	const handleSubmitUser = async (event: FormEvent) => {
 		console.log('Form submitted')
@@ -60,7 +63,8 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 						<Input
 							className='flex h-[40px] gap-[8px] px-[12px] py-[8px] [&_.MuiInputAdornment-positionStart]:m-0'
 							id='standard-search'
-							placeholder='ค้นหา ชื่อ, อีเมล, จังหวัด, อำเภอ'
+							// placeholder={`'ค้นหา ชื่อ, อีเมล, จังหวัด, อำเภอ'`}
+							placeholder={`${t('search',{ ns : 'um'})} ${t('name', {ns:'um'})}, ${t('email')}, ${t('province')}, ${t('district')}`}
 							type='search'
 							startAdornment={
 								<InputAdornment position='start'>
@@ -79,7 +83,7 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 					startIcon={<GroupAddOutlinedIcon className='h-[24px] w-[24px]' />}
 					onClick={() => setOpenForm(true)}
 				>
-					เพิ่มผู้ใช้งาน
+					{t('addUser', {ns : 'um'})}
 				</Button>
 				<Button
 					className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
@@ -87,7 +91,7 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 					color='primary'
 					startIcon={<SystemUpdateAltIcon className='h-[24px] w-[24px]' />}
 				>
-					นำเข้าผู้ใช้งาน
+					{t('importUser', {ns : 'um'})}
 				</Button>
 			</Paper>
 			<FormMain open={openForm} onClose={() => setOpenForm(false)} onSubmitUser={handleSubmitUser} />
