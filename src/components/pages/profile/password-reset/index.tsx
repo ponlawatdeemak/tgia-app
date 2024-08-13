@@ -117,7 +117,7 @@ const PasswordResetMain: React.FC<PasswordResetMainProps> = () => {
 					disabled={busy}
 					startIcon={<Icon path={mdiArrowLeft} size={'18px'} className='text-black' />}
 				>
-					{t('default.back')}
+					{t('back')}
 				</Button>
 			</div>
 			<form
@@ -146,13 +146,13 @@ const PasswordResetMain: React.FC<PasswordResetMainProps> = () => {
 							) : null
 						}
 					>
-						{t('default.confirm')}
+						{t('confirm')}
 					</Button>
 				</div>
 				<AlertConfirm
 					open={confirmOpen}
-					title='ยืนยันการแก้รหัสผ่าน'
-					content='ต้องการยืนยันการแก้รหัสผ่านของผู้ใช้งานนี้ใช่หรือไม่'
+					title={t('alert.confirmEditPassword')}
+					content={t('alert.confirmChangePassword')}
 					onClose={() => setConfirmOpen(false)}
 					onConfirm={handleConfirmSubmit}
 				/>

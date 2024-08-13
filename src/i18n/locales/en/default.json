@@ -56,6 +56,8 @@
 		"confirmUserUpdateTitle": "Confirm user account update",
 		"confirmUserUpdateContent": "Are you sure you want to update this user account?",
 		"confirmLogoutTitle": "Confirm logout",
-		"confirmLogoutContent": "Are you sure you want to log out?"
+		"confirmLogoutContent": "Are you sure you want to log out?",
+		"confirmEditPassword": "Confirm password change?",
+		"confirmChangePassword": "Do you want change user password?"
 	}
 }

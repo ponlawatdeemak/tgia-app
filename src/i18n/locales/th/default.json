@@ -57,6 +57,8 @@
 		"confirmUserUpdateTitle": "บันทึกบัญชีผู้ใช้งาน",
 		"confirmUserUpdateContent": "ต้องการยืนยันการบันทึกบัญชีผู้ใช้งานนี้ใช่หรือไม่",
 		"confirmLogoutTitle": "ยืนยันการออกจากระบบ",
-		"confirmLogoutContent": "ต้องการยืนยันการออกจากระบบใช่หรือไม่"
+		"confirmLogoutContent": "ต้องการยืนยันการออกจากระบบใช่หรือไม่",
+		"confirmEditPassword": "ยืนยันการแก้รหัสผ่าน",
+		"confirmChangePassword": "ต้องการยืนยันการแก้รหัสผ่านของผู้ใช้งานนี้ใช่หรือไม่"
 	}
 }

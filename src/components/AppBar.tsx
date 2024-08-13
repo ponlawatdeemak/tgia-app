@@ -485,7 +485,7 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 									onClick={() => setToggle(!toggle)}
 									startIcon={<Icon path={mdiTune} size={1} />}
 								>
-									{t('default.setting')}
+									{t('setting')}
 								</Button>
 							</div>
 							<div className='flex flex-col'>
