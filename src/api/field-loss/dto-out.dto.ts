@@ -42,6 +42,10 @@ export interface GetAreaStatisticDtoOut extends LossTypeAreaPredicted {
 	order: number
 }
 
-export interface GetTimeStatisticDtoOut extends LossTypeAreaPredicted {
+export interface GetTimeStatisticDtoOut {
+	month: number
 	monthYear: ResponseLanguage
+	totalPredicted: ResponseArea
+	floodPredicted: ClaimedArea
+	droughtPredicted: ClaimedArea
 }
