@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { Box, ToggleButton, ToggleButtonGroup, Typography, IconButton, Popover } from '@mui/material'
 import { mdiLayersOutline, mdiMinus, mdiPlus } from '@mdi/js'
-import Image from 'next/image'
 import Icon from '@mdi/react'
 
 const basemapList = [
@@ -100,7 +99,7 @@ const MapTools: React.FC<MapToolsProps> = ({ onBasemapChange, onZoomIn, onZoomOu
 									}}
 									value={item.value}
 								>
-									<Image src={item.image} alt={item.value} className='w-full' />
+									<img src={item.image} className='w-full' />
 									<Typography variant={'body2'} align='center'>
 										{item.label}
 									</Typography>
