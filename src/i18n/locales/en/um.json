@@ -20,6 +20,10 @@
 	"names" : "Names",
 	"alert": {
 		"deleteUserProfile": "Delete user",
-		"confirmDeleteUserProfile": "Are you sure you want to delete this user account ?"
+		"enableUserProfile" : "Enable User",
+		"disableUserProfile" : "Disable User",
+		"confirmDeleteUserProfile": "Are you sure you want to delete this user account ?",
+		"confirmEnableUserProfile" : "Are you sure you want to enable this user account ?",
+		"confirmDisableUserProfile" : "Are you sure you want to disable this user account ?"
 	}
 }
