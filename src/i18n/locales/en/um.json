@@ -17,5 +17,9 @@
 	"search" : "Search",
 	"name" : "Name",
 	"selecting" : "Selecting",
-	"names" : "Names"
+	"names" : "Names",
+	"alert": {
+		"deleteUserProfile": "Delete user",
+		"confirmDeleteUserProfile": "Are you sure you want to delete this user account ?"
+	}
 }

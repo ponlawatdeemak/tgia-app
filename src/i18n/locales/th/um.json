@@ -7,15 +7,19 @@
 	"enableUser": "เปิดใช้งาน",
 	"disableUser": "ปิดใช้งาน",
 	"deleteUser": "ลบผู้ใช้งาน",
-	"addUser" : "เพิ่มผู้ใช้งาน",
-	"importUser" : "นำเข้าผู้ใช้งาน",
-	"userList" : "รายชื่อผู้ใช้งาน",
-	"item" : "รายการ",
-	"showing" : "แสดง",
-	"of" : "จาก",
-	"page" : "หน้า",
+	"addUser": "เพิ่มผู้ใช้งาน",
+	"importUser": "นำเข้าผู้ใช้งาน",
+	"userList": "รายชื่อผู้ใช้งาน",
+	"item": "รายการ",
+	"showing": "แสดง",
+	"of": "จาก",
+	"page": "หน้า",
 	"search": "ค้นหา",
-	"name" : "ชื่อ",
-	"selecting" : "กำลังเลือก",
-	"names" : "รายชื่อ"
- }
+	"name": "ชื่อ",
+	"selecting": "กำลังเลือก",
+	"names": "รายชื่อ",
+	"alert": {
+		"deleteUserProfile": "ลบบัญชีผู้ใช้งาน",
+		"confirmDeleteUserProfile": "ต้องการยืนยันการลบบัญชีผู้ใช้งานนี้ใช่หรือไม่"
+	}
+}
