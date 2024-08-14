@@ -20,6 +20,10 @@
 	"names": "รายชื่อ",
 	"alert": {
 		"deleteUserProfile": "ลบบัญชีผู้ใช้งาน",
-		"confirmDeleteUserProfile": "ต้องการยืนยันการลบบัญชีผู้ใช้งานนี้ใช่หรือไม่"
+		"enableUserProfile" : "เปิดบัญชีผู้ใช้งาน",
+		"disableUserProfile" : "ปิดบัญชีผู้ใช้งาน",
+		"confirmDeleteUserProfile": "ต้องการยืนยันการลบบัญชีผู้ใช้งานนี้ใช่หรือไม่",
+		"confirmEnableUserProfile" : "ต้องการยืนยันการเปิดใช้งานบัญชีผู้ใช้งานนี้ใช่หรือไม่",
+		"confirmDisableUserProfile" : "ต้องการยืนยันการปิดใช้งานบัญชีผู้ใช้งานนี้ใช่หรือไม่"
 	}
 }
