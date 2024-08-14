@@ -39,6 +39,7 @@ import AlertConfirm from '@/components/common/dialog/AlertConfirm'
 import PaginationItem from '@mui/material/PaginationItem'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import useResponsive from '@/hook/responsive'
 
 interface Data {
 	id: number
@@ -87,6 +88,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
+	const { isDesktop } = useResponsive()
 
 	// Define TableHead
 	const headCells: readonly HeadCell[] = [
@@ -275,7 +277,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 				const res = await mutateDeleteProfile(payload)
 				queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 				setIsSearch(true)
-				setAlertInfo({ open: true, severity: 'success', message: t('success.profileDelete') })
+				setAlertInfo({ open: true, severity: 'success', message: t('profileDelete', { ns: 'um' }) })
 				console.log(res)
 			} catch (error) {
 				console.error(error)
@@ -301,7 +303,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
-					setAlertInfo({ open: true, severity: 'success', message: t('success.profileDelete') })
+					setAlertInfo({ open: true, severity: 'success', message: t('profileDelete', { ns: 'um' }) })
 				})
 				.catch((error) => {
 					console.log(error)
@@ -328,7 +330,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
-					setAlertInfo({ open: true, severity: 'success', message: t('alert.profileUpdate') })
+					setAlertInfo({ open: true, severity: 'success', message: t('profileUpdate', { ns: 'um' }) })
 				})
 				.catch((error) => {
 					console.log(error)
@@ -356,7 +358,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
-					setAlertInfo({ open: true, severity: 'success', message: t('alert.profileUpdate') })
+					setAlertInfo({ open: true, severity: 'success', message: t('profileUpdate', { ns: 'um' }) })
 				})
 				.catch((error) => {
 					console.log(error)
@@ -393,7 +395,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	// console.log(emptyRows)
 
 	return (
-		<div className='py-[16px]'>
+		<div className={isDesktop ? 'py-[16]' : 'pb-[8px] pt-[16px]'}>
 			<Paper className='flex flex-col gap-[8px] px-[24px] py-[16px]'>
 				<div className='flex items-baseline gap-[12px]'>
 					<Typography variant='body1' className='font-semibold'>
@@ -404,7 +406,6 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						{t('of', { ns: 'um' })} {total} {t('item', { ns: 'um' })}
 					</Typography>
 				</div>
-				
 
 				<Box className='flex h-[70vh] flex-col gap-[16px]'>
 					<TableContainer
@@ -413,50 +414,58 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						component={'div'}
 					>
 						{selected.length > 0 && (
-					<Box
-						sx={{ display: 'inline-flex', backgroundColor: '#F8FAFD' }}
-						className='flex h-[48px] rounded-lg p-2 w-full'
-					>
-						<Typography className='m-4 flex items-center font-medium'>
-							{t('selecting', { ns: 'um' })}{' '}
-							<span className='inline-block font-bold text-primary'>&nbsp;{selected.length}&nbsp;</span>{' '}
-							{t('names', { ns: 'um' })}
-						</Typography>
-						<Stack direction='row' spacing={1} className='flex items-center'>
-							<Button
-								className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
-								variant='contained'
-								color='primary'
-								onClick={() => {
-									setIsConfirmOpenManyOpen(true)
-								}}
+							<Box
+								sx={{ display: 'inline-flex', backgroundColor: '#F8FAFD', position: 'sticky', left:0 }}
+								className={
+									isDesktop
+										? 'flex h-[48px] w-auto rounded-[2px] rounded-lg p-2'
+										: 'flex h-[100px] w-auto flex-col rounded-[2px] rounded-lg p-2'
+								}
 							>
-								{t('enableUser', { ns: 'um' })}
-							</Button>
-							<Button
-								className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
-								variant='contained'
-								color='primary'
-								onClick={() => {
-									setIsConfirmCloseManyOpen(true)
-								}}
-							>
-								{t('disableUser', { ns: 'um' })}
-							</Button>
-							<Button
-								className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
-								variant='contained'
-								color='primary'
-								startIcon={<Icon path={mdiTrashCanOutline} size={1} color='var(--black-color)' />}
-								onClick={() => {
-									setIsConfirmDeleteManyOpen(true)
-								}}
-							>
-								{t('deleteUser', { ns: 'um' })}
-							</Button>
-						</Stack>
-					</Box>
-				)}
+								<Typography className='m-4 flex items-center font-medium'>
+									{t('selecting', { ns: 'um' })}{' '}
+									<span className='inline-block font-bold text-primary'>
+										&nbsp;{selected.length}&nbsp;
+									</span>{' '}
+									{t('names', { ns: 'um' })}
+								</Typography>
+								<Stack direction='row' spacing={1} className='flex items-center'>
+									<Button
+										className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
+										variant='contained'
+										color='primary'
+										onClick={() => {
+											setIsConfirmOpenManyOpen(true)
+										}}
+									>
+										{t('enableUser', { ns: 'um' })}
+									</Button>
+									<Button
+										className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
+										variant='contained'
+										color='primary'
+										onClick={() => {
+											setIsConfirmCloseManyOpen(true)
+										}}
+									>
+										{t('disableUser', { ns: 'um' })}
+									</Button>
+									<Button
+										className='flex h-[40px] shrink-0 gap-[8px] bg-white py-[8px] pl-[12px] pr-[16px] text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
+										variant='contained'
+										color='primary'
+										startIcon={
+											<Icon path={mdiTrashCanOutline} size={1} color='var(--black-color)' />
+										}
+										onClick={() => {
+											setIsConfirmDeleteManyOpen(true)
+										}}
+									>
+										{t('deleteUser', { ns: 'um' })}
+									</Button>
+								</Stack>
+							</Box>
+						)}
 						<Table
 							aria-labelledby='tableTitle'
 							size={dense ? 'small' : 'medium'}
@@ -631,12 +640,16 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 							{t('page', { ns: 'um' })} {page} {t('of', { ns: 'um' })} {Math.ceil(total / 10)}
 						</Typography>
 						<Pagination
-							className='um-table-pagination [&_ul]:divide-solid [&_ul]:divide-gray [&_ul]:divide-x [&_ul]:divide-y-0 [&_ul]:border-solid [&_ul]:border-gray [&_ul]:border [&_ul]:rounded'
+							className={
+								isDesktop
+									? 'um-table-pagination [&_ul]:divide-x [&_ul]:divide-y-0 [&_ul]:divide-solid [&_ul]:divide-gray [&_ul]:rounded [&_ul]:border [&_ul]:border-solid [&_ul]:border-gray'
+									: 'mobile-um-table-pagination [&_ul]:divide-x [&_ul]:divide-y-0 [&_ul]:divide-solid [&_ul]:divide-gray [&_ul]:rounded [&_ul]:border [&_ul]:border-solid [&_ul]:border-gray'
+							}
 							count={Math.ceil(total / 10)}
 							variant='outlined'
 							shape='rounded'
-							siblingCount={1}
-							boundaryCount={1}
+							siblingCount={isDesktop ? 1 : 0}
+							boundaryCount={isDesktop ? 1 : 0}
 							onChange={handlePagination}
 							page={page}
 							sx={{
@@ -647,12 +660,14 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									slots={{
 										previous: () => (
 											<>
-												<ArrowBackIcon className='h-[20px] w-[20px]' /> {t('previous')}
+												<ArrowBackIcon className='h-[20px] w-[20px]' />
+												{/* {t('previous')} */}
 											</>
 										),
 										next: () => (
 											<>
-												{t('next')} <ArrowForwardIcon className='h-[20px] w-[20px]' />
+												{/* {t('next')}  */}
+												<ArrowForwardIcon className='h-[20px] w-[20px]' />
 											</>
 										),
 									}}
