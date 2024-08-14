@@ -1,3 +1,39 @@
-.MuiPagination-root ul li{
-    padding: '10px';
+.um-table-pagination ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.um-table-pagination li {
+    margin: 0;
+    padding: 0;
+}
+
+.um-table-pagination button {
+    margin: 0;
+    padding: 0;
+}
+
+.um-table-pagination ul li button{
+    margin: 0, 0, 0, 0;
+    border-radius: 0px;
+    padding: 0,0,0,0;
+}
+
+.um-table-pagination ul li:first-child button {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    width: 90px;
+    border-right: none;
+}
+
+.um-table-pagination ul li:last-child button {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    width: 90px;
+    border-left: none;
+}
+
+.um-table-pagination ul li button {
+    padding: 0,0,0,0;
 }
