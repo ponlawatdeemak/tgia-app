@@ -3,7 +3,7 @@ const nextConfig = {
 	env: {
 		API_URL: process.env.API_URL,
 		API_KEY: process.env.API_KEY,
-		NEXT_PUBLIC_API_URL_DISASTER: process.env.NEXT_PUBLIC_API_URL_DISASTER,
+		API_URL_DISASTER: process.env.API_URL_DISASTER,
 		API_KEY_DISASTER: process.env.API_KEY_DISASTER,
 		API_URL_TILE: process.env.API_URL_TILE,
 		API_KEY_TILE: process.env.API_KEY_TILE,
