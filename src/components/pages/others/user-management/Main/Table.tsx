@@ -369,15 +369,15 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 
 	const handlePagination = React.useCallback(
 		(event: React.ChangeEvent<unknown>, value: number) => {
-			if(value === page + 1 || value === page - 1){
+			if (value === page + 1 || value === page - 1) {
 				setSearchParams((prevSearch) => ({
 					...prevSearch,
 					offset: page < value ? prevSearch.offset + 10 : prevSearch.offset - 10,
 				}))
-			}else{
-				setSearchParams((prevSearch) =>({
+			} else {
+				setSearchParams((prevSearch) => ({
 					...prevSearch,
-					offset: (value-1)*10
+					offset: (value - 1) * 10,
 				}))
 			}
 			setIsSearch(true)
@@ -404,10 +404,18 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						{t('of', { ns: 'um' })} {total} {t('item', { ns: 'um' })}
 					</Typography>
 				</div>
-				{selected.length > 0 && (
+				
+
+				<Box className='flex h-[70vh] flex-col gap-[16px]'>
+					<TableContainer
+						className='flex flex-col overflow-y-auto'
+						sx={{ minHeight: '90%', flex: 1 }}
+						component={'div'}
+					>
+						{selected.length > 0 && (
 					<Box
 						sx={{ display: 'inline-flex', backgroundColor: '#F8FAFD' }}
-						className='flex h-[48px] rounded-lg p-2'
+						className='flex h-[48px] rounded-lg p-2 w-full'
 					>
 						<Typography className='m-4 flex items-center font-medium'>
 							{t('selecting', { ns: 'um' })}{' '}
@@ -449,12 +457,6 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						</Stack>
 					</Box>
 				)}
-
-				<Box className='flex min-h-[90%] flex-col gap-[16px]'>
-					<TableContainer
-						className='flex h-full max-h-[512px] flex-col overflow-y-auto'
-						sx={{ minHeight: '90%' }}
-					>
 						<Table
 							aria-labelledby='tableTitle'
 							size={dense ? 'small' : 'medium'}
@@ -629,7 +631,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 							{t('page', { ns: 'um' })} {page} {t('of', { ns: 'um' })} {Math.ceil(total / 10)}
 						</Typography>
 						<Pagination
-							className="um-table-pagination"
+							className='um-table-pagination [&_ul]:divide-solid [&_ul]:divide-gray [&_ul]:divide-x [&_ul]:divide-y-0 [&_ul]:border-solid [&_ul]:border-gray [&_ul]:border [&_ul]:rounded'
 							count={Math.ceil(total / 10)}
 							variant='outlined'
 							shape='rounded'
@@ -638,19 +640,19 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 							onChange={handlePagination}
 							page={page}
 							sx={{
-								gap: 0
+								gap: 0,
 							}}
 							renderItem={(item) => (
 								<PaginationItem
 									slots={{
 										previous: () => (
 											<>
-												<ArrowBackIcon className='h-[20px] w-[20px]' />  {t('previous')}
+												<ArrowBackIcon className='h-[20px] w-[20px]' /> {t('previous')}
 											</>
 										),
 										next: () => (
 											<>
-												{t('next')}  <ArrowForwardIcon className='h-[20px] w-[20px]' />
+												{t('next')} <ArrowForwardIcon className='h-[20px] w-[20px]' />
 											</>
 										),
 									}}
@@ -678,8 +680,8 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			{/* Alert Confirm Delete Many */}
 			<AlertConfirm
 				open={isConfirmDeleteManyOpen}
-				title={i18n.language === 'th' ? 'ลบบัญชีผู้ใช้งาน' : 'Delete Users'}
-				content='Delete Many'
+				title={t('alert.deleteUserProfile', { ns: 'um' })}
+				content={t('alert.confirmDeleteUserProfile', { ns: 'um' })}
 				onClose={() => {
 					setIsConfirmDeleteManyOpen(false)
 				}}
