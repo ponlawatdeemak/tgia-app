@@ -23,6 +23,9 @@ function DeckGLOverlay() {
 export default function MapGoogle({ viewState, onViewStateChange }: MapInterface) {
 	const overlay = useLayerStore((state) => state.overlay)
 	useEffect(() => {
+		console.log('Google mapKey ', process.env.GOOGLE_MAPS_API_KEY)
+		console.log('Google mapId ', process.env.GOOGLE_MAPS_API_MAP_ID)
+		
 		return () => {
 			overlay?.setProps({ layers: [] })
 		}
