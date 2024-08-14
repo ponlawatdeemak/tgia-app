@@ -1,8 +1,14 @@
+export const Boundary = {
+	green: '#38A700',
+	gray: '#E2E2E2',
+}
+
 export const LossTypeColor = {
 	total: '#B23B56',
 	noData: '#38A700',
 	drought: '#E34A33',
 	flood: '#3182BD',
+	rnr: '#38A700',
 }
 
 export const TextColor = {
