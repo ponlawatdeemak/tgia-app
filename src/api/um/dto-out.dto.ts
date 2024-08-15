@@ -53,3 +53,21 @@ export interface PatchStatusDtoOut {
 export interface DeleteProfileDtoOut {
 	id: string
 }
+
+export interface PutProfileUMDtoOut {
+	id : string,
+	username : string,
+	firstName : string,
+	lastName : string,
+	email : string,
+	image : string,
+	orgCode : string,
+	role : string,
+	responsibleProvinceCode : string,
+	responsibleDistrictCode : string,
+	flagStatus : string
+}
+
+export interface PostProfileUMDtoOut {
+	id : string
+}
