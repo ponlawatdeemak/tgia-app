@@ -43,7 +43,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ timeStatisticData, timeStatis
 	const { queryParams } = useSearchFieldLoss()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default', 'profile'])
+	const { t, i18n } = useTranslation(['default', 'um'])
 	const language = i18n.language as keyof ResponseLanguage
 
 	const rows = timeStatisticData || []

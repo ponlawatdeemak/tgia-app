@@ -67,7 +67,7 @@ const TableDetail: React.FC<TableDetailProps> = ({
 }) => {
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default', 'profile'])
+	const { t, i18n } = useTranslation(['default', 'um'])
 	const language = i18n.language as keyof ResponseLanguage
 
 	const rows = areaStatisticData || []

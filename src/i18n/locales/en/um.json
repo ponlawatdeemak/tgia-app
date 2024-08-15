@@ -1,0 +1,29 @@
+{
+	"profileUpdate": "Updated successfully",
+	"profileDelete": "User delete succesfully",
+	"profile": "Profile",
+	"belongProvince": "Province",
+	"belongDistrict": "District",
+	"enableUser": "Enable User",
+	"disableUser" : "Disable User",
+	"deleteUser": "Delete User",
+	"addUser" : "Add User",
+	"importUser" : "Import Users",
+	"userList" : "User List",
+	"item" : "Item",
+	"showing" : "Showing",
+	"of" : "of",
+	"page" : "Page",
+	"search" : "Search",
+	"name" : "Name",
+	"selecting" : "Selecting",
+	"names" : "Names",
+	"alert": {
+		"deleteUserProfile": "Delete user",
+		"enableUserProfile" : "Enable User",
+		"disableUserProfile" : "Disable User",
+		"confirmDeleteUserProfile": "Are you sure you want to delete this user account ?",
+		"confirmEnableUserProfile" : "Are you sure you want to enable this user account ?",
+		"confirmDisableUserProfile" : "Are you sure you want to disable this user account ?"
+	}
+}

@@ -71,11 +71,19 @@ export default function PlaygroundPage() {
 
 			<div className={text}>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี test </div>
 			<div className='text-xs text-[#E34A33]'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-lossType-drought text-sm'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-lossType-flood text-base'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
-			<div className='text-lossType text-lg'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className='text-sm text-lossType-drought'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className='text-base text-lossType-flood'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
+			<div className='text-lg text-lossType'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
 			<div className='text-xl text-[#3182BD]'>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี</div>
 			<div className={textFlood}>โครงการพัฒนาระบบเทคโนโลยี เพื่องานประกันภัยข้าวนาปี Flood</div>
+
+			<div>NEXT_PUBLIC_API_URL_DISASTER {process.env.NEXT_PUBLIC_API_URL_DISASTER}</div>
+
+			<div>API_URL_DISASTER {process.env.API_URL_DISASTER}</div>
+
+			<div>NEXT_PUBLIC_DISASTER {process.env.NEXT_PUBLIC_DISASTER}</div>
+
+			<div>DISASTER {process.env.DISASTER}</div>
 		</main>
 	)
 }
