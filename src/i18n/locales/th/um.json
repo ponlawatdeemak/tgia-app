@@ -18,6 +18,7 @@
 	"name": "ชื่อ",
 	"selecting": "กำลังเลือก",
 	"names": "รายชื่อ",
+	"editUserAccount": "แก้ไขบัญชีผู้ใช้งาน",
 	"alert": {
 		"deleteUserProfile": "ลบบัญชีผู้ใช้งาน",
 		"enableUserProfile" : "เปิดบัญชีผู้ใช้งาน",

@@ -43,6 +43,7 @@ import useResponsive from '@/hook/responsive'
 import classNames from 'classnames'
 import { mdiAccount } from '@mdi/js'
 import { mdiAccountOff } from '@mdi/js'
+import { FormMain } from '../Form'
 
 interface Data {
 	id: number
@@ -157,11 +158,13 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	const [tableData, setTableData] = React.useState<GetSearchUMDtoOut[]>([])
 	const [total, setTotal] = React.useState<number>(0)
 	const [currentDeleteId, setCurrentDeleteId] = React.useState<string>('')
+	const [currentEditId, setCurrentEditId] = React.useState<string>('')
 	const [alertInfo, setAlertInfo] = React.useState<AlertInfoType>({
 		open: false,
 		severity: 'success',
 		message: '',
 	})
+	const [isEditOpen, setIsEditOpen] = React.useState<boolean>(false)
 	const [isConfirmDeleteOneOpen, setIsConfirmDeleteOneOpen] = React.useState<boolean>(false)
 	const [isConfirmDeleteManyOpen, setIsConfirmDeleteManyOpen] = React.useState<boolean>(false)
 	const [isConfirmOpenManyOpen, setIsConfirmOpenManyOpen] = React.useState<boolean>(false)
@@ -414,6 +417,11 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 
 	const isSelected = (id: string) => selected.indexOf(id) !== -1
 
+	const handleSubmitUser = async (event: React.FormEvent) => {
+		console.log('Form submitted')
+		// Add your form submission logic here
+	}
+
 	// Avoid a layout jump when reaching the last page with empty rows.
 	const emptyRows = page > Math.ceil(total / 10) - 1 ? Math.max(0, (1 + page) * 2 - tableData.length) : 0
 
@@ -626,6 +634,8 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 														<IconButton
 															onClick={(e) => {
 																e.stopPropagation()
+																setCurrentEditId(row.id)
+																setIsEditOpen(true)
 															}}
 														>
 															<Icon
@@ -782,6 +792,16 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					{alertInfo.message}
 				</Alert>
 			</Snackbar>
+
+			<FormMain
+				open={isEditOpen}
+				onClose={() => setIsEditOpen(false)}
+				onSubmitUser={handleSubmitUser}
+				userId={currentEditId}
+				isEdit={true}
+				setOpen={setIsEditOpen}
+				setIsSearch={setIsSearch}
+			/>
 		</div>
 	)
 }

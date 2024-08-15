@@ -18,6 +18,7 @@
 	"name" : "Name",
 	"selecting" : "Selecting",
 	"names" : "Names",
+	"editUserAccount": "Edit User Account",
 	"alert": {
 		"deleteUserProfile": "Delete user",
 		"enableUserProfile" : "Enable User",

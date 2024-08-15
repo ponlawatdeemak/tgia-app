@@ -1,9 +1,9 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
-import React, { FormEvent, useState, useCallback } from 'react'
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar } from '@mui/material'
+import React, { FormEvent, useState, useCallback, useEffect } from 'react'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import IOSSwitch from '@/components/common/switch/IOSSwitch'
 import ProfileForm from '@/components/shared/ProfileForm'
-import { FormValues } from '@/components/shared/ProfileForm/interface'
+import { AlertInfoType, FormValues } from '@/components/shared/ProfileForm/interface'
 import { useFormik } from 'formik'
 import service from '@/api'
 import { useQuery } from '@tanstack/react-query'
@@ -11,11 +11,20 @@ import * as yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { useSwitchLanguage } from '@/i18n/client'
 import { Language } from '@/enum'
+import { useSession } from 'next-auth/react'
+import AlertConfirm from '@/components/common/dialog/AlertConfirm'
+import { DeleteProfileDtoIn } from '@/api/um/dto-in.dto'
+import um from '@/api/um'
+
 
 export interface UserManagementProps {
 	open: boolean
 	onClose: () => void
 	onSubmitUser: (event: FormEvent) => void
+	userId: string
+	isEdit: boolean
+	setOpen: React.Dispatch<React.SetStateAction<boolean>>
+	setIsSearch: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const defaultFormValues: FormValues = {
@@ -32,12 +41,21 @@ const defaultFormValues: FormValues = {
 }
 
 export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
-	const { t, i18n } = useTranslation(['default','um'])
+	const { t, i18n } = useTranslation(['default', 'um'])
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
-
+	const [isUserActive, setIsUserActive] = useState<boolean>(false)
+	const [isConfirmAddOpen, setIsConfirmAddOpen] = useState<boolean>(false)
+	const [isConfirmEditOpen, setIsConfirmEditOpen] = useState<boolean>(false)
+	const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState<boolean>(false)
+	const [alertInfo, setAlertInfo] = React.useState<AlertInfoType>({
+		open: false,
+		severity: 'success',
+		message: '',
+	})
+	const { data: session } = useSession()
 	const handleSubmitUser = async (event: FormEvent) => {
-		console.log('Form submitted')
-		// Add your form submission logic here
+		event.preventDefault()
+		props.isEdit ? setIsConfirmEditOpen(true) : setIsConfirmAddOpen(true)
 	}
 
 	const validationSchema = yup.object({
@@ -48,12 +66,43 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 	})
 
 	const { data: userData, isLoading: isUserDataLoading } = useQuery({
-		queryKey: ['getProfile'],
-		queryFn: () => service.um.getProfile(),
+		queryKey: ['getProfile', props.userId],
+		queryFn: () =>
+			service.um.getUM({
+				userId: props.userId,
+			}),
 	})
+
+	useEffect(() => {
+		setIsUserActive(userData?.data?.flagStatus === 'A' ? true : false)
+	}, [userData])
+
+	useEffect(() => {
+		formik.setFieldValue('flagStatus', isUserActive ? 'A' : 'C')
+	}, [isUserActive])
+
+	const onDelete = useCallback(async (userId: string) => {
+		try {
+			// filter out current session userid
+			if (userId === session?.user.id) {
+				return
+			}
+			const payload: DeleteProfileDtoIn = { id: userId }
+			const res = await um.deleteProfile(payload)
+			props.setIsSearch(true)
+			setAlertInfo({ open: true, severity: 'success', message: t('profileDelete', { ns: 'um' }) })
+		} catch (error: any) {
+			setAlertInfo({
+				open: true,
+				severity: 'error',
+				message: error?.title ? error.title : t('error.somethingWrong'),
+			})
+		}
+	}, [props, session?.user.id,t])
 
 	const onSubmit = useCallback(async (values: FormValues) => {
 		try {
+			console.log(values)
 			// setBusy(true)
 			// if (values.image instanceof File) {
 			// 	const selectedImage: CreateProfileImageDtoIn = {
@@ -128,22 +177,39 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 				fullWidth
 				scroll='paper'
 			>
-				<DialogTitle>{t('addUser', {ns : 'um'})}</DialogTitle>
+				<DialogTitle>
+					{props.isEdit ? t('editUserAccount', { ns: 'um' }) : t('addUser', { ns: 'um' })}
+				</DialogTitle>
 				<DialogContent className='h-[492px]' dividers={true}>
+					{/* override class from parent */}
 					<ProfileForm formik={formik}></ProfileForm>
-
-					<FormControlLabel control={<IOSSwitch sx={{ m: 1 }} defaultChecked />} label='iOS style' />
+					{session?.user.id !== props.userId && (
+						<FormControlLabel
+							control={
+								<IOSSwitch
+									sx={{ m: 1 }}
+									checked={isUserActive}
+									onChange={() => {
+										setIsUserActive(!isUserActive)
+									}}
+								/>
+							}
+							label={t('enableUser', { ns: 'um' })}
+						/>
+					)}
 				</DialogContent>
 				<DialogActions className='p-6'>
-					<Button
-						className='text-red bg-white text-sm text-[#D13438]'
-						variant='contained'
-						onClick={() => {
-							console.log('ลบผู้ใช้งาน')
-						}}
-					>
-						ลบผู้ใช้งาน
-					</Button>
+					{session?.user.id !== props.userId && (
+						<Button
+							className='text-red bg-white text-sm text-[#D13438]'
+							variant='contained'
+							onClick={() => {
+								setIsConfirmDeleteOpen(true)
+							}}
+						>
+							ลบผู้ใช้งาน
+						</Button>
+					)}
 					<Button className='bg-white text-sm text-black' variant='contained' onClick={props.onClose}>
 						ยกเลิก
 					</Button>
@@ -152,6 +218,64 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 					</Button>
 				</DialogActions>
 			</Dialog>
+			{/* Alert Confirm Add New */}
+			<AlertConfirm
+				open={isConfirmAddOpen}
+				title={t('alert.enableUserProfile', { ns: 'um' })}
+				content={t('alert.confirmEnableUserProfile', { ns: 'um' })}
+				onClose={() => {
+					setIsConfirmAddOpen(false)
+				}}
+				onConfirm={() => {
+					console.log('Confirm Add')
+					onSubmit(formik.values)
+					setIsConfirmAddOpen(false)
+				}}
+			/>
+			{/* Alert Confirm Edit Existing */}
+			<AlertConfirm
+				open={isConfirmEditOpen}
+				title={t('alert.disableUserProfile', { ns: 'um' })}
+				content={t('alert.confirmDisableUserProfile', { ns: 'um' })}
+				onClose={() => {
+					setIsConfirmEditOpen(false)
+				}}
+				onConfirm={() => {
+					console.log('Confirm Edit')
+					onSubmit(formik.values)
+					setIsConfirmEditOpen(false)
+				}}
+			/>
+			{/* Alert Confirm DeleteOne */}
+			<AlertConfirm
+				open={isConfirmDeleteOpen}
+				title={t('alert.deleteUserProfile', { ns: 'um' })}
+				content={t('alert.confirmDeleteUserProfile', { ns: 'um' })}
+				onClose={() => {
+					setIsConfirmDeleteOpen(false)
+				}}
+				onConfirm={() => {
+					onDelete(props.userId)
+					setIsConfirmDeleteOpen(false)
+					props.setOpen(false)
+				}}
+			/>
+
+			<Snackbar
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+				open={alertInfo.open}
+				autoHideDuration={6000}
+				onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+				className='w-[300px]'
+			>
+				<Alert
+					onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+					severity={alertInfo.severity}
+					className='w-full'
+				>
+					{alertInfo.message}
+				</Alert>
+			</Snackbar>
 		</div>
 	)
 }

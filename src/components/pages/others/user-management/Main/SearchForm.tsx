@@ -28,7 +28,6 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 	setPage,
 }) => {
 	const [openForm, setOpenForm] = useState<boolean>(false)
-	const [searchString, setSearchString] = useState<string>('')
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const { isDesktop } = useResponsive()
 
@@ -96,7 +95,15 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 					{isDesktop && t('importUser', { ns: 'um' })}
 				</Button>
 			</Paper>
-			<FormMain open={openForm} onClose={() => setOpenForm(false)} onSubmitUser={handleSubmitUser} />
+			<FormMain
+				open={openForm}
+				onClose={() => setOpenForm(false)}
+				onSubmitUser={handleSubmitUser}
+				userId=''
+				isEdit={false}
+				setOpen={setOpenForm}
+				setIsSearch={setIsSearch}
+			/>
 		</>
 	)
 }
