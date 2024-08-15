@@ -13,9 +13,8 @@ import { useSwitchLanguage } from '@/i18n/client'
 import { Language } from '@/enum'
 import { useSession } from 'next-auth/react'
 import AlertConfirm from '@/components/common/dialog/AlertConfirm'
-import { DeleteProfileDtoIn } from '@/api/um/dto-in.dto'
+import { DeleteProfileDtoIn, PostProfileUMDtoIn, PostUploadFilesDtoIn, PutProfileUMDtoIn } from '@/api/um/dto-in.dto'
 import um from '@/api/um'
-
 
 export interface UserManagementProps {
 	open: boolean
@@ -27,7 +26,11 @@ export interface UserManagementProps {
 	setIsSearch: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const defaultFormValues: FormValues = {
+interface UMFormValues extends FormValues {
+	flagStatus: string
+}
+
+const defaultFormValues: UMFormValues = {
 	id: '',
 	username: '',
 	firstName: '',
@@ -38,12 +41,13 @@ const defaultFormValues: FormValues = {
 	role: '',
 	responsibleProvinceCode: '',
 	responsibleDistrictCode: '',
+	flagStatus: '',
 }
 
 export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
-	const [isUserActive, setIsUserActive] = useState<boolean>(false)
+	// const [isUserActive, setIsUserActive] = useState<boolean>(false)
 	const [isConfirmAddOpen, setIsConfirmAddOpen] = useState<boolean>(false)
 	const [isConfirmEditOpen, setIsConfirmEditOpen] = useState<boolean>(false)
 	const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState<boolean>(false)
@@ -67,42 +71,104 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 
 	const { data: userData, isLoading: isUserDataLoading } = useQuery({
 		queryKey: ['getProfile', props.userId],
-		queryFn: () =>
-			service.um.getUM({
+		queryFn: async () => {
+			const res = await service.um.getUM({
 				userId: props.userId,
-			}),
+			})
+			console.log(res.data)
+			return res
+		},
+		enabled: !!props.userId,
 	})
 
-	useEffect(() => {
-		setIsUserActive(userData?.data?.flagStatus === 'A' ? true : false)
-	}, [userData])
-
-	useEffect(() => {
-		formik.setFieldValue('flagStatus', isUserActive ? 'A' : 'C')
-	}, [isUserActive])
-
-	const onDelete = useCallback(async (userId: string) => {
-		try {
-			// filter out current session userid
-			if (userId === session?.user.id) {
-				return
+	const onDelete = useCallback(
+		async (userId: string) => {
+			try {
+				// filter out current session userid
+				if (userId === session?.user.id) {
+					return
+				}
+				const payload: DeleteProfileDtoIn = { id: userId }
+				const res = await um.deleteProfile(payload)
+				props.setIsSearch(true)
+				setAlertInfo({ open: true, severity: 'success', message: t('profileDelete', { ns: 'um' }) })
+			} catch (error: any) {
+				setAlertInfo({
+					open: true,
+					severity: 'error',
+					message: error?.title ? error.title : t('error.somethingWrong'),
+				})
 			}
-			const payload: DeleteProfileDtoIn = { id: userId }
-			const res = await um.deleteProfile(payload)
-			props.setIsSearch(true)
-			setAlertInfo({ open: true, severity: 'success', message: t('profileDelete', { ns: 'um' }) })
-		} catch (error: any) {
-			setAlertInfo({
-				open: true,
-				severity: 'error',
-				message: error?.title ? error.title : t('error.somethingWrong'),
-			})
-		}
-	}, [props, session?.user.id,t])
+		},
+		[props, session?.user.id, t],
+	)
 
-	const onSubmit = useCallback(async (values: FormValues) => {
+	const onSubmit = useCallback(async (values: UMFormValues) => {
 		try {
-			console.log(values)
+			try {
+				// images is newly added
+				let imageUrl
+				if (values.image instanceof File) {
+					// New image uploaded
+					const imagePayload: PostUploadFilesDtoIn = {
+						file: values.image,
+					}
+					const res = await um.postUploadFiles(imagePayload)
+					imageUrl = res.data?.download_file_url
+				}
+				if (imageUrl) {
+					console.log('new image uploaded')
+					values.image = imageUrl
+				} else {
+					console.log('no image uploaded or already existing image')
+					values.image = ""
+				}
+				if (props.isEdit) {
+					// put method edit existing user
+					const payload: PutProfileUMDtoIn = {
+						id: values.id,
+						username: values.username,
+						firstName: values.firstName,
+						lastName: values.lastName,
+						email: values.email,
+						image: values.image,
+						orgCode: values.orgCode,
+						role: values.role,
+						responsibleProvinceCode: values.responsibleProvinceCode,
+						responsibleDistrictCode: values.responsibleDistrictCode,
+						flagStatus: values.flagStatus,
+					}
+					console.log("Editing user :: ",payload)
+					const res = await um.putProfileUM(payload)
+					console.log("res :: ",res)
+					props.setIsSearch(true)
+				} else {
+					// post method add new user
+					const payload: PostProfileUMDtoIn = {
+						username: values.username,
+						firstName: values.firstName,
+						lastName: values.lastName,
+						email: values.email,
+						image: values.image,
+						orgCode: values.orgCode,
+						role: values.role,
+						responsibleProvinceCode: values.responsibleProvinceCode,
+						responsibleDistrictCode: values.responsibleDistrictCode,
+						flagStatus: values.flagStatus,
+					}
+					console.log("Adding new user :: ", payload)
+					const res = await um.postProfileUM(payload)
+					console.log("res :: ",res)
+					props.setIsSearch(true)
+				}
+			} catch (error) {
+				console.log(error)
+				setAlertInfo({
+					open: true,
+					severity: 'error',
+					message: t('error.somethingWrong'),
+				})
+			}
 			// setBusy(true)
 			// if (values.image instanceof File) {
 			// 	const selectedImage: CreateProfileImageDtoIn = {
@@ -160,13 +226,12 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 
 	// const logout = useCallback(() => signOut({ callbackUrl: AppPath.Login }), [])
 
-	const formik = useFormik<FormValues>({
+	const formik = useFormik<UMFormValues>({
 		enableReinitialize: true,
 		initialValues: userData?.data || defaultFormValues,
 		validationSchema: validationSchema,
 		onSubmit,
 	})
-
 	return (
 		<div className='flex flex-col'>
 			<Dialog
@@ -188,9 +253,9 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 							control={
 								<IOSSwitch
 									sx={{ m: 1 }}
-									checked={isUserActive}
-									onChange={() => {
-										setIsUserActive(!isUserActive)
+									checked={formik.values.flagStatus === 'A' ? true : false}
+									onChange={(event) => {
+										formik.setFieldValue('flagStatus', event.target.checked ? 'A' : 'C')
 									}}
 								/>
 							}
@@ -221,8 +286,8 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 			{/* Alert Confirm Add New */}
 			<AlertConfirm
 				open={isConfirmAddOpen}
-				title={t('alert.enableUserProfile', { ns: 'um' })}
-				content={t('alert.confirmEnableUserProfile', { ns: 'um' })}
+				title={t('addUser', { ns: 'um' })}
+				content={t('alert.confirmAddUserProfile', { ns: 'um' })}
 				onClose={() => {
 					setIsConfirmAddOpen(false)
 				}}
@@ -235,8 +300,8 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 			{/* Alert Confirm Edit Existing */}
 			<AlertConfirm
 				open={isConfirmEditOpen}
-				title={t('alert.disableUserProfile', { ns: 'um' })}
-				content={t('alert.confirmDisableUserProfile', { ns: 'um' })}
+				title={t('editUserAccount', { ns: 'um' })}
+				content={t('alert.confirmEditUserProfile', { ns: 'um' })}
 				onClose={() => {
 					setIsConfirmEditOpen(false)
 				}}
@@ -249,7 +314,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 			{/* Alert Confirm DeleteOne */}
 			<AlertConfirm
 				open={isConfirmDeleteOpen}
-				title={t('alert.deleteUserProfile', { ns: 'um' })}
+				title={t('deleteUser', { ns: 'um' })}
 				content={t('alert.confirmDeleteUserProfile', { ns: 'um' })}
 				onClose={() => {
 					setIsConfirmDeleteOpen(false)
