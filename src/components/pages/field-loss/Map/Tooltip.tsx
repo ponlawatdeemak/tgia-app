@@ -1,81 +1,138 @@
 import { GetSummaryAreaDtoOut } from '@/api/field-loss/dto-out.dto'
-import { Box, Paper, Typography } from '@mui/material'
-import React, { CSSProperties } from 'react'
+import { Box, IconButton, Paper, Typography } from '@mui/material'
+import React from 'react'
+import Icon from '@mdi/react'
+import { mdiArrowRight } from '@mdi/js'
+import useSearchFieldLoss from '../Main/context'
+import useLayerStore from '@/components/common/map/store/map'
+import { MVTLayer } from '@deck.gl/geo-layers'
+import { ResponseLanguage } from '@/api/interface'
+import { useTranslation } from 'react-i18next'
+import useAreaUnit from '@/store/area-unit'
+import useAreaType from '@/store/area-type'
+import { LossType } from '@/enum'
 
 type HoverInfo = {
 	x: number
 	y: number
-	province: GetSummaryAreaDtoOut | null
+	area: GetSummaryAreaDtoOut | null
+	areaCode: number
+	layerName: string
+}
+
+interface LayerType {
+	layerName: string
+	layerId: number | null
 }
 
 interface TooltipProps {
 	info: HoverInfo | null
+	setHoverInfo: React.Dispatch<React.SetStateAction<HoverInfo | null>>
+	setLayer: React.Dispatch<React.SetStateAction<LayerType>>
 }
 
-const Tooltip: React.FC<TooltipProps> = ({ info }) => {
-	if (!info || !info.province) {
+const Tooltip: React.FC<TooltipProps> = ({ info, setHoverInfo, setLayer }) => {
+	const { layers, addLayer, setLayers } = useLayerStore()
+	const { queryParams, setQueryParams } = useSearchFieldLoss()
+	const { areaUnit } = useAreaUnit()
+	const { t, i18n } = useTranslation(['default', 'um'])
+	const language = i18n.language as keyof ResponseLanguage
+
+	if (!info || !info.area) {
 		return null
+	}
+
+	const handleClickTooltip = (name: string, id: number) => {
+		if (name === 'province') {
+			setQueryParams({ ...queryParams, provinceId: id })
+		} else if (name === 'district') {
+			setQueryParams({ ...queryParams, districtId: id })
+		}
+		setLayer((prevLayer) => ({ ...prevLayer, layerName: name, layerId: id }))
+		setHoverInfo(null)
 	}
 
 	return (
 		<Paper className='absolute z-10 flex flex-col gap-2 bg-white p-2' style={{ left: info.x, top: info.y }}>
-			<Typography className='text-base font-semibold text-black'>{info.province.name.th}</Typography>
+			<Box className='flex items-center justify-between'>
+				<Typography className='text-base font-semibold text-black'>{info.area.name[language]}</Typography>
+				{info.layerName !== 'subdistrict' && (
+					<IconButton
+						onClick={() => handleClickTooltip(info.layerName, info.areaCode)}
+						className='h-6 w-6 rounded-lg border border-solid border-gray p-1'
+					>
+						<Icon path={mdiArrowRight} className='h-4 w-4 font-normal text-black' />
+					</IconButton>
+				)}
+			</Box>
 			<Box className='flex flex-col gap-2'>
 				<Typography className='text-xs font-medium text-gray-dark2'>พื้นที่เสียหายจากการวิเคราะห์</Typography>
-				<Box className='flex flex-col gap-0.5'>
-					<div className='flex items-baseline justify-between'>
-						<span className='text-sm font-medium text-black'>ทั้งหมด</span>
-						<div className='flex items-baseline gap-1'>
-							<span className='text-base font-semibold text-secondary'>
-								{info.province.predictedArea.areaRai.toLocaleString()}
-							</span>
-							<span className='text-sm font-normal text-black'>ไร่</span>
+				{!queryParams.lossType && (
+					<Box className='flex flex-col gap-0.5'>
+						<div className='flex items-baseline justify-between'>
+							<span className='text-sm font-medium text-black'>ทั้งหมด</span>
+							<div className='flex items-baseline gap-1'>
+								<span className='text-base font-semibold text-secondary'>
+									{info.area.totalPredictedArea[areaUnit].toLocaleString()}
+								</span>
+								<span className='text-sm font-normal text-black'>ไร่</span>
+							</div>
 						</div>
-					</div>
-					<div className='flex items-baseline gap-1'>
-						<span className='text-xs font-medium text-gray-dark2'>คิดเป็น</span>
-						<span className='text-xs font-medium text-secondary'>
-							{info.province.predictedArea.percent + '%'}
-						</span>
-						<span className='text-xs font-medium text-gray-dark2'>ของพื้นที่ลงทะเบียน</span>
-					</div>
-				</Box>
-				<Box className='flex flex-col gap-0.5'>
-					<div className='flex items-baseline justify-between'>
-						<span className='text-sm font-medium text-black'>ทั้งหมด</span>
 						<div className='flex items-baseline gap-1'>
-							<span className='text-base font-semibold text-secondary'>
-								{info.province.predictedArea.areaRai.toLocaleString()}
+							<span className='text-xs font-medium text-gray-dark2'>คิดเป็น</span>
+							<span className='text-xs font-medium text-secondary'>
+								{info.area.totalPredictedArea.percent + '%'}
 							</span>
-							<span className='text-sm font-normal text-black'>ไร่</span>
+							<span className='text-xs font-medium text-gray-dark2'>ของพื้นที่ลงทะเบียน</span>
 						</div>
-					</div>
-					<div className='flex items-baseline gap-1'>
-						<span className='text-xs font-medium text-gray-dark2'>คิดเป็น</span>
-						<span className='text-xs font-medium text-secondary'>
-							{info.province.predictedArea.percent + '%'}
-						</span>
-						<span className='text-xs font-medium text-gray-dark2'>ของพื้นที่ลงทะเบียน</span>
-					</div>
-				</Box>
-				<Box className='flex flex-col gap-0.5'>
-					<div className='flex items-baseline justify-between'>
-						<span className='text-sm font-medium text-black'>ทั้งหมด</span>
+					</Box>
+				)}
+				{((!queryParams.lossType && info.area.lossPredicted.find((item) => item.lossType === 'drought')) ||
+					queryParams.lossType === LossType.Drought) && (
+					<Box className='flex flex-col gap-0.5'>
+						<div className='flex items-baseline justify-between'>
+							<span className='text-sm font-medium text-black'>ภัยแล้ง</span>
+							<div className='flex items-baseline gap-1'>
+								<span className='text-base font-semibold text-secondary'>
+									{info.area.lossPredicted
+										.find((item) => item.lossType === 'drought')
+										?.[areaUnit].toLocaleString()}
+								</span>
+								<span className='text-sm font-normal text-black'>ไร่</span>
+							</div>
+						</div>
 						<div className='flex items-baseline gap-1'>
-							<span className='text-base font-semibold text-secondary'>
-								{info.province.predictedArea.areaRai.toLocaleString()}
+							<span className='text-xs font-medium text-gray-dark2'>คิดเป็น</span>
+							<span className='text-xs font-medium text-secondary'>
+								{info.area.lossPredicted.find((item) => item.lossType === 'drought')?.percent + '%'}
 							</span>
-							<span className='text-sm font-normal text-black'>ไร่</span>
+							<span className='text-xs font-medium text-gray-dark2'>ของพื้นที่ลงทะเบียน</span>
 						</div>
-					</div>
-					<div className='flex items-baseline gap-1'>
-						<span className='text-xs font-medium text-gray-dark2'>คิดเป็น</span>
-						<span className='text-xs font-medium text-secondary'>
-							{info.province.predictedArea.percent + '%'}
-						</span>
-						<span className='text-xs font-medium text-gray-dark2'>ของพื้นที่ลงทะเบียน</span>
-					</div>
-				</Box>
+					</Box>
+				)}
+				{((!queryParams.lossType && info.area.lossPredicted.find((item) => item.lossType === 'flood')) ||
+					queryParams.lossType === LossType.Flood) && (
+					<Box className='flex flex-col gap-0.5'>
+						<div className='flex items-baseline justify-between'>
+							<span className='text-sm font-medium text-black'>น้ำท่วม</span>
+							<div className='flex items-baseline gap-1'>
+								<span className='text-base font-semibold text-secondary'>
+									{info.area.lossPredicted
+										.find((item) => item.lossType === 'flood')
+										?.[areaUnit].toLocaleString()}
+								</span>
+								<span className='text-sm font-normal text-black'>ไร่</span>
+							</div>
+						</div>
+						<div className='flex items-baseline gap-1'>
+							<span className='text-xs font-medium text-gray-dark2'>คิดเป็น</span>
+							<span className='text-xs font-medium text-secondary'>
+								{info.area.lossPredicted.find((item) => item.lossType === 'flood')?.percent + '%'}
+							</span>
+							<span className='text-xs font-medium text-gray-dark2'>ของพื้นที่ลงทะเบียน</span>
+						</div>
+					</Box>
+				)}
 			</Box>
 		</Paper>
 	)
