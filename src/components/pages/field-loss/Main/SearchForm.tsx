@@ -25,7 +25,7 @@ import {
 } from '@mui/icons-material'
 import parse from 'autosuggest-highlight/parse'
 import match from 'autosuggest-highlight/match'
-import React, { ChangeEvent, ReactNode, useMemo, useState } from 'react'
+import React, { ChangeEvent, ReactNode, useEffect, useMemo, useState } from 'react'
 import clsx from 'clsx'
 import service from '@/api'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -38,7 +38,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs, { Dayjs } from 'dayjs'
 import DateRangePicker from '@/components/shared/DateRangePicker'
 import useResponsive from '@/hook/responsive'
-import html2canvas from 'html2canvas'
+import useSearchFieldLoss from './context'
+import { onCapture } from '@/utils/screenshot'
 
 interface OptionType {
 	name: string
@@ -50,31 +51,19 @@ interface HistoryType {
 	[key: string]: OptionType[]
 }
 
-interface SearchFormProps {
-	selectedOption: OptionType | null
-	startDate: Dayjs | null
-	endDate: Dayjs | null
-	setSeletedOption: React.Dispatch<React.SetStateAction<OptionType | null>>
-	setStartDate: React.Dispatch<React.SetStateAction<Dayjs | null>>
-	setEndDate: React.Dispatch<React.SetStateAction<Dayjs | null>>
-}
+interface SearchFormProps {}
 
 const FavoriteLengthMax = 5
 const HistoryLengthMax = 5
 
-const SearchForm: React.FC<SearchFormProps> = ({
-	selectedOption,
-	startDate,
-	endDate,
-	setSeletedOption,
-	setStartDate,
-	setEndDate,
-}) => {
+const SearchForm: React.FC<SearchFormProps> = () => {
 	const queryClient = useQueryClient()
 	const { isDesktop } = useResponsive()
+	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	const [isFocused, setIsFocused] = useState<boolean>(false)
 	const [isPopperOpened, setPopperOpened] = useState<boolean>(false)
 	const [inputValue, setInputValue] = useState<string>('')
+	const [selectedOption, setSeletedOption] = useState<OptionType | null>(null)
 
 	const [history, setHistory] = useLocalStorage<HistoryType>('fieldLoss.history', {})
 	const [favorite, setFavorite] = useLocalStorage<HistoryType>('fieldLoss.favorite', {})
@@ -126,8 +115,30 @@ const SearchForm: React.FC<SearchFormProps> = ({
 	// 	)
 	// }
 
+	useEffect(() => {
+		console.log('provinceIdtooption', queryParams.provinceId)
+		console.log('districtIdtooption', queryParams.districtId)
+		const provinceOption = optionList.find((item) => parseInt(item.id) === queryParams.provinceId) || null
+		console.log('optionprovinceId', provinceOption)
+		const districtOption = optionList.find((item) => parseInt(item.id) === queryParams.districtId) || null
+		console.log('optiondistrictId', districtOption)
+		if (selectedOption?.id) {
+			if (queryParams.provinceId === parseInt(selectedOption.id)) {
+				console.log('setoptionDistrict')
+				setSeletedOption(districtOption)
+			} else {
+				console.log('setoptionProvince again')
+				setSeletedOption(provinceOption)
+			}
+		} else {
+			console.log('setoptionProvince')
+			setSeletedOption(provinceOption)
+		}
+	}, [queryParams.provinceId, queryParams.districtId])
+
 	const handleSelectOption = (_event: ChangeEvent<{}>, newSelectedValue: OptionType | null) => {
-		setSeletedOption(newSelectedValue)
+		//setSeletedOption(newSelectedValue)
+		setQueryParams({ ...queryParams, provinceId: newSelectedValue?.id ? parseInt(newSelectedValue.id) : undefined })
 		if (userId) {
 			const favoriteList = favorite[userId] || []
 			const historyList = history[userId] || []
@@ -212,36 +223,9 @@ const SearchForm: React.FC<SearchFormProps> = ({
 		setSeletedOption(null)
 	}
 
-	const onCapture = () => {
-		const timestamp = new Date().toISOString().replace(/[:.-]/g, '_')
-		const filename = `screenshot_${timestamp}.png`
-		html2canvas(document.body, {
-			useCORS: true,
-			allowTaint: true,
-			scrollX: 0,
-			scrollY: 0,
-			onclone: function (clone) {
-				clone.body.style.height = 'unset'
-				const elements = clone.getElementsByClassName('capture')
-				for (let index = 0; index < elements.length; index++) {
-					const element = elements[index] as HTMLElement
-					element.style.overflowY = 'visible !important'
-					element.style.maxHeight = 'unset !important'
-				}
-				return true
-			},
-		}).then((canvas) => {
-			const img = canvas.toDataURL('image/png')
-			const link = document.createElement('a')
-			link.href = img
-			link.download = filename
-			link.click()
-		})
-	}
-
 	return (
 		<>
-			<Paper className='bg-gray-dark4 mx-4 flex gap-1.5 p-1.5'>
+			<Paper className='mx-4 flex gap-1.5 bg-gray-dark4 p-1.5'>
 				<FormControl
 					fullWidth
 					variant='standard'
@@ -425,7 +409,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
 												className='p-0'
 												onClick={(event) => handleRemoveFavorite(event, option.id)}
 											>
-												<Remove className='text-gray-light4 h-5 w-5 font-light' />
+												<Remove className='h-5 w-5 font-light text-gray-light4' />
 											</IconButton>
 										)}
 									</div>
@@ -451,7 +435,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
 												className='p-0'
 												onClick={(event) => handleRemoveHistory(event, option.id)}
 											>
-												<Clear className='text-gray-light4 h-5 w-5 font-light' />
+												<Clear className='h-5 w-5 font-light text-gray-light4' />
 											</IconButton>
 										)}
 									</div>
