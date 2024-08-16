@@ -19,6 +19,7 @@
 	"name" : "Name",
 	"selecting" : "Selecting",
 	"names" : "Names",
+	"save" : "Save",
 	"editUserAccount": "Edit User Account",
 	"alert": {
 		"deleteUserProfile": "Delete user",

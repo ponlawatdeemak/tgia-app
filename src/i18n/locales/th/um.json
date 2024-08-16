@@ -19,6 +19,7 @@
 	"name": "ชื่อ",
 	"selecting": "กำลังเลือก",
 	"names": "รายชื่อ",
+	"save": "บันทึก",
 	"editUserAccount": "แก้ไขบัญชีผู้ใช้งาน",
 	"alert": {
 		"deleteUserProfile": "ลบบัญชีผู้ใช้งาน",
