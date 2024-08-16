@@ -53,3 +53,11 @@ export interface PatchStatusDtoOut {
 export interface DeleteProfileDtoOut {
 	id: string
 }
+
+export interface PutProfileUMDtoOut extends PutProfileDtoOut{
+	
+}
+
+export interface PostProfileUMDtoOut {
+	id : string
+}
