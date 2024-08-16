@@ -41,8 +41,8 @@ const fieldLoss = {
 		if (payload.endDate) params.append('endDate', payload.endDate)
 		if (payload.registrationAreaType !== undefined)
 			params.append('registrationAreaType', payload.registrationAreaType.toString())
-		if (payload.provinceId !== undefined) params.append('provinceId', payload.provinceId.toString())
-		if (payload.districtId !== undefined) params.append('districtId', payload.districtId.toString())
+		if (payload.provinceCode !== undefined) params.append('provinceCode', payload.provinceCode.toString())
+		if (payload.districtCode !== undefined) params.append('districtCode', payload.districtCode.toString())
 
 		return await api.get(`/predicted-loss/summary-area?${params}`, APIService.DisasterAPI)
 	},
