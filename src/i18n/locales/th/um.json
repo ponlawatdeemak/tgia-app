@@ -1,7 +1,11 @@
 {
 	"profileUpdate": "บันทึกสำเร็จ",
-	"profileDelete": "ลบผู้ใช้งานสำเร็จ",
-	"profileAdd": "เพิ่มผู้ใช้งานสำเร็จ",
+	"profileDeleteSuccess": "ลบผู้ใช้งานสำเร็จ",
+	"profileDeleteFail": "ลบผู้ใช้งานไม่สำเร็จ",
+	"profileAddSuccess": "เพิ่มผู้ใช้งานสำเร็จ",
+	"profileAddFail": "เพิ่มผู้ใช้งานไม่สำเร็จ",
+	"profileUpdateSuccess": "แก้ไขข้อมูลผู้ใช้งานสำเร็จ",
+	"profileUpdateFail": "แก้ไขข้อมูลผู้ใช้งานไม่สำเร็จ",
 	"profile": "ข้อมูลส่วนตัว",
 	"belongProvince": "สังกัดจังหวัด",
 	"belongDistrict": "สังกัดอำเภอ",
