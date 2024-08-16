@@ -119,13 +119,13 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 				const payload: DeleteProfileDtoIn = { id: userId }
 				const res = await um.deleteProfile(payload)
 				props.setIsSearch(true)
-				setAlertInfo({ open: true, severity: 'success', message: t('profileDelete', { ns: 'um' }) })
+				setAlertInfo({ open: true, severity: 'success', message: t('profileDeleteSuccess', { ns: 'um' }) })
 				props.setOpen(false)
 			} catch (error: any) {
 				setAlertInfo({
 					open: true,
 					severity: 'error',
-					message: error?.title ? error.title : t('error.somethingWrong'),
+					message: error?.title ? error.title : t('profileDeleteFail', { ns: 'um' }),
 				})
 			}
 		},
@@ -155,68 +155,93 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 					}
 					if (props.isEdit) {
 						// put method edit existing user
-						const payload: PutProfileUMDtoIn = {
-							id: values.id,
-							username: values.username,
-							firstName: values.firstName,
-							lastName: values.lastName,
-							email: values.email,
-							image: values.image,
-							orgCode: values.orgCode,
-							role: values.role,
-							responsibleProvinceCode: values.responsibleProvinceCode,
-							responsibleDistrictCode: values.responsibleDistrictCode,
-							flagStatus: values.flagStatus,
-						}
-						console.log('Editing user :: ', payload)
-						const res = await mutatePutProfileUM(payload)
-						// update session on userId
-						if (session?.user.id === values.id) {
-							let userImage
-							try {
-								userImage = (await service.um.getProfile()).data?.image
-							} catch (error) {
-								throw new Error('Access Profile failed')
+						try {
+							const payload: PutProfileUMDtoIn = {
+								id: values.id,
+								username: values.username,
+								firstName: values.firstName,
+								lastName: values.lastName,
+								email: values.email,
+								image: values.image,
+								orgCode: values.orgCode,
+								role: values.role,
+								responsibleProvinceCode: values.responsibleProvinceCode,
+								responsibleDistrictCode: values.responsibleDistrictCode,
+								flagStatus: values.flagStatus,
 							}
-							// ใช้ update ค่า data จาก useSession
-							try {
-								await update({
-									firstName: payload.firstName,
-									lastName: payload.lastName,
-									email: payload.email,
-									image: userImage,
-									responsibleProvinceCode: payload.responsibleProvinceCode,
-									responsibleDistrictCode: payload.responsibleDistrictCode,
-								})
-							} catch (error) {
-								throw new Error('Failed to update session')
+							console.log('Editing user :: ', payload)
+							const res = await mutatePutProfileUM(payload)
+							// update session on userId
+							if (session?.user.id === values.id) {
+								let userImage
+								try {
+									userImage = (await service.um.getProfile()).data?.image
+								} catch (error) {
+									throw new Error('Access Profile failed')
+								}
+								// ใช้ update ค่า data จาก useSession
+								try {
+									await update({
+										firstName: payload.firstName,
+										lastName: payload.lastName,
+										email: payload.email,
+										image: userImage,
+										responsibleProvinceCode: payload.responsibleProvinceCode,
+										responsibleDistrictCode: payload.responsibleDistrictCode,
+									})
+								} catch (error) {
+									throw new Error('Failed to update session')
+								}
 							}
+							setAlertInfo({
+								open: true,
+								severity: 'success',
+								message: t('profileUpdateSuccess', { ns: 'um' }),
+							})
+							console.log('res :: ', res)
+							props.setIsSearch(true)
+						} catch (error: any) {
+							console.log(error)
+							setAlertInfo({
+								open: true,
+								severity: 'error',
+								message: error?.title ? error.title : t('profileUpdateFail', { ns: 'um' }),
+							})
 						}
-
-						setAlertInfo({ open: true, severity: 'success', message: t('profileUpdate', { ns: 'um' }) })
-						console.log('res :: ', res)
-						props.setIsSearch(true)
 					} else {
 						// post method add new user
-						const payload: PostProfileUMDtoIn = {
-							username: values.username,
-							firstName: values.firstName,
-							lastName: values.lastName,
-							email: values.email,
-							image: values.image,
-							orgCode: values.orgCode,
-							role: values.role,
-							responsibleProvinceCode: values.responsibleProvinceCode,
-							responsibleDistrictCode: values.responsibleDistrictCode,
-							flagStatus: values.flagStatus,
+						try {
+							const payload: PostProfileUMDtoIn = {
+								username: values.username,
+								firstName: values.firstName,
+								lastName: values.lastName,
+								email: values.email,
+								image: values.image,
+								orgCode: values.orgCode,
+								role: values.role,
+								responsibleProvinceCode: values.responsibleProvinceCode,
+								responsibleDistrictCode: values.responsibleDistrictCode,
+								flagStatus: values.flagStatus,
+							}
+							console.log('Adding new user :: ', payload)
+							const res = await mutatePostProfileUM(payload)
+							setAlertInfo({
+								open: true,
+								severity: 'success',
+								message: t('profileAddSuccess', { ns: 'um' }),
+							})
+							console.log('res :: ', res)
+							props.setIsSearch(true)
+							props.setOpen(false)
+							formik.resetForm()
+						} catch (error: any) {
+							console.log(error)
+							setAlertInfo({
+								open: true,
+								severity: 'error',
+								message: error?.title ? error.title : t('profileAddFail', { ns: 'um' }),
+							})
 						}
-						console.log('Adding new user :: ', payload)
-						const res = await mutatePostProfileUM(payload)
-						setAlertInfo({ open: true, severity: 'success', message: t('profileAdd', { ns: 'um' }) })
-						console.log('res :: ', res)
-						props.setIsSearch(true)
-						props.setOpen(false)
-						formik.resetForm()
 					}
 				} catch (error: any) {
 					console.log(error)
@@ -308,20 +333,12 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 					{props.isEdit ? t('editUserAccount', { ns: 'um' }) : t('addUser', { ns: 'um' })}
 				</DialogTitle>
 				<DialogContent dividers={true} className='flex flex-col justify-between max-lg:gap-3'>
-					{/* override class from parent */}
-					{/* <Box sx={{
-						'.MuiBox-root' : {
-							display: 'flex',
-							flexDirection: 'column'
-						},
-					}}> */}
 					<div className='flex flex-col items-center justify-center gap-3 max-lg:block lg:flex-row'>
 						<ProfileForm
 							formik={formik}
 							loading={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
 						/>
 					</div>
-					{/* </Box> */}
 					{session?.user.id !== props.userId && (
 						<FormControlLabel
 							control={
@@ -376,7 +393,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 							className='h-[40px] w-[71px] text-sm [&_.MuiButtonBase-root]:w-[71px]'
 							disabled={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
 						>
-							{t('save', {ns :'um'})}
+							{t('save', { ns: 'um' })}
 						</Button>
 					</div>
 				</DialogActions>
