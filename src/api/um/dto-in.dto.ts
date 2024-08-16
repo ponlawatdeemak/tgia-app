@@ -34,7 +34,7 @@ export interface DeleteProfileDtoIn {
 }
 
 export interface PutProfileUMDtoIn {
-	id: string,
+	id: string
 	username: string
 	firstName: string
 	lastName: string
@@ -47,14 +47,14 @@ export interface PutProfileUMDtoIn {
 	flagStatus: string
 }
 export interface PostProfileUMDtoIn {
-	username : string,
-	firstName : string,
-	lastName : string,
-	email : string,
-	image : string,
-	orgCode : string,
-	role : string,
-	responsibleProvinceCode : string,
-	responsibleDistrictCode : string,
-	flagStatus : string
+	username: string
+	firstName: string
+	lastName: string
+	email: string
+	image: string
+	orgCode: string
+	role: string
+	responsibleProvinceCode: string
+	responsibleDistrictCode: string
+	flagStatus: string
 }
