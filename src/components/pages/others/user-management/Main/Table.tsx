@@ -283,7 +283,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 				const res = await mutateDeleteProfile(payload)
 				queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 				setIsSearch(true)
-				setAlertInfo({ open: true, severity: 'success', message: t('profileDelete', { ns: 'um' }) })
+				setAlertInfo({ open: true, severity: 'success', message: t('profileDeleteSuccess', { ns: 'um' }) })
 				console.log(res)
 			} catch (error: any) {
 				setAlertInfo({
@@ -313,7 +313,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
-					setAlertInfo({ open: true, severity: 'success', message: t('profileDelete', { ns: 'um' }) })
+					setAlertInfo({ open: true, severity: 'success', message: t('profileDeleteSuccess', { ns: 'um' }) })
 				})
 				.catch((error) => {
 					console.log(error)

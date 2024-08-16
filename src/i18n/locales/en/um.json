@@ -1,7 +1,11 @@
 {
 	"profileUpdate": "Updated successfully",
-	"profileDelete": "User delete succesfully",
-	"profileAdd": "User add successfully",
+	"profileDeleteSuccess": "User delete succesfully",
+	"profileDeleteFail": "User delete failed",
+	"profileAddSuccess": "User add successfully",
+	"profileAddFail": "User add failed",
+	"profileUpdateSuccess": "User update successfully",
+	"profileUpdateFail": "User update failed",
 	"profile": "Profile",
 	"belongProvince": "Province",
 	"belongDistrict": "District",
@@ -19,6 +23,7 @@
 	"name" : "Name",
 	"selecting" : "Selecting",
 	"names" : "Names",
+	"save" : "Save",
 	"editUserAccount": "Edit User Account",
 	"alert": {
 		"deleteUserProfile": "Delete user",
