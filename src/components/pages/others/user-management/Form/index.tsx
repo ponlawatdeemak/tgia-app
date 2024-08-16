@@ -59,7 +59,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 		severity: 'success',
 		message: '',
 	})
-	const { data: session } = useSession()
+	const { data: session, update } = useSession()
 	const { isDesktop } = useResponsive()
 	const handleSubmitUser = async (event: FormEvent) => {
 		event.preventDefault()
@@ -72,14 +72,16 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 		email: yup.string().email(t('warning.invalidEmailFormat')).required(t('warning.inputEmail')),
 		responsibleProvinceCode: yup.string().required(t('warning.inputProvince')),
 	})
-
-	const { data: userData, isLoading: isUserDataLoading } = useQuery({
+	const {
+		data: userData,
+		isLoading: isUserDataLoading,
+		error: getUMError,
+	} = useQuery({
 		queryKey: ['getProfile', props.userId],
 		queryFn: async () => {
 			const res = await service.um.getUM({
 				userId: props.userId,
 			})
-			// console.log(res.data)
 			return res
 		},
 		enabled: !!props.userId,
@@ -168,6 +170,29 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 						}
 						console.log('Editing user :: ', payload)
 						const res = await mutatePutProfileUM(payload)
+						// update session on userId
+						if (session?.user.id === values.id) {
+							let userImage
+							try {
+								userImage = (await service.um.getProfile()).data?.image
+							} catch (error) {
+								throw new Error('Access Profile failed')
+							}
+							// ใช้ update ค่า data จาก useSession
+							try {
+								await update({
+									firstName: payload.firstName,
+									lastName: payload.lastName,
+									email: payload.email,
+									image: userImage,
+									responsibleProvinceCode: payload.responsibleProvinceCode,
+									responsibleDistrictCode: payload.responsibleDistrictCode,
+								})
+							} catch (error) {
+								throw new Error('Failed to update session')
+							}
+						}
+
 						setAlertInfo({ open: true, severity: 'success', message: t('profileUpdate', { ns: 'um' }) })
 						console.log('res :: ', res)
 						props.setIsSearch(true)
@@ -275,11 +300,14 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 				onSubmit={handleSubmitUser}
 				fullWidth
 				scroll='paper'
+				className={classNames('[&_.MuiPaper-root]:h-[636px] [&_.MuiPaper-root]:max-w-[800px]', {
+					'': !isDesktop,
+				})}
 			>
 				<DialogTitle>
 					{props.isEdit ? t('editUserAccount', { ns: 'um' }) : t('addUser', { ns: 'um' })}
 				</DialogTitle>
-				<DialogContent className='h-[492px]' dividers={true}>
+				<DialogContent dividers={true} className='flex flex-col justify-between max-lg:gap-3'>
 					{/* override class from parent */}
 					{/* <Box sx={{
 						'.MuiBox-root' : {
@@ -287,10 +315,12 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 							flexDirection: 'column'
 						},
 					}}> */}
-					<ProfileForm
-						formik={formik}
-						loading={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
-					></ProfileForm>
+					<div className='flex flex-col items-center justify-center gap-3 max-lg:block lg:flex-row'>
+						<ProfileForm
+							formik={formik}
+							loading={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
+						/>
+					</div>
 					{/* </Box> */}
 					{session?.user.id !== props.userId && (
 						<FormControlLabel
@@ -307,7 +337,11 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 						/>
 					)}
 				</DialogContent>
-				<DialogActions className='flex justify-between p-6'>
+				<DialogActions
+					className={classNames('flex justify-between p-6', {
+						'': props.isEdit || session?.user.id === props.userId,
+					})}
+				>
 					{session?.user.id !== props.userId && props.isEdit && (
 						<Button
 							className='text-red h-[40px] w-[124px] bg-white text-sm text-error'
@@ -316,15 +350,22 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 								setIsConfirmDeleteOpen(true)
 							}}
 							startIcon={<Icon path={mdiTrashCanOutline} size={1} color={'var(--error-color-1)'} />}
+							disabled={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
 						>
 							{t('deleteUser', { ns: 'um' })}
 						</Button>
 					)}
-					<div className='flex space-x-2'>
+					<div className='flex-1' />
+					<div
+						className={classNames('flex justify-end space-x-2', {
+							'': props.isEdit || session?.user.id === props.userId,
+						})}
+					>
 						<Button
 							className='h-[40px] w-[71px] bg-white text-sm text-black'
 							variant='contained'
 							onClick={props.onClose}
+							disabled={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
 						>
 							{t('cancel')}
 						</Button>
@@ -333,9 +374,9 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 							variant='contained'
 							color='primary'
 							className='h-[40px] w-[71px] text-sm [&_.MuiButtonBase-root]:w-[71px]'
+							disabled={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
 						>
-							{/* {t('save')} */}
-							บันทึก
+							{t('save', {ns :'um'})}
 						</Button>
 					</div>
 				</DialogActions>
