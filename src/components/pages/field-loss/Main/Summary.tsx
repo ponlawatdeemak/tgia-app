@@ -11,70 +11,79 @@ import {
 	ToggleButtonGroup,
 	Typography,
 } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import clsx from 'clsx'
-import { AreaTypeKey, AreaUnitKey, Language } from '@/enum'
+import { AreaTypeKey, SortType } from '@/enum'
 import useAreaType from '@/store/area-type'
 import useAreaUnit from '@/store/area-unit'
 import { LossType } from '@/enum'
 import FieldLossCard from '../Card'
 import { useTranslation } from 'react-i18next'
-import dayjs, { Dayjs } from 'dayjs'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import RegistrationCalculation from '@/components/svg/field-loss/RegistrationCalculation'
 import { mdiClose } from '@mdi/js'
 import Icon from '@mdi/react'
 import InsuranceCalculation from '@/components/svg/field-loss/InsuranceCalculation'
+import useSearchFieldLoss from './context'
+import { addDays, format } from 'date-fns'
+import { GetSummaryPredictedLossDtoIn } from '@/api/field-loss/dto-in.dto'
+import { ResponseArea } from '@/api/interface'
 
-interface OptionType {
-	name: string
-	id: string
-	searchType: string
+interface Data {
+	//id: number
+	totalPredicted: ResponseArea
+	droughtPredicted: ResponseArea
+	floodPredicted: ResponseArea
 }
 
-interface LossPredictedType {
-	lossType: string
-	areaRai: number
-	areaPlot: number
-	precent: number
-}
+interface FieldLossSummaryProps {}
 
-interface FieldLossSummaryProps {
-	selectedOption: OptionType | null
-	startDate: Dayjs | null
-	endDate: Dayjs | null
-	lossType: LossType | null
-	setLossType: React.Dispatch<React.SetStateAction<LossType | null>>
-}
-
-const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
-	selectedOption,
-	startDate,
-	endDate,
-	lossType,
-	setLossType,
-}) => {
+const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default', 'field-loss'])
+	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	const [selectedCard, setSelecteeCard] = useState<number>(2)
 	const [openCalDialog, setOpenCalDialog] = useState<boolean>(false)
 
+	const filterSummary = useMemo(() => {
+		const filter: GetSummaryPredictedLossDtoIn = {
+			lossType: queryParams.lossType || undefined,
+			startDate: queryParams.startDate
+				? format(queryParams.startDate, 'yyyy-MM-dd')
+				: format(new Date(), 'yyyy-MM-dd'),
+			endDate: queryParams.endDate
+				? format(queryParams.endDate, 'yyyy-MM-dd')
+				: format(addDays(new Date(), 15), 'yyyy-MM-dd'),
+			registrationAreaType: areaType,
+			provinceId: queryParams.provinceId,
+		}
+		return filter
+	}, [queryParams, areaType])
+
 	const { data: summaryData, isLoading: isSummaryDataLoading } = useQuery({
-		queryKey: ['getSummaryPredictedLoss', lossType, startDate, endDate, areaType, selectedOption?.id],
-		queryFn: () =>
-			service.fieldLoss.getSummaryPredictedLoss({
-				lossType: lossType || undefined,
-				startDate: startDate?.toISOString().split('T')[0] || '',
-				endDate: endDate?.toISOString().split('T')[0] || '',
-				registrationAreaType: areaType,
-				provinceId: selectedOption?.id ? parseInt(selectedOption.id) : undefined,
-			}),
+		queryKey: ['getSummaryPredictedLoss', filterSummary],
+		queryFn: () => service.fieldLoss.getSummaryPredictedLoss(filterSummary),
 	})
 
 	const handleLossTypeClick = (_event: React.MouseEvent<HTMLElement>, newAlignment: LossType | null) => {
-		setLossType(newAlignment)
+		let sortTypeField: keyof Data
+		if (newAlignment) {
+			if (newAlignment === LossType.Drought) {
+				sortTypeField = 'droughtPredicted'
+			} else {
+				sortTypeField = 'floodPredicted'
+			}
+		} else {
+			sortTypeField = 'totalPredicted'
+		}
+		setQueryParams({
+			...queryParams,
+			lossType: newAlignment,
+			sortTypeField: sortTypeField,
+			sortType: SortType.DESC,
+		})
 	}
 
 	const handleCardClick = (_event: React.MouseEvent<HTMLElement>, cardIndex: number) => {
@@ -92,18 +101,18 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 	}
 
 	return (
-		<div className='box-border flex flex-col gap-0 bg-gray-light p-0 lg:w-[30%] lg:min-w-[360px] lg:max-w-[580px] lg:gap-4 lg:bg-gray-light2 lg:px-[22px] lg:py-4'>
+		<div className='box-border flex flex-col gap-0 bg-gray-light p-0 lg:w-[30%] lg:min-w-[360px] lg:max-w-[580px] lg:gap-4 lg:overflow-auto lg:bg-gray-light2 lg:px-[22px] lg:py-4'>
 			<ToggleButtonGroup
-				value={lossType}
+				value={queryParams.lossType}
 				exclusive
 				onChange={handleLossTypeClick}
 				aria-label='loss-type'
-				className='flex gap-2 border-2 border-solid border-gray-light max-lg:py-3 lg:gap-1 lg:border-gray-light2 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5'
+				className='flex gap-2 border-2 border-solid border-gray-light max-lg:py-3 lg:gap-1 lg:border-gray-light2 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
 			>
 				<ToggleButton
 					className={clsx('text-base', {
-						'bg-primary font-semibold text-white': Boolean(lossType) === false,
-						'text-gray-dark2': Boolean(lossType) !== false,
+						'bg-primary font-semibold text-white': Boolean(queryParams.lossType) === false,
+						'text-gray-dark2': Boolean(queryParams.lossType) !== false,
 					})}
 					value={''}
 				>
@@ -111,8 +120,8 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 				</ToggleButton>
 				<ToggleButton
 					className={clsx('text-base', {
-						'bg-primary font-semibold text-white': lossType === LossType.Drought,
-						'text-gray-dark2': lossType !== LossType.Drought,
+						'bg-primary font-semibold text-white': queryParams.lossType === LossType.Drought,
+						'text-gray-dark2': queryParams.lossType !== LossType.Drought,
 					})}
 					value={LossType.Drought}
 				>
@@ -120,8 +129,8 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 				</ToggleButton>
 				<ToggleButton
 					className={clsx('text-base', {
-						'bg-primary font-semibold text-white': lossType === LossType.Flood,
-						'text-gray-dark2': lossType !== LossType.Flood,
+						'bg-primary font-semibold text-white': queryParams.lossType === LossType.Flood,
+						'text-gray-dark2': queryParams.lossType !== LossType.Flood,
 					})}
 					value={LossType.Flood}
 				>
@@ -184,12 +193,14 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = ({
 										{t('percentTotalRegisteredAreas', { ns: 'field-loss' })}
 									</p>
 								</div>
-								<span
-									onClick={(event) => handleOpenCalDialog(event)}
-									className='text-right text-sm font-normal text-black-dark underline'
-								>
-									{t('calculationMethod', { ns: 'field-loss' })}
-								</span>
+								<div className='flex justify-end'>
+									<span
+										onClick={(event) => handleOpenCalDialog(event)}
+										className='text-right text-sm font-normal text-black-dark underline'
+									>
+										{t('calculationMethod', { ns: 'field-loss' })}
+									</span>
+								</div>
 								<Dialog
 									open={openCalDialog}
 									onClick={(event) => handleCloseCalDialog(event)}
