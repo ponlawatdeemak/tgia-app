@@ -9,6 +9,7 @@ import React, { ChangeEvent, FormEvent, useState } from 'react'
 import { GetSearchUMDtoIn } from '@/api/um/dto-in.dto'
 import { useTranslation } from 'react-i18next'
 import useResponsive from '@/hook/responsive'
+import { FormImport } from '../Import'
 
 export interface UserManagementSearchFormProps {
 	searchParams: GetSearchUMDtoIn
@@ -28,6 +29,7 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 	setPage,
 }) => {
 	const [openForm, setOpenForm] = useState<boolean>(false)
+	const [openImport, setOpenImport] = useState<boolean>(false)
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const { isDesktop } = useResponsive()
 
@@ -91,6 +93,7 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 					variant='contained'
 					color='primary'
 					startIcon={<SystemUpdateAltIcon className={`h-[24px] w-[24px] ${!isDesktop && 'ml-[5px]'}`} />}
+					onClick={() => setOpenImport(true)}
 				>
 					{isDesktop && t('importUser', { ns: 'um' })}
 				</Button>
@@ -102,6 +105,12 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 				userId=''
 				isEdit={false}
 				setOpen={setOpenForm}
+				setIsSearch={setIsSearch}
+			/>
+			<FormImport 
+				open={openImport}
+				onClose={() => setOpenImport(false)}
+				setOpen={setOpenImport}
 				setIsSearch={setIsSearch}
 			/>
 		</>
