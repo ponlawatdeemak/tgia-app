@@ -12,13 +12,16 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useSwitchLanguage } from '@/i18n/client'
 import { Language } from '@/enum'
+import classNames from 'classnames'
 
 export interface ProfileFormProps {
 	formik: FormikProps<any>
 	loading?: boolean
+	isDisabledProfile?: boolean
+	isHiddenProfile?: boolean
 }
 
-const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) => {
+const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false, isDisabledProfile = false, isHiddenProfile = false }) => {
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 
@@ -92,7 +95,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 							label={t('email')}
 							formik={formik}
 							required
-							disabled
+							disabled={isDisabledProfile}
 						/>
 					</div>
 				</Box>
@@ -128,7 +131,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 							disabled={isDistricDataLoading || loading || !formik.values.responsibleProvinceCode}
 						/>
 					</div>
-					<div className='flex gap-[16px] max-lg:hidden max-lg:flex-col lg:gap-[12px]'>
+					<div className={classNames('flex gap-[16px] max-lg:flex-col lg:gap-[12px]', {
+						'max-lg:hidden': isHiddenProfile
+					})}>
 						<AutocompleteInput
 							className='w-full text-sm font-medium lg:w-[240px]'
 							options={
@@ -141,7 +146,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 							name='orgCode'
 							label={t('org')}
 							formik={formik}
-							disabled
+							disabled={isDisabledProfile}
 						/>
 						<AutocompleteInput
 							className='w-full text-sm font-medium lg:w-[240px]'
@@ -155,7 +160,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false }) =>
 							name='role'
 							label={t('role')}
 							formik={formik}
-							disabled
+							disabled={isDisabledProfile}
 						/>
 					</div>
 				</Box>

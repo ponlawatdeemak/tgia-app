@@ -59,7 +59,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 		queryKey: ['getProfile'],
 		queryFn: async () => await service.um.getProfile(),
 	})
-
+	console.log(userData)
 	const {
 		data,
 		error,
@@ -166,7 +166,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 				className='flex h-full flex-col justify-between max-lg:justify-start max-lg:gap-[32px]'
 			>
 				<Box className='flex w-full gap-[16px] max-lg:flex-col lg:gap-[12px]'>
-					<ProfileForm formik={formik} loading={busy || isUserDataLoading} />
+					<ProfileForm formik={formik} loading={busy || isUserDataLoading} isDisabledProfile isHiddenProfile/>
 				</Box>
 				<Box className='flex items-center max-lg:flex-col max-lg:items-center max-lg:gap-[8px] lg:justify-between lg:px-[40px]'>
 					<div className='flex gap-[8px] max-lg:w-[250px] max-lg:flex-col lg:gap-[20px]'>

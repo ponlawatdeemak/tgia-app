@@ -38,6 +38,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs, { Dayjs } from 'dayjs'
 import DateRangePicker from '@/components/shared/DateRangePicker'
 import useResponsive from '@/hook/responsive'
+import html2canvas from 'html2canvas'
 
 interface OptionType {
 	name: string
@@ -209,6 +210,33 @@ const SearchForm: React.FC<SearchFormProps> = ({
 	const handleClear = () => {
 		setInputValue('')
 		setSeletedOption(null)
+	}
+
+	const onCapture = () => {
+		const timestamp = new Date().toISOString().replace(/[:.-]/g, '_')
+		const filename = `screenshot_${timestamp}.png`
+		html2canvas(document.body, {
+			useCORS: true,
+			allowTaint: true,
+			scrollX: 0,
+			scrollY: 0,
+			onclone: function (clone) {
+				clone.body.style.height = 'unset'
+				const elements = clone.getElementsByClassName('capture')
+				for (let index = 0; index < elements.length; index++) {
+					const element = elements[index] as HTMLElement
+					element.style.overflowY = 'visible !important'
+					element.style.maxHeight = 'unset !important'
+				}
+				return true
+			},
+		}).then((canvas) => {
+			const img = canvas.toDataURL('image/png')
+			const link = document.createElement('a')
+			link.href = img
+			link.download = filename
+			link.click()
+		})
 	}
 
 	return (
@@ -397,7 +425,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
 												className='p-0'
 												onClick={(event) => handleRemoveFavorite(event, option.id)}
 											>
-												<Remove className='h-5 w-5 font-light text-gray-light4' />
+												<Remove className='text-gray-light4 h-5 w-5 font-light' />
 											</IconButton>
 										)}
 									</div>
@@ -423,7 +451,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
 												className='p-0'
 												onClick={(event) => handleRemoveHistory(event, option.id)}
 											>
-												<Clear className='h-5 w-5 font-light text-gray-light4' />
+												<Clear className='text-gray-light4 h-5 w-5 font-light' />
 											</IconButton>
 										)}
 									</div>
@@ -438,6 +466,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
 					variant='contained'
 					color='primary'
 					startIcon={<Fullscreen className='h-6 w-6' />}
+					onClick={() => onCapture()}
 				></Button>
 			</Paper>
 		</>
