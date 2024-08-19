@@ -52,29 +52,44 @@ export const SummaryLineChartColor = {
 
 export const TotalTileColor: { [key: string]: [number, number, number, number] } = {
 	default: [226, 226, 226, 100],
-	level1: [242, 216, 222, 255],
-	level2: [229, 178, 189, 255],
-	level3: [212, 127, 146, 255],
-	level4: [178, 59, 86, 255],
-	level5: [114, 38, 55, 255],
+	level1: [249, 235, 238, 255],
+	level2: [242, 216, 222, 255],
+	level3: [234, 192, 201, 255],
+	level4: [229, 178, 189, 255],
+	level5: [218, 146, 161, 255],
+	level6: [212, 127, 146, 255],
+	level7: [201, 91, 117, 255],
+	level8: [178, 59, 86, 255],
+	level9: [141, 47, 67, 255],
+	level10: [114, 38, 55, 255],
 }
 
 export const DroughtTileColor: { [key: string]: [number, number, number, number] } = {
 	default: [226, 226, 226, 100],
-	level1: [255, 239, 217, 255],
-	level2: [253, 204, 138, 255],
-	level3: [252, 142, 89, 255],
-	level4: [227, 74, 51, 255],
-	level5: [179, 1, 0, 255],
+	level1: [255, 245, 231, 255],
+	level2: [255, 239, 217, 255],
+	level3: [254, 224, 184, 255],
+	level4: [253, 204, 138, 255],
+	level5: [252, 172, 132, 255],
+	level6: [252, 142, 89, 255],
+	level7: [231, 97, 79, 255],
+	level8: [227, 74, 51, 255],
+	level9: [210, 0, 0, 255],
+	level10: [179, 1, 0, 255],
 }
 
 export const FloodTileColor: { [key: string]: [number, number, number, number] } = {
 	default: [226, 226, 226, 100],
-	level1: [239, 243, 255, 255],
-	level2: [189, 215, 231, 255],
-	level3: [107, 174, 214, 255],
-	level4: [49, 130, 189, 255],
-	level5: [8, 81, 156, 255],
+	level1: [251, 252, 255, 255],
+	level2: [239, 243, 255, 255],
+	level3: [204, 224, 236, 255],
+	level4: [189, 215, 231, 255],
+	level5: [127, 184, 219, 255],
+	level6: [107, 174, 214, 255],
+	level7: [69, 148, 207, 255],
+	level8: [49, 130, 189, 255],
+	level9: [10, 98, 186, 255],
+	level10: [8, 81, 156, 255],
 }
 
 export const TileLayerColor = {

@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import MapView from '@/components/common/map/MapView'
-import { Box } from '@mui/material'
+import { Box, Breadcrumbs, Link, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import useAreaType from '@/store/area-type'
@@ -77,19 +77,12 @@ type HoverInfo = {
 	layerName: string
 }
 
-interface LayerType {
-	layerName: string
-	layerId: number | null
-}
-
 interface MapDetailProps {
 	areaDetail: string
-	layer: LayerType
-	setLayer: React.Dispatch<React.SetStateAction<LayerType>>
 }
 
-const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, layer, setLayer }) => {
-	const { queryParams } = useSearchFieldLoss()
+const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
+	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { layers, addLayer, setLayers } = useLayerStore()
@@ -143,19 +136,34 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, layer, setLayer }) =>
 	const checkLevelTileColor = useCallback((percent: number) => {
 		let level
 		switch (true) {
-			case percent >= 80 && percent <= 100:
+			case percent > 90 && percent <= 100:
+				level = 'level10'
+				break
+			case percent > 80 && percent <= 90:
+				level = 'level9'
+				break
+			case percent > 70 && percent <= 80:
+				level = 'level8'
+				break
+			case percent > 60 && percent <= 70:
+				level = 'level7'
+				break
+			case percent > 50 && percent <= 60:
+				level = 'level6'
+				break
+			case percent > 40 && percent <= 50:
 				level = 'level5'
 				break
-			case percent >= 60 && percent < 80:
+			case percent > 30 && percent <= 40:
 				level = 'level4'
 				break
-			case percent >= 40 && percent < 60:
+			case percent > 20 && percent <= 30:
 				level = 'level3'
 				break
-			case percent >= 20 && percent < 40:
+			case percent > 10 && percent <= 20:
 				level = 'level2'
 				break
-			case percent >= 0 && percent < 20:
+			case percent > 0 && percent <= 10:
 				level = 'level1'
 				break
 			default:
@@ -165,7 +173,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, layer, setLayer }) =>
 	}, [])
 
 	useEffect(() => {
-		if (layer.layerName === 'country') {
+		if (!queryParams.layerName) {
 			setLayers([
 				new MVTLayer({
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/province/tiles.json',
@@ -276,7 +284,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, layer, setLayer }) =>
 					},
 				}),
 			])
-		} else if (layer.layerName === 'province') {
+		} else if (queryParams.layerName === 'province') {
 			setLayers([
 				new MVTLayer({
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/district/tiles.json',
@@ -409,7 +417,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, layer, setLayer }) =>
 					},
 				}),
 			])
-		} else if (layer.layerName === 'district') {
+		} else if (queryParams.layerName === 'district') {
 			setLayers([
 				new MVTLayer({
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/subdistrict/tiles.json',
@@ -543,16 +551,52 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, layer, setLayer }) =>
 				}),
 			])
 		}
-	}, [setLayers, summaryAreaData, queryParams.lossType, checkLevelTileColor, layer, summaryAreaId])
+	}, [setLayers, summaryAreaData, queryParams.lossType, checkLevelTileColor, queryParams.layerName])
+
+	function handleCountryClick() {
+		setQueryParams({ ...queryParams, provinceId: undefined, districtId: undefined, layerName: undefined })
+	}
+
+	const handleProvinceClick = () => {
+		setQueryParams({ ...queryParams, districtId: undefined, layerName: 'province' })
+	}
 
 	return (
 		<div className='relative h-[390px] w-full max-lg:overflow-hidden max-lg:rounded lg:h-full'>
-			<Box className='absolute bottom-2 left-[68px] z-10 w-[calc(100%-84px)] max-lg:hidden'>
-				<DatePickerHorizontal
-					startDate={queryParams.startDate || new Date()}
-					endDate={queryParams.endDate || addDays(new Date(), 15)}
-					calendarData={calendarData}
-				/>
+			<Box
+				role='presentation'
+				className='absolute left-3 top-3 z-10 flex h-7 items-center gap-2 rounded-lg bg-white px-2 py-1'
+			>
+				<Typography className='text-base font-medium text-black'>ระดับ:</Typography>
+				<Breadcrumbs aria-label='breadcrumb'>
+					{queryParams.layerName && (
+						<Link
+							className='text-base font-normal text-black'
+							underline='hover'
+							href='#'
+							onClick={handleCountryClick}
+						>
+							ประเทศ
+						</Link>
+					)}
+					{queryParams.layerName && queryParams.layerName === 'district' && (
+						<Link
+							className='text-base font-normal text-black'
+							underline='hover'
+							href='#'
+							onClick={handleProvinceClick}
+						>
+							จังหวัด
+						</Link>
+					)}
+					<Typography className='text-base font-semibold text-black' color='text.primary'>
+						{queryParams.layerName
+							? queryParams.layerName === 'province'
+								? 'จังหวัด'
+								: 'อำเภอ'
+							: 'ประเทศ'}
+					</Typography>
+				</Breadcrumbs>
 			</Box>
 			<Box className='absolute bottom-24 right-2 z-10 max-lg:hidden'>
 				{!queryParams.lossType && (
@@ -565,7 +609,14 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, layer, setLayer }) =>
 					<ColorRange startColor={FloodRangeColor.start} endColor={FloodRangeColor.end} />
 				)}
 			</Box>
-			<Tooltip info={hoverInfo} setHoverInfo={setHoverInfo} setLayer={setLayer} />
+			<Box className='absolute bottom-2 left-[68px] z-10 w-[calc(100%-84px)] max-lg:hidden'>
+				<DatePickerHorizontal
+					startDate={queryParams.startDate || new Date()}
+					endDate={queryParams.endDate || addDays(new Date(), 15)}
+					calendarData={calendarData}
+				/>
+			</Box>
+			<Tooltip info={hoverInfo} setHoverInfo={setHoverInfo} />
 			<MapView />
 		</div>
 	)

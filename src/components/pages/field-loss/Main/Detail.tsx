@@ -12,17 +12,11 @@ import MapDetail from '../Detail/MapDetail'
 // 	1 =
 // }
 
-interface LayerType {
-	layerName: string
-	layerId: number | null
-}
-
 interface FieldLossDetailProps {}
 
 const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 	const { isDesktop } = useResponsive()
 	const [areaDetail, setAreaDetail] = useState('summary-area')
-	const [layer, setLayer] = useState<LayerType>({ layerName: 'country', layerId: null })
 
 	const handleAreaDetailChange = useCallback((_event: React.MouseEvent<HTMLElement>, newAreaDetail: string) => {
 		setAreaDetail((prev) => newAreaDetail || prev)
@@ -67,7 +61,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 				</ToggleButton>
 			</ToggleButtonGroup>
 			{(areaDetail === 'summary-area' || !isDesktop) && (
-				<MapDetail areaDetail={areaDetail} layer={layer} setLayer={setLayer} />
+				<MapDetail areaDetail={areaDetail} />
 			)}
 			{(areaDetail === 'area-statistic' || !isDesktop) && <TableDetail areaDetail={areaDetail} />}
 			{(areaDetail === 'time-statistic' || !isDesktop) && <ChartDetail areaDetail={areaDetail} />}
