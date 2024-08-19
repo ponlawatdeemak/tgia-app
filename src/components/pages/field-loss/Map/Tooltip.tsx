@@ -9,7 +9,6 @@ import { MVTLayer } from '@deck.gl/geo-layers'
 import { ResponseLanguage } from '@/api/interface'
 import { useTranslation } from 'react-i18next'
 import useAreaUnit from '@/store/area-unit'
-import useAreaType from '@/store/area-type'
 import { LossType } from '@/enum'
 
 type HoverInfo = {
@@ -20,18 +19,12 @@ type HoverInfo = {
 	layerName: string
 }
 
-interface LayerType {
-	layerName: string
-	layerId: number | null
-}
-
 interface TooltipProps {
 	info: HoverInfo | null
 	setHoverInfo: React.Dispatch<React.SetStateAction<HoverInfo | null>>
-	setLayer: React.Dispatch<React.SetStateAction<LayerType>>
 }
 
-const Tooltip: React.FC<TooltipProps> = ({ info, setHoverInfo, setLayer }) => {
+const Tooltip: React.FC<TooltipProps> = ({ info, setHoverInfo }) => {
 	const { layers, addLayer, setLayers } = useLayerStore()
 	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	const { areaUnit } = useAreaUnit()
@@ -44,11 +37,10 @@ const Tooltip: React.FC<TooltipProps> = ({ info, setHoverInfo, setLayer }) => {
 
 	const handleClickTooltip = (name: string, id: number) => {
 		if (name === 'province') {
-			setQueryParams({ ...queryParams, provinceId: id })
+			setQueryParams({ ...queryParams, provinceId: id, layerName: name })
 		} else if (name === 'district') {
-			setQueryParams({ ...queryParams, districtId: id })
+			setQueryParams({ ...queryParams, districtId: id, layerName: name })
 		}
-		setLayer((prevLayer) => ({ ...prevLayer, layerName: name, layerId: id }))
 		setHoverInfo(null)
 	}
 
