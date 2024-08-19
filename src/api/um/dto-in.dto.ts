@@ -39,7 +39,7 @@ export interface PutProfileUMDtoIn {
 	firstName: string
 	lastName: string
 	email: string
-	image: string | null
+	image: string
 	orgCode: string
 	role: string
 	responsibleProvinceCode: string

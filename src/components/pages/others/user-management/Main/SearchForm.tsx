@@ -11,31 +11,19 @@ import { useTranslation } from 'react-i18next'
 import useResponsive from '@/hook/responsive'
 
 export interface UserManagementSearchFormProps {
-	searchParams: GetSearchUMDtoIn
 	setSearchParams: React.Dispatch<React.SetStateAction<GetSearchUMDtoIn>>
-	isSearch: boolean
 	setIsSearch: React.Dispatch<React.SetStateAction<boolean>>
-	page: number
 	setPage: React.Dispatch<React.SetStateAction<number>>
 }
 
 const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
-	searchParams,
 	setSearchParams,
-	isSearch,
 	setIsSearch,
-	page,
 	setPage,
 }) => {
 	const [openForm, setOpenForm] = useState<boolean>(false)
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const { isDesktop } = useResponsive()
-
-	// Change Event to useCallback
-	const handleSubmitUser = async (event: FormEvent) => {
-		console.log('Form submitted')
-		// Add your form submission logic here
-	}
 
 	const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
 		// setSearchString(event.target.value)
@@ -98,7 +86,6 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 			<FormMain
 				open={openForm}
 				onClose={() => setOpenForm(false)}
-				onSubmitUser={handleSubmitUser}
 				userId=''
 				isEdit={false}
 				setOpen={setOpenForm}

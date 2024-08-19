@@ -14,9 +14,11 @@ export interface FieldLossParamsType {
 	endDate?: Date
 	provinceId?: number
 	districtId?: number
+	subDistrictId?: number
 	lossType?: LossType | null
 	sortType?: SortType
 	sortTypeField?: keyof Data
+	layerName?: string
 }
 
 const initialParams = {
@@ -24,9 +26,11 @@ const initialParams = {
 	endDate: undefined,
 	provinceId: undefined,
 	districtId: undefined,
+	subDistrictId: undefined,
 	LossType: undefined,
 	sortType: SortType.DESC,
 	sortTypeField: undefined,
+	layerName: undefined,
 }
 
 interface SearchFieldLossContextType {
