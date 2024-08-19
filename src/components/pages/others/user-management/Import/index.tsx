@@ -5,6 +5,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconBut
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import ClearIcon from '@mui/icons-material/Clear'
+import { PostImportXLSXUMDtoIn } from '@/api/um/dto-in.dto'
 
 const maxFileSize = 1.5e7
 export interface FormImportProps {
@@ -13,11 +14,11 @@ export interface FormImportProps {
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>
 	setIsSearch: React.Dispatch<React.SetStateAction<boolean>>
 }
+
 export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
-	const [file, setFile] = React.useState<string | null>(null)
-	const [importFile, setImportFile] = React.useState<File | null>(null)
+	const [importFile, setImportFile] = React.useState<File>()
 	const { open, onClose, setOpen, setIsSearch } = props
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,15 +36,13 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 			console.log(fileType)
 			if (validFileTypes.includes(fileType) && fileSize <= maxFileSize) {
 				console.log(URL.createObjectURL(importFile))
-				setFile(URL.createObjectURL(importFile))
 				setImportFile(importFile)
 			} else {
 				// handle wrong type + emax size exceed
 				console.log('ELSECASE')
 			}
 		} else {
-			setFile(null)
-			setImportFile(null)
+			setImportFile(undefined)
 		}
 	}
 
@@ -51,24 +50,52 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 		event.preventDefault()
 		try {
 			console.log(importFile?.type)
-			if (importFile?.type === 'text/csv') {
-				// case csv
-			} else if (importFile?.type === 'text/xlsx') {
-				// case xlsx
+			if (importFile) {
+				if (importFile?.type === 'text/csv') {
+					// case csv
+					const formData = new FormData()
+					formData.append('users_data_csv', importFile)
+					const payload: PostImportXLSXUMDtoIn = {
+						data: formData,
+					}
+					const res = await um.postImportCSVUM(payload)
+					console.log(res)
+				} else {
+					// case xlsx
+					const formData = new FormData()
+					formData.append('users_data_excel', importFile)
+					const payload: PostImportXLSXUMDtoIn = {
+						data: formData,
+					}
+					const res = await um.postImportXLSXUM(payload)
+					console.log(res)
+				}
 			}
 		} catch (error) {
 			console.log(error)
 		}
 	}
 
-	const handleDownloadTemplate = async () => {
+	const handleDownloadTemplate = async (type: string) => {
 		try {
-			const res = await um.getTemplateCSVUM()
-			if (res) {
-				const file = new Blob([res.toString()], { type: 'csv' })
+			let res
+			if (type === 'csv') {
+				res = await um.getTemplateCSVUM()
 				const a = document.createElement('a')
-				a.download = 'template.csv'
-				a.href = window.URL.createObjectURL(file)
+				a.download = 'users_data_csv.' + type
+				a.href = window.URL.createObjectURL(res.data)
+				const clickEvt = new MouseEvent('click', {
+					view: window,
+					bubbles: true,
+					cancelable: true,
+				})
+				a.dispatchEvent(clickEvt)
+				a.remove()
+			} else {
+				res = await um.getTemplateXLSXUM()
+				const a = document.createElement('a')
+				a.download = 'users_data_excel.' + type
+				a.href = window.URL.createObjectURL(res.data)
 				const clickEvt = new MouseEvent('click', {
 					view: window,
 					bubbles: true,
@@ -77,15 +104,17 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 				a.dispatchEvent(clickEvt)
 				a.remove()
 			}
+			if (res) {
+			}
 		} catch (error: any) {
 			console.log(error)
 		}
 	}
 
 	const handleRemoveFile = () => {
-		setImportFile(null)
-		setFile(null)
+		setImportFile(undefined)
 	}
+
 	return (
 		<div className='flex flex-col'>
 			<Dialog open={open} onClose={onClose} component='form' onSubmit={() => {}} fullWidth>
@@ -117,7 +146,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 								อัปโหลดไฟล์
 								<input
 									type='file'
-									accept='.csv, .xlsx'
+									accept='.csv, .xlsx, .xls'
 									className='absolute bottom-0 left-0 h-full w-full cursor-pointer opacity-0'
 									onChange={handleFileChange}
 									// {...uploadProps}
@@ -130,9 +159,23 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 							variant='outlined'
 							tabIndex={-1}
 							className='flex h-[32px] gap-[4px] border-gray py-[6px] pl-[8px] pr-[10px] text-base text-black [&_.MuiButton-startIcon]:m-0'
-							onClick={handleDownloadTemplate}
+							onClick={() => {
+								handleDownloadTemplate('csv')
+							}}
 						>
-							ดาวน์โหลด Template
+							ดาวน์โหลด Template csv
+						</Button>
+						<Button
+							component='label'
+							role={undefined}
+							variant='outlined'
+							tabIndex={-1}
+							className='flex h-[32px] gap-[4px] border-gray py-[6px] pl-[8px] pr-[10px] text-base text-black [&_.MuiButton-startIcon]:m-0'
+							onClick={() => {
+								handleDownloadTemplate('xlsx')
+							}}
+						>
+							ดาวน์โหลด Template excel
 						</Button>
 					</Box>
 				</DialogContent>
