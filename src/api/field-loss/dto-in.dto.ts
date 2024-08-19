@@ -16,8 +16,8 @@ export interface GetSummaryAreaDtoIn {
 	startDate: string
 	endDate: string
 	registrationAreaType: number
-	provinceId?: number
-	districtId?: number
+	provinceCode?: number
+	districtCode?: number
 }
 
 export interface GetAreaStatisticDtoIn {

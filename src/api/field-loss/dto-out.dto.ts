@@ -16,9 +16,10 @@ export interface LossPredicted extends ResponseArea {
 }
 
 export interface GetSummaryAreaDtoOut {
+	id: string
 	name: ResponseLanguage
-	lossPredicted: LossPredicted
-	predictedArea: ClaimedArea
+	lossPredicted: LossPredicted[]
+	totalPredictedArea: ClaimedArea
 }
 
 export interface GetSummaryPredictedLossDtoOut {
