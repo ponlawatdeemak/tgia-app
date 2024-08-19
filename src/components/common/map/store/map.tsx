@@ -23,18 +23,18 @@ export const useLayerStore = create<LayerStore>()((set) => ({
 	addLayer: (layer) => set((state) => ({ ...state, layers: [...state.layers, layer] })),
 	// layers: [],
 	layers: [
-		new MVTLayer({
-			data: 'https://tileserver.cropinsurance-dev.thaicom.io/boundary_2022/tiles.json',
-			filled: true,
-			getFillColor(d) {
-				return [255, 0, 0, 100]
-			},
-			getLineColor(d) {
-				return [255, 0, 0, 255]
-			},
-			getLineWidth: 4,
-			pickable: true,
-		}),
+		// new MVTLayer({
+		// 	data: 'https://tileserver.cropinsurance-dev.thaicom.io/boundary_2022/tiles.json',
+		// 	filled: true,
+		// 	getFillColor(d) {
+		// 		return [255, 0, 0, 100]
+		// 	},
+		// 	getLineColor(d) {
+		// 		return [255, 0, 0, 255]
+		// 	},
+		// 	getLineWidth: 4,
+		// 	pickable: true,
+		// }),
 		// ,
 		// new ScatterplotLayer({
 		// 	data: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/bart-stations.json',

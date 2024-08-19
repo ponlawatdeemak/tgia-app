@@ -11,15 +11,20 @@ import {
 	TableSortLabel,
 	Typography,
 } from '@mui/material'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { visuallyHidden } from '@mui/utils'
-import { GetAreaStatisticDtoOut, LossTypeAreaPredicted } from '@/api/field-loss/dto-out.dto'
-import { ResponseArea, ResponseLanguage, ResponseStatisticDto } from '@/api/interface'
+import { ResponseArea, ResponseLanguage } from '@/api/interface'
 import useAreaType from '@/store/area-type'
 import useAreaUnit from '@/store/area-unit'
 import { useTranslation } from 'react-i18next'
 import { SortType } from '@/enum'
 import clsx from 'clsx'
+import useSearchFieldLoss from '../Main/context'
+import { GetAreaStatisticDtoIn } from '@/api/field-loss/dto-in.dto'
+import { format } from 'date-fns'
+import { useQuery } from '@tanstack/react-query'
+import service from '@/api'
+import useResponsive from '@/hook/responsive'
 
 interface Data {
 	//id: number
@@ -49,40 +54,49 @@ const headCells: readonly HeadCell[] = [
 ]
 
 interface TableDetailProps {
-	areaStatisticData: GetAreaStatisticDtoOut[] | undefined
-	areaStatisticDataTotal: LossTypeAreaPredicted | undefined
-	sortType: SortType
-	sortTypeField: keyof Data
-	setSortType: React.Dispatch<React.SetStateAction<SortType>>
-	setSortTypeField: React.Dispatch<React.SetStateAction<keyof Data>>
+	areaDetail: string
 }
 
-const TableDetail: React.FC<TableDetailProps> = ({
-	areaStatisticData,
-	areaStatisticDataTotal,
-	sortType,
-	sortTypeField,
-	setSortType,
-	setSortTypeField,
-}) => {
+const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
+	const { queryParams, setQueryParams } = useSearchFieldLoss()
+	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const language = i18n.language as keyof ResponseLanguage
 
-	const rows = areaStatisticData || []
+	const filterAreaStatistic = useMemo(() => {
+		const filter: GetAreaStatisticDtoIn = {
+			startDate: queryParams.startDate ? format(queryParams.startDate, 'yyyy-MM-dd') : '',
+			endDate: queryParams.endDate ? format(queryParams.endDate, 'yyyy-MM-dd') : '',
+			lossType: queryParams.lossType || undefined,
+			registrationAreaType: areaType,
+			sort: queryParams.sortTypeField || 'totalPredicted',
+			sortType: queryParams.sortType || SortType.DESC,
+		}
+		return filter
+	}, [queryParams, areaType])
+
+	const { data: areaStatisticData, isLoading: isAreaStatisticData } = useQuery({
+		queryKey: ['getAreaStatistic', filterAreaStatistic],
+		queryFn: () => service.fieldLoss.getAreaStatistic(filterAreaStatistic),
+		enabled: areaDetail === 'area-statistic' || !isDesktop,
+	})
+
+	const rows = useMemo(() => areaStatisticData?.data || [], [areaStatisticData?.data])
 
 	const handleRequestSort = useCallback(
 		(_event: React.MouseEvent<HTMLSpanElement, MouseEvent>, property: keyof Data) => {
-			const isDesc = sortTypeField === property && sortType === SortType.DESC
-			setSortType(isDesc ? SortType.ASC : SortType.DESC)
-			setSortTypeField(property)
+			const isDesc =
+				(queryParams.sortTypeField || 'totalPredicted') === property &&
+				(queryParams.sortType || SortType.DESC) === SortType.DESC
+			setQueryParams({ ...queryParams, sortType: isDesc ? SortType.ASC : SortType.DESC, sortTypeField: property })
 		},
-		[sortType, sortTypeField, setSortType, setSortTypeField],
+		[queryParams, setQueryParams],
 	)
 
 	return (
-		<div className='flex h-full flex-1 flex-col gap-3 overflow-hidden bg-white p-6 pb-0 max-lg:rounded'>
+		<div className='box-border flex h-full flex-1 flex-col gap-3 overflow-hidden bg-white p-6 pb-0 max-lg:rounded'>
 			<Typography className='text-md font-semibold text-black-dark'>อันดับความเสียหายจากภัยพิบัติ</Typography>
 			<TableContainer>
 				<Table aria-labelledby='tableTitle'>
@@ -93,30 +107,36 @@ const TableDetail: React.FC<TableDetailProps> = ({
 							</TableCell>
 							<TableCell
 								className={clsx('w-[20.5%] min-w-[120px]', {
-									'text-secondary': sortTypeField === 'totalPredicted',
-									'text-black-light': sortTypeField !== 'totalPredicted',
+									'text-secondary':
+										(queryParams.sortTypeField || 'totalPredicted') === 'totalPredicted',
+									'text-black-light':
+										(queryParams.sortTypeField || 'totalPredicted') !== 'totalPredicted',
 								})}
 								align='right'
 							>
-								{areaStatisticDataTotal?.totalPredicted[areaUnit].toLocaleString()}
+								{areaStatisticData?.dataTotal?.totalPredicted[areaUnit].toLocaleString()}
 							</TableCell>
 							<TableCell
 								className={clsx('w-[20.5%] min-w-[100px]', {
-									'text-secondary': sortTypeField === 'droughtPredicted',
-									'text-black-light': sortTypeField !== 'droughtPredicted',
+									'text-secondary':
+										(queryParams.sortTypeField || 'totalPredicted') === 'droughtPredicted',
+									'text-black-light':
+										(queryParams.sortTypeField || 'totalPredicted') !== 'droughtPredicted',
 								})}
 								align='right'
 							>
-								{areaStatisticDataTotal?.droughtPredicted[areaUnit].toLocaleString()}
+								{areaStatisticData?.dataTotal?.droughtPredicted[areaUnit].toLocaleString()}
 							</TableCell>
 							<TableCell
 								className={clsx('w-[20.5%] min-w-[100px]', {
-									'text-secondary': sortTypeField === 'floodPredicted',
-									'text-black-light': sortTypeField !== 'floodPredicted',
+									'text-secondary':
+										(queryParams.sortTypeField || 'totalPredicted') === 'floodPredicted',
+									'text-black-light':
+										(queryParams.sortTypeField || 'totalPredicted') !== 'floodPredicted',
 								})}
 								align='right'
 							>
-								{areaStatisticDataTotal?.floodPredicted[areaUnit].toLocaleString()}
+								{areaStatisticData?.dataTotal?.floodPredicted[areaUnit].toLocaleString()}
 							</TableCell>
 						</TableRow>
 						<TableRow className='[&_th]:border-gray [&_th]:px-2.5 [&_th]:py-2 [&_th]:text-sm [&_th]:font-semibold [&_th]:text-black'>
@@ -125,18 +145,28 @@ const TableDetail: React.FC<TableDetailProps> = ({
 								<TableCell
 									key={headCell.id}
 									className='[&_span.Mui-active>svg]:block [&_span>svg]:hidden'
-									sortDirection={sortTypeField === headCell.id ? sortType : false}
+									sortDirection={
+										(queryParams.sortTypeField || 'totalPredicted') === headCell.id
+											? queryParams.sortType || SortType.DESC
+											: false
+									}
 								>
 									<TableSortLabel
 										className='flex flex-row items-center justify-end gap-1 [&_svg]:m-0 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:font-normal [&_svg]:text-black'
-										active={sortTypeField === headCell.id}
-										direction={sortTypeField === headCell.id ? sortType : SortType.DESC}
+										active={(queryParams.sortTypeField || 'totalPredicted') === headCell.id}
+										direction={
+											(queryParams.sortTypeField || 'totalPredicted') === headCell.id
+												? queryParams.sortType || SortType.DESC
+												: SortType.DESC
+										}
 										onClick={(event) => handleRequestSort(event, headCell.id)}
 									>
 										{headCell.label}
-										{sortTypeField === headCell.id ? (
+										{(queryParams.sortTypeField || 'totalPredicted') === headCell.id ? (
 											<Box component='span' sx={visuallyHidden}>
-												{sortType === SortType.ASC ? 'sorted ascending' : 'sorted descending'}
+												{(queryParams.sortType || SortType.DESC) === SortType.ASC
+													? 'sorted ascending'
+													: 'sorted descending'}
 											</Box>
 										) : null}
 									</TableSortLabel>
@@ -172,8 +202,10 @@ const TableDetail: React.FC<TableDetailProps> = ({
 									<TableCell
 										align='right'
 										className={clsx('', {
-											'font-medium text-secondary': sortTypeField === 'totalPredicted',
-											'text-black-light font-normal': sortTypeField !== 'totalPredicted',
+											'font-medium text-secondary':
+												(queryParams.sortTypeField || 'totalPredicted') === 'totalPredicted',
+											'font-normal text-black-light':
+												(queryParams.sortTypeField || 'totalPredicted') !== 'totalPredicted',
 										})}
 									>
 										{row.totalPredicted[areaUnit].toLocaleString()}
@@ -181,8 +213,10 @@ const TableDetail: React.FC<TableDetailProps> = ({
 									<TableCell
 										align='right'
 										className={clsx('', {
-											'font-medium text-secondary': sortTypeField === 'droughtPredicted',
-											'text-black-light font-normal': sortTypeField !== 'droughtPredicted',
+											'font-medium text-secondary':
+												(queryParams.sortTypeField || 'totalPredicted') === 'droughtPredicted',
+											'font-normal text-black-light':
+												(queryParams.sortTypeField || 'totalPredicted') !== 'droughtPredicted',
 										})}
 									>
 										{row.droughtPredicted[areaUnit].toLocaleString()}
@@ -190,8 +224,10 @@ const TableDetail: React.FC<TableDetailProps> = ({
 									<TableCell
 										align='right'
 										className={clsx('', {
-											'font-medium text-secondary': sortTypeField === 'floodPredicted',
-											'text-black-light font-normal': sortTypeField !== 'floodPredicted',
+											'font-medium text-secondary':
+												(queryParams.sortTypeField || 'totalPredicted') === 'floodPredicted',
+											'font-normal text-black-light':
+												(queryParams.sortTypeField || 'totalPredicted') !== 'floodPredicted',
 										})}
 									>
 										{row.floodPredicted[areaUnit].toLocaleString()}
