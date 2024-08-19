@@ -21,11 +21,8 @@ export const UserManagementMain = () => {
 	return (
 		<div className={`flex flex-col ${isDesktop ? 'pl-[32px] pr-[32px]' : 'pl-[8px] pr-[8px]'}`}>
 			<UserManagementSearchForm
-				searchParams={searchParams}
 				setSearchParams={setSearchParams}
-				isSearch={isSearch}
 				setIsSearch={setIsSearch}
-				page={page}
 				setPage={setPage}
 			/>
 			<UserManagementTable
