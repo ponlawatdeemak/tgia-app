@@ -1,7 +1,7 @@
 {
 	"auth": {
-		"title": "โครงการพัฒนาระบบเทคโนโลยี",
-		"subTitle": "เพื่องานประกันภัยข้าวนาปี",
+		"title": "Technology System Development Project",
+		"subTitle": "For Annual Rice Insurance",
 		"login": "Login",
 		"signIn": "Sign In",
 		"returnLogin": "Return to login",
