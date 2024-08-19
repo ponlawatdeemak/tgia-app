@@ -1,17 +1,27 @@
 'use client'
 
 import * as React from 'react'
-import Box from '@mui/material/Box'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import TableSortLabel from '@mui/material/TableSortLabel'
-import Typography from '@mui/material/Typography'
-import Paper from '@mui/material/Paper'
-import Checkbox from '@mui/material/Checkbox'
+import {
+	Box,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	TableSortLabel,
+	Typography,
+	Paper,
+	Checkbox,
+	Avatar,
+	Button,
+	IconButton,
+	Stack,
+	Pagination,
+	Snackbar,
+	Alert,
+	PaginationItem,
+} from '@mui/material'
 import { visuallyHidden } from '@mui/utils'
 import { SortType } from '@/enum'
 import um from '@/api/um'
@@ -20,23 +30,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useSwitchLanguage } from '@/i18n/client'
 import { Language } from '@/enum'
-import { Avatar, Button } from '@mui/material'
 import { GetSearchUMDtoOut } from '@/api/um/dto-out.dto'
 import { ResponseLanguage } from '@/api/interface'
-import { IconButton } from '@mui/material'
-import { mdiTrashCanOutline } from '@mdi/js'
+import { mdiTrashCanOutline, mdiPencilOutline } from '@mdi/js'
 import Icon from '@mdi/react'
-import { mdiPencilOutline } from '@mdi/js'
-import Stack from '@mui/material/Stack'
-import TableFooter from '@mui/material/TableFooter'
-import Pagination from '@mui/material/Pagination'
 import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
-import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar'
-import Alert from '@mui/material/Alert'
 import { useSession } from 'next-auth/react'
-import { isSea } from 'node:sea'
 import AlertConfirm from '@/components/common/dialog/AlertConfirm'
-import PaginationItem from '@mui/material/PaginationItem'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import useResponsive from '@/hook/responsive'
@@ -591,9 +591,10 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											<TableCell component='th' id={labelId} scope='row' padding='none'>
 												<Box className='flex'>
 													{
-														<Avatar className='mr-[4px] h-[24px] w-[24px] bg-primary'>
-															M
-														</Avatar>
+														<Avatar
+															className='mr-[4px] h-[24px] w-[24px] bg-primary'
+															src={row.image}
+														/>
 													}{' '}
 													{row.firstName} {row.lastName}
 												</Box>
@@ -796,7 +797,6 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			<FormMain
 				open={isEditOpen}
 				onClose={() => setIsEditOpen(false)}
-				onSubmitUser={handleSubmitUser}
 				userId={currentEditId}
 				isEdit={true}
 				setOpen={setIsEditOpen}
