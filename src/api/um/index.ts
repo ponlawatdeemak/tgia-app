@@ -24,7 +24,8 @@ const um = {
 		await api.patch(`/um/${payload.id}`,payload),
 	deleteProfile: async (payload: DeleteProfileDtoIn) : Promise<ResponseDto<DeleteProfileDtoOut>> => await api.delete(`/um/${payload.id}`),
 	putProfileUM: async (payload: PutProfileUMDtoIn) : Promise<ResponseDto<PutProfileUMDtoOut>> => await api.put(`/um/${payload.id}`,payload),
-	postProfileUM: async (payload: PostProfileUMDtoIn): Promise<ResponseDto<PostProfileUMDtoOut>> => await api.post('/um',payload)
+	postProfileUM: async (payload: PostProfileUMDtoIn): Promise<ResponseDto<PostProfileUMDtoOut>> => await api.post('/um',payload),
+	getTemplateCSVUM: async (): Promise<ResponseDto> => await api.get('/um/import/template/csv')
 }
 
 export default um
