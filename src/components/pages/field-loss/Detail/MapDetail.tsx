@@ -140,35 +140,35 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 	const checkLevelTileColor = useCallback((percent: number) => {
 		let level
 		switch (true) {
-			case percent > 90 && percent <= 100:
-				level = 'level10'
+			case percent <= 10:
+				level = 'level1'
 				break
-			case percent > 80 && percent <= 90:
-				level = 'level9'
-				break
-			case percent > 70 && percent <= 80:
-				level = 'level8'
-				break
-			case percent > 60 && percent <= 70:
-				level = 'level7'
-				break
-			case percent > 50 && percent <= 60:
-				level = 'level6'
-				break
-			case percent > 40 && percent <= 50:
-				level = 'level5'
-				break
-			case percent > 30 && percent <= 40:
-				level = 'level4'
-				break
-			case percent > 20 && percent <= 30:
-				level = 'level3'
-				break
-			case percent > 10 && percent <= 20:
+			case percent <= 20:
 				level = 'level2'
 				break
-			case percent > 0 && percent <= 10:
-				level = 'level1'
+			case percent <= 30:
+				level = 'level3'
+				break
+			case percent <= 40:
+				level = 'level4'
+				break
+			case percent <= 50:
+				level = 'level5'
+				break
+			case percent <= 60:
+				level = 'level6'
+				break
+			case percent <= 70:
+				level = 'level7'
+				break
+			case percent <= 80:
+				level = 'level8'
+				break
+			case percent <= 90:
+				level = 'level9'
+				break
+			case percent <= 100:
+				level = 'level10'
 				break
 			default:
 				level = 'default'
@@ -181,6 +181,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 			setLayers([
 				new MVTLayer({
 					id: 'province',
+					name: 'province',
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/province/tiles.json',
 					filled: true,
 					lineWidthUnits: 'pixels',
@@ -291,10 +292,10 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 				}),
 			])
 		} else if (queryParams.layerName === 'province') {
-			console.log('queryParams.layerName  ', queryParams.layerName)
 			setLayers([
 				new MVTLayer({
-					id: 'province1',
+					id: 'province-district',
+					name: 'province-district',
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/province/tiles.json',
 					filled: true,
 					lineWidthUnits: 'pixels',
@@ -324,6 +325,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 				}),
 				new MVTLayer({
 					id: 'district',
+					name: 'district',
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/district/tiles.json',
 					filled: true,
 					//visible: layer.layerName === 'province',
@@ -458,7 +460,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 		} else if (queryParams.layerName === 'district') {
 			setLayers([
 				new MVTLayer({
-					id: 'district2',
+					id: 'district-subDistrict',
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/district/tiles.json',
 					filled: true,
 					//visible: layer.layerName === 'province',
