@@ -53,7 +53,7 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 						<Input
 							className='flex h-[40px] gap-[8px] px-[12px] py-[8px] [&_.MuiInputAdornment-positionStart]:m-0'
 							id='standard-search'
-							placeholder={`${t('search', { ns: 'um' })} ${isDesktop ? `${t('name', { ns: 'um' })}, ${t('email')}, ${t('province')}, ${t('district')}` : ''}`}
+							placeholder={`${t('search', { ns: 'um' })} ${isDesktop ? `${t('name', { ns: 'um' })}, ${t('email')}, ${t('org')}, ${t('role')}, ${t('province')}, ${t('district')}` : ''}`}
 							type='search'
 							startAdornment={
 								<InputAdornment position='start'>
