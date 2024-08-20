@@ -79,4 +79,17 @@ export interface PostImportCSVUMDtoOut {
 
 export interface PostImportXLSXUMDtoOut extends PostImportCSVUMDtoOut {}
 
-export interface PostImportCSVErrorDtoOut {}
+export interface PostImportErrorDtoOut {
+	firstName: string
+	lastName: string
+	email: string
+	orgCode: string
+	result: string
+	role: string
+	rowNo: number
+	success: boolean
+}
+
+export interface PostImportCSVErrorDtoOut extends PostImportErrorDtoOut {}
+
+export interface PostImportXLSXErrorDtoOut extends PostImportErrorDtoOut {}
