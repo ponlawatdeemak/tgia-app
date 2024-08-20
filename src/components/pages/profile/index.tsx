@@ -59,7 +59,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 		queryKey: ['getProfile'],
 		queryFn: async () => await service.um.getProfile(),
 	})
-	console.log(userData)
+
 	const {
 		data,
 		error,

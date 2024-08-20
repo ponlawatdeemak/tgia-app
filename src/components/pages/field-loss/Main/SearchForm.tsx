@@ -130,8 +130,6 @@ const SearchForm: React.FC<SearchFormProps> = () => {
 
 	useEffect(() => {
 		const displaySearchOption = async () => {
-			console.log('provinceIdtooption', queryParams.provinceCode)
-			console.log('districtIdtooption', queryParams.districtCode)
 			const countryOption: OptionType = {
 				name: language === Language.TH ? 'ประเทศไทย' : 'Thailand',
 				id: '',
