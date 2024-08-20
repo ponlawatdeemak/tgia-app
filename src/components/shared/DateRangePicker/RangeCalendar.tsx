@@ -39,8 +39,8 @@ interface FilterType {
 	startDate: string
 	endDate: string
 	registrationAreaType: AreaTypeKey
-	provinceId: number | undefined
-	districtId: number | undefined
+	provinceCode: number | undefined
+	districtCode: number | undefined
 }
 
 interface MappedDataType {
@@ -68,8 +68,8 @@ const RangeCalendar: React.FC<RangeCalendarProps> = ({ dateRange = undefined, on
 		startDate: queryParams.startDate ? format(addDays(startOfMonth(new Date()), -7), 'yyyy-MM-dd') : '',
 		endDate: queryParams.endDate ? format(addDays(endOfMonth(new Date()), 7), 'yyyy-MM-dd') : '',
 		registrationAreaType: areaType,
-		provinceId: queryParams.provinceId,
-		districtId: queryParams.districtId,
+		provinceCode: queryParams.provinceCode,
+		districtCode: queryParams.districtCode,
 	})
 
 	const { data } = useQuery({
@@ -112,8 +112,8 @@ const RangeCalendar: React.FC<RangeCalendarProps> = ({ dateRange = undefined, on
 			startDate: format(addDays(startOfMonth(date), -7), 'yyyy-MM-dd'),
 			endDate: format(addDays(endOfMonth(date), 7), 'yyyy-MM-dd'),
 			registrationAreaType: areaType,
-			provinceId: queryParams.provinceId,
-			districtId: queryParams.districtId,
+			provinceCode: queryParams.provinceCode,
+			districtCode: queryParams.districtCode,
 		})
 	}
 

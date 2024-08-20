@@ -37,9 +37,9 @@ const Tooltip: React.FC<TooltipProps> = ({ info, setHoverInfo }) => {
 
 	const handleClickTooltip = (name: string, id: number) => {
 		if (name === 'province') {
-			setQueryParams({ ...queryParams, provinceId: id, layerName: name })
+			setQueryParams({ ...queryParams, provinceCode: id, layerName: name })
 		} else if (name === 'district') {
-			setQueryParams({ ...queryParams, districtId: id, layerName: name })
+			setQueryParams({ ...queryParams, districtCode: id, layerName: name })
 		}
 		setHoverInfo(null)
 	}
