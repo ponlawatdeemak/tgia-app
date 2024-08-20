@@ -118,12 +118,35 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 	)
 
 	return (
-		<div className='box-border flex h-full flex-1 flex-col gap-3 overflow-hidden bg-white p-6 pb-0 max-lg:rounded'>
-			<Typography className='text-md font-semibold text-black-dark'>
-				ความเสียหายจากภัยพิบัติ (รายเดือน)
-			</Typography>
+		<div className='box-border flex h-full flex-1 flex-col gap-4 bg-white p-4 max-lg:rounded lg:gap-3 lg:overflow-hidden lg:p-6 lg:pb-0'>
+			<div className='flex flex-col gap-2'>
+				{!isDesktop && (
+					<Typography className='text-sm font-medium text-gray-dark2'>
+						พื้นที่เสียหายทั้งหมดจากการวิเคราะห์
+					</Typography>
+				)}
+				<Typography className='text-lg font-semibold text-black-dark lg:text-md'>
+					ความเสียหายจากภัยพิบัติ (รายเดือน)
+				</Typography>
+				{!isDesktop && (
+					<div className='flex flex-row items-center'>
+						{(!queryParams.lossType || queryParams.lossType === LossType.Drought) && (
+							<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
+								<span className='h-2.5 w-2.5 rounded-sm bg-lossType-drought'></span>
+								<span className='text-base font-medium text-black'>ภัยแล้ง</span>
+							</div>
+						)}
+						{(!queryParams.lossType || queryParams.lossType === LossType.Flood) && (
+							<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
+								<span className='h-2.5 w-2.5 rounded-sm bg-lossType-flood'></span>
+								<span className='text-base font-medium text-black'>น้ำท่วม</span>
+							</div>
+						)}
+					</div>
+				)}
+			</div>
 			{isTimeStatisticData ? (
-				<div className='flex h-full flex-col items-center justify-center bg-white'>
+				<div className='flex h-60 flex-col items-center justify-center bg-white lg:h-full'>
 					<CircularProgress size={80} color='primary' />
 				</div>
 			) : (
@@ -143,18 +166,20 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 								>
 									{timeStatisticData?.dataTotal?.[lossTypePredicted][areaUnit].toLocaleString()}
 								</TableCell>
-								<TableCell className='p-0 py-2 font-medium text-black' align='right'>
-									<div className='flex flex-row items-center justify-end'>
-										<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
-											<span className='h-2.5 w-2.5 rounded-sm bg-lossType-drought'></span>
-											<span>ภัยแล้ง</span>
+								{isDesktop && (
+									<TableCell className='p-0 py-2 font-medium text-black' align='right'>
+										<div className='flex flex-row items-center justify-end'>
+											<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
+												<span className='h-2.5 w-2.5 rounded-sm bg-lossType-drought'></span>
+												<span>ภัยแล้ง</span>
+											</div>
+											<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
+												<span className='h-2.5 w-2.5 rounded-sm bg-lossType-flood'></span>
+												<span>น้ำท่วม</span>
+											</div>
 										</div>
-										<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
-											<span className='h-2.5 w-2.5 rounded-sm bg-lossType-flood'></span>
-											<span>น้ำท่วม</span>
-										</div>
-									</div>
-								</TableCell>
+									</TableCell>
+								)}
 							</TableRow>
 							<TableRow className='h-3'></TableRow>
 							<TableRow>
@@ -262,49 +287,78 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 											</Box>
 										}
 									>
-										<TableRow
-											className={clsx(
-												'hover:bg-transparent hover:opacity-100 [&_td]:border-none',
-												{
-													'opacity-100': isWithinRange,
-													'opacity-40': !isWithinRange,
-												},
-											)}
-											hover
-											role='checkbox'
-											tabIndex={-1}
-											key={index}
-											sx={{ cursor: 'pointer' }}
-										>
-											<TableCell
-												className='border-none p-2.5 text-base font-medium text-black'
-												component='th'
-												id={labelId}
-												scope='row'
-												align='left'
+										{isDesktop ? (
+											<TableRow
+												className={clsx(
+													'hover:bg-transparent hover:opacity-100 [&_td]:border-none',
+													{
+														'opacity-100': isWithinRange,
+														'opacity-40': !isWithinRange,
+													},
+												)}
+												hover
+												role='checkbox'
+												tabIndex={-1}
+												key={index}
+												sx={{ cursor: 'pointer' }}
 											>
-												{row.monthYear[language]}
-											</TableCell>
-											<TableCell
-												className='p-2.5 text-base font-medium text-secondary'
-												align='right'
+												<TableCell
+													className='border-none p-2.5 text-base font-medium text-black'
+													component='th'
+													id={labelId}
+													scope='row'
+													align='left'
+												>
+													{row.monthYear[language]}
+												</TableCell>
+												<TableCell
+													className='p-2.5 text-base font-medium text-secondary'
+													align='right'
+												>
+													{row?.[lossTypePredicted][areaUnit].toLocaleString()}
+												</TableCell>
+												<TableCell className='p-0 px-2.5' align='left'>
+													<div className='w-full'>
+														<StackedProgressBar
+															data={chartData(row) || []}
+														></StackedProgressBar>
+													</div>
+												</TableCell>
+											</TableRow>
+										) : (
+											<TableRow
+												className={clsx(
+													'hover:bg-transparent hover:opacity-100 [&_td]:border-none',
+													{
+														'opacity-100': isWithinRange,
+														'opacity-40': !isWithinRange,
+													},
+												)}
+												hover
+												role='checkbox'
+												tabIndex={-1}
+												key={index}
+												sx={{ cursor: 'pointer' }}
 											>
-												{row?.[lossTypePredicted][areaUnit].toLocaleString()}
-											</TableCell>
-											<TableCell className='p-0 px-2.5' align='left'>
-												<div className='w-full'>
-													<StackedProgressBar
-														data={chartData(row) || []}
-														percentTotal={
-															// sortTypeField === 'totalPredicted'
-															// 	? (row.totalPredicted[areaUnit] / maxTotalPredicted) * 100
-															// 	: 100
-															100
-														}
-													></StackedProgressBar>
-												</div>
-											</TableCell>
-										</TableRow>
+												<TableCell className='p-0 py-2' colSpan={2}>
+													<Box className='flex flex-col'>
+														<Box className='flex flex-row items-baseline justify-between px-2.5 py-0.5'>
+															<Typography className='border-none text-base font-medium text-black'>
+																{row.monthYear[language]}
+															</Typography>
+															<Typography className='text-base font-medium text-secondary'>
+																{row?.[lossTypePredicted][areaUnit].toLocaleString()}
+															</Typography>
+														</Box>
+														<div className='px-2.5'>
+															<StackedProgressBar
+																data={chartData(row) || []}
+															></StackedProgressBar>
+														</div>
+													</Box>
+												</TableCell>
+											</TableRow>
+										)}
 									</Tooltip>
 								)
 							})}

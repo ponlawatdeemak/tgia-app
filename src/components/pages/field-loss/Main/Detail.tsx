@@ -8,10 +8,6 @@ import clsx from 'clsx'
 import useResponsive from '@/hook/responsive'
 import MapDetail from '../Detail/MapDetail'
 
-// enum SortFieldType {
-// 	1 =
-// }
-
 interface FieldLossDetailProps {}
 
 const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
@@ -60,9 +56,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 					ตามช่วงเวลา
 				</ToggleButton>
 			</ToggleButtonGroup>
-			{(areaDetail === 'summary-area' || !isDesktop) && (
-				<MapDetail areaDetail={areaDetail} />
-			)}
+			{(areaDetail === 'summary-area' || !isDesktop) && <MapDetail areaDetail={areaDetail} />}
 			{(areaDetail === 'area-statistic' || !isDesktop) && <TableDetail areaDetail={areaDetail} />}
 			{(areaDetail === 'time-statistic' || !isDesktop) && <ChartDetail areaDetail={areaDetail} />}
 		</Paper>

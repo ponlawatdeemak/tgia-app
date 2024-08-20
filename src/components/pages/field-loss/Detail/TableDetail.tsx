@@ -97,10 +97,19 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 	)
 
 	return (
-		<div className='box-border flex h-full flex-1 flex-col gap-3 overflow-hidden bg-white p-6 pb-0 max-lg:rounded'>
-			<Typography className='text-md font-semibold text-black-dark'>อันดับความเสียหายจากภัยพิบัติ</Typography>
+		<div className='box-border flex h-full flex-1 flex-col gap-4 bg-white p-4 max-lg:rounded lg:gap-3 lg:overflow-hidden lg:p-6 lg:pb-0'>
+			<div className='flex flex-col gap-2'>
+				{!isDesktop && (
+					<Typography className='text-sm font-medium text-gray-dark2'>
+						พื้นที่เสียหายทั้งหมดจากการวิเคราะห์
+					</Typography>
+				)}
+				<Typography className='text-lg font-semibold text-black-dark lg:text-md'>
+					อันดับความเสียหายจากภัยพิบัติ
+				</Typography>
+			</div>
 			{isAreaStatisticData ? (
-				<div className='flex h-full flex-col items-center justify-center bg-white'>
+				<div className='flex h-60 flex-col items-center justify-center bg-white lg:h-full'>
 					<CircularProgress size={80} color='primary' />
 				</div>
 			) : (
