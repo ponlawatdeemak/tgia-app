@@ -126,6 +126,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 						// post service error show in local modal component rows errors
 						console.log(error)
 						const data: PostImportCSVErrorDtoOut[] = error.data
+						setImportFile(undefined)
 						console.log(data)
 						setImportError(data)
 					}
@@ -151,6 +152,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 						// post service error show in local modal component rows errors
 						console.log(error)
 						const data: PostImportXLSXErrorDtoOut[] = error.data
+						setImportFile(undefined)
 						setImportError(data)
 					}
 				}
@@ -225,7 +227,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 				className='[&_.MuiPaper-root]:h-[444px] [&_.MuiPaper-root]:max-w-[600px]'
 			>
 				<Box className='flex flex-row items-center justify-between'>
-					<DialogTitle>นำเข้าผู้ใช้งาน</DialogTitle>
+					<DialogTitle className='text-lg'>นำเข้าผู้ใช้งาน</DialogTitle>
 					<IconButton
 						onClick={(event) => {
 							handleCloseImport(event, 'cancelClick')
@@ -239,90 +241,100 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 					dividers={true}
 					className='flex h-full flex-col items-center justify-between max-lg:gap-3'
 				>
-					<Box className='ml-[24px] mr-[24px] flex min-h-max w-full flex-col items-center bg-gray-light2'>
-						<Typography>นำเข้าผู้ใช้งาน</Typography>
-						{importFile ? (
-							<Box className='flex flex-col'>
-								<Button
-									endIcon={
-										<IconButton disableRipple onClick={handleRemoveFile}>
-											<ClearIcon />
-										</IconButton>
-									}
-									variant='outlined'
-									disableElevation
-									className='h-[40px] max-w-[196px]'
-								>
-									{importFile.name}
-								</Button>
-								{importError.length > 0 && (
-									<Box className='rounded bg-error-light'>
-										<div className='flex flex-row items-center gap-1 text-error'>
-											<Icon path={mdiCloseCircleOutline} size={1} />
-											<Typography>ข้อมูลในเอกสารไม่ถูกต้อง</Typography>
-										</div>
-										{importError.map((error) => {
-											if (error.success === false) {
-												return (
-													<p className='p-1' key={error.firstName}>
-														{error.rowNo} :{error.result}
-													</p>
-												)
-											}
-										})}
-									</Box>
-								)}
-							</Box>
-						) : (
-							<Box className='flex flex-col'>
+					<Box
+						className={`ml-[24px] mr-[24px] flex w-full flex-col items-center bg-gray-light2 ${!(importError.length > 0) && 'h-full'}`}
+					>
+						<Box className='flex min-h-[200px] flex-col items-center justify-center gap-2'>
+							<Typography>นำเข้าผู้ใช้งาน</Typography>
+							{importFile ? (
+								<Box className='flex flex-col items-center'>
+									<Button
+										endIcon={
+											<IconButton disableRipple onClick={handleRemoveFile}>
+												<ClearIcon />
+											</IconButton>
+										}
+										variant='outlined'
+										disableElevation
+										className='h-[40px]'
+									>
+										{importFile.name}
+									</Button>
+								</Box>
+							) : (
+								<Box className='flex flex-col items-center gap-2'>
+									<Button
+										component='label'
+										role={undefined}
+										variant='contained'
+										tabIndex={-1}
+										className='flex h-[32px] gap-[4px] border-gray py-[6px] pl-[8px] pr-[10px] text-base text-black text-white [&_.MuiButton-startIcon]:m-0'
+										startIcon={<Icon path={mdiTrayArrowUp} size={1} />}
+									>
+										อัปโหลดไฟล์
+										<input
+											type='file'
+											accept='.csv, .xlsx, .xls'
+											className='absolute bottom-0 left-0 h-full w-full cursor-pointer opacity-0'
+											onChange={handleFileChange}
+											value={importFile}
+										/>
+									</Button>
+									{importError.length > 0 && (
+										<Box className='rounded-lg bg-error-light p-4'>
+											<div className='flex flex-row items-center gap-1 text-error'>
+												<Icon path={mdiCloseCircleOutline} size={1} />
+												<Typography>ข้อมูลในเอกสารไม่ถูกต้อง</Typography>
+											</div>
+											<div className='divide-y-0'>
+												{importError.map((error) => {
+													if (error.success === false) {
+														return (
+															<div key={error.firstName}>
+																<p key={error.firstName}>
+																	{error.rowNo} :{error.result}
+																</p>
+															</div>
+														)
+													}
+												})}
+											</div>
+										</Box>
+									)}
+								</Box>
+							)}
+						</Box>
+						{!importFile && (
+							<Box className='flex w-[90%] flex-col items-center justify-center gap-2 border-x-0 border-y-0 border-t border-solid border-gray'>
+								<Typography className='font-medium'>ตัวอย่างเอกสารผู้ใช้งาน</Typography>
 								<Button
 									component='label'
 									role={undefined}
-									variant='contained'
+									variant='outlined'
 									tabIndex={-1}
-									className='flex h-[32px] gap-[4px] border-gray py-[6px] pl-[8px] pr-[10px] text-base text-black text-white [&_.MuiButton-startIcon]:m-0'
-									startIcon={<Icon path={mdiTrayArrowUp} size={1} />}
+									className='flex h-[32px] gap-[4px] border-gray bg-white py-[6px] pl-[8px] pr-[10px] text-base text-black [&_.MuiButton-startIcon]:m-0'
+									onClick={() => {
+										handleDownloadTemplate('csv')
+									}}
+									startIcon={<Icon path={mdiTrayArrowDown} size={1} />}
 								>
-									อัปโหลดไฟล์
-									<input
-										type='file'
-										accept='.csv, .xlsx, .xls'
-										className='absolute bottom-0 left-0 h-full w-full cursor-pointer opacity-0'
-										onChange={handleFileChange}
-										value={importFile}
-									/>
+									ดาวน์โหลด Template csv
+								</Button>
+								<Button
+									component='label'
+									role={undefined}
+									variant='outlined'
+									tabIndex={-1}
+									className='flex h-[32px] gap-[4px] border-gray bg-white py-[6px] pl-[8px] pr-[10px] text-base text-black [&_.MuiButton-startIcon]:m-0'
+									onClick={() => {
+										handleDownloadTemplate('xlsx')
+									}}
+									startIcon={<Icon path={mdiTrayArrowDown} size={1} />}
+								>
+									ดาวน์โหลด Template excel
 								</Button>
 							</Box>
 						)}
-						<Typography>ตัวอย่างเอกสารผู้ใช้งาน</Typography>
-						<Box>
-							<Button
-								component='label'
-								role={undefined}
-								variant='outlined'
-								tabIndex={-1}
-								className='flex h-[32px] gap-[4px] border-gray bg-white py-[6px] pl-[8px] pr-[10px] text-base text-black [&_.MuiButton-startIcon]:m-0'
-								onClick={() => {
-									handleDownloadTemplate('csv')
-								}}
-								startIcon={<Icon path={mdiTrayArrowDown} size={1} />}
-							>
-								ดาวน์โหลด Template csv
-							</Button>
-							<Button
-								component='label'
-								role={undefined}
-								variant='outlined'
-								tabIndex={-1}
-								className='flex h-[32px] gap-[4px] border-gray bg-white py-[6px] pl-[8px] pr-[10px] text-base text-black [&_.MuiButton-startIcon]:m-0'
-								onClick={() => {
-									handleDownloadTemplate('xlsx')
-								}}
-								startIcon={<Icon path={mdiTrayArrowDown} size={1} />}
-							>
-								ดาวน์โหลด Template excel
-							</Button>
-						</Box>
 					</Box>
 				</DialogContent>
 				{importFile && (
