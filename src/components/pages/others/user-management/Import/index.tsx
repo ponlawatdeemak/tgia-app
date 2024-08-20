@@ -33,6 +33,7 @@ import {
 } from '@/api/um/dto-out.dto'
 import AlertConfirm from '@/components/common/dialog/AlertConfirm'
 import CloseIcon from '@mui/icons-material/Close'
+import { mdiCloseCircleOutline } from '@mdi/js'
 
 const maxFileSize = 1.5e7
 export interface FormImportProps {
@@ -210,15 +211,16 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 						onClick={(event) => {
 							handleCloseImport(event, 'cancelClick')
 						}}
+						className='mr-2 p-2'
 					>
 						<CloseIcon />
 					</IconButton>
 				</Box>
 				<DialogContent dividers={true} className='flex flex-col items-center justify-between max-lg:gap-3'>
-					<Box className='flex flex-col items-center bg-gray-light2 p-[24px]'>
+					<Box className='ml-[24px] mr-[24px] flex w-full flex-col items-center bg-gray-light2'>
 						<Typography>นำเข้าผู้ใช้งาน</Typography>
 						{importFile ? (
-							<Box>
+							<Box className='flex flex-col'>
 								<Button
 									endIcon={
 										<IconButton disableRipple onClick={handleRemoveFile}>
@@ -231,17 +233,25 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 									{importFile.name}
 								</Button>
 								{importError.length > 0 && (
-									<Box>
+									<Box className='rounded bg-error-light'>
+										<div className='flex flex-row items-center gap-1 text-error'>
+											<Icon path={mdiCloseCircleOutline} size={1} />
+											<Typography>ข้อมูลในเอกสารไม่ถูกต้อง</Typography>
+										</div>
 										{importError.map((error) => {
 											if (error.success === false) {
-												return <p>{error.result}</p>
+												return (
+													<p className='p-1'>
+														{error.rowNo} :{error.result}
+													</p>
+												)
 											}
 										})}
 									</Box>
 								)}
 							</Box>
 						) : (
-							<Box>
+							<Box className='flex flex-col'>
 								<Button
 									component='label'
 									role={undefined}
