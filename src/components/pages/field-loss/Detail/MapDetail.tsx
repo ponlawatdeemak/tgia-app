@@ -180,8 +180,10 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 		if (!queryParams.layerName) {
 			setLayers([
 				new MVTLayer({
+					id: 'province',
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/province/tiles.json',
 					filled: true,
+					lineWidthUnits: 'pixels',
 					//visible: layer.layerName === 'country',
 					getFillColor(d: Feature<Geometry, ProvincePropertiesType>) {
 						if (summaryAreaId.includes(d.properties.provinceCode)) {
@@ -217,13 +219,13 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 						return TotalTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, ProvincePropertiesType>) {
-						return [0, 0, 0, 255]
+						return [110, 110, 110, 255]
 					},
 					getLineWidth(d: Feature<Geometry, ProvincePropertiesType>) {
 						if (summaryAreaId.includes(d.properties.provinceCode)) {
-							return 400
+							return 2
 						}
-						return 4
+						return 0
 					},
 					pickable: true,
 					updateTriggers: {
@@ -289,11 +291,43 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 				}),
 			])
 		} else if (queryParams.layerName === 'province') {
+			console.log('queryParams.layerName  ', queryParams.layerName)
 			setLayers([
 				new MVTLayer({
+					id: 'province1',
+					data: 'https://tileserver.cropinsurance-dev.thaicom.io/province/tiles.json',
+					filled: true,
+					lineWidthUnits: 'pixels',
+					//visible: layer.layerName === 'country',
+					getFillColor(d: Feature<Geometry, ProvincePropertiesType>) {
+						return [0, 0, 0, 0]
+					},
+					getLineColor(d: Feature<Geometry, ProvincePropertiesType>) {
+						// return [255, 0, 0, 255]
+						return [110, 110, 110, 255]
+					},
+					getLineWidth(d: Feature<Geometry, ProvincePropertiesType>) {
+						console.log('summaryAreaId ', summaryAreaId, d.properties.provinceNameTh)
+
+						const xxx = []
+
+						if (summaryAreaId.length > 0) {
+							xxx.push(Number(summaryAreaId[0].toString().substring(0, 2)))
+						}
+
+						console.log('d ', d.properties, xxx, xxx.includes(d.properties.provinceCode))
+						if (xxx.includes(d.properties.provinceCode)) {
+							return 2
+						}
+						return 0
+					},
+				}),
+				new MVTLayer({
+					id: 'district',
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/district/tiles.json',
 					filled: true,
 					//visible: layer.layerName === 'province',
+					lineWidthUnits: 'pixels',
 					getFillColor(d: Feature<Geometry, DistrictPropertiesType>) {
 						if (summaryAreaId.includes(d.properties.districtCode)) {
 							const district = summaryAreaData?.data?.find(
@@ -328,7 +362,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 						return TotalTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, DistrictPropertiesType>) {
-						return [0, 0, 0, 255]
+						return [110, 110, 110, 255]
 					},
 					getLineWidth(d: Feature<Geometry, DistrictPropertiesType>) {
 						if (summaryAreaId.includes(d.properties.districtCode)) {
@@ -339,24 +373,24 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									if (district?.lossPredicted.find((item) => item.lossType === 'drought')) {
-										return 400
+										return 2
 									} else {
-										return 4
+										return 0
 									}
 								}
 								case LossType.Flood: {
 									if (district?.lossPredicted.find((item) => item.lossType === 'flood')) {
-										return 400
+										return 2
 									} else {
-										return 4
+										return 0
 									}
 								}
 								default: {
-									return 400
+									return 2
 								}
 							}
 						}
-						return 4
+						return 0
 					},
 					pickable: true,
 					updateTriggers: {
@@ -424,8 +458,43 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 		} else if (queryParams.layerName === 'district') {
 			setLayers([
 				new MVTLayer({
+					id: 'district2',
+					data: 'https://tileserver.cropinsurance-dev.thaicom.io/district/tiles.json',
+					filled: true,
+					//visible: layer.layerName === 'province',
+					lineWidthUnits: 'pixels',
+					getFillColor(d: Feature<Geometry, DistrictPropertiesType>) {
+						return [0, 0, 0, 0]
+					},
+					getLineColor(d: Feature<Geometry, DistrictPropertiesType>) {
+						return [110, 110, 110, 255]
+					},
+					getLineWidth(d: Feature<Geometry, DistrictPropertiesType>) {
+						console.log(
+							'summaryAreaId  district2',
+							summaryAreaId,
+							d.properties.provinceNameTh,
+							d.properties.districtNameTh,
+						)
+
+						const xxx = []
+
+						if (summaryAreaId.length > 0) {
+							xxx.push(Number(summaryAreaId[0].toString().substring(0, 4)))
+						}
+
+						console.log('summaryAreaId d ', d.properties, xxx, xxx.includes(d.properties.districtCode))
+						if (xxx.includes(d.properties.districtCode)) {
+							return 2
+						}
+						return 0
+					},
+				}),
+				new MVTLayer({
+					id: 'subDistrict',
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/subdistrict/tiles.json',
 					filled: true,
+					lineWidthUnits: 'pixels',
 					//visible: layer.layerName === 'district',
 					getFillColor(d: Feature<Geometry, SubDistrictPropertiesType>) {
 						if (summaryAreaId.includes(d.properties.subDistrictCode)) {
@@ -461,7 +530,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 						return TotalTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, SubDistrictPropertiesType>) {
-						return [0, 0, 0, 255]
+						return [110, 110, 110, 255]
 					},
 					getLineWidth(d: Feature<Geometry, SubDistrictPropertiesType>) {
 						if (summaryAreaId.includes(d.properties.subDistrictCode)) {
@@ -472,24 +541,24 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')) {
-										return 400
+										return 2
 									} else {
-										return 4
+										return 0
 									}
 								}
 								case LossType.Flood: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')) {
-										return 400
+										return 2
 									} else {
-										return 4
+										return 0
 									}
 								}
 								default: {
-									return 400
+									return 2
 								}
 							}
 						}
-						return 4
+						return 0
 					},
 					pickable: true,
 					updateTriggers: {
