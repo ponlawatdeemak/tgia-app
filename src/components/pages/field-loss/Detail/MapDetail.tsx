@@ -221,7 +221,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 					},
 					getLineWidth(d: Feature<Geometry, ProvincePropertiesType>) {
 						if (summaryAreaId.includes(d.properties.provinceCode)) {
-							return 400
+							return 10
 						}
 						return 4
 					},
@@ -339,20 +339,20 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									if (district?.lossPredicted.find((item) => item.lossType === 'drought')) {
-										return 400
+										return 10
 									} else {
 										return 4
 									}
 								}
 								case LossType.Flood: {
 									if (district?.lossPredicted.find((item) => item.lossType === 'flood')) {
-										return 400
+										return 10
 									} else {
 										return 4
 									}
 								}
 								default: {
-									return 400
+									return 10
 								}
 							}
 						}
@@ -472,20 +472,20 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')) {
-										return 400
+										return 10
 									} else {
 										return 4
 									}
 								}
 								case LossType.Flood: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')) {
-										return 400
+										return 10
 									} else {
 										return 4
 									}
 								}
 								default: {
-									return 400
+									return 10
 								}
 							}
 						}
@@ -605,20 +605,20 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')) {
-										return 400
+										return 10
 									} else {
 										return 4
 									}
 								}
 								case LossType.Flood: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')) {
-										return 400
+										return 10
 									} else {
 										return 4
 									}
 								}
 								default: {
-									return 400
+									return 10
 								}
 							}
 						}
