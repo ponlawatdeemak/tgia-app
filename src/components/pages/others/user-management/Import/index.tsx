@@ -22,7 +22,7 @@ import { PostImportXLSXUMDtoIn } from '@/api/um/dto-in.dto'
 import Icon from '@mdi/react'
 import { mdiTrayArrowDown } from '@mdi/js'
 import { mdiTrayArrowUp } from '@mdi/js'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
 import {
@@ -56,6 +56,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 		message: '',
 	})
 	const [importError, setImportError] = React.useState<(PostImportCSVErrorDtoOut | PostImportXLSXErrorDtoOut)[]>([])
+	const queryClient = useQueryClient()
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const importFile = event.target.files?.[0]
@@ -113,6 +114,14 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 						}
 						const res = await um.postImportCSVUM(payload)
 						console.log(res)
+						setAlertInfo({
+							open: true,
+							severity: 'success',
+							message: t('successImport', { ns: 'um' }),
+						})
+						setIsSearch(true)
+						queryClient.invalidateQueries({ queryKey: ['getSearchUM'] })
+						handleCloseImport(null, 'importFinish')
 					} catch (error: any) {
 						// post service error show in local modal component rows errors
 						console.log(error)
@@ -130,6 +139,14 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 						}
 						const res = await um.postImportXLSXUM(payload)
 						console.log(res)
+						setAlertInfo({
+							open: true,
+							severity: 'success',
+							message: t('successImport', { ns: 'um' }),
+						})
+						setIsSearch(true)
+						queryClient.invalidateQueries({ queryKey: ['getSearchUM'] })
+						handleCloseImport(null, 'importFinish')
 					} catch (error: any) {
 						// post service error show in local modal component rows errors
 						console.log(error)
@@ -204,6 +221,8 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 				onSubmit={() => {}}
 				fullWidth
 				keepMounted={false}
+				scroll='paper'
+				className='[&_.MuiPaper-root]:h-[444px] [&_.MuiPaper-root]:max-w-[600px]'
 			>
 				<Box className='flex flex-row items-center justify-between'>
 					<DialogTitle>นำเข้าผู้ใช้งาน</DialogTitle>
@@ -216,8 +235,11 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 						<CloseIcon />
 					</IconButton>
 				</Box>
-				<DialogContent dividers={true} className='flex flex-col items-center justify-between max-lg:gap-3'>
-					<Box className='ml-[24px] mr-[24px] flex w-full flex-col items-center bg-gray-light2'>
+				<DialogContent
+					dividers={true}
+					className='flex h-full flex-col items-center justify-between max-lg:gap-3'
+				>
+					<Box className='ml-[24px] mr-[24px] flex min-h-max w-full flex-col items-center bg-gray-light2'>
 						<Typography>นำเข้าผู้ใช้งาน</Typography>
 						{importFile ? (
 							<Box className='flex flex-col'>
@@ -229,6 +251,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 									}
 									variant='outlined'
 									disableElevation
+									className='h-[40px] max-w-[196px]'
 								>
 									{importFile.name}
 								</Button>
@@ -241,7 +264,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 										{importError.map((error) => {
 											if (error.success === false) {
 												return (
-													<p className='p-1'>
+													<p className='p-1' key={error.firstName}>
 														{error.rowNo} :{error.result}
 													</p>
 												)
