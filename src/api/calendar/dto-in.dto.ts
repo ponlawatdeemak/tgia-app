@@ -4,6 +4,6 @@ export interface GetCalendarDtoIn {
 	startDate: string
 	endDate: string
 	registrationAreaType: AreaTypeKey
-	provinceId: number | undefined
-	districtId: number | undefined
+	provinceCode: number | undefined
+	districtCode: number | undefined
 }
