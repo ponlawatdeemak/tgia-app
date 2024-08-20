@@ -58,3 +58,11 @@ export interface PostProfileUMDtoIn {
 	responsibleDistrictCode: string
 	flagStatus: string
 }
+
+export interface PostImportCSVUMDtoIn {
+	data : FormData
+}
+
+export interface PostImportXLSXUMDtoIn extends PostImportCSVUMDtoIn{
+
+}
