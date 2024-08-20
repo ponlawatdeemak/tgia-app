@@ -302,63 +302,62 @@ const SearchForm: React.FC<SearchFormProps> = () => {
 	}
 
 	return (
-		<>
-			<Paper className='mx-4 flex gap-1.5 bg-gray-dark4 p-1.5'>
-				<FormControl
-					fullWidth
-					variant='standard'
-					className={clsx('[&_.MuiInputBase-root.Mui-focused]:border-primary', {
-						'[&_.MuiInputBase-root.Mui-focused]:rounded-b-none [&_.MuiInputBase-root.Mui-focused]:border-b-0':
-							isPopperOpened && isDesktop,
-					})}
-				>
-					<Autocomplete
-						blurOnSelect
-						options={optionList.sort((a, b) => a.searchType.localeCompare(b.searchType))}
-						groupBy={(option) => (!inputValue ? option.searchType : '')}
-						getOptionLabel={(option) => option.name}
-						isOptionEqualToValue={(option, value) => option.id === value.id}
-						PopperComponent={(props) => {
-							return isDesktop ? (
-								<Popper
-									{...props}
-									className='z-50 rounded-lg rounded-t-none border-2 border-t-0 border-solid border-primary bg-white [&_.MuiPaper-root]:rounded-t-none [&_ul]:max-h-full [&_ul]:p-0'
-								>
-									{props.children}
-								</Popper>
-							) : (
-								<Popper
-									{...props}
-									className='z-50 h-full !w-full !translate-y-[124px] rounded-none bg-white [&_.MuiAutocomplete-listbox]:divide-x-0 [&_.MuiAutocomplete-listbox]:divide-y [&_.MuiAutocomplete-listbox]:divide-solid [&_.MuiAutocomplete-listbox]:divide-gray [&_.MuiPaper-root]:h-full [&_.MuiPaper-root]:rounded-none [&_ul]:max-h-full [&_ul]:p-0'
-								>
-									{props.children}
-								</Popper>
-							)
-						}}
-						//open={true}
-						inputValue={inputValue}
-						value={selectedOption}
-						onInputChange={(_event, newInputValue) => setInputValue(newInputValue)}
-						onChange={handleSelectOption}
-						onOpen={() => setPopperOpened(true)}
-						onClose={() => setPopperOpened(false)}
-						renderInput={(params) => {
-							const { InputLabelProps, InputProps, ...otherParams } = params
-							return (
-								<Input
-									{...otherParams}
-									{...params.InputProps}
-									className='flex h-10 items-center gap-2 rounded-lg border-2 border-solid border-transparent bg-white px-3 py-2 [&_.MuiInputAdornment-positionEnd]:m-0 [&_.MuiInputAdornment-positionStart]:m-0 [&_.MuiInputBase-input]:p-0'
-									startAdornment={
-										<InputAdornment position='start'>
-											<SearchOutlined className='h-6 w-6 text-black' />
-										</InputAdornment>
-									}
-									endAdornment={
-										<InputAdornment position='end'>
-											{isFocused ? (
-												<div className='flex items-center'>
-													{/* {inputValue && (
+		<Paper className='mx-4 flex gap-1.5 bg-gray-dark4 p-1.5'>
+			<FormControl
+				fullWidth
+				variant='standard'
+				className={clsx('[&_.MuiInputBase-root.Mui-focused]:border-primary', {
+					'[&_.MuiInputBase-root.Mui-focused]:rounded-b-none [&_.MuiInputBase-root.Mui-focused]:border-b-0':
+						isPopperOpened && isDesktop,
+				})}
+			>
+				<Autocomplete
+					blurOnSelect
+					options={optionList.sort((a, b) => a.searchType.localeCompare(b.searchType))}
+					groupBy={(option) => (!inputValue ? option.searchType : '')}
+					getOptionLabel={(option) => option.name}
+					isOptionEqualToValue={(option, value) => option.id === value.id}
+					PopperComponent={(props) => {
+						return isDesktop ? (
+							<Popper
+								{...props}
+								className='z-50 rounded-lg rounded-t-none border-2 border-t-0 border-solid border-primary bg-white [&_.MuiPaper-root]:rounded-t-none [&_ul]:max-h-full [&_ul]:p-0'
+							>
+								{props.children}
+							</Popper>
+						) : (
+							<Popper
+								{...props}
+								className='z-50 h-full !w-full !translate-y-[124px] rounded-none bg-white [&_.MuiAutocomplete-listbox]:divide-x-0 [&_.MuiAutocomplete-listbox]:divide-y [&_.MuiAutocomplete-listbox]:divide-solid [&_.MuiAutocomplete-listbox]:divide-gray [&_.MuiPaper-root]:h-full [&_.MuiPaper-root]:rounded-none [&_ul]:max-h-full [&_ul]:p-0'
+							>
+								{props.children}
+							</Popper>
+						)
+					}}
+					//open={true}
+					inputValue={inputValue}
+					value={selectedOption}
+					onInputChange={(_event, newInputValue) => setInputValue(newInputValue)}
+					onChange={handleSelectOption}
+					onOpen={() => setPopperOpened(true)}
+					onClose={() => setPopperOpened(false)}
+					renderInput={(params) => {
+						const { InputLabelProps, InputProps, ...otherParams } = params
+						return (
+							<Input
+								{...otherParams}
+								{...params.InputProps}
+								className='flex h-10 items-center gap-2 rounded-lg border-2 border-solid border-transparent bg-white px-3 py-2 [&_.MuiInputAdornment-positionEnd]:m-0 [&_.MuiInputAdornment-positionStart]:m-0 [&_.MuiInputBase-input]:p-0'
+								startAdornment={
+									<InputAdornment position='start'>
+										<SearchOutlined className='h-6 w-6 text-black' />
+									</InputAdornment>
+								}
+								endAdornment={
+									<InputAdornment position='end'>
+										{isFocused ? (
+											<div className='flex items-center'>
+												{/* {inputValue && (
 														<IconButton className='rounded-[8px]'>
 														<span className='text-sm text-[#7A7A7A]'>ล้าง</span>
 														</IconButton>
@@ -371,129 +370,75 @@ const SearchForm: React.FC<SearchFormProps> = () => {
 															flexItem
 															/>
 															)} */}
-													{inputValue && (
-														<IconButton className='p-1' onClick={handleClear}>
-															<Clear className='h-6 w-6 text-gray-dark2' />
-														</IconButton>
-													)}
-												</div>
-											) : (
-												inputValue && (
-													<IconButton
-														className='p-1'
-														onClick={(event) => handleSelectFavorite(event, selectedOption)}
-													>
-														<StarBorder
-															className={clsx('h-6 w-6', {
-																'text-yellow': optionList
-																	.filter(
-																		(option) => option.searchType === 'favorite',
-																	)
-																	.map((option) => option.id)
-																	.includes(selectedOption?.id || ''),
-																'text-black': !optionList
-																	.filter(
-																		(option) => option.searchType === 'favorite',
-																	)
-																	.map((option) => option.id)
-																	.includes(selectedOption?.id || ''),
-															})}
-														/>
+												{inputValue && (
+													<IconButton className='p-1' onClick={handleClear}>
+														<Clear className='h-6 w-6 text-gray-dark2' />
 													</IconButton>
-												)
-											)}
-										</InputAdornment>
-									}
-									disableUnderline={true}
-									id='standard-search'
-									placeholder='จังหวัด อำเภอ ตำบล'
-									onFocus={() => setIsFocused(true)}
-									onBlur={() => setIsFocused(false)}
-								/>
-							)
-						}}
-						renderGroup={(params) => {
-							return inputValue ? (
-								<li
-									key={params.key}
-									className='flex flex-col gap-2 p-4 max-lg:px-6 lg:border-0 lg:border-t lg:border-solid lg:border-gray'
-								>
-									<div className='text-sm font-medium text-gray-dark2'>{'ผลลัพธ์การค้นหา'}</div>
-									<ul className='flex flex-col gap-0 p-0 lg:gap-2 [&_li]:p-0 max-lg:[&_li]:min-h-10'>
-										{params.children}
-									</ul>
-								</li>
-							) : (
-								<li
-									key={params.key}
-									className='flex flex-col gap-2 p-4 max-lg:px-6 lg:border-0 lg:border-t lg:border-solid lg:border-gray'
-								>
-									<div className='text-sm font-medium text-gray-dark2'>
-										{params.group === 'favorite' ? 'พื้นที่ในรายการโปรด' : 'ค้นหาล่าสุด'}
-									</div>
-									<ul className='flex flex-col gap-0 p-0 lg:gap-2 [&_li]:p-0 max-lg:[&_li]:min-h-10'>
-										{params.children}
-									</ul>
-								</li>
-							)
-						}}
-						renderOption={(props, option, { inputValue }) => {
-							const { key, ...optionProps } = props
-							const matches = match(option.name, inputValue, { insideWords: true })
-							const parts = parse(option.name, matches)
-							return selectedOption?.name === inputValue ? (
-								option === selectedOption ? (
-									<li key={`selected-${key}`} {...optionProps}>
-										<div className='flex w-full items-center justify-between'>
-											<div>
-												{parts.map((part, index) => (
-													<span
-														key={index}
-														className={clsx('text-md', {
-															'font-bold text-primary': part.highlight,
-															'font-normal text-black': !part.highlight,
-														})}
-													>
-														{part.text}
-													</span>
-												))}
+												)}
 											</div>
-										</div>
-									</li>
-								) : null
-							) : option.searchType === 'favorite' ? (
-								<li key={`favorite-${key}`} {...optionProps}>
-									<div className='flex w-full items-center justify-between'>
-										<div className='flex items-center gap-2'>
-											<IconButton className='p-0'>
-												<StarBorder className='h-5 w-5 text-yellow' />
-											</IconButton>
-											<div>
-												{parts.map((part, index) => (
-													<span
-														key={index}
-														className={clsx('text-md', {
-															'font-bold text-primary': part.highlight,
-															'font-normal text-black': !part.highlight,
+										) : (
+											inputValue && (
+												<IconButton
+													className='p-1'
+													onClick={(event) => handleSelectFavorite(event, selectedOption)}
+												>
+													<StarBorder
+														className={clsx('h-6 w-6', {
+															'text-yellow': optionList
+																.filter((option) => option.searchType === 'favorite')
+																.map((option) => option.id)
+																.includes(selectedOption?.id || ''),
+															'text-black': !optionList
+																.filter((option) => option.searchType === 'favorite')
+																.map((option) => option.id)
+																.includes(selectedOption?.id || ''),
 														})}
-													>
-														{part.text}
-													</span>
-												))}
-											</div>
-										</div>
-										{!inputValue && (
-											<IconButton
-												className='p-0'
-												onClick={(event) => handleRemoveFavorite(event, option.id)}
-											>
-												<Remove className='h-5 w-5 font-light text-gray-light4' />
-											</IconButton>
+													/>
+												</IconButton>
+											)
 										)}
-									</div>
-								</li>
-							) : (
-								<li key={`history-${key}`} {...optionProps}>
+									</InputAdornment>
+								}
+								disableUnderline={true}
+								id='standard-search'
+								placeholder={`${t('province')} ${t('district')} ${t('subDistrict')}`}
+								onFocus={() => setIsFocused(true)}
+								onBlur={() => setIsFocused(false)}
+							/>
+						)
+					}}
+					renderGroup={(params) => {
+						return inputValue ? (
+							<li
+								key={params.key}
+								className='flex flex-col gap-2 p-4 max-lg:px-6 lg:border-0 lg:border-t lg:border-solid lg:border-gray'
+							>
+								<div className='text-sm font-medium text-gray-dark2'>{t('searchResults')}</div>
+								<ul className='flex flex-col gap-0 p-0 lg:gap-2 [&_li]:p-0 max-lg:[&_li]:min-h-10'>
+									{params.children}
+								</ul>
+							</li>
+						) : (
+							<li
+								key={params.key}
+								className='flex flex-col gap-2 p-4 max-lg:px-6 lg:border-0 lg:border-t lg:border-solid lg:border-gray'
+							>
+								<div className='text-sm font-medium text-gray-dark2'>
+									{params.group === 'favorite' ? t('favoriteAreas') : t('recentSearches')}
+								</div>
+								<ul className='flex flex-col gap-0 p-0 lg:gap-2 [&_li]:p-0 max-lg:[&_li]:min-h-10'>
+									{params.children}
+								</ul>
+							</li>
+						)
+					}}
+					renderOption={(props, option, { inputValue }) => {
+						const { key, ...optionProps } = props
+						const matches = match(option.name, inputValue, { insideWords: true })
+						const parts = parse(option.name, matches)
+						return selectedOption?.name === inputValue ? (
+							option === selectedOption ? (
+								<li key={`selected-${key}`} {...optionProps}>
 									<div className='flex w-full items-center justify-between'>
 										<div>
 											{parts.map((part, index) => (
@@ -508,30 +453,79 @@ const SearchForm: React.FC<SearchFormProps> = () => {
 												</span>
 											))}
 										</div>
-										{!inputValue && (
-											<IconButton
-												className='p-0'
-												onClick={(event) => handleRemoveHistory(event, option.id)}
-											>
-												<Clear className='h-5 w-5 font-light text-gray-light4' />
-											</IconButton>
-										)}
 									</div>
 								</li>
-							)
-						}}
-					/>
-				</FormControl>
-				<DateRangePicker />
-				<Button
-					className='h-10 min-w-10 bg-white p-2 text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
-					variant='contained'
-					color='primary'
-					startIcon={<Fullscreen className='h-6 w-6' />}
-					onClick={() => onCapture()}
-				></Button>
-			</Paper>
-		</>
+							) : null
+						) : option.searchType === 'favorite' ? (
+							<li key={`favorite-${key}`} {...optionProps}>
+								<div className='flex w-full items-center justify-between'>
+									<div className='flex items-center gap-2'>
+										<IconButton className='p-0'>
+											<StarBorder className='h-5 w-5 text-yellow' />
+										</IconButton>
+										<div>
+											{parts.map((part, index) => (
+												<span
+													key={index}
+													className={clsx('text-md', {
+														'font-bold text-primary': part.highlight,
+														'font-normal text-black': !part.highlight,
+													})}
+												>
+													{part.text}
+												</span>
+											))}
+										</div>
+									</div>
+									{!inputValue && (
+										<IconButton
+											className='p-0'
+											onClick={(event) => handleRemoveFavorite(event, option.id)}
+										>
+											<Remove className='h-5 w-5 font-light text-gray-light4' />
+										</IconButton>
+									)}
+								</div>
+							</li>
+						) : (
+							<li key={`history-${key}`} {...optionProps}>
+								<div className='flex w-full items-center justify-between'>
+									<div>
+										{parts.map((part, index) => (
+											<span
+												key={index}
+												className={clsx('text-md', {
+													'font-bold text-primary': part.highlight,
+													'font-normal text-black': !part.highlight,
+												})}
+											>
+												{part.text}
+											</span>
+										))}
+									</div>
+									{!inputValue && (
+										<IconButton
+											className='p-0'
+											onClick={(event) => handleRemoveHistory(event, option.id)}
+										>
+											<Clear className='h-5 w-5 font-light text-gray-light4' />
+										</IconButton>
+									)}
+								</div>
+							</li>
+						)
+					}}
+				/>
+			</FormControl>
+			<DateRangePicker />
+			<Button
+				className='h-10 min-w-10 bg-white p-2 text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
+				variant='contained'
+				color='primary'
+				startIcon={<Fullscreen className='h-6 w-6' />}
+				onClick={() => onCapture()}
+			></Button>
+		</Paper>
 	)
 }
 

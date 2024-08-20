@@ -28,7 +28,7 @@ const Tooltip: React.FC<TooltipProps> = ({ info, setHoverInfo }) => {
 	const { layers, addLayer, setLayers } = useLayerStore()
 	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default', 'um'])
+	const { t, i18n } = useTranslation(['default', 'field-loss'])
 	const language = i18n.language as keyof ResponseLanguage
 
 	if (!info || !info.area) {
@@ -58,24 +58,30 @@ const Tooltip: React.FC<TooltipProps> = ({ info, setHoverInfo }) => {
 				)}
 			</Box>
 			<Box className='flex flex-col gap-2'>
-				<Typography className='text-xs font-medium text-gray-dark2'>พื้นที่เสียหายจากการวิเคราะห์</Typography>
+				<Typography className='text-xs font-medium text-gray-dark2'>
+					{t('damageAreaAnalysis', { ns: 'field-loss' })}
+				</Typography>
 				{!queryParams.lossType && (
 					<Box className='flex flex-col gap-0.5'>
 						<div className='flex items-baseline justify-between'>
-							<span className='text-sm font-medium text-black'>ทั้งหมด</span>
+							<span className='text-sm font-medium text-black'>{t('all')}</span>
 							<div className='flex items-baseline gap-1'>
 								<span className='text-base font-semibold text-secondary'>
 									{info.area.totalPredictedArea[areaUnit].toLocaleString()}
 								</span>
-								<span className='text-sm font-normal text-black'>ไร่</span>
+								<span className='text-sm font-normal text-black'>{t(areaUnit)}</span>
 							</div>
 						</div>
 						<div className='flex items-baseline gap-1'>
-							<span className='text-xs font-medium text-gray-dark2'>คิดเป็น</span>
+							{i18n.language === 'th' && (
+								<span className='text-xs font-medium text-gray-dark2'>{'คิดเป็น'}</span>
+							)}
 							<span className='text-xs font-medium text-secondary'>
 								{info.area.totalPredictedArea.percent + '%'}
 							</span>
-							<span className='text-xs font-medium text-gray-dark2'>ของพื้นที่ลงทะเบียน</span>
+							<span className='text-xs font-medium text-gray-dark2'>
+								{t('percentRegisteredAreas', { ns: 'field-loss' })}
+							</span>
 						</div>
 					</Box>
 				)}
@@ -83,22 +89,26 @@ const Tooltip: React.FC<TooltipProps> = ({ info, setHoverInfo }) => {
 					queryParams.lossType === LossType.Drought) && (
 					<Box className='flex flex-col gap-0.5'>
 						<div className='flex items-baseline justify-between'>
-							<span className='text-sm font-medium text-black'>ภัยแล้ง</span>
+							<span className='text-sm font-medium text-black'>{t('drought')}</span>
 							<div className='flex items-baseline gap-1'>
 								<span className='text-base font-semibold text-secondary'>
 									{info.area.lossPredicted
 										.find((item) => item.lossType === 'drought')
 										?.[areaUnit].toLocaleString()}
 								</span>
-								<span className='text-sm font-normal text-black'>ไร่</span>
+								<span className='text-sm font-normal text-black'>{t(areaUnit)}</span>
 							</div>
 						</div>
 						<div className='flex items-baseline gap-1'>
-							<span className='text-xs font-medium text-gray-dark2'>คิดเป็น</span>
+							{i18n.language === 'th' && (
+								<span className='text-xs font-medium text-gray-dark2'>{'คิดเป็น'}</span>
+							)}
 							<span className='text-xs font-medium text-secondary'>
 								{info.area.lossPredicted.find((item) => item.lossType === 'drought')?.percent + '%'}
 							</span>
-							<span className='text-xs font-medium text-gray-dark2'>ของพื้นที่ลงทะเบียน</span>
+							<span className='text-xs font-medium text-gray-dark2'>
+								{t('percentRegisteredAreas', { ns: 'field-loss' })}
+							</span>
 						</div>
 					</Box>
 				)}
@@ -106,22 +116,26 @@ const Tooltip: React.FC<TooltipProps> = ({ info, setHoverInfo }) => {
 					queryParams.lossType === LossType.Flood) && (
 					<Box className='flex flex-col gap-0.5'>
 						<div className='flex items-baseline justify-between'>
-							<span className='text-sm font-medium text-black'>น้ำท่วม</span>
+							<span className='text-sm font-medium text-black'>{t('flood')}</span>
 							<div className='flex items-baseline gap-1'>
 								<span className='text-base font-semibold text-secondary'>
 									{info.area.lossPredicted
 										.find((item) => item.lossType === 'flood')
 										?.[areaUnit].toLocaleString()}
 								</span>
-								<span className='text-sm font-normal text-black'>ไร่</span>
+								<span className='text-sm font-normal text-black'>{t(areaUnit)}</span>
 							</div>
 						</div>
 						<div className='flex items-baseline gap-1'>
-							<span className='text-xs font-medium text-gray-dark2'>คิดเป็น</span>
+							{i18n.language === 'th' && (
+								<span className='text-xs font-medium text-gray-dark2'>{'คิดเป็น'}</span>
+							)}
 							<span className='text-xs font-medium text-secondary'>
 								{info.area.lossPredicted.find((item) => item.lossType === 'flood')?.percent + '%'}
 							</span>
-							<span className='text-xs font-medium text-gray-dark2'>ของพื้นที่ลงทะเบียน</span>
+							<span className='text-xs font-medium text-gray-dark2'>
+								{t('percentRegisteredAreas', { ns: 'field-loss' })}
+							</span>
 						</div>
 					</Box>
 				)}

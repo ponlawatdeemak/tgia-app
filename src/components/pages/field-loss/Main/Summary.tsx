@@ -30,6 +30,7 @@ import useSearchFieldLoss from './context'
 import { addDays, format } from 'date-fns'
 import { GetSummaryPredictedLossDtoIn } from '@/api/field-loss/dto-in.dto'
 import { ResponseArea } from '@/api/interface'
+import { formatDate } from '@/utils/date'
 
 interface Data {
 	totalPredicted: ResponseArea
@@ -150,14 +151,16 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 									<span className='text-base text-black-dark'>{t(areaUnit)}</span>
 								</div>
 								<span className='text-left text-sm font-medium text-gray-dark2'>
-									{t('lastUpdated', { ns: 'field-loss' })} 24 มี.ค. 2568
+									{`${t('lastUpdated', { ns: 'field-loss' })} ${summaryData?.data?.updatedDate ? formatDate(new Date(summaryData.data.updatedDate), 'd MMM yyyy', i18n.language) : undefined}`}
 								</span>
 							</CardContent>
 						</Card>
 						<Card className='border border-solid border-gray-light px-4 py-3 max-lg:rounded'>
 							<CardContent className='flex flex-col gap-3 p-0'>
 								<Typography variant='body1' className='text-left text-md font-semibold text-black-dark'>
-									{t('estimatedRemediationArea', { ns: 'field-loss' })}
+									{areaType === AreaTypeKey.Registration
+										? t('estimatedRemediationArea', { ns: 'field-loss' })
+										: t('estimatedInsuredArea', { ns: 'field-loss' })}
 								</Typography>
 								<div className='flex flex-col items-end gap-1'>
 									<div className='flex items-baseline justify-end gap-1'>
@@ -207,8 +210,8 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 											})}
 										>
 											{areaType === AreaTypeKey.Registration
-												? 'วิธีการคำนวนพื้นที่ประมาณการการเยียวยา'
-												: 'วิธีการคำนวนพื้นที่ประมาณการเคลมประกัน'}
+												? t('calculationEstimatedRemediationArea', { ns: 'field-loss' })
+												: t('calculationEstimatedInsuredArea', { ns: 'field-loss' })}
 										</Typography>
 										<IconButton aria-label='close' onClick={handleCloseCalDialog}>
 											<Icon
@@ -252,7 +255,7 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 									))}
 								</div>
 								<span className='text-left text-sm font-medium text-gray-dark2'>
-									{t('latestDataAnalysis', { ns: 'field-loss' })} 24 มี.ค. 2568
+									{`${t('latestDataAnalysis', { ns: 'field-loss' })} ${summaryData?.data?.updatedDate ? formatDate(new Date(summaryData.data.updatedDate), 'd MMM yyyy', i18n.language) : undefined}`}
 								</span>
 							</CardContent>
 						</Card>
