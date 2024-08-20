@@ -1,5 +1,6 @@
 {
 	"profileUpdate": "บันทึกสำเร็จ",
+	"profileUpdateError": "บันทึกไม่สำเร็จ",
 	"profileDeleteSuccess": "ลบผู้ใช้งานสำเร็จ",
 	"profileDeleteFail": "ลบผู้ใช้งานไม่สำเร็จ",
 	"profileAddSuccess": "เพิ่มผู้ใช้งานสำเร็จ",

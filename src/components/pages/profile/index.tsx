@@ -123,10 +123,10 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 				throw new Error('Failed to update session')
 			}
 
-			setAlertInfo({ open: true, severity: 'success', message: t('success.profileUpdate') })
+			setAlertInfo({ open: true, severity: 'success', message: t('profileUpdate', { ns: 'um' }) })
 		} catch (error: any) {
 			console.log('Error:', error.message)
-			setAlertInfo({ open: true, severity: 'error', message: t('error.profileUpdate') })
+			setAlertInfo({ open: true, severity: 'error', message: t('profileUpdateError', { ns: 'um' }) })
 		} finally {
 			setBusy(false)
 		}
@@ -159,14 +159,19 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 	return (
 		<>
 			<Typography className='text-xl font-semibold text-black lg:text-md'>
-				{t('um', { ns: 'um' })}
+				{t('profile', { ns: 'um' })}
 			</Typography>
 			<form
 				onSubmit={formik.handleSubmit}
 				className='flex h-full flex-col justify-between max-lg:justify-start max-lg:gap-[32px]'
 			>
 				<Box className='flex w-full gap-[16px] max-lg:flex-col lg:gap-[12px]'>
-					<ProfileForm formik={formik} loading={busy || isUserDataLoading} isDisabledProfile isHiddenProfile/>
+					<ProfileForm
+						formik={formik}
+						loading={busy || isUserDataLoading}
+						isDisabledProfile
+						isHiddenProfile
+					/>
 				</Box>
 				<Box className='flex items-center max-lg:flex-col max-lg:items-center max-lg:gap-[8px] lg:justify-between lg:px-[40px]'>
 					<div className='flex gap-[8px] max-lg:w-[250px] max-lg:flex-col lg:gap-[20px]'>

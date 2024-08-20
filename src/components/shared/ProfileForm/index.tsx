@@ -21,7 +21,12 @@ export interface ProfileFormProps {
 	isHiddenProfile?: boolean
 }
 
-const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false, isDisabledProfile = false, isHiddenProfile = false }) => {
+const ProfileForm: React.FC<ProfileFormProps> = ({
+	formik,
+	loading = false,
+	isDisabledProfile = false,
+	isHiddenProfile = false,
+}) => {
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 
@@ -131,9 +136,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formik, loading = false, isDi
 							disabled={isDistricDataLoading || loading || !formik.values.responsibleProvinceCode}
 						/>
 					</div>
-					<div className={classNames('flex gap-[16px] max-lg:flex-col lg:gap-[12px]', {
-						'max-lg:hidden': isHiddenProfile
-					})}>
+					<div
+						className={classNames('flex gap-[16px] max-lg:flex-col lg:gap-[12px]', {
+							'max-lg:hidden': isHiddenProfile,
+						})}
+					>
 						<AutocompleteInput
 							className='w-full text-sm font-medium lg:w-[240px]'
 							options={
