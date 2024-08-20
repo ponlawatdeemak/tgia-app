@@ -2,6 +2,7 @@ import um from '@/api/um'
 import { Language } from '@/enum'
 import { useSwitchLanguage } from '@/i18n/client'
 import {
+	Alert,
 	Box,
 	Button,
 	CircularProgress,
@@ -11,6 +12,7 @@ import {
 	DialogTitle,
 	IconButton,
 	Input,
+	Snackbar,
 	Typography,
 } from '@mui/material'
 import React from 'react'
@@ -22,6 +24,15 @@ import { mdiTrayArrowDown } from '@mdi/js'
 import { mdiTrayArrowUp } from '@mdi/js'
 import { useMutation } from '@tanstack/react-query'
 import LoadingButton from '@mui/lab/LoadingButton'
+import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
+import {
+	PostImportCSVErrorDtoOut,
+	PostImportCSVUMDtoOut,
+	PostImportErrorDtoOut,
+	PostImportXLSXErrorDtoOut,
+} from '@/api/um/dto-out.dto'
+import AlertConfirm from '@/components/common/dialog/AlertConfirm'
+import CloseIcon from '@mui/icons-material/Close'
 
 const maxFileSize = 1.5e7
 export interface FormImportProps {
@@ -36,19 +47,17 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 	const [importFile, setImportFile] = React.useState<File>()
 	const { open, onClose, setOpen, setIsSearch } = props
-	const [uploadFileError, setUploadFileError] = React.useState({
-		severity: 'error',
+	const [isLoading, setIsLoading] = React.useState<boolean>(false)
+	const [isOpenConfirmModal, setIsOpenConfirmModal] = React.useState<boolean>(false)
+	const [alertInfo, setAlertInfo] = React.useState<AlertInfoType>({
+		open: false,
+		severity: 'success',
 		message: '',
 	})
-	const [isLoading, setIsLoading] = React.useState<boolean>()
-
-	React.useEffect(() => {
-		console.log(isLoading)
-	}, [isLoading])
+	const [importError, setImportError] = React.useState<(PostImportCSVErrorDtoOut | PostImportXLSXErrorDtoOut)[]>([])
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const importFile = event.target.files?.[0]
-		console.log(importFile)
 		if (importFile) {
 			const fileType = importFile.type
 			const fileSize = importFile.size
@@ -57,30 +66,39 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 				'text/xlsx',
 				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 			]
+			console.log(importFile)
 			if (validFileTypes.includes(fileType) && fileSize <= maxFileSize) {
 				setImportFile(importFile)
 			} else {
 				// handle wrong type + emax size exceed
 				// notification lower left side error
-				setUploadFileError({
-					severity: 'error',
-					message: 'wrong type',
-				})
+				if (!validFileTypes.includes(fileType)) {
+					// invalid file type
+					setAlertInfo({ open: true, severity: 'error', message: t('error.invalidFileType', { ns: 'um' }) })
+				} else if (fileSize > maxFileSize) {
+					// limit exceed
+					setAlertInfo({
+						open: true,
+						severity: 'error',
+						message: t('error.fileSizeLimitExceed', { ns: 'um' }),
+					})
+				} else {
+					// something wrong
+					setAlertInfo({ open: true, severity: 'error', message: t('error.somethingWrong') })
+				}
 			}
 		} else {
 			// no file
 			setImportFile(undefined)
 			// notification lower left side error
-			setUploadFileError({
-				severity: 'error',
-				message: t('error.somethingWrong'),
-			})
+			setAlertInfo({ open: true, severity: 'error', message: t('error.somethingWrong') })
 		}
 	}
 
-	const handleConfirmImport = async (event: React.MouseEvent) => {
-		event.preventDefault()
+	const handleConfirmImport = async () => {
+		// event.preventDefault()
 		try {
+			setImportError([])
 			setIsLoading(true)
 			console.log(importFile?.type)
 			if (importFile) {
@@ -97,6 +115,9 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 					} catch (error: any) {
 						// post service error show in local modal component rows errors
 						console.log(error)
+						const data: PostImportCSVErrorDtoOut[] = error.data
+						console.log(data)
+						setImportError(data)
 					}
 				} else {
 					// case xlsx
@@ -111,6 +132,8 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 					} catch (error: any) {
 						// post service error show in local modal component rows errors
 						console.log(error)
+						const data: PostImportXLSXErrorDtoOut[] = error.data
+						setImportError(data)
 					}
 				}
 			}
@@ -118,7 +141,6 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 			console.log(error)
 		} finally {
 			setIsLoading(false)
-			console.log('job finish')
 		}
 	}
 
@@ -127,9 +149,10 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 			let res
 			if (type === 'csv') {
 				res = await um.getTemplateCSVUM()
+				console.log(res)
 				const a = document.createElement('a')
 				a.download = 'users_data_csv.' + type
-				a.href = window.URL.createObjectURL(res.data) // blob return from res
+				a.href = window.URL.createObjectURL(res) // blob return from res
 				const clickEvt = new MouseEvent('click', {
 					view: window,
 					bubbles: true,
@@ -139,9 +162,10 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 				a.remove()
 			} else {
 				res = await um.getTemplateXLSXUM()
+				console.log(res)
 				const a = document.createElement('a')
 				a.download = 'users_data_excel.' + type
-				a.href = window.URL.createObjectURL(res.data) // blob return from res
+				a.href = window.URL.createObjectURL(res) // blob return from res
 				const clickEvt = new MouseEvent('click', {
 					view: window,
 					bubbles: true,
@@ -152,10 +176,12 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 			}
 		} catch (error: any) {
 			console.log(error)
+			setAlertInfo({ open: true, severity: 'error', message: t('error.somethingWrong') })
 		}
 	}
 
 	const handleRemoveFile = () => {
+		setImportError([])
 		setImportFile(undefined)
 	}
 
@@ -163,8 +189,9 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 		if (reason === 'backdropClick' && isLoading) {
 			return
 		}
-		setImportFile(undefined)
 		onClose()
+		setImportError([])
+		setImportFile(undefined)
 	}
 
 	return (
@@ -177,11 +204,21 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 				fullWidth
 				keepMounted={false}
 			>
-				<DialogTitle>นำเข้าผู้ใช้งาน</DialogTitle>
+				<Box className='flex flex-row items-center justify-between'>
+					<DialogTitle>นำเข้าผู้ใช้งาน</DialogTitle>
+					<IconButton
+						onClick={(event) => {
+							handleCloseImport(event, 'cancelClick')
+						}}
+					>
+						<CloseIcon />
+					</IconButton>
+				</Box>
 				<DialogContent dividers={true} className='flex flex-col items-center justify-between max-lg:gap-3'>
-					<Box className='flex h-[300px] w-[400px] flex-col bg-gray-light2 p-[24px]'>
+					<Box className='flex flex-col items-center bg-gray-light2 p-[24px]'>
+						<Typography>นำเข้าผู้ใช้งาน</Typography>
 						{importFile ? (
-							<>
+							<Box>
 								<Button
 									endIcon={
 										<IconButton disableRipple onClick={handleRemoveFile}>
@@ -193,11 +230,18 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 								>
 									{importFile.name}
 								</Button>
-							</>
+								{importError.length > 0 && (
+									<Box>
+										{importError.map((error) => {
+											if (error.success === false) {
+												return <p>{error.result}</p>
+											}
+										})}
+									</Box>
+								)}
+							</Box>
 						) : (
 							<Box>
-								{uploadFileError.message !== '' && <Typography></Typography>}
-								<Typography>นำเข้าผู้ใช้งาน</Typography>
 								<Button
 									component='label'
 									role={undefined}
@@ -212,6 +256,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 										accept='.csv, .xlsx, .xls'
 										className='absolute bottom-0 left-0 h-full w-full cursor-pointer opacity-0'
 										onChange={handleFileChange}
+										value={importFile}
 									/>
 								</Button>
 							</Box>
@@ -223,7 +268,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 								role={undefined}
 								variant='outlined'
 								tabIndex={-1}
-								className='flex h-[32px] gap-[4px] border-gray py-[6px] pl-[8px] pr-[10px] text-base text-black [&_.MuiButton-startIcon]:m-0'
+								className='flex h-[32px] gap-[4px] border-gray bg-white py-[6px] pl-[8px] pr-[10px] text-base text-black [&_.MuiButton-startIcon]:m-0'
 								onClick={() => {
 									handleDownloadTemplate('csv')
 								}}
@@ -236,7 +281,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 								role={undefined}
 								variant='outlined'
 								tabIndex={-1}
-								className='flex h-[32px] gap-[4px] border-gray py-[6px] pl-[8px] pr-[10px] text-base text-black [&_.MuiButton-startIcon]:m-0'
+								className='flex h-[32px] gap-[4px] border-gray bg-white py-[6px] pl-[8px] pr-[10px] text-base text-black [&_.MuiButton-startIcon]:m-0'
 								onClick={() => {
 									handleDownloadTemplate('xlsx')
 								}}
@@ -268,7 +313,9 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 								variant='contained'
 								color='primary'
 								className='h-[40px] w-[71px] text-sm [&_.MuiButton-startIcon]:m-0 [&_.MuiButtonBase-root]:w-[100px]'
-								onClick={handleConfirmImport}
+								onClick={() => {
+									setIsOpenConfirmModal(true)
+								}}
 								disabled={isLoading}
 							>
 								<span> {t('confirm')}</span>
@@ -277,6 +324,33 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 					</DialogActions>
 				)}
 			</Dialog>
+			<Snackbar
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+				open={alertInfo.open}
+				autoHideDuration={6000}
+				onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+				className='w-[300px]'
+			>
+				<Alert
+					onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+					severity={alertInfo.severity}
+					className='w-full'
+				>
+					{alertInfo.message}
+				</Alert>
+			</Snackbar>
+			<AlertConfirm
+				open={isOpenConfirmModal}
+				title={'ยืนยันการบันทึกข้อมูล'} // t('confirmImport', { ns : 'um'})
+				content={'ต้องการยืนยันการนำเข้าผู้ใช้งานใช่หรือไม่?'} //t('confirmImport', {ns : 'um'})
+				onClose={() => {
+					setIsOpenConfirmModal(false)
+				}}
+				onConfirm={() => {
+					handleConfirmImport()
+					setIsOpenConfirmModal(false)
+				}}
+			/>
 		</div>
 	)
 }
