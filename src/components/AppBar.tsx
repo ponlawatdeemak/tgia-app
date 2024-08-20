@@ -77,14 +77,24 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 		})?.key
 	}, [pathname])
 
-	const handleCloseNavMenu = useCallback(
-		(key: keyof typeof AppPath) => {
-			router.push(AppPath[key])
-			setAnchorOthersMenuEl(null)
-			setDrawerOpen(false)
-		},
-		[router],
-	)
+	// const handleCloseNavMenu = useCallback(
+	// 	(key: keyof typeof AppPath) => {
+	// 		console.log('handleCloseNavMenu ', AppPath[key], AppPath, key, router)
+
+	// 		router.push(AppPath[key])
+	// 		setAnchorOthersMenuEl(null)
+	// 		setDrawerOpen(false)
+	// 	},
+	// 	[router],
+	// )
+
+	const handleCloseNavMenu = (key: keyof typeof AppPath) => {
+		console.log('handleCloseNavMenu ', AppPath[key], AppPath, key, router)
+
+		router.push(AppPath[key])
+		setAnchorOthersMenuEl(null)
+		setDrawerOpen(false)
+	}
 
 	const handleAreaTypeChange = (event: React.MouseEvent<HTMLElement>, newAreaType: AreaTypeKey) => {
 		if (newAreaType !== null) {
@@ -236,7 +246,7 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 							{menuAreaString}
 						</Button>
 						<Menu
-							id='basic-menu2'
+							// id='basic-menu2'
 							anchorEl={anchorToggleMenuEl}
 							open={openToggleMenu}
 							onClose={() => setAnchorToggleMenuEl(null)}
