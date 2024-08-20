@@ -3,8 +3,12 @@ import {
 	DeleteProfileDtoOut,
 	GetProfileDtoOut,
 	GetSearchUMDtoOut,
+	GetTemplateCSVUMDtoOut,
+	GetTemplateXLSXUMDtoOut,
 	GetUmDtoOut,
 	PatchStatusDtoOut,
+	PostImportCSVUMDtoOut,
+	PostImportXLSXUMDtoOut,
 	PostProfileUMDtoOut,
 	PostUploadFilesDtoOut,
 	PutProfileDtoOut,
@@ -23,16 +27,6 @@ import {
 	PutProfileUMDtoIn,
 } from '@/api/um/dto-in.dto'
 import { APIService, ResponseDto } from '@/api/interface'
-import axios from 'axios'
-
-// define responseType of method to blob
-const instance = axios.create({
-	baseURL: process.env.API_URL,
-	headers: {
-		'x-api-key': process.env.API_KEY || '',
-	},
-	responseType: 'blob',
-})
 
 // Api for Profile and UM
 const um = {
@@ -61,11 +55,15 @@ const um = {
 		await api.put(`/um/${payload.id}`, payload),
 	postProfileUM: async (payload: PostProfileUMDtoIn): Promise<ResponseDto<PostProfileUMDtoOut>> =>
 		await api.post('/um', payload),
-	getTemplateCSVUM: async (): Promise<ResponseDto> => await instance.get('/um/import/template/csv'),
-	getTemplateXLSXUM: async (): Promise<ResponseDto> => await instance.get('/um/import/template/xlsx'),
-	postImportCSVUM: async (payload: PostImportCSVUMDtoIn): Promise<ResponseDto> =>
+	// change type res : blob
+	getTemplateCSVUM: async (): Promise<any> =>
+		await api.get('/um/import/template/csv', APIService.WebAPI, { responseType: 'blob' }),
+	// change type res : blob
+	getTemplateXLSXUM: async (): Promise<any> =>
+		await api.get('/um/import/template/xlsx', APIService.WebAPI, { responseType: 'blob' }),
+	postImportCSVUM: async (payload: PostImportCSVUMDtoIn): Promise<ResponseDto<PostImportCSVUMDtoOut[]>> =>
 		await api.post('/um/import/csv', payload.data),
-	postImportXLSXUM: async (payload: PostImportXLSXUMDtoIn): Promise<ResponseDto> =>
+	postImportXLSXUM: async (payload: PostImportXLSXUMDtoIn): Promise<ResponseDto<PostImportXLSXUMDtoOut>> =>
 		await api.post('/um/import/xlsx', payload.data),
 }
 
