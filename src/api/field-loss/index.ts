@@ -17,8 +17,14 @@ import { APIService, ResponseDto, ResponseStatisticDto } from '@/api/interface'
 import { api } from '../core'
 
 const fieldLoss = {
-	getSearchAdminPoly: async (payload: GetSearchAdminPolyDtoIn): Promise<ResponseDto<GetSearchAdminPolyDtoOut[]>> =>
-		await api.get(`/admin-poly/search?keyword=${payload.keyword}`, APIService.DisasterAPI),
+	getSearchAdminPoly: async (payload: GetSearchAdminPolyDtoIn): Promise<ResponseDto<GetSearchAdminPolyDtoOut[]>> => {
+		const params = new URLSearchParams()
+
+		if (payload.id !== undefined) params.append('id', payload.id.toString())
+		if (payload.keyword) params.append('keyword', payload.keyword)
+
+		return await api.get(`/admin-poly/search?${params}`, APIService.DisasterAPI)
+	},
 	getSummaryPredictedLoss: async (
 		payload: GetSummaryPredictedLossDtoIn,
 	): Promise<ResponseDto<GetSummaryPredictedLossDtoOut>> => {
@@ -29,8 +35,8 @@ const fieldLoss = {
 		if (payload.endDate) params.append('endDate', payload.endDate)
 		if (payload.registrationAreaType !== undefined)
 			params.append('registrationAreaType', payload.registrationAreaType.toString())
-		if (payload.provinceId !== undefined) params.append('provinceId', payload.provinceId.toString())
-		if (payload.districtId !== undefined) params.append('districtId', payload.districtId.toString())
+		if (payload.provinceCode !== undefined) params.append('provinceCode', payload.provinceCode.toString())
+		if (payload.districtCode !== undefined) params.append('districtCode', payload.districtCode.toString())
 
 		return await api.get(`/predicted-loss/summary?${params}`, APIService.DisasterAPI)
 	},

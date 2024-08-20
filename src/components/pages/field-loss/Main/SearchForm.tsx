@@ -40,6 +40,13 @@ import DateRangePicker from '@/components/shared/DateRangePicker'
 import useResponsive from '@/hook/responsive'
 import useSearchFieldLoss from './context'
 import { onCapture } from '@/utils/screenshot'
+import { useTranslation } from 'react-i18next'
+import { ResponseLanguage } from '@/api/interface'
+import { Language } from '@/enum'
+import { GetSummaryAreaDtoIn } from '@/api/field-loss/dto-in.dto'
+import { addDays, format } from 'date-fns'
+import useAreaType from '@/store/area-type'
+import { id } from 'date-fns/locale'
 
 interface OptionType {
 	name: string
@@ -51,15 +58,19 @@ interface HistoryType {
 	[key: string]: OptionType[]
 }
 
-interface SearchFormProps {}
-
 const FavoriteLengthMax = 5
 const HistoryLengthMax = 5
+const ProvinceCodeLength = 2
+const DistrictCodeLength = 4
+const SubDistrictCodeLength = 6
+
+interface SearchFormProps {}
 
 const SearchForm: React.FC<SearchFormProps> = () => {
 	const queryClient = useQueryClient()
 	const { isDesktop } = useResponsive()
 	const { queryParams, setQueryParams } = useSearchFieldLoss()
+	const { areaType } = useAreaType()
 	const [isFocused, setIsFocused] = useState<boolean>(false)
 	const [isPopperOpened, setPopperOpened] = useState<boolean>(false)
 	const [inputValue, setInputValue] = useState<string>('')
@@ -68,7 +79,9 @@ const SearchForm: React.FC<SearchFormProps> = () => {
 	const [history, setHistory] = useLocalStorage<HistoryType>('fieldLoss.history', {})
 	const [favorite, setFavorite] = useLocalStorage<HistoryType>('fieldLoss.favorite', {})
 	const { data: session } = useSession()
+	const { t, i18n } = useTranslation(['default', 'field-loss'])
 	const userId = session?.user.id ?? null
+	const language = i18n.language as keyof ResponseLanguage
 
 	const { data: searchData, isLoading: isSearchDataLoading } = useQuery({
 		queryKey: ['getSearchAdminPoly', inputValue],
@@ -91,7 +104,7 @@ const SearchForm: React.FC<SearchFormProps> = () => {
 								return true
 							}
 						})
-						.map((data) => ({ ...data, searchType: 'zzz' }))
+						.map((data) => ({ ...data, name: data.name.th, searchType: 'zzz' }))
 				: []
 			return [...historyList, ...favoriteList, ...searchDataList]
 		}
@@ -116,29 +129,96 @@ const SearchForm: React.FC<SearchFormProps> = () => {
 	// }
 
 	useEffect(() => {
-		console.log('provinceIdtooption', queryParams.provinceId)
-		console.log('districtIdtooption', queryParams.districtId)
-		const provinceOption = optionList.find((item) => parseInt(item.id) === queryParams.provinceId) || null
-		console.log('optionprovinceId', provinceOption)
-		const districtOption = optionList.find((item) => parseInt(item.id) === queryParams.districtId) || null
-		console.log('optiondistrictId', districtOption)
-		if (selectedOption?.id) {
-			if (queryParams.provinceId === parseInt(selectedOption.id)) {
-				console.log('setoptionDistrict')
-				setSeletedOption(districtOption)
-			} else {
-				console.log('setoptionProvince again')
-				setSeletedOption(provinceOption)
+		const displaySearchOption = async () => {
+			console.log('provinceIdtooption', queryParams.provinceCode)
+			console.log('districtIdtooption', queryParams.districtCode)
+			const countryOption: OptionType = {
+				name: language === Language.TH ? 'ประเทศไทย' : 'Thailand',
+				id: '',
+				searchType: '',
 			}
-		} else {
-			console.log('setoptionProvince')
-			setSeletedOption(provinceOption)
+			if (!queryParams.provinceCode && !queryParams.districtCode) {
+				setSeletedOption(countryOption)
+			} else if (queryParams.subDistrictCode) {
+				console.log('inSubDistrictIdtooption')
+				try {
+					const subDistrict = (
+						await service.fieldLoss.getSearchAdminPoly({ id: queryParams.subDistrictCode })
+					).data?.[0]
+					console.log('subDistrict', subDistrict)
+					const subDistrictOption: OptionType | null = subDistrict
+						? { name: subDistrict.name[language], id: subDistrict.id, searchType: '' }
+						: null
+					setSeletedOption(subDistrictOption)
+				} catch (error) {
+					console.log('error: ', error)
+				}
+			} else if (queryParams.districtCode) {
+				console.log('inDistrictIdtooption')
+				try {
+					const district = (await service.fieldLoss.getSearchAdminPoly({ id: queryParams.districtCode }))
+						.data?.[0]
+					console.log('district', district)
+					const districtOption: OptionType | null = district
+						? { name: district.name[language], id: district.id, searchType: '' }
+						: null
+					setSeletedOption(districtOption)
+				} catch (error) {
+					console.log('error: ', error)
+				}
+			} else if (queryParams.provinceCode) {
+				console.log('inProvinceIdtooption')
+				try {
+					const province = (await service.fieldLoss.getSearchAdminPoly({ id: queryParams.provinceCode }))
+						.data?.[0]
+					console.log('province', province)
+					const provinceOption: OptionType | null = province
+						? { name: province.name[language], id: province.id, searchType: '' }
+						: null
+					setSeletedOption(provinceOption)
+				} catch (error) {
+					console.log('error: ', error)
+				}
+			}
 		}
-	}, [queryParams.provinceId, queryParams.districtId])
+
+		displaySearchOption()
+	}, [language, queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode])
 
 	const handleSelectOption = (_event: ChangeEvent<{}>, newSelectedValue: OptionType | null) => {
-		//setSeletedOption(newSelectedValue)
-		setQueryParams({ ...queryParams, provinceId: newSelectedValue?.id ? parseInt(newSelectedValue.id) : undefined })
+		setSeletedOption(newSelectedValue)
+		if (newSelectedValue?.id) {
+			if (newSelectedValue.id.length === ProvinceCodeLength) {
+				setQueryParams({
+					...queryParams,
+					provinceCode: parseInt(newSelectedValue.id),
+					districtCode: undefined,
+					layerName: 'province',
+				})
+			} else if (newSelectedValue.id.length === DistrictCodeLength) {
+				const provinceCode = parseInt(newSelectedValue.id.substring(0, 2))
+				setQueryParams({
+					...queryParams,
+					provinceCode: provinceCode,
+					districtCode: parseInt(newSelectedValue.id),
+					layerName: 'district',
+				})
+			} else if (newSelectedValue.id.length === SubDistrictCodeLength) {
+				const provinceCode = parseInt(newSelectedValue.id.substring(0, 2))
+				const districtCode = parseInt(newSelectedValue.id.substring(0, 4))
+				console.log('province', provinceCode)
+				console.log('district', districtCode)
+				console.log('subdistrict', newSelectedValue.id)
+				setQueryParams({
+					...queryParams,
+					provinceCode: provinceCode,
+					districtCode: districtCode,
+					subDistrictCode: parseInt(newSelectedValue.id),
+					layerName: 'subdistrict',
+				})
+			}
+		}
+
 		if (userId) {
 			const favoriteList = favorite[userId] || []
 			const historyList = history[userId] || []

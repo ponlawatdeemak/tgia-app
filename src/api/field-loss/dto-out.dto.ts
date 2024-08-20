@@ -3,7 +3,7 @@ import { ResponseArea, ResponseLanguage } from '../interface'
 
 export interface GetSearchAdminPolyDtoOut {
 	id: string
-	name: string
+	name: ResponseLanguage
 }
 
 interface ClaimedArea extends ResponseArea {

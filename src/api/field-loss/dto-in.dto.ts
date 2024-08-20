@@ -1,6 +1,7 @@
 import { GetAreaStatisticDtoOut } from './dto-out.dto'
 export interface GetSearchAdminPolyDtoIn {
-	keyword: string
+	keyword?: string
+	id?: number
 }
 
 export interface GetSummaryPredictedLossDtoIn {
@@ -8,8 +9,8 @@ export interface GetSummaryPredictedLossDtoIn {
 	startDate: string
 	endDate: string
 	registrationAreaType: number
-	provinceId?: number
-	districtId?: number
+	provinceCode?: number
+	districtCode?: number
 }
 
 export interface GetSummaryAreaDtoIn {

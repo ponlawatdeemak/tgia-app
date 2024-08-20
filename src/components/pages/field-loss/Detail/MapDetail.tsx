@@ -31,8 +31,8 @@ interface FilterRangeMonthType {
 	startDate: string
 	endDate: string
 	registrationAreaType: AreaTypeKey
-	provinceId: number | undefined
-	districtId: number | undefined
+	provinceCode: number | undefined
+	districtCode: number | undefined
 }
 
 // enum SortFieldType {
@@ -97,8 +97,8 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 				? format(queryParams.endDate, 'yyyy-MM-dd')
 				: format(addDays(new Date(), 15), 'yyyy-MM-dd'),
 			registrationAreaType: areaType,
-			provinceId: queryParams.provinceId,
-			districtId: queryParams.districtId,
+			provinceCode: queryParams.provinceCode,
+			districtCode: queryParams.districtCode,
 		}
 		return filter
 	}, [queryParams, areaType])
@@ -110,15 +110,19 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 
 	const filterSummaryArea = useMemo(() => {
 		const filter: GetSummaryAreaDtoIn = {
-			startDate: queryParams.startDate
-				? format(queryParams.startDate, 'yyyy-MM-dd')
-				: format(new Date(), 'yyyy-MM-dd'),
-			endDate: queryParams.endDate
-				? format(queryParams.endDate, 'yyyy-MM-dd')
-				: format(addDays(new Date(), 15), 'yyyy-MM-dd'),
+			startDate: queryParams.selectedDateHorizontal
+				? format(queryParams.selectedDateHorizontal, 'yyyy-MM-dd')
+				: queryParams.startDate
+					? format(queryParams.startDate, 'yyyy-MM-dd')
+					: format(new Date(), 'yyyy-MM-dd'),
+			endDate: queryParams.selectedDateHorizontal
+				? format(queryParams.selectedDateHorizontal, 'yyyy-MM-dd')
+				: queryParams.endDate
+					? format(queryParams.endDate, 'yyyy-MM-dd')
+					: format(addDays(new Date(), 15), 'yyyy-MM-dd'),
 			registrationAreaType: areaType,
-			provinceCode: queryParams.provinceId,
-			districtCode: queryParams.districtId,
+			provinceCode: queryParams.provinceCode,
+			districtCode: queryParams.districtCode,
 		}
 		return filter
 	}, [queryParams, areaType])
@@ -550,15 +554,166 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 					},
 				}),
 			])
+		} else if (queryParams.layerName === 'subdistrict') {
+			setLayers([
+				new MVTLayer({
+					data: 'https://tileserver.cropinsurance-dev.thaicom.io/subdistrict/tiles.json',
+					filled: true,
+					//visible: layer.layerName === 'subdistrict',
+					getFillColor(d: Feature<Geometry, SubDistrictPropertiesType>) {
+						if (queryParams.subDistrictCode === d.properties.subDistrictCode) {
+							const subDistrict = summaryAreaData?.data?.find(
+								(item) => parseInt(item.id) === d.properties.subDistrictCode,
+							)
+							switch (queryParams.lossType) {
+								case LossType.Drought: {
+									const percentDrought =
+										subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')
+											?.percent || null
+									const levelDroughtColor = percentDrought
+										? checkLevelTileColor(percentDrought)
+										: null
+									return levelDroughtColor
+										? DroughtTileColor[levelDroughtColor]
+										: DroughtTileColor.default
+								}
+								case LossType.Flood: {
+									const percentFlood =
+										subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')?.percent ||
+										null
+									const levelFloodColor = percentFlood ? checkLevelTileColor(percentFlood) : null
+									return levelFloodColor ? FloodTileColor[levelFloodColor] : FloodTileColor.default
+								}
+								default: {
+									const percentTotal = subDistrict?.totalPredictedArea.percent || null
+									const levelTotalColor = percentTotal ? checkLevelTileColor(percentTotal) : null
+									return levelTotalColor ? TotalTileColor[levelTotalColor] : TotalTileColor.default
+								}
+							}
+						}
+						return TotalTileColor.default
+					},
+					getLineColor(d: Feature<Geometry, SubDistrictPropertiesType>) {
+						return [0, 0, 0, 255]
+					},
+					getLineWidth(d: Feature<Geometry, SubDistrictPropertiesType>) {
+						if (queryParams.subDistrictCode === d.properties.subDistrictCode) {
+							const subDistrict =
+								summaryAreaData?.data?.find(
+									(item) => parseInt(item.id) === d.properties.subDistrictCode,
+								) || null
+							switch (queryParams.lossType) {
+								case LossType.Drought: {
+									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')) {
+										return 400
+									} else {
+										return 4
+									}
+								}
+								case LossType.Flood: {
+									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')) {
+										return 400
+									} else {
+										return 4
+									}
+								}
+								default: {
+									return 400
+								}
+							}
+						}
+						return 4
+					},
+					pickable: true,
+					updateTriggers: {
+						getFillColor: queryParams.lossType,
+						getLineColor: queryParams.lossType,
+						getLineWidth: queryParams.lossType,
+					},
+					onHover: (info, event) => {
+						if (info.object) {
+							if (queryParams.subDistrictCode === info.object.properties.subDistrictCode) {
+								const subDistrict =
+									summaryAreaData?.data?.find(
+										(item) => parseInt(item.id) === info.object.properties.subDistrictCode,
+									) || null
+								console.log('lossType', queryParams.lossType)
+								switch (queryParams.lossType) {
+									case LossType.Drought: {
+										if (subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')) {
+											setHoverInfo({
+												x: info.x,
+												y: info.y,
+												area: subDistrict,
+												areaCode: info.object.properties.subDistrictCode,
+												layerName: info.object.properties.layerName,
+											})
+										} else {
+											setHoverInfo(null)
+										}
+										break
+									}
+									case LossType.Flood: {
+										if (subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')) {
+											setHoverInfo({
+												x: info.x,
+												y: info.y,
+												area: subDistrict,
+												areaCode: info.object.properties.subDistrictCode,
+												layerName: info.object.properties.layerName,
+											})
+										} else {
+											setHoverInfo(null)
+										}
+										break
+									}
+									default: {
+										setHoverInfo({
+											x: info.x,
+											y: info.y,
+											area: subDistrict,
+											areaCode: info.object.properties.subDistrictCode,
+											layerName: info.object.properties.layerName,
+										})
+										break
+									}
+								}
+							} else {
+								setHoverInfo(null)
+							}
+						} else {
+							setHoverInfo(null)
+						}
+					},
+				}),
+			])
 		}
-	}, [setLayers, summaryAreaData, queryParams.lossType, checkLevelTileColor, queryParams.layerName])
+	}, [
+		setLayers,
+		summaryAreaData,
+		queryParams.lossType,
+		checkLevelTileColor,
+		queryParams.layerName,
+		queryParams.subDistrictCode,
+		summaryAreaId,
+	])
 
 	function handleCountryClick() {
-		setQueryParams({ ...queryParams, provinceId: undefined, districtId: undefined, layerName: undefined })
+		setQueryParams({
+			...queryParams,
+			provinceCode: undefined,
+			districtCode: undefined,
+			subDistrictCode: undefined,
+			layerName: undefined,
+		})
 	}
 
 	const handleProvinceClick = () => {
-		setQueryParams({ ...queryParams, districtId: undefined, layerName: 'province' })
+		setQueryParams({ ...queryParams, districtCode: undefined, subDistrictCode: undefined, layerName: 'province' })
+	}
+
+	const handleDistrictClick = () => {
+		setQueryParams({ ...queryParams, subDistrictCode: undefined, layerName: 'district' })
 	}
 
 	return (
@@ -579,21 +734,34 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							ประเทศ
 						</Link>
 					)}
-					{queryParams.layerName && queryParams.layerName === 'district' && (
+					{queryParams.layerName &&
+						(queryParams.layerName === 'district' || queryParams.layerName === 'subdistrict') && (
+							<Link
+								className='text-base font-normal text-black'
+								underline='hover'
+								href='#'
+								onClick={handleProvinceClick}
+							>
+								จังหวัด
+							</Link>
+						)}
+					{queryParams.layerName && queryParams.layerName === 'subdistrict' && (
 						<Link
 							className='text-base font-normal text-black'
 							underline='hover'
 							href='#'
-							onClick={handleProvinceClick}
+							onClick={handleDistrictClick}
 						>
-							จังหวัด
+							อำเภอ
 						</Link>
 					)}
 					<Typography className='text-base font-semibold text-black' color='text.primary'>
 						{queryParams.layerName
 							? queryParams.layerName === 'province'
 								? 'จังหวัด'
-								: 'อำเภอ'
+								: queryParams.layerName === 'district'
+									? 'อำเภอ'
+									: 'ตำบล'
 							: 'ประเทศ'}
 					</Typography>
 				</Breadcrumbs>

@@ -12,9 +12,10 @@ interface Data {
 export interface FieldLossParamsType {
 	startDate?: Date
 	endDate?: Date
-	provinceId?: number
-	districtId?: number
-	subDistrictId?: number
+	selectedDateHorizontal?: Date
+	provinceCode?: number
+	districtCode?: number
+	subDistrictCode?: number
 	lossType?: LossType | null
 	sortType?: SortType
 	sortTypeField?: keyof Data
@@ -24,6 +25,7 @@ export interface FieldLossParamsType {
 const initialParams = {
 	startDate: undefined,
 	endDate: undefined,
+	selectedDateHorizontal: undefined,
 	provinceId: undefined,
 	districtId: undefined,
 	subDistrictId: undefined,
