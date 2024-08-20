@@ -11,32 +11,19 @@ import { useTranslation } from 'react-i18next'
 import useResponsive from '@/hook/responsive'
 
 export interface UserManagementSearchFormProps {
-	searchParams: GetSearchUMDtoIn
 	setSearchParams: React.Dispatch<React.SetStateAction<GetSearchUMDtoIn>>
-	isSearch: boolean
 	setIsSearch: React.Dispatch<React.SetStateAction<boolean>>
-	page: number
 	setPage: React.Dispatch<React.SetStateAction<number>>
 }
 
 const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
-	searchParams,
 	setSearchParams,
-	isSearch,
 	setIsSearch,
-	page,
 	setPage,
 }) => {
 	const [openForm, setOpenForm] = useState<boolean>(false)
-	const [searchString, setSearchString] = useState<string>('')
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const { isDesktop } = useResponsive()
-
-	// Change Event to useCallback
-	const handleSubmitUser = async (event: FormEvent) => {
-		console.log('Form submitted')
-		// Add your form submission logic here
-	}
 
 	const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
 		// setSearchString(event.target.value)
@@ -66,7 +53,7 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 						<Input
 							className='flex h-[40px] gap-[8px] px-[12px] py-[8px] [&_.MuiInputAdornment-positionStart]:m-0'
 							id='standard-search'
-							placeholder={`${t('search', { ns: 'um' })} ${isDesktop ? `${t('name', { ns: 'um' })}, ${t('email')}, ${t('province')}, ${t('district')}` : ''}`}
+							placeholder={`${t('search', { ns: 'um' })} ${isDesktop ? `${t('name', { ns: 'um' })}, ${t('email')}, ${t('org')}, ${t('role')}, ${t('province')}, ${t('district')}` : ''}`}
 							type='search'
 							startAdornment={
 								<InputAdornment position='start'>
@@ -96,7 +83,14 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 					{isDesktop && t('importUser', { ns: 'um' })}
 				</Button>
 			</Paper>
-			<FormMain open={openForm} onClose={() => setOpenForm(false)} onSubmitUser={handleSubmitUser} />
+			<FormMain
+				open={openForm}
+				onClose={() => setOpenForm(false)}
+				userId=''
+				isEdit={false}
+				setOpen={setOpenForm}
+				setIsSearch={setIsSearch}
+			/>
 		</>
 	)
 }

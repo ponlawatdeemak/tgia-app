@@ -26,6 +26,7 @@ import { format } from 'date-fns'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import useResponsive from '@/hook/responsive'
+import { GetAreaStatisticDtoOut } from '@/api/field-loss/dto-out.dto'
 
 interface Data {
 	//id: number
@@ -72,6 +73,19 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 			endDate: queryParams.endDate ? format(queryParams.endDate, 'yyyy-MM-dd') : '',
 			lossType: queryParams.lossType || undefined,
 			registrationAreaType: areaType,
+			// sort: queryParams.sortTypeField || 'totalPredicted',
+			// sortType: queryParams.sortType || SortType.DESC,
+		}
+		return filter
+	}, [queryParams, areaType])
+
+	const filterOrder = useMemo(() => {
+		// : GetAreaStatisticDtoIn
+		const filter = {
+			// startDate: queryParams.startDate ? format(queryParams.startDate, 'yyyy-MM-dd') : '',
+			// endDate: queryParams.endDate ? format(queryParams.endDate, 'yyyy-MM-dd') : '',
+			// lossType: queryParams.lossType || undefined,
+			// registrationAreaType: areaType,
 			sort: queryParams.sortTypeField || 'totalPredicted',
 			sortType: queryParams.sortType || SortType.DESC,
 		}
@@ -80,11 +94,40 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 
 	const { data: areaStatisticData, isLoading: isAreaStatisticData } = useQuery({
 		queryKey: ['getAreaStatistic', filterAreaStatistic],
-		queryFn: () => service.fieldLoss.getAreaStatistic(filterAreaStatistic),
+		queryFn: () => service.fieldLoss.getAreaStatistic({ ...filterAreaStatistic, ...filterOrder }),
 		enabled: areaDetail === 'area-statistic' || !isDesktop,
 	})
 
-	const rows = useMemo(() => areaStatisticData?.data || [], [areaStatisticData?.data])
+	// const rows = useMemo(() => areaStatisticData?.data || [], [areaStatisticData?.data])
+
+	const rows = useMemo(() => {
+		const data: GetAreaStatisticDtoOut[] = areaStatisticData?.data || []
+		data?.sort((a, b) => {
+			return filterOrder.sortType === SortType.ASC
+				? a[filterOrder?.sort][areaUnit] - b[filterOrder?.sort][areaUnit]
+				: b[filterOrder?.sort][areaUnit] - a[filterOrder?.sort][areaUnit]
+		})
+
+		let rowNum = 1
+
+		for (let i = 0; i < (data?.length || 0); i++) {
+			if (i === 0) {
+				data[i].order = 1
+			} else {
+				if (
+					filterOrder.sortType === SortType.ASC
+						? data[i]?.[filterOrder?.sort][areaUnit] > data?.[i - 1]?.[filterOrder?.sort][areaUnit]
+						: data[i]?.[filterOrder?.sort][areaUnit] < data?.[i - 1]?.[filterOrder?.sort][areaUnit]
+				) {
+					rowNum = rowNum + 1
+				} else {
+					rowNum
+				}
+				data[i].order = rowNum
+			}
+		}
+		return data || []
+	}, [areaStatisticData?.data, filterOrder, areaUnit])
 
 	const handleRequestSort = useCallback(
 		(_event: React.MouseEvent<HTMLSpanElement, MouseEvent>, property: keyof Data) => {

@@ -1,17 +1,27 @@
 'use client'
 
 import * as React from 'react'
-import Box from '@mui/material/Box'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import TableSortLabel from '@mui/material/TableSortLabel'
-import Typography from '@mui/material/Typography'
-import Paper from '@mui/material/Paper'
-import Checkbox from '@mui/material/Checkbox'
+import {
+	Box,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	TableSortLabel,
+	Typography,
+	Paper,
+	Checkbox,
+	Avatar,
+	Button,
+	IconButton,
+	Stack,
+	Pagination,
+	Snackbar,
+	Alert,
+	PaginationItem,
+} from '@mui/material'
 import { visuallyHidden } from '@mui/utils'
 import { SortType } from '@/enum'
 import um from '@/api/um'
@@ -20,29 +30,20 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useSwitchLanguage } from '@/i18n/client'
 import { Language } from '@/enum'
-import { Avatar, Button } from '@mui/material'
 import { GetSearchUMDtoOut } from '@/api/um/dto-out.dto'
 import { ResponseLanguage } from '@/api/interface'
-import { IconButton } from '@mui/material'
-import { mdiTrashCanOutline } from '@mdi/js'
+import { mdiTrashCanOutline, mdiPencilOutline } from '@mdi/js'
 import Icon from '@mdi/react'
-import { mdiPencilOutline } from '@mdi/js'
-import Stack from '@mui/material/Stack'
-import TableFooter from '@mui/material/TableFooter'
-import Pagination from '@mui/material/Pagination'
 import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
-import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar'
-import Alert from '@mui/material/Alert'
 import { useSession } from 'next-auth/react'
-import { isSea } from 'node:sea'
 import AlertConfirm from '@/components/common/dialog/AlertConfirm'
-import PaginationItem from '@mui/material/PaginationItem'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import useResponsive from '@/hook/responsive'
 import classNames from 'classnames'
 import { mdiAccount } from '@mdi/js'
 import { mdiAccountOff } from '@mdi/js'
+import { FormMain } from '../Form'
 
 interface Data {
 	id: number
@@ -157,11 +158,13 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	const [tableData, setTableData] = React.useState<GetSearchUMDtoOut[]>([])
 	const [total, setTotal] = React.useState<number>(0)
 	const [currentDeleteId, setCurrentDeleteId] = React.useState<string>('')
+	const [currentEditId, setCurrentEditId] = React.useState<string>('')
 	const [alertInfo, setAlertInfo] = React.useState<AlertInfoType>({
 		open: false,
 		severity: 'success',
 		message: '',
 	})
+	const [isEditOpen, setIsEditOpen] = React.useState<boolean>(false)
 	const [isConfirmDeleteOneOpen, setIsConfirmDeleteOneOpen] = React.useState<boolean>(false)
 	const [isConfirmDeleteManyOpen, setIsConfirmDeleteManyOpen] = React.useState<boolean>(false)
 	const [isConfirmOpenManyOpen, setIsConfirmOpenManyOpen] = React.useState<boolean>(false)
@@ -280,7 +283,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 				const res = await mutateDeleteProfile(payload)
 				queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 				setIsSearch(true)
-				setAlertInfo({ open: true, severity: 'success', message: t('profileDelete', { ns: 'um' }) })
+				setAlertInfo({ open: true, severity: 'success', message: t('profileDeleteSuccess', { ns: 'um' }) })
 				console.log(res)
 			} catch (error: any) {
 				setAlertInfo({
@@ -310,7 +313,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					console.log(res)
 					queryClient.invalidateQueries({ queryKey: ['getSearchUM', searchParams] })
 					setIsSearch(true)
-					setAlertInfo({ open: true, severity: 'success', message: t('profileDelete', { ns: 'um' }) })
+					setAlertInfo({ open: true, severity: 'success', message: t('profileDeleteSuccess', { ns: 'um' }) })
 				})
 				.catch((error) => {
 					console.log(error)
@@ -413,6 +416,11 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	)
 
 	const isSelected = (id: string) => selected.indexOf(id) !== -1
+
+	const handleSubmitUser = async (event: React.FormEvent) => {
+		console.log('Form submitted')
+		// Add your form submission logic here
+	}
 
 	// Avoid a layout jump when reaching the last page with empty rows.
 	const emptyRows = page > Math.ceil(total / 10) - 1 ? Math.max(0, (1 + page) * 2 - tableData.length) : 0
@@ -583,9 +591,10 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											<TableCell component='th' id={labelId} scope='row' padding='none'>
 												<Box className='flex'>
 													{
-														<Avatar className='mr-[4px] h-[24px] w-[24px] bg-primary'>
-															M
-														</Avatar>
+														<Avatar
+															className='mr-[4px] h-[24px] w-[24px] bg-primary'
+															src={row.image}
+														/>
 													}{' '}
 													{row.firstName} {row.lastName}
 												</Box>
@@ -626,6 +635,8 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 														<IconButton
 															onClick={(e) => {
 																e.stopPropagation()
+																setCurrentEditId(row.id)
+																setIsEditOpen(true)
 															}}
 														>
 															<Icon
@@ -782,6 +793,15 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					{alertInfo.message}
 				</Alert>
 			</Snackbar>
+
+			<FormMain
+				open={isEditOpen}
+				onClose={() => setIsEditOpen(false)}
+				userId={currentEditId}
+				isEdit={true}
+				setOpen={setIsEditOpen}
+				setIsSearch={setIsSearch}
+			/>
 		</div>
 	)
 }

@@ -1,5 +1,5 @@
-import { SortType } from "@/enum"
-import { TablePagination } from "../interface"
+import { SortType } from '@/enum'
+import { TablePagination } from '../interface'
 
 export interface GetUmDtoIn {
 	userId: string
@@ -19,17 +19,42 @@ export interface PutProfileDtoIn {
 	responsibleDistrictCode: string
 }
 
-export interface GetSearchUMDtoIn extends TablePagination{
-	keyword : string,
-	firstName : string
+export interface GetSearchUMDtoIn extends TablePagination {
+	keyword: string
+	firstName: string
 }
 
 export interface PatchStatusDtoIn {
-	id : string,
-	flagStatus : string
+	id: string
+	flagStatus: string
 }
 
 export interface DeleteProfileDtoIn {
-	id : string
+	id: string
 }
 
+export interface PutProfileUMDtoIn {
+	id: string
+	username: string
+	firstName: string
+	lastName: string
+	email: string
+	image: string
+	orgCode: string
+	role: string
+	responsibleProvinceCode: string
+	responsibleDistrictCode: string
+	flagStatus: string
+}
+export interface PostProfileUMDtoIn {
+	username: string
+	firstName: string
+	lastName: string
+	email: string
+	image: string
+	orgCode: string
+	role: string
+	responsibleProvinceCode: string
+	responsibleDistrictCode: string
+	flagStatus: string
+}
