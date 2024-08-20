@@ -7,12 +7,14 @@ import ChartDetail from '../Detail/ChartDetail'
 import clsx from 'clsx'
 import useResponsive from '@/hook/responsive'
 import MapDetail from '../Detail/MapDetail'
+import { useTranslation } from 'react-i18next'
 
 interface FieldLossDetailProps {}
 
 const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 	const { isDesktop } = useResponsive()
 	const [areaDetail, setAreaDetail] = useState('summary-area')
+	const { t, i18n } = useTranslation('field-loss')
 
 	const handleAreaDetailChange = useCallback((_event: React.MouseEvent<HTMLElement>, newAreaDetail: string) => {
 		setAreaDetail((prev) => newAreaDetail || prev)
@@ -35,7 +37,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 					})}
 					value={'summary-area'}
 				>
-					ตามแผนที่
+					{t('byMap')}
 				</ToggleButton>
 				<ToggleButton
 					className={clsx('border border-solid text-base', {
@@ -44,7 +46,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 					})}
 					value={'area-statistic'}
 				>
-					ตามอันดับ
+					{t('byRank')}
 				</ToggleButton>
 				<ToggleButton
 					className={clsx('border border-solid text-base', {
@@ -53,7 +55,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 					})}
 					value={'time-statistic'}
 				>
-					ตามช่วงเวลา
+					{t('byTime')}
 				</ToggleButton>
 			</ToggleButtonGroup>
 			{(areaDetail === 'summary-area' || !isDesktop) && <MapDetail areaDetail={areaDetail} />}

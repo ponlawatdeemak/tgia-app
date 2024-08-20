@@ -26,6 +26,7 @@ import { GetSummaryAreaDtoOut } from '@/api/field-loss/dto-out.dto'
 import { GetSummaryAreaDtoIn } from '@/api/field-loss/dto-in.dto'
 import useSearchFieldLoss from '../Main/context'
 import { Feature, Geometry } from 'geojson'
+import { useTranslation } from 'react-i18next'
 
 interface FilterRangeMonthType {
 	startDate: string
@@ -85,6 +86,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
+	const { t, i18n } = useTranslation(['default', 'field-loss'])
 	const { layers, addLayer, setLayers } = useLayerStore()
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null)
 
@@ -793,7 +795,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 				role='presentation'
 				className='absolute left-3 top-3 z-10 flex h-7 items-center gap-2 rounded-lg bg-white px-2 py-1'
 			>
-				<Typography className='text-base font-medium text-black'>ระดับ:</Typography>
+				<Typography className='text-base font-medium text-black'>{`${t('level', { ns: 'field-loss' })}:`}</Typography>
 				<Breadcrumbs aria-label='breadcrumb'>
 					{queryParams.layerName && (
 						<Link
@@ -802,7 +804,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							href='#'
 							onClick={handleCountryClick}
 						>
-							ประเทศ
+							{t('national', { ns: 'field-loss' })}
 						</Link>
 					)}
 					{queryParams.layerName &&
@@ -813,7 +815,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 								href='#'
 								onClick={handleProvinceClick}
 							>
-								จังหวัด
+								{t('province')}
 							</Link>
 						)}
 					{queryParams.layerName && queryParams.layerName === 'subdistrict' && (
@@ -823,29 +825,41 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							href='#'
 							onClick={handleDistrictClick}
 						>
-							อำเภอ
+							{t('district')}
 						</Link>
 					)}
 					<Typography className='text-base font-semibold text-black' color='text.primary'>
 						{queryParams.layerName
 							? queryParams.layerName === 'province'
-								? 'จังหวัด'
+								? t('province')
 								: queryParams.layerName === 'district'
-									? 'อำเภอ'
-									: 'ตำบล'
-							: 'ประเทศ'}
+									? t('district')
+									: t('subDistrict')
+							: t('national', { ns: 'field-loss' })}
 					</Typography>
 				</Breadcrumbs>
 			</Box>
 			<Box className='absolute bottom-24 right-2 z-10 max-lg:hidden'>
 				{!queryParams.lossType && (
-					<ColorRange startColor={TotalRangeColor.start} endColor={TotalRangeColor.end} />
+					<ColorRange
+						title={t('totalDamagedArea', { ns: 'field-loss' })}
+						startColor={TotalRangeColor.start}
+						endColor={TotalRangeColor.end}
+					/>
 				)}
 				{queryParams.lossType === LossType.Drought && (
-					<ColorRange startColor={DroughtRangeColor.start} endColor={DroughtRangeColor.end} />
+					<ColorRange
+						title={t('droughtDamageArea', { ns: 'field-loss' })}
+						startColor={DroughtRangeColor.start}
+						endColor={DroughtRangeColor.end}
+					/>
 				)}
 				{queryParams.lossType === LossType.Flood && (
-					<ColorRange startColor={FloodRangeColor.start} endColor={FloodRangeColor.end} />
+					<ColorRange
+						title={t('floodDamageArea', { ns: 'field-loss' })}
+						startColor={FloodRangeColor.start}
+						endColor={FloodRangeColor.end}
+					/>
 				)}
 			</Box>
 			<Box className='absolute bottom-2 left-[68px] z-10 w-[calc(100%-84px)] max-lg:hidden'>
