@@ -55,7 +55,7 @@ const defaultFormValues: UMFormValues = {
 	role: '',
 	responsibleProvinceCode: '',
 	responsibleDistrictCode: '',
-	flagStatus: 'C',
+	flagStatus: 'A',
 }
 
 export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
