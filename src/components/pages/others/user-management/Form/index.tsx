@@ -299,7 +299,16 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 						<FormControlLabel
 							control={
 								<IOSSwitch
-									sx={{ m: 1 }}
+									sx={{
+										m: 1,
+										'& .MuiSwitch-switchBase': {
+											'&.Mui-checked': {
+												'& + .MuiSwitch-track': {
+													backgroundColor: '#0C626D',
+												},
+											},
+										},
+									}}
 									checked={formik.values.flagStatus === 'A' ? true : false}
 									onChange={(event) => {
 										formik.setFieldValue('flagStatus', event.target.checked ? 'A' : 'C')
