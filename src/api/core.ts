@@ -109,44 +109,24 @@ instance.interceptors.response.use(
 	},
 	async function (error) {
 		const errorData = error.response.data
-		const originalRequest: AxiosRequestConfig = error.config
 		if (error.response && error.response.status === 403) {
-			if (!isRefreshing) {
-				isRefreshing = true
-				try {
-					// Refresh the access token
-					const { accessToken } = await refreshAccessToken()
+			const originalRequest = error.config as any
+			if (!originalRequest?._retry) {
+				originalRequest._retry = true
+				const { accessToken } = await refreshAccessToken()
+				error.config.headers['Authorization'] = `Bearer ${accessToken}`
 
-					// Update the request headers with the new access token
-					error.config.headers['Authorization'] = `Bearer ${accessToken}`
-
-					// Retry all requests in the queue with the new token
-					refreshAndRetryQueue.forEach(({ config, resolve, reject }) => {
-						instance
-							.request(config)
-							.then((response) => resolve(response))
-							.catch((err) => reject(err))
-					})
-
-					// Clear the queue
-					refreshAndRetryQueue.length = 0
-
-					// Retry the original request
-					return instance(originalRequest)
-				} catch (refreshError) {
-					// Handle token refresh error
-					// You can clear all storage and redirect the user to the login page
+				return instance({
+					...originalRequest,
+					headers: {
+						...originalRequest.headers,
+						authorization: `Bearer ${accessToken}`,
+					},
+				}).catch((err) => {
 					forceLogout()
-					throw refreshError
-				} finally {
-					isRefreshing = false
-				}
+					throw err
+				})
 			}
-
-			// Add the original request to the queue
-			return new Promise<void>((resolve, reject) => {
-				refreshAndRetryQueue.push({ config: originalRequest, resolve, reject })
-			})
 		}
 		return Promise.reject({
 			title: errorData.title || errorData.message,
