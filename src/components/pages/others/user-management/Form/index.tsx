@@ -8,6 +8,7 @@ import {
 	DialogTitle,
 	Snackbar,
 	FormControlLabel,
+	CircularProgress,
 } from '@mui/material'
 import React, { FormEvent, useState, useCallback, useEffect } from 'react'
 import IOSSwitch from '@/components/common/switch/IOSSwitch'
@@ -28,6 +29,7 @@ import Icon from '@mdi/react'
 import { mdiTrashCanOutline } from '@mdi/js'
 import useResponsive from '@/hook/responsive'
 import classNames from 'classnames'
+import LoadingButton from '@mui/lab/LoadingButton'
 
 export interface UserManagementProps {
 	open: boolean
@@ -340,15 +342,17 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 						>
 							{t('cancel')}
 						</Button>
-						<Button
-							type='submit'
+						<LoadingButton
+							fullWidth
+							loading={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
+							loadingPosition='start'
+							startIcon={<CircularProgress size={0} />}
 							variant='contained'
-							color='primary'
-							className='h-[40px] w-[71px] text-sm [&_.MuiButtonBase-root]:w-[71px]'
-							disabled={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
+							type='submit'
+							className='h-[40px] w-[71px] text-sm [&_.MuiButton-startIcon]:m-0 [&_.MuiButtonBase-root]:w-[71px]'
 						>
-							{t('save', { ns: 'um' })}
-						</Button>
+							<span>{t('save', { ns: 'um' })}</span>
+						</LoadingButton>
 					</div>
 				</DialogActions>
 			</Dialog>

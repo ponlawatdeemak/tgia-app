@@ -102,7 +102,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 							label={t('email')}
 							formik={formik}
 							required
-							disabled={isDisabledProfile}
+							disabled={isDisabledProfile || loading}
 						/>
 					</div>
 				</Box>
@@ -156,7 +156,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 							name='orgCode'
 							label={t('org')}
 							formik={formik}
-							disabled={isDisabledProfile}
+							disabled={isDisabledProfile || loading}
 							required={isFormUM}
 						/>
 						<AutocompleteInput
@@ -171,7 +171,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 							name='role'
 							label={t('role')}
 							formik={formik}
-							disabled={isDisabledProfile}
+							disabled={isDisabledProfile || loading}
 							required={isFormUM}
 						/>
 					</div>
