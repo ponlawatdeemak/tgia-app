@@ -28,12 +28,15 @@ import { GetTimeStatisticDtoIn } from '@/api/field-loss/dto-in.dto'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import useResponsive from '@/hook/responsive'
+import { formatDate } from '@/utils/date'
 
 interface Data {
 	totalPredicted: ResponseArea
 	droughtPredicted: ResponseArea
 	floodPredicted: ResponseArea
 }
+
+const EndCultivationMonth = 3
 
 interface ChartDetailProps {
 	areaDetail: string
@@ -44,7 +47,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default', 'um'])
+	const { t, i18n } = useTranslation(['default', 'field-loss'])
 	const language = i18n.language as keyof ResponseLanguage
 
 	const filterTimeStatistic = useMemo(() => {
@@ -117,13 +120,49 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 		[queryParams.lossType],
 	)
 
+	const cultivationYear = useMemo(() => {
+		if (queryParams.endDate) {
+			const endYear = formatDate(queryParams.endDate, 'yyyy', i18n.language)
+			const endMonth = queryParams.endDate.getMonth()
+			if (endMonth >= EndCultivationMonth) {
+				return `${endYear}/${(parseInt(endYear) + 1).toString().slice(2, 4)}`
+			} else {
+				return `${(parseInt(endYear) - 1).toString()}/${endYear.slice(2, 4)}`
+			}
+		}
+		return ''
+	}, [queryParams.endDate, i18n.language])
+
 	return (
-		<div className='box-border flex h-full flex-1 flex-col gap-3 overflow-hidden bg-white p-6 pb-0 max-lg:rounded'>
-			<Typography className='text-md font-semibold text-black-dark'>
-				ความเสียหายจากภัยพิบัติ (รายเดือน)
-			</Typography>
+		<div className='box-border flex h-full flex-1 flex-col gap-4 bg-white p-4 max-lg:rounded lg:gap-3 lg:overflow-hidden lg:p-6 lg:pb-0'>
+			<div className='flex flex-col gap-2'>
+				{!isDesktop && (
+					<Typography className='text-sm font-medium text-gray-dark2'>
+						{t('totalDamagedArea', { ns: 'field-loss' })}
+					</Typography>
+				)}
+				<Typography className='text-lg font-semibold text-black-dark lg:text-md'>
+					{t('monthlyDisasterDamage', { ns: 'field-loss' })}
+				</Typography>
+				{!isDesktop && (
+					<div className='flex flex-row items-center'>
+						{(!queryParams.lossType || queryParams.lossType === LossType.Drought) && (
+							<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
+								<span className='h-2.5 w-2.5 rounded-sm bg-lossType-drought'></span>
+								<span className='text-base font-medium text-black'>{t('drought')}</span>
+							</div>
+						)}
+						{(!queryParams.lossType || queryParams.lossType === LossType.Flood) && (
+							<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
+								<span className='h-2.5 w-2.5 rounded-sm bg-lossType-flood'></span>
+								<span className='text-base font-medium text-black'>{t('flood')}</span>
+							</div>
+						)}
+					</div>
+				)}
+			</div>
 			{isTimeStatisticData ? (
-				<div className='flex h-full flex-col items-center justify-center bg-white'>
+				<div className='flex h-60 flex-col items-center justify-center bg-white lg:h-full'>
 					<CircularProgress size={80} color='primary' />
 				</div>
 			) : (
@@ -135,7 +174,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 									className='w-[25.5%] min-w-[130px] p-2.5 font-semibold text-black'
 									align='left'
 								>
-									รวมทั้งหมด
+									{t('total')}
 								</TableCell>
 								<TableCell
 									className='w-[20.5%] min-w-[100px] p-2.5 font-semibold text-secondary'
@@ -143,18 +182,20 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 								>
 									{timeStatisticData?.dataTotal?.[lossTypePredicted][areaUnit].toLocaleString()}
 								</TableCell>
-								<TableCell className='p-0 py-2 font-medium text-black' align='right'>
-									<div className='flex flex-row items-center justify-end'>
-										<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
-											<span className='h-2.5 w-2.5 rounded-sm bg-lossType-drought'></span>
-											<span>ภัยแล้ง</span>
+								{isDesktop && (
+									<TableCell className='p-0 py-2 font-medium text-black' align='right'>
+										<div className='flex flex-row items-center justify-end'>
+											<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
+												<span className='h-2.5 w-2.5 rounded-sm bg-lossType-drought'></span>
+												<span>{t('drought')}</span>
+											</div>
+											<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
+												<span className='h-2.5 w-2.5 rounded-sm bg-lossType-flood'></span>
+												<span>{t('flood')}</span>
+											</div>
 										</div>
-										<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
-											<span className='h-2.5 w-2.5 rounded-sm bg-lossType-flood'></span>
-											<span>น้ำท่วม</span>
-										</div>
-									</div>
-								</TableCell>
+									</TableCell>
+								)}
 							</TableRow>
 							<TableRow className='h-3'></TableRow>
 							<TableRow>
@@ -163,7 +204,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 									align='left'
 									colSpan={2}
 								>
-									ปีการเพาะปลูก 2567/68
+									{`${t('cultivationYear', { ns: 'field-loss' })} ${cultivationYear}`}
 								</TableCell>
 							</TableRow>
 						</TableHead>
@@ -192,7 +233,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 													{row.monthYear[language]}
 												</span>
 												<span className='text-xs font-medium text-gray-dark2'>
-													พื้นที่เสียหายจากการวิเคราะห์
+													{t('damageAreaAnalysis', { ns: 'field-loss' })}
 												</span>
 												{queryParams.lossType ? (
 													<>
@@ -211,7 +252,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 																		: row.floodPredicted[areaUnit].toLocaleString()}
 																</span>
 																<span className='text-sm font-normal text-black'>
-																	ไร่
+																	{t(areaUnit)}
 																</span>
 															</div>
 														</div>
@@ -220,40 +261,40 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 													<>
 														<div className='flex flex-row items-baseline justify-between'>
 															<span className='text-sm font-medium text-black'>
-																ทั้งหมด
+																{t('all')}
 															</span>
 															<div className='flex flex-row items-baseline gap-1'>
 																<span className='text-base font-semibold text-secondary'>
 																	{row.totalPredicted[areaUnit].toLocaleString()}
 																</span>
 																<span className='text-sm font-normal text-black'>
-																	ไร่
+																	{t(areaUnit)}
 																</span>
 															</div>
 														</div>
 														<div className='flex flex-row items-baseline justify-between'>
 															<span className='text-sm font-medium text-black'>
-																ภัยแล้ง
+																{t('drought')}
 															</span>
 															<div className='flex flex-row items-baseline gap-1'>
 																<span className='text-base font-semibold text-secondary'>
 																	{row.droughtPredicted[areaUnit].toLocaleString()}
 																</span>
 																<span className='text-sm font-normal text-black'>
-																	ไร่
+																	{t(areaUnit)}
 																</span>
 															</div>
 														</div>
 														<div className='flex flex-row items-baseline justify-between'>
 															<span className='text-sm font-medium text-black'>
-																น้ำท่วม
+																{t('flood')}
 															</span>
 															<div className='flex flex-row items-baseline gap-1'>
 																<span className='text-base font-semibold text-secondary'>
 																	{row.floodPredicted[areaUnit].toLocaleString()}
 																</span>
 																<span className='text-sm font-normal text-black'>
-																	ไร่
+																	{t(areaUnit)}
 																</span>
 															</div>
 														</div>
@@ -262,49 +303,78 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 											</Box>
 										}
 									>
-										<TableRow
-											className={clsx(
-												'hover:bg-transparent hover:opacity-100 [&_td]:border-none',
-												{
-													'opacity-100': isWithinRange,
-													'opacity-40': !isWithinRange,
-												},
-											)}
-											hover
-											role='checkbox'
-											tabIndex={-1}
-											key={index}
-											sx={{ cursor: 'pointer' }}
-										>
-											<TableCell
-												className='border-none p-2.5 text-base font-medium text-black'
-												component='th'
-												id={labelId}
-												scope='row'
-												align='left'
+										{isDesktop ? (
+											<TableRow
+												className={clsx(
+													'hover:bg-transparent hover:opacity-100 [&_td]:border-none',
+													{
+														'opacity-100': isWithinRange,
+														'opacity-40': !isWithinRange,
+													},
+												)}
+												hover
+												role='checkbox'
+												tabIndex={-1}
+												key={index}
+												sx={{ cursor: 'pointer' }}
 											>
-												{row.monthYear[language]}
-											</TableCell>
-											<TableCell
-												className='p-2.5 text-base font-medium text-secondary'
-												align='right'
+												<TableCell
+													className='border-none p-2.5 text-base font-medium text-black'
+													component='th'
+													id={labelId}
+													scope='row'
+													align='left'
+												>
+													{row.monthYear[language]}
+												</TableCell>
+												<TableCell
+													className='p-2.5 text-base font-medium text-secondary'
+													align='right'
+												>
+													{row?.[lossTypePredicted][areaUnit].toLocaleString()}
+												</TableCell>
+												<TableCell className='p-0 px-2.5' align='left'>
+													<div className='w-full'>
+														<StackedProgressBar
+															data={chartData(row) || []}
+														></StackedProgressBar>
+													</div>
+												</TableCell>
+											</TableRow>
+										) : (
+											<TableRow
+												className={clsx(
+													'hover:bg-transparent hover:opacity-100 [&_td]:border-none',
+													{
+														'opacity-100': isWithinRange,
+														'opacity-40': !isWithinRange,
+													},
+												)}
+												hover
+												role='checkbox'
+												tabIndex={-1}
+												key={index}
+												sx={{ cursor: 'pointer' }}
 											>
-												{row?.[lossTypePredicted][areaUnit].toLocaleString()}
-											</TableCell>
-											<TableCell className='p-0 px-2.5' align='left'>
-												<div className='w-full'>
-													<StackedProgressBar
-														data={chartData(row) || []}
-														percentTotal={
-															// sortTypeField === 'totalPredicted'
-															// 	? (row.totalPredicted[areaUnit] / maxTotalPredicted) * 100
-															// 	: 100
-															100
-														}
-													></StackedProgressBar>
-												</div>
-											</TableCell>
-										</TableRow>
+												<TableCell className='p-0 py-2' colSpan={2}>
+													<Box className='flex flex-col'>
+														<Box className='flex flex-row items-baseline justify-between px-2.5 py-0.5'>
+															<Typography className='border-none text-base font-medium text-black'>
+																{row.monthYear[language]}
+															</Typography>
+															<Typography className='text-base font-medium text-secondary'>
+																{row?.[lossTypePredicted][areaUnit].toLocaleString()}
+															</Typography>
+														</Box>
+														<div className='px-2.5'>
+															<StackedProgressBar
+																data={chartData(row) || []}
+															></StackedProgressBar>
+														</div>
+													</Box>
+												</TableCell>
+											</TableRow>
+										)}
 									</Tooltip>
 								)
 							})}

@@ -26,14 +26,24 @@
 	"names": "Names",
 	"save": "Save",
 	"editUserAccount": "Edit User Account",
+	"uploadFile": "Upload File",
+	"fileDataError": "Invalid data in file",
+	"userDocExample": "User Document Example",
+	"downloadTemplate": "Download Template",
 	"alert": {
 		"deleteUserProfile": "Delete user",
 		"enableUserProfile": "Enable User",
 		"disableUserProfile": "Disable User",
+		"importUserFile": "Confirm Import",
 		"confirmDeleteUserProfile": "Are you sure you want to delete this user account ?",
 		"confirmEnableUserProfile": "Are you sure you want to enable this user account ?",
 		"confirmDisableUserProfile": "Are you sure you want to disable this user account ?",
 		"confirmAddUserProfile": "Are you sure you want to add this user account ?",
-		"confirmEditUserProfile": "Are you sure you want to edit this user account ?"
+		"confirmEditUserProfile": "Are you sure you want to edit this user account ?",
+		"confirmImportUserFile": "Are you sure you want to import user from this file ?"
+	},
+	"error": {
+		"invalidFileType": "Invalid file extension",
+		"fileSizeLimitExceed": "File size does not exceed 15 MB (csv or xlsx)"
 	}
 }

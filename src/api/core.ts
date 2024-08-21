@@ -149,9 +149,11 @@ instance.interceptors.response.use(
 			})
 		}
 		return Promise.reject({
-			title: errorData.title,
-			status: errorData.status,
+			title: errorData.title || errorData.message,
+			status: errorData.status || errorData.success,
 			detail: errorData.detail,
+			countImported: errorData?.countImported,
+			data: errorData?.data,
 		})
 	},
 )

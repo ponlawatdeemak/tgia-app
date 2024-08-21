@@ -2,16 +2,15 @@ import { Box, Paper, Typography } from '@mui/material'
 import React from 'react'
 
 interface ColorRangeProps {
+	title: string
 	startColor: string
 	endColor: string
 }
 
-const ColorRange: React.FC<ColorRangeProps> = ({ startColor, endColor }) => {
+const ColorRange: React.FC<ColorRangeProps> = ({ title, startColor, endColor }) => {
 	return (
 		<Paper className='flex flex-col gap-1 bg-white px-2 py-1.5'>
-			<Typography className='text-xs font-medium text-black-dark'>
-				พื้นที่เสียหายภัยแล้งจากการวิเคราะห์
-			</Typography>
+			<Typography className='text-xs font-medium text-black-dark'>{title}</Typography>
 			<Box
 				className='h-1.5 bg-primary'
 				sx={{

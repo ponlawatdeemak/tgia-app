@@ -8,13 +8,12 @@ export interface StackedProgressBarData {
 
 export interface StackedProgressBarProps {
 	data: StackedProgressBarData[]
-	percentTotal?: number
 }
 
-const StackedProgressBar: React.FC<StackedProgressBarProps> = ({ data, percentTotal }) => {
+const StackedProgressBar: React.FC<StackedProgressBarProps> = ({ data }) => {
 	return (
 		<div>
-			<div className='flex h-4 gap-0.5' style={{ width: `${percentTotal}%` }}>
+			<div className='flex h-4 gap-0.5'>
 				{/* <div style={{ borderTop: '2px dotted #D6D6D6' }}></div> */}
 				{data.map((item, index) => {
 					return (

@@ -1,4 +1,4 @@
-import { ResponseLanguage } from '../interface'
+import { ErrorResponse, ResponseDto, ResponseLanguage } from '../interface'
 
 export interface GetUmDtoOut {
 	id: string
@@ -47,17 +47,49 @@ export interface GetSearchUMDtoOut extends GetProfileDtoOut {
 }
 
 export interface PatchStatusDtoOut {
-	id : string,
+	id: string
 }
 
 export interface DeleteProfileDtoOut {
 	id: string
 }
 
-export interface PutProfileUMDtoOut extends PutProfileDtoOut{
-	
-}
+export interface PutProfileUMDtoOut extends PutProfileDtoOut {}
 
 export interface PostProfileUMDtoOut {
-	id : string
+	id: string
 }
+
+export interface GetTemplateCSVUMDtoOut {
+	blob: Blob | MediaSource
+}
+
+export interface GetTemplateXLSXUMDtoOut extends GetTemplateCSVUMDtoOut {}
+
+export interface PostImportCSVUMDtoOut {
+	firstName: string
+	lastName: string
+	email: string
+	role: string
+	orgCode: string
+	rowNo: number
+	success: boolean
+	result: string
+}
+
+export interface PostImportXLSXUMDtoOut extends PostImportCSVUMDtoOut {}
+
+export interface PostImportErrorDtoOut {
+	firstName: string
+	lastName: string
+	email: string
+	orgCode: string
+	result: string
+	role: string
+	rowNo: number
+	success: boolean
+}
+
+export interface PostImportCSVErrorDtoOut extends PostImportErrorDtoOut {}
+
+export interface PostImportXLSXErrorDtoOut extends PostImportErrorDtoOut {}

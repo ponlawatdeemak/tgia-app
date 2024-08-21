@@ -40,21 +40,6 @@ interface HeadCell {
 	label: string
 }
 
-const headCells: readonly HeadCell[] = [
-	{
-		id: 'totalPredicted',
-		label: 'ภัยพิบัติทั้งหมด',
-	},
-	{
-		id: 'droughtPredicted',
-		label: 'ภัยแล้ง',
-	},
-	{
-		id: 'floodPredicted',
-		label: 'น้ำท่วม',
-	},
-]
-
 interface TableDetailProps {
 	areaDetail: string
 }
@@ -64,8 +49,23 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default', 'um'])
+	const { t, i18n } = useTranslation(['default', 'field-loss'])
 	const language = i18n.language as keyof ResponseLanguage
+
+	const headCells: readonly HeadCell[] = [
+		{
+			id: 'totalPredicted',
+			label: t('allDisasters'),
+		},
+		{
+			id: 'droughtPredicted',
+			label: t('drought'),
+		},
+		{
+			id: 'floodPredicted',
+			label: t('flood'),
+		},
+	]
 
 	const filterAreaStatistic = useMemo(() => {
 		const filter: GetAreaStatisticDtoIn = {
@@ -140,10 +140,19 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 	)
 
 	return (
-		<div className='box-border flex h-full flex-1 flex-col gap-3 overflow-hidden bg-white p-6 pb-0 max-lg:rounded'>
-			<Typography className='text-md font-semibold text-black-dark'>อันดับความเสียหายจากภัยพิบัติ</Typography>
+		<div className='box-border flex h-full flex-1 flex-col gap-4 bg-white p-4 max-lg:rounded lg:gap-3 lg:overflow-hidden lg:p-6 lg:pb-0'>
+			<div className='flex flex-col gap-2'>
+				{!isDesktop && (
+					<Typography className='text-sm font-medium text-gray-dark2'>
+						{t('totalDamagedArea', { ns: 'field-loss' })}
+					</Typography>
+				)}
+				<Typography className='text-lg font-semibold text-black-dark lg:text-md'>
+					{t('disasterDamageRank', { ns: 'field-loss' })}
+				</Typography>
+			</div>
 			{isAreaStatisticData ? (
-				<div className='flex h-full flex-col items-center justify-center bg-white'>
+				<div className='flex h-60 flex-col items-center justify-center bg-white lg:h-full'>
 					<CircularProgress size={80} color='primary' />
 				</div>
 			) : (
@@ -152,7 +161,7 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 						<TableHead>
 							<TableRow className='[&_th]:border-gray [&_th]:p-2.5 [&_th]:text-base [&_th]:font-semibold'>
 								<TableCell className='text-black' align='left'>
-									รวมทั้งหมด
+									{t('total')}
 								</TableCell>
 								<TableCell
 									className={clsx('w-[20.5%] min-w-[120px]', {
@@ -189,7 +198,7 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 								</TableCell>
 							</TableRow>
 							<TableRow className='[&_th]:border-gray [&_th]:px-2.5 [&_th]:py-2 [&_th]:text-sm [&_th]:font-semibold [&_th]:text-black'>
-								<TableCell align='left'>อันดับ</TableCell>
+								<TableCell align='left'>{t('rank')}</TableCell>
 								{headCells.map((headCell) => (
 									<TableCell
 										key={headCell.id}

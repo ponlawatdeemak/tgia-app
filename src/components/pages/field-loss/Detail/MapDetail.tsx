@@ -26,6 +26,7 @@ import { GetSummaryAreaDtoOut } from '@/api/field-loss/dto-out.dto'
 import { GetSummaryAreaDtoIn } from '@/api/field-loss/dto-in.dto'
 import useSearchFieldLoss from '../Main/context'
 import { Feature, Geometry } from 'geojson'
+import { useTranslation } from 'react-i18next'
 
 interface FilterRangeMonthType {
 	startDate: string
@@ -85,6 +86,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
+	const { t, i18n } = useTranslation(['default', 'field-loss'])
 	const { layers, addLayer, setLayers } = useLayerStore()
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null)
 
@@ -140,35 +142,35 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 	const checkLevelTileColor = useCallback((percent: number) => {
 		let level
 		switch (true) {
-			case percent > 90 && percent <= 100:
-				level = 'level10'
+			case percent <= 10:
+				level = 'level1'
 				break
-			case percent > 80 && percent <= 90:
-				level = 'level9'
-				break
-			case percent > 70 && percent <= 80:
-				level = 'level8'
-				break
-			case percent > 60 && percent <= 70:
-				level = 'level7'
-				break
-			case percent > 50 && percent <= 60:
-				level = 'level6'
-				break
-			case percent > 40 && percent <= 50:
-				level = 'level5'
-				break
-			case percent > 30 && percent <= 40:
-				level = 'level4'
-				break
-			case percent > 20 && percent <= 30:
-				level = 'level3'
-				break
-			case percent > 10 && percent <= 20:
+			case percent <= 20:
 				level = 'level2'
 				break
-			case percent > 0 && percent <= 10:
-				level = 'level1'
+			case percent <= 30:
+				level = 'level3'
+				break
+			case percent <= 40:
+				level = 'level4'
+				break
+			case percent <= 50:
+				level = 'level5'
+				break
+			case percent <= 60:
+				level = 'level6'
+				break
+			case percent <= 70:
+				level = 'level7'
+				break
+			case percent <= 80:
+				level = 'level8'
+				break
+			case percent <= 90:
+				level = 'level9'
+				break
+			case percent <= 100:
+				level = 'level10'
 				break
 			default:
 				level = 'default'
@@ -180,8 +182,11 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 		if (!queryParams.layerName) {
 			setLayers([
 				new MVTLayer({
+					id: 'province',
+					name: 'province',
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/province/tiles.json',
 					filled: true,
+					lineWidthUnits: 'pixels',
 					//visible: layer.layerName === 'country',
 					getFillColor(d: Feature<Geometry, ProvincePropertiesType>) {
 						if (summaryAreaId.includes(d.properties.provinceCode)) {
@@ -217,13 +222,13 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 						return TotalTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, ProvincePropertiesType>) {
-						return [0, 0, 0, 255]
+						return [110, 110, 110, 255]
 					},
 					getLineWidth(d: Feature<Geometry, ProvincePropertiesType>) {
 						if (summaryAreaId.includes(d.properties.provinceCode)) {
-							return 400
+							return 2
 						}
-						return 4
+						return 0
 					},
 					pickable: true,
 					updateTriggers: {
@@ -291,9 +296,42 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 		} else if (queryParams.layerName === 'province') {
 			setLayers([
 				new MVTLayer({
+					id: 'province-district',
+					name: 'province-district',
+					data: 'https://tileserver.cropinsurance-dev.thaicom.io/province/tiles.json',
+					filled: true,
+					lineWidthUnits: 'pixels',
+					//visible: layer.layerName === 'country',
+					getFillColor(d: Feature<Geometry, ProvincePropertiesType>) {
+						return [0, 0, 0, 0]
+					},
+					getLineColor(d: Feature<Geometry, ProvincePropertiesType>) {
+						// return [255, 0, 0, 255]
+						return [110, 110, 110, 255]
+					},
+					getLineWidth(d: Feature<Geometry, ProvincePropertiesType>) {
+						console.log('summaryAreaId ', summaryAreaId, d.properties.provinceNameTh)
+
+						const xxx = []
+
+						if (summaryAreaId.length > 0) {
+							xxx.push(Number(summaryAreaId[0].toString().substring(0, 2)))
+						}
+
+						console.log('d ', d.properties, xxx, xxx.includes(d.properties.provinceCode))
+						if (xxx.includes(d.properties.provinceCode)) {
+							return 2
+						}
+						return 0
+					},
+				}),
+				new MVTLayer({
+					id: 'district',
+					name: 'district',
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/district/tiles.json',
 					filled: true,
 					//visible: layer.layerName === 'province',
+					lineWidthUnits: 'pixels',
 					getFillColor(d: Feature<Geometry, DistrictPropertiesType>) {
 						if (summaryAreaId.includes(d.properties.districtCode)) {
 							const district = summaryAreaData?.data?.find(
@@ -328,7 +366,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 						return TotalTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, DistrictPropertiesType>) {
-						return [0, 0, 0, 255]
+						return [110, 110, 110, 255]
 					},
 					getLineWidth(d: Feature<Geometry, DistrictPropertiesType>) {
 						if (summaryAreaId.includes(d.properties.districtCode)) {
@@ -339,24 +377,24 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									if (district?.lossPredicted.find((item) => item.lossType === 'drought')) {
-										return 400
+										return 2
 									} else {
-										return 4
+										return 0
 									}
 								}
 								case LossType.Flood: {
 									if (district?.lossPredicted.find((item) => item.lossType === 'flood')) {
-										return 400
+										return 2
 									} else {
-										return 4
+										return 0
 									}
 								}
 								default: {
-									return 400
+									return 2
 								}
 							}
 						}
-						return 4
+						return 0
 					},
 					pickable: true,
 					updateTriggers: {
@@ -424,8 +462,43 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 		} else if (queryParams.layerName === 'district') {
 			setLayers([
 				new MVTLayer({
+					id: 'district-subDistrict',
+					data: 'https://tileserver.cropinsurance-dev.thaicom.io/district/tiles.json',
+					filled: true,
+					//visible: layer.layerName === 'province',
+					lineWidthUnits: 'pixels',
+					getFillColor(d: Feature<Geometry, DistrictPropertiesType>) {
+						return [0, 0, 0, 0]
+					},
+					getLineColor(d: Feature<Geometry, DistrictPropertiesType>) {
+						return [110, 110, 110, 255]
+					},
+					getLineWidth(d: Feature<Geometry, DistrictPropertiesType>) {
+						console.log(
+							'summaryAreaId  district2',
+							summaryAreaId,
+							d.properties.provinceNameTh,
+							d.properties.districtNameTh,
+						)
+
+						const xxx = []
+
+						if (summaryAreaId.length > 0) {
+							xxx.push(Number(summaryAreaId[0].toString().substring(0, 4)))
+						}
+
+						console.log('summaryAreaId d ', d.properties, xxx, xxx.includes(d.properties.districtCode))
+						if (xxx.includes(d.properties.districtCode)) {
+							return 2
+						}
+						return 0
+					},
+				}),
+				new MVTLayer({
+					id: 'subDistrict',
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/subdistrict/tiles.json',
 					filled: true,
+					lineWidthUnits: 'pixels',
 					//visible: layer.layerName === 'district',
 					getFillColor(d: Feature<Geometry, SubDistrictPropertiesType>) {
 						if (summaryAreaId.includes(d.properties.subDistrictCode)) {
@@ -461,7 +534,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 						return TotalTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, SubDistrictPropertiesType>) {
-						return [0, 0, 0, 255]
+						return [110, 110, 110, 255]
 					},
 					getLineWidth(d: Feature<Geometry, SubDistrictPropertiesType>) {
 						if (summaryAreaId.includes(d.properties.subDistrictCode)) {
@@ -472,24 +545,24 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')) {
-										return 400
+										return 2
 									} else {
-										return 4
+										return 0
 									}
 								}
 								case LossType.Flood: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')) {
-										return 400
+										return 2
 									} else {
-										return 4
+										return 0
 									}
 								}
 								default: {
-									return 400
+									return 2
 								}
 							}
 						}
-						return 4
+						return 0
 					},
 					pickable: true,
 					updateTriggers: {
@@ -605,20 +678,20 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')) {
-										return 400
+										return 10
 									} else {
 										return 4
 									}
 								}
 								case LossType.Flood: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')) {
-										return 400
+										return 10
 									} else {
 										return 4
 									}
 								}
 								default: {
-									return 400
+									return 10
 								}
 							}
 						}
@@ -722,7 +795,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 				role='presentation'
 				className='absolute left-3 top-3 z-10 flex h-7 items-center gap-2 rounded-lg bg-white px-2 py-1'
 			>
-				<Typography className='text-base font-medium text-black'>ระดับ:</Typography>
+				<Typography className='text-base font-medium text-black'>{`${t('level', { ns: 'field-loss' })}:`}</Typography>
 				<Breadcrumbs aria-label='breadcrumb'>
 					{queryParams.layerName && (
 						<Link
@@ -731,7 +804,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							href='#'
 							onClick={handleCountryClick}
 						>
-							ประเทศ
+							{t('national', { ns: 'field-loss' })}
 						</Link>
 					)}
 					{queryParams.layerName &&
@@ -742,7 +815,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 								href='#'
 								onClick={handleProvinceClick}
 							>
-								จังหวัด
+								{t('province')}
 							</Link>
 						)}
 					{queryParams.layerName && queryParams.layerName === 'subdistrict' && (
@@ -752,29 +825,41 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							href='#'
 							onClick={handleDistrictClick}
 						>
-							อำเภอ
+							{t('district')}
 						</Link>
 					)}
 					<Typography className='text-base font-semibold text-black' color='text.primary'>
 						{queryParams.layerName
 							? queryParams.layerName === 'province'
-								? 'จังหวัด'
+								? t('province')
 								: queryParams.layerName === 'district'
-									? 'อำเภอ'
-									: 'ตำบล'
-							: 'ประเทศ'}
+									? t('district')
+									: t('subDistrict')
+							: t('national', { ns: 'field-loss' })}
 					</Typography>
 				</Breadcrumbs>
 			</Box>
 			<Box className='absolute bottom-24 right-2 z-10 max-lg:hidden'>
 				{!queryParams.lossType && (
-					<ColorRange startColor={TotalRangeColor.start} endColor={TotalRangeColor.end} />
+					<ColorRange
+						title={t('totalDamagedArea', { ns: 'field-loss' })}
+						startColor={TotalRangeColor.start}
+						endColor={TotalRangeColor.end}
+					/>
 				)}
 				{queryParams.lossType === LossType.Drought && (
-					<ColorRange startColor={DroughtRangeColor.start} endColor={DroughtRangeColor.end} />
+					<ColorRange
+						title={t('droughtDamageArea', { ns: 'field-loss' })}
+						startColor={DroughtRangeColor.start}
+						endColor={DroughtRangeColor.end}
+					/>
 				)}
 				{queryParams.lossType === LossType.Flood && (
-					<ColorRange startColor={FloodRangeColor.start} endColor={FloodRangeColor.end} />
+					<ColorRange
+						title={t('floodDamageArea', { ns: 'field-loss' })}
+						startColor={FloodRangeColor.start}
+						endColor={FloodRangeColor.end}
+					/>
 				)}
 			</Box>
 			<Box className='absolute bottom-2 left-[68px] z-10 w-[calc(100%-84px)] max-lg:hidden'>

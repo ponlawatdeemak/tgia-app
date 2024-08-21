@@ -1,21 +1,12 @@
 'use client'
 
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import { WaterOutlined, WbSunnyOutlined } from '@mui/icons-material'
 import React from 'react'
-import { AreaTypeKey, AreaUnitKey, Language } from '@/enum'
-import useAreaType from '@/store/area-type'
 import useAreaUnit from '@/store/area-unit'
 import { useTranslation } from 'react-i18next'
 import { LossPredicted } from '@/api/field-loss/dto-out.dto'
 import { ResponseArea } from '@/api/interface'
-
-interface LossPredictedType {
-	lossType: string
-	areaRai: number
-	areaPlot: number
-	percent: number
-}
 
 interface FieldLossCardProps {
 	item: LossPredicted
@@ -23,7 +14,6 @@ interface FieldLossCardProps {
 }
 
 const FieldLossCard: React.FC<FieldLossCardProps> = ({ item, actArea }) => {
-	const { areaType, setAreaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
 	const { t } = useTranslation(['default', 'field-loss'])
 
@@ -32,9 +22,9 @@ const FieldLossCard: React.FC<FieldLossCardProps> = ({ item, actArea }) => {
 			<Box className='flex items-center justify-between'>
 				<div className='flex items-center gap-1'>
 					{item.lossType === 'drought' ? (
-						<WbSunnyOutlined className='text-lossTypeIcon-drought h-5 w-5 font-light' />
+						<WbSunnyOutlined className='h-5 w-5 font-light text-lossTypeIcon-drought' />
 					) : (
-						<WaterOutlined className='text-lossTypeIcon-flood h-5 w-5 font-light' />
+						<WaterOutlined className='h-5 w-5 font-light text-lossTypeIcon-flood' />
 					)}
 					<div className='flex items-baseline gap-1'>
 						<span className='text-base text-black'>{t(item.lossType)}</span>
