@@ -160,6 +160,8 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 		} catch (error) {
 			console.log(error)
 		} finally {
+			setIsSearch(true)
+			queryClient.invalidateQueries({ queryKey: ['getSearchUM'] })
 			setIsLoading(false)
 		}
 	}
@@ -224,10 +226,10 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 				fullWidth
 				keepMounted={false}
 				scroll='paper'
-				className='[&_.MuiPaper-root]:h-[444px] [&_.MuiPaper-root]:max-w-[600px]'
+				className='[&_.MuiPaper-root]:h-[460px] [&_.MuiPaper-root]:max-w-[600px]'
 			>
 				<Box className='flex flex-row items-center justify-between'>
-					<DialogTitle className='text-lg'>นำเข้าผู้ใช้งาน</DialogTitle>
+					<DialogTitle className='text-lg'>{t('importUser', { ns: 'um' })}</DialogTitle>
 					<IconButton
 						onClick={(event) => {
 							handleCloseImport(event, 'cancelClick')
@@ -239,16 +241,16 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 				</Box>
 				<DialogContent
 					dividers={true}
-					className='flex h-full flex-col items-center justify-between max-lg:gap-3'
+					className='flex h-full flex-col items-center justify-between overflow-x-hidden max-lg:gap-3'
 				>
 					<Box
-						className={`ml-[24px] mr-[24px] flex w-full flex-col items-center bg-gray-light2 ${!(importError.length > 0) && 'h-full'}`}
+						className={`ml-[24px] mr-[24px] flex w-full flex-col items-center bg-gray-light2 ${!(importError.length > 0) && 'h-full'} ${importFile && 'h-full'}`}
 					>
-						<Box className='flex min-h-[200px] flex-col items-center justify-center gap-2'>
-							<Typography>นำเข้าผู้ใช้งาน</Typography>
+						<Box className='flex min-h-[200px] flex-col items-center justify-center gap-2 p-4'>
+							<Typography className='text-base font-medium'>{t('importUser', { ns: 'um' })}</Typography>
 							{importFile ? (
 								<Box className='flex flex-col items-center'>
-									<Button
+									{/* <Button
 										endIcon={
 											<IconButton disableRipple onClick={handleRemoveFile}>
 												<ClearIcon />
@@ -259,7 +261,20 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 										className='h-[40px]'
 									>
 										{importFile.name}
-									</Button>
+									</Button> */}
+									<Box className='flex flex-row items-center rounded-lg border-solid border-gray bg-background p-1'>
+										<Typography className='p-[4px] text-base font-semibold'>
+											{importFile.name}
+										</Typography>
+										<IconButton
+											disableRipple
+											onClick={handleRemoveFile}
+											className='p-[4px]'
+											size='small'
+										>
+											<ClearIcon />
+										</IconButton>
+									</Box>
 								</Box>
 							) : (
 								<Box className='flex flex-col items-center gap-2'>
@@ -271,7 +286,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 										className='flex h-[32px] gap-[4px] border-gray py-[6px] pl-[8px] pr-[10px] text-base text-black text-white [&_.MuiButton-startIcon]:m-0'
 										startIcon={<Icon path={mdiTrayArrowUp} size={1} />}
 									>
-										อัปโหลดไฟล์
+										{t('uploadFile', { ns: 'um' })}
 										<input
 											type='file'
 											accept='.csv, .xlsx, .xls'
@@ -281,19 +296,30 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 										/>
 									</Button>
 									{importError.length > 0 && (
-										<Box className='rounded-lg bg-error-light p-4'>
+										<Box className='flex flex-col rounded-lg border-solid border-error bg-white p-4'>
 											<div className='flex flex-row items-center gap-1 text-error'>
 												<Icon path={mdiCloseCircleOutline} size={1} />
-												<Typography>ข้อมูลในเอกสารไม่ถูกต้อง</Typography>
+												<Typography>{t('fileDataError', { ns: 'um' })}</Typography>
 											</div>
-											<div className='divide-y-0'>
+											<div className='divide-x-0 divide-y divide-solid divide-gray'>
 												{importError.map((error) => {
 													if (error.success === false) {
 														return (
-															<div key={error.firstName}>
-																<p key={error.firstName}>
-																	{error.rowNo} :{error.result}
-																</p>
+															// <div key={error.firstName}>
+															// 	<p key={error.firstName}>
+															// 		{error.rowNo} :{error.result}
+															// 	</p>
+															// </div>
+															<div
+																className='flex items-center justify-between p-2'
+																key={error.firstName}
+															>
+																<div className='mr-[16px] w-12 text-left'>
+																	{error.rowNo}
+																</div>
+																<div className='flex-shrink flex-grow basis-0'>
+																	:{error.result}
+																</div>
 															</div>
 														)
 													}
@@ -305,8 +331,10 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 							)}
 						</Box>
 						{!importFile && (
-							<Box className='flex w-[90%] flex-col items-center justify-center gap-2 border-x-0 border-y-0 border-t border-solid border-gray'>
-								<Typography className='font-medium'>ตัวอย่างเอกสารผู้ใช้งาน</Typography>
+							<Box className='flex w-[90%] flex-col items-center justify-center gap-2 border-x-0 border-y-0 border-t border-solid border-gray p-4'>
+								<Typography className='text-base font-medium'>
+									{t('userDocExample', { ns: 'um' })}
+								</Typography>
 								<Button
 									component='label'
 									role={undefined}
@@ -318,7 +346,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 									}}
 									startIcon={<Icon path={mdiTrayArrowDown} size={1} />}
 								>
-									ดาวน์โหลด Template csv
+									{t('downloadTemplate', { ns: 'um' })} csv
 								</Button>
 								<Button
 									component='label'
@@ -331,14 +359,14 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 									}}
 									startIcon={<Icon path={mdiTrayArrowDown} size={1} />}
 								>
-									ดาวน์โหลด Template excel
+									{t('downloadTemplate', { ns: 'um' })} excel
 								</Button>
 							</Box>
 						)}
 					</Box>
 				</DialogContent>
 				{importFile && (
-					<DialogActions className={'flex justify-end p-6'}>
+					<DialogActions className={'flex justify-end p-4'}>
 						<div className={'flex justify-end space-x-2'}>
 							<Button
 								className='h-[40px] w-[71px] bg-white text-sm text-black'
@@ -386,8 +414,8 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 			</Snackbar>
 			<AlertConfirm
 				open={isOpenConfirmModal}
-				title={'ยืนยันการบันทึกข้อมูล'} // t('confirmImport', { ns : 'um'})
-				content={'ต้องการยืนยันการนำเข้าผู้ใช้งานใช่หรือไม่?'} //t('confirmImport', {ns : 'um'})
+				title={t('alert.importUserFile', { ns: 'um' })} // t('confirmImport', { ns : 'um'})
+				content={t('alert.confirmImportUserFile', { ns: 'um' })} //t('confirmImport', {ns : 'um'})
 				onClose={() => {
 					setIsOpenConfirmModal(false)
 				}}
