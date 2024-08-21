@@ -229,7 +229,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 				className='[&_.MuiPaper-root]:h-[460px] [&_.MuiPaper-root]:max-w-[600px]'
 			>
 				<Box className='flex flex-row items-center justify-between'>
-					<DialogTitle className='text-lg'>นำเข้าผู้ใช้งาน</DialogTitle>
+					<DialogTitle className='text-lg'>{t('importUser', { ns: 'um' })}</DialogTitle>
 					<IconButton
 						onClick={(event) => {
 							handleCloseImport(event, 'cancelClick')
@@ -247,7 +247,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 						className={`ml-[24px] mr-[24px] flex w-full flex-col items-center bg-gray-light2 ${!(importError.length > 0) && 'h-full'} ${importFile && 'h-full'}`}
 					>
 						<Box className='flex min-h-[200px] flex-col items-center justify-center gap-2 p-4'>
-							<Typography className='text-base font-medium'>นำเข้าผู้ใช้งาน</Typography>
+							<Typography className='text-base font-medium'>{t('importUser', { ns: 'um' })}</Typography>
 							{importFile ? (
 								<Box className='flex flex-col items-center'>
 									{/* <Button
@@ -286,7 +286,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 										className='flex h-[32px] gap-[4px] border-gray py-[6px] pl-[8px] pr-[10px] text-base text-black text-white [&_.MuiButton-startIcon]:m-0'
 										startIcon={<Icon path={mdiTrayArrowUp} size={1} />}
 									>
-										อัปโหลดไฟล์
+										{t('uploadFile', { ns: 'um' })}
 										<input
 											type='file'
 											accept='.csv, .xlsx, .xls'
@@ -299,7 +299,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 										<Box className='flex flex-col rounded-lg border-solid border-error bg-white p-4'>
 											<div className='flex flex-row items-center gap-1 text-error'>
 												<Icon path={mdiCloseCircleOutline} size={1} />
-												<Typography>ข้อมูลในเอกสารไม่ถูกต้อง</Typography>
+												<Typography>{t('fileDataError', { ns: 'um' })}</Typography>
 											</div>
 											<div className='divide-x-0 divide-y divide-solid divide-gray'>
 												{importError.map((error) => {
@@ -332,7 +332,9 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 						</Box>
 						{!importFile && (
 							<Box className='flex w-[90%] flex-col items-center justify-center gap-2 border-x-0 border-y-0 border-t border-solid border-gray p-4'>
-								<Typography className='text-base font-medium'>ตัวอย่างเอกสารผู้ใช้งาน</Typography>
+								<Typography className='text-base font-medium'>
+									{t('userDocExample', { ns: 'um' })}
+								</Typography>
 								<Button
 									component='label'
 									role={undefined}
@@ -344,7 +346,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 									}}
 									startIcon={<Icon path={mdiTrayArrowDown} size={1} />}
 								>
-									ดาวน์โหลด Template csv
+									{t('downloadTemplate', { ns: 'um' })} csv
 								</Button>
 								<Button
 									component='label'
@@ -357,7 +359,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 									}}
 									startIcon={<Icon path={mdiTrayArrowDown} size={1} />}
 								>
-									ดาวน์โหลด Template excel
+									{t('downloadTemplate', { ns: 'um' })} excel
 								</Button>
 							</Box>
 						)}
@@ -412,8 +414,8 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 			</Snackbar>
 			<AlertConfirm
 				open={isOpenConfirmModal}
-				title={'ยืนยันการบันทึกข้อมูล'} // t('confirmImport', { ns : 'um'})
-				content={'ต้องการยืนยันการนำเข้าผู้ใช้งานใช่หรือไม่?'} //t('confirmImport', {ns : 'um'})
+				title={t('alert.importUserFile', { ns: 'um' })} // t('confirmImport', { ns : 'um'})
+				content={t('alert.confirmImportUserFile', { ns: 'um' })} //t('confirmImport', {ns : 'um'})
 				onClose={() => {
 					setIsOpenConfirmModal(false)
 				}}
