@@ -19,6 +19,7 @@ export interface ProfileFormProps {
 	loading?: boolean
 	isDisabledProfile?: boolean
 	isHiddenProfile?: boolean
+	isFormUM?: boolean
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({
@@ -26,6 +27,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 	loading = false,
 	isDisabledProfile = false,
 	isHiddenProfile = false,
+	isFormUM = false,
 }) => {
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
@@ -134,6 +136,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 							label={t('belongDistrict', { ns: 'um' })}
 							formik={formik}
 							disabled={isDistricDataLoading || loading || !formik.values.responsibleProvinceCode}
+							required={isFormUM}
 						/>
 					</div>
 					<div
@@ -154,6 +157,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 							label={t('org')}
 							formik={formik}
 							disabled={isDisabledProfile}
+							required={isFormUM}
 						/>
 						<AutocompleteInput
 							className='w-full text-sm font-medium lg:w-[240px]'
@@ -168,6 +172,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 							label={t('role')}
 							formik={formik}
 							disabled={isDisabledProfile}
+							required={isFormUM}
 						/>
 					</div>
 				</Box>

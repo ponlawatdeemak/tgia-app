@@ -1,4 +1,14 @@
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, FormControlLabel } from '@mui/material'
+import {
+	Alert,
+	Box,
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Snackbar,
+	FormControlLabel,
+} from '@mui/material'
 import React, { FormEvent, useState, useCallback, useEffect } from 'react'
 import IOSSwitch from '@/components/common/switch/IOSSwitch'
 import ProfileForm from '@/components/shared/ProfileForm'
@@ -71,6 +81,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 		lastName: yup.string().required(t('warning.inputLastName')),
 		email: yup.string().email(t('warning.invalidEmailFormat')).required(t('warning.inputEmail')),
 		responsibleProvinceCode: yup.string().required(t('warning.inputProvince')),
+		responsibleDistrictCode: yup.string().required(t('warning.inputDistrict')),
 	})
 	const {
 		data: userData,
@@ -131,7 +142,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 				})
 			}
 		},
-		[ session?.user.id, t, setIsSearch, setOpen],
+		[session?.user.id, t, setIsSearch, setOpen],
 	)
 
 	const onSubmit = useCallback(
@@ -279,6 +290,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 						<ProfileForm
 							formik={formik}
 							loading={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
+							isFormUM={true}
 						/>
 					</div>
 					{session?.user.id !== userId && (

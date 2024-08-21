@@ -45,7 +45,8 @@
 		"minPasswordSymbol": "ต้องมีอักขระพิเศษอย่างน้อย 1 ตัว",
 		"inputFirstName": "กรุณากรอกชื่อ",
 		"inputLastName": "กรุณากรอกนามสกุล",
-		"inputProvince": "กรุณาเลือกจังหวัด"
+		"inputProvince": "กรุณาเลือกจังหวัด",
+		"inputDistrict": "กรุณาเลือกอำเภอ"
 	},
 	"success": {},
 	"error": {
