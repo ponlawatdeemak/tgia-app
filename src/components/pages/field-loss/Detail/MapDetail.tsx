@@ -12,10 +12,12 @@ import DatePickerHorizontal from '@/components/shared/DatePickerHorizontal'
 import { addDays, format } from 'date-fns'
 import ColorRange from '../Map/ColorRange'
 import {
+	BoundaryTileColor,
 	DroughtRangeColor,
 	DroughtTileColor,
 	FloodRangeColor,
 	FloodTileColor,
+	LineWidthColor,
 	TotalRangeColor,
 	TotalTileColor,
 } from '@/config/color'
@@ -35,10 +37,6 @@ interface FilterRangeMonthType {
 	provinceCode: number | undefined
 	districtCode: number | undefined
 }
-
-// enum SortFieldType {
-// 	1 =
-// }
 
 type ProvincePropertiesType = {
 	layerName: string
@@ -77,6 +75,9 @@ type HoverInfo = {
 	areaCode: number
 	layerName: string
 }
+
+const SelectedLineWidth = 2
+const DefaultLineWidth = 0
 
 interface MapDetailProps {
 	areaDetail: string
@@ -221,13 +222,13 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 						return TotalTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, ProvincePropertiesType>) {
-						return [110, 110, 110, 255]
+						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, ProvincePropertiesType>) {
 						if (summaryAreaId.includes(d.properties.provinceCode)) {
-							return 2
+							return SelectedLineWidth
 						}
-						return 0
+						return DefaultLineWidth
 					},
 					pickable: true,
 					updateTriggers: {
@@ -302,26 +303,17 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 					lineWidthUnits: 'pixels',
 					//visible: layer.layerName === 'country',
 					getFillColor(d: Feature<Geometry, ProvincePropertiesType>) {
-						return [0, 0, 0, 0]
+						return BoundaryTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, ProvincePropertiesType>) {
 						// return [255, 0, 0, 255]
-						return [110, 110, 110, 255]
+						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, ProvincePropertiesType>) {
-						console.log('summaryAreaId ', summaryAreaId, d.properties.provinceNameTh)
-
-						const xxx = []
-
-						if (summaryAreaId.length > 0) {
-							xxx.push(Number(summaryAreaId[0].toString().substring(0, 2)))
+						if (queryParams.provinceCode === d.properties.provinceCode) {
+							return SelectedLineWidth
 						}
-
-						console.log('d ', d.properties, xxx, xxx.includes(d.properties.provinceCode))
-						if (xxx.includes(d.properties.provinceCode)) {
-							return 2
-						}
-						return 0
+						return DefaultLineWidth
 					},
 				}),
 				new MVTLayer({
@@ -364,7 +356,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 						return TotalTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, DistrictPropertiesType>) {
-						return [110, 110, 110, 255]
+						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, DistrictPropertiesType>) {
 						if (summaryAreaId.includes(d.properties.districtCode)) {
@@ -375,24 +367,24 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									if (district?.lossPredicted.find((item) => item.lossType === 'drought')) {
-										return 2
+										return SelectedLineWidth
 									} else {
-										return 0
+										return DefaultLineWidth
 									}
 								}
 								case LossType.Flood: {
 									if (district?.lossPredicted.find((item) => item.lossType === 'flood')) {
-										return 2
+										return SelectedLineWidth
 									} else {
-										return 0
+										return DefaultLineWidth
 									}
 								}
 								default: {
-									return 2
+									return SelectedLineWidth
 								}
 							}
 						}
-						return 0
+						return DefaultLineWidth
 					},
 					pickable: true,
 					updateTriggers: {
@@ -466,30 +458,16 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 					//visible: layer.layerName === 'province',
 					lineWidthUnits: 'pixels',
 					getFillColor(d: Feature<Geometry, DistrictPropertiesType>) {
-						return [0, 0, 0, 0]
+						return BoundaryTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, DistrictPropertiesType>) {
-						return [110, 110, 110, 255]
+						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, DistrictPropertiesType>) {
-						console.log(
-							'summaryAreaId  district2',
-							summaryAreaId,
-							d.properties.provinceNameTh,
-							d.properties.districtNameTh,
-						)
-
-						const xxx = []
-
-						if (summaryAreaId.length > 0) {
-							xxx.push(Number(summaryAreaId[0].toString().substring(0, 4)))
+						if (queryParams.districtCode === d.properties.districtCode) {
+							return SelectedLineWidth
 						}
-
-						console.log('summaryAreaId d ', d.properties, xxx, xxx.includes(d.properties.districtCode))
-						if (xxx.includes(d.properties.districtCode)) {
-							return 2
-						}
-						return 0
+						return DefaultLineWidth
 					},
 				}),
 				new MVTLayer({
@@ -532,7 +510,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 						return TotalTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, SubDistrictPropertiesType>) {
-						return [110, 110, 110, 255]
+						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, SubDistrictPropertiesType>) {
 						if (summaryAreaId.includes(d.properties.subDistrictCode)) {
@@ -543,24 +521,24 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')) {
-										return 2
+										return SelectedLineWidth
 									} else {
-										return 0
+										return DefaultLineWidth
 									}
 								}
 								case LossType.Flood: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')) {
-										return 2
+										return SelectedLineWidth
 									} else {
-										return 0
+										return DefaultLineWidth
 									}
 								}
 								default: {
-									return 2
+									return SelectedLineWidth
 								}
 							}
 						}
-						return 0
+						return DefaultLineWidth
 					},
 					pickable: true,
 					updateTriggers: {
@@ -631,6 +609,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/subdistrict/tiles.json',
 					filled: true,
 					//visible: layer.layerName === 'subdistrict',
+					lineWidthUnits: 'pixels',
 					getFillColor(d: Feature<Geometry, SubDistrictPropertiesType>) {
 						if (queryParams.subDistrictCode === d.properties.subDistrictCode) {
 							const subDistrict = summaryAreaData?.data?.find(
@@ -665,7 +644,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 						return TotalTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, SubDistrictPropertiesType>) {
-						return [0, 0, 0, 255]
+						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, SubDistrictPropertiesType>) {
 						if (queryParams.subDistrictCode === d.properties.subDistrictCode) {
@@ -676,24 +655,24 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')) {
-										return 10
+										return SelectedLineWidth
 									} else {
-										return 4
+										return DefaultLineWidth
 									}
 								}
 								case LossType.Flood: {
 									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')) {
-										return 10
+										return SelectedLineWidth
 									} else {
-										return 4
+										return DefaultLineWidth
 									}
 								}
 								default: {
-									return 10
+									return SelectedLineWidth
 								}
 							}
 						}
-						return 4
+						return DefaultLineWidth
 					},
 					pickable: true,
 					updateTriggers: {
