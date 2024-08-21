@@ -20,6 +20,7 @@ export interface ProfileFormProps {
 	isDisabledProfile?: boolean
 	isHiddenProfile?: boolean
 	isFormUM?: boolean
+	isEditFormUM?: boolean
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({
@@ -28,6 +29,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 	isDisabledProfile = false,
 	isHiddenProfile = false,
 	isFormUM = false,
+	isEditFormUM = false,
 }) => {
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
@@ -102,7 +104,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 							label={t('email')}
 							formik={formik}
 							required
-							disabled={isDisabledProfile || loading}
+							disabled={isDisabledProfile || loading || isEditFormUM}
 						/>
 					</div>
 				</Box>

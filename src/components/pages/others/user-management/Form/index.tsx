@@ -207,6 +207,8 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 						})
 						console.log('res :: ', res)
 						setIsSearch(true)
+						setOpen(false)
+						formik.resetForm()
 					} catch (error: any) {
 						console.log(error)
 						setAlertInfo({
@@ -293,6 +295,8 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 							formik={formik}
 							loading={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
 							isFormUM={true}
+							isEditFormUM={isEdit}
+							isDisabledProfile={userId === session?.user.id}
 						/>
 					</div>
 					{session?.user.id !== userId && (
