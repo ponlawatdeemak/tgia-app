@@ -290,7 +290,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 			>
 				<DialogTitle>{isEdit ? t('editUserAccount', { ns: 'um' }) : t('addUser', { ns: 'um' })}</DialogTitle>
 				<DialogContent dividers={true} className='flex flex-col justify-between max-lg:gap-3'>
-					<div className='flex flex-col items-center justify-center gap-3 max-lg:block lg:flex-row'>
+					<div className='flex flex-col items-center gap-3 max-lg:block lg:flex-row'>
 						<ProfileForm
 							formik={formik}
 							loading={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
@@ -301,23 +301,30 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 					</div>
 					{session?.user.id !== userId && (
 						<FormControlLabel
+							sx={{
+								pointerEvents: 'none',
+							}}
+							className='max-lg:pt-1'
 							control={
-								<IOSSwitch
-									sx={{
-										m: 1,
-										'& .MuiSwitch-switchBase': {
-											'&.Mui-checked': {
-												'& + .MuiSwitch-track': {
-													backgroundColor: '#0C626D',
+								<div className='pointer-events-auto'>
+									<IOSSwitch
+										sx={{
+											m: 1,
+											'& .MuiSwitch-switchBase': {
+												'&.Mui-checked': {
+													'& + .MuiSwitch-track': {
+														backgroundColor: '#0C626D',
+													},
 												},
 											},
-										},
-									}}
-									checked={formik.values.flagStatus === 'A' ? true : false}
-									onChange={(event) => {
-										formik.setFieldValue('flagStatus', event.target.checked ? 'A' : 'C')
-									}}
-								/>
+											marginLeft: '14px',
+										}}
+										checked={formik.values.flagStatus === 'A' ? true : false}
+										onChange={(event) => {
+											formik.setFieldValue('flagStatus', event.target.checked ? 'A' : 'C')
+										}}
+									/>
+								</div>
 							}
 							label={t('enableUser', { ns: 'um' })}
 						/>
@@ -330,7 +337,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 				>
 					{session?.user.id !== userId && isEdit && (
 						<Button
-							className='text-red h-[40px] w-[124px] bg-white text-sm text-error'
+							className='text-red h-[40px] w-[136px] bg-white text-sm text-error'
 							variant='contained'
 							onClick={() => {
 								setIsConfirmDeleteOpen(true)
