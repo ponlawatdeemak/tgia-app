@@ -301,7 +301,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 												<Icon path={mdiCloseCircleOutline} size={1} />
 												<Typography>{t('fileDataError', { ns: 'um' })}</Typography>
 											</div>
-											<div className='divide-x-0 divide-y divide-solid divide-gray'>
+											<div className='divide-x-0 divide-y divide-solid divide-gray pt-3'>
 												{importError.map((error) => {
 													if (error.success === false) {
 														return (
