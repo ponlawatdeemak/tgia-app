@@ -696,7 +696,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 												y: info.y,
 												area: subDistrict,
 												areaCode: info.object.properties.subDistrictCode,
-												layerName: info.object.properties.layerName,
+												layerName: 'endLayer',
 											})
 										} else {
 											setHoverInfo(null)
@@ -710,7 +710,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 												y: info.y,
 												area: subDistrict,
 												areaCode: info.object.properties.subDistrictCode,
-												layerName: info.object.properties.layerName,
+												layerName: 'endLayer',
 											})
 										} else {
 											setHoverInfo(null)
@@ -723,7 +723,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 											y: info.y,
 											area: subDistrict,
 											areaCode: info.object.properties.subDistrictCode,
-											layerName: info.object.properties.layerName,
+											layerName: 'endLayer',
 										})
 										break
 									}
@@ -744,6 +744,8 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 		queryParams.lossType,
 		checkLevelTileColor,
 		queryParams.layerName,
+		queryParams.provinceCode,
+		queryParams.districtCode,
 		queryParams.subDistrictCode,
 		summaryAreaId,
 	])
@@ -839,14 +841,14 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 					/>
 				)}
 			</Box>
-			<Box className='absolute bottom-2 left-[68px] z-10 w-[calc(100%-84px)] max-lg:hidden'>
+			<Box className='absolute bottom-2 left-[68px] z-10 w-[calc(100%-76px)] max-lg:hidden'>
 				<DatePickerHorizontal
 					startDate={queryParams.startDate || new Date()}
 					endDate={queryParams.endDate || addDays(new Date(), 15)}
 					calendarData={calendarData}
 				/>
 			</Box>
-			<Tooltip info={hoverInfo} setHoverInfo={setHoverInfo} />
+			<Tooltip hoverInfo={hoverInfo} setHoverInfo={setHoverInfo} />
 			<MapView />
 		</div>
 	)
