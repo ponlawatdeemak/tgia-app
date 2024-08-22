@@ -27,6 +27,7 @@ import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import useResponsive from '@/hook/responsive'
 import { GetAreaStatisticDtoOut } from '@/api/field-loss/dto-out.dto'
+import classNames from 'classnames'
 
 interface Data {
 	//id: number
@@ -95,7 +96,7 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 	const { data: areaStatisticData, isLoading: isAreaStatisticData } = useQuery({
 		queryKey: ['getAreaStatistic', filterAreaStatistic],
 		queryFn: () => service.fieldLoss.getAreaStatistic({ ...filterAreaStatistic, ...filterOrder }),
-		enabled: areaDetail === 'area-statistic' || !isDesktop,
+		//enabled: areaDetail === 'area-statistic' || !isDesktop,
 	})
 
 	// const rows = useMemo(() => areaStatisticData?.data || [], [areaStatisticData?.data])
@@ -140,7 +141,14 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 	)
 
 	return (
-		<div className='box-border flex h-full flex-1 flex-col gap-4 bg-white p-4 max-lg:rounded lg:gap-3 lg:overflow-hidden lg:p-6 lg:pb-0'>
+		<div
+			className={classNames(
+				'box-border flex h-full flex-1 flex-col gap-4 bg-white p-4 max-lg:rounded lg:gap-3 lg:overflow-hidden lg:p-6 lg:pb-0',
+				{
+					'lg:hidden': areaDetail !== 'area-statistic',
+				},
+			)}
+		>
 			<div className='flex flex-col gap-2'>
 				{!isDesktop && (
 					<Typography className='text-sm font-medium text-gray-dark2'>

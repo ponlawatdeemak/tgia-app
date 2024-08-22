@@ -29,6 +29,7 @@ import { GetSummaryAreaDtoIn } from '@/api/field-loss/dto-in.dto'
 import useSearchFieldLoss from '../Main/context'
 import { Feature, Geometry } from 'geojson'
 import { useTranslation } from 'react-i18next'
+import classNames from 'classnames'
 
 interface FilterRangeMonthType {
 	startDate: string
@@ -133,7 +134,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 	const { data: summaryAreaData, isLoading: isSummaryAreaDataLoading } = useQuery({
 		queryKey: ['getSummaryArea', filterSummaryArea],
 		queryFn: () => service.fieldLoss.getSummaryArea(filterSummaryArea),
-		enabled: areaDetail === 'summary-area' || !isDesktop,
+		//enabled: areaDetail === 'summary-area' || !isDesktop,
 	})
 
 	const summaryAreaId = useMemo(() => {
@@ -698,7 +699,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 												y: info.y,
 												area: subDistrict,
 												areaCode: info.object.properties.subDistrictCode,
-												layerName: info.object.properties.layerName,
+												layerName: 'endLayer',
 											})
 										} else {
 											setHoverInfo(null)
@@ -712,7 +713,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 												y: info.y,
 												area: subDistrict,
 												areaCode: info.object.properties.subDistrictCode,
-												layerName: info.object.properties.layerName,
+												layerName: 'endLayer',
 											})
 										} else {
 											setHoverInfo(null)
@@ -725,7 +726,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 											y: info.y,
 											area: subDistrict,
 											areaCode: info.object.properties.subDistrictCode,
-											layerName: info.object.properties.layerName,
+											layerName: 'endLayer',
 										})
 										break
 									}
@@ -746,6 +747,8 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 		queryParams.lossType,
 		checkLevelTileColor,
 		queryParams.layerName,
+		queryParams.provinceCode,
+		queryParams.districtCode,
 		queryParams.subDistrictCode,
 		summaryAreaId,
 	])
@@ -769,7 +772,11 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 	}
 
 	return (
-		<div className='relative h-[390px] w-full max-lg:overflow-hidden max-lg:rounded lg:h-full'>
+		<div
+			className={classNames('relative h-[390px] w-full max-lg:overflow-hidden max-lg:rounded lg:h-full', {
+				'lg:hidden': areaDetail !== 'summary-area',
+			})}
+		>
 			<Box
 				role='presentation'
 				className='absolute left-3 top-3 z-10 flex h-7 items-center gap-2 rounded-lg bg-white px-2 py-1'
@@ -841,14 +848,14 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 					/>
 				)}
 			</Box>
-			<Box className='absolute bottom-2 left-[68px] z-10 w-[calc(100%-84px)] max-lg:hidden'>
+			<Box className='absolute bottom-2 left-[68px] z-10 w-[calc(100%-76px)] max-lg:hidden'>
 				<DatePickerHorizontal
 					startDate={queryParams.startDate || new Date()}
 					endDate={queryParams.endDate || addDays(new Date(), 15)}
 					calendarData={calendarData}
 				/>
 			</Box>
-			<Tooltip info={hoverInfo} setHoverInfo={setHoverInfo} />
+			<Tooltip hoverInfo={hoverInfo} setHoverInfo={setHoverInfo} />
 			<MapView />
 		</div>
 	)

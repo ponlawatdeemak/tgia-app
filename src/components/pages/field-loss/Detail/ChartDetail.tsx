@@ -29,6 +29,7 @@ import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import useResponsive from '@/hook/responsive'
 import { formatDate } from '@/utils/date'
+import classNames from 'classnames'
 
 interface Data {
 	totalPredicted: ResponseArea
@@ -63,7 +64,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 	const { data: timeStatisticData, isLoading: isTimeStatisticData } = useQuery({
 		queryKey: ['getTimeStatistic', filterTimeStatistic],
 		queryFn: () => service.fieldLoss.getTimeStatistic(filterTimeStatistic),
-		enabled: areaDetail === 'time-statistic' || !isDesktop,
+		//enabled: areaDetail === 'time-statistic' || !isDesktop,
 	})
 
 	const rows = useMemo(() => timeStatisticData?.data || [], [timeStatisticData?.data])
@@ -134,7 +135,14 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 	}, [queryParams.endDate, i18n.language])
 
 	return (
-		<div className='box-border flex h-full flex-1 flex-col gap-4 bg-white p-4 max-lg:rounded lg:gap-3 lg:overflow-hidden lg:p-6 lg:pb-0'>
+		<div
+			className={classNames(
+				'box-border flex h-full flex-1 flex-col gap-4 bg-white p-4 max-lg:rounded lg:gap-3 lg:overflow-hidden lg:p-6 lg:pb-0',
+				{
+					'lg:hidden': areaDetail !== 'time-statistic',
+				},
+			)}
+		>
 			<div className='flex flex-col gap-2'>
 				{!isDesktop && (
 					<Typography className='text-sm font-medium text-gray-dark2'>

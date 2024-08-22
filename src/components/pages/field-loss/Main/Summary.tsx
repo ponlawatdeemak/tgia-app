@@ -212,7 +212,7 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 											/>
 										</IconButton>
 									</DialogTitle>
-									<DialogContent className='p-0 max-lg:[&_svg]:!h-full max-lg:[&_svg]:!w-full'>
+									<DialogContent className='flex justify-center p-0 max-lg:[&_svg]:!h-full max-lg:[&_svg]:!w-full'>
 										{areaType === AreaTypeKey.Registration ? (
 											<Box className='overflow-hidden rounded-lg lg:h-[94px] lg:w-[433px]'>
 												<RegistrationCalculation width={433} height={94} />

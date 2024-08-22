@@ -58,7 +58,7 @@ enum LossType {
 }
 
 const RangeCalendar: React.FC<RangeCalendarProps> = ({ dateRange = undefined, onChange, className }) => {
-	const { i18n } = useTranslation()
+	const { t, i18n } = useTranslation('field-loss')
 	const { open } = useRangePicker()
 	const { queryParams } = useSearchFieldLoss()
 	const { areaType } = useAreaType()
@@ -186,7 +186,7 @@ const RangeCalendar: React.FC<RangeCalendarProps> = ({ dateRange = undefined, on
 							</div>
 						</div>
 					)}
-					{noData && <div className='text-xs !text-[#959595]'>ไม่มีข้อมูล</div>}
+					{noData && <div className='text-xs !text-[#959595]'>{t('noData')}</div>}
 				</div>
 			</div>
 		)
