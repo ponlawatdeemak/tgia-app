@@ -21,6 +21,7 @@ import {
 	Snackbar,
 	Alert,
 	PaginationItem,
+	CircularProgress,
 } from '@mui/material'
 import { visuallyHidden } from '@mui/utils'
 import { SortType } from '@/enum'
@@ -431,7 +432,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 				'pb-[8px] pt-[12px]': !isDesktop,
 			})}
 		>
-			<Paper className='flex flex-col gap-[8px] px-[24px] py-[16px]'>
+			<Paper className='relative flex flex-col gap-[8px] px-[24px] py-[16px]'>
 				<div className='flex items-baseline gap-[12px]'>
 					<Typography variant='body1' className='font-semibold'>
 						{t('userList', { ns: 'um' })}
@@ -724,6 +725,24 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 							)}
 						/>
 					</Box>
+				</Box>
+				{/* OverlayLoading */}
+				<Box
+					sx={{
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						width: '100%',
+						height: '100%',
+						display: isTableDataLoading ? 'flex' : 'none',
+						alignItems: 'center',
+						justifyContent: 'center',
+						backgroundColor: 'rgba(255, 255, 255, 0.7)',
+						zIndex: 10,
+						borderRadius: '8px',
+					}}
+				>
+					<CircularProgress />
 				</Box>
 			</Paper>
 			{/* <AlertConfirm/> x 4 forEach function */}
