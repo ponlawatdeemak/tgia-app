@@ -4,8 +4,6 @@ import React from 'react'
 import Icon from '@mdi/react'
 import { mdiArrowRight } from '@mdi/js'
 import useSearchFieldLoss from '../Main/context'
-import useLayerStore from '@/components/common/map/store/map'
-import { MVTLayer } from '@deck.gl/geo-layers'
 import { ResponseLanguage } from '@/api/interface'
 import { useTranslation } from 'react-i18next'
 import useAreaUnit from '@/store/area-unit'
@@ -25,7 +23,6 @@ interface TooltipProps {
 }
 
 const Tooltip: React.FC<TooltipProps> = ({ info, setHoverInfo }) => {
-	const { layers, addLayer, setLayers } = useLayerStore()
 	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default', 'field-loss'])

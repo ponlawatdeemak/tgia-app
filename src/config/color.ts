@@ -92,6 +92,14 @@ export const FloodTileColor: { [key: string]: [number, number, number, number] }
 	level10: [8, 81, 156, 255],
 }
 
+export const BoundaryTileColor: { [key: string]: [number, number, number, number] } = {
+	default: [0, 0, 0, 0],
+}
+
+export const LineWidthColor: { [key: string]: [number, number, number, number] } = {
+	default: [110, 110, 110, 255],
+}
+
 export const TileLayerColor = {
 	disabled: '#E2E2E2',
 	flood: '#3182BD',

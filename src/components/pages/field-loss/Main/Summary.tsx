@@ -87,14 +87,6 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 		})
 	}
 
-	const handleOpenCalDialog = () => {
-		setOpenCalDialog(true)
-	}
-
-	const handleCloseCalDialog = () => {
-		setOpenCalDialog(false)
-	}
-
 	return (
 		<div className='box-border flex flex-col gap-0 bg-gray-light p-0 lg:w-[30%] lg:min-w-[360px] lg:max-w-[580px] lg:gap-4 lg:overflow-auto lg:bg-gray-light2 lg:px-6 lg:py-4'>
 			{isSummaryDataLoading ? (
@@ -179,7 +171,7 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 								</div>
 								<div className='flex justify-end'>
 									<span
-										onClick={handleOpenCalDialog}
+										onClick={() => setOpenCalDialog(true)}
 										className='cursor-pointer text-right text-sm font-normal text-black-dark underline'
 									>
 										{t('calculationMethod', { ns: 'field-loss' })}
@@ -187,7 +179,7 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 								</div>
 								<Dialog
 									open={openCalDialog}
-									onClick={handleCloseCalDialog}
+									onClick={() => setOpenCalDialog(false)}
 									aria-labelledby='alert-dialog-title'
 									aria-describedby='alert-dialog-description'
 									PaperComponent={({ children }) => (
@@ -213,7 +205,7 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 												? t('calculationEstimatedRemediationArea', { ns: 'field-loss' })
 												: t('calculationEstimatedInsuredArea', { ns: 'field-loss' })}
 										</Typography>
-										<IconButton aria-label='close' onClick={handleCloseCalDialog}>
+										<IconButton aria-label='close' onClick={() => setOpenCalDialog(false)}>
 											<Icon
 												path={mdiClose}
 												className='h-4 w-4 font-light text-black lg:h-6 lg:w-6'
