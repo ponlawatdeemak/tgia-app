@@ -1,11 +1,11 @@
 'use client'
-import { memo, useCallback, useState } from 'react'
+import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useState } from 'react'
 import classNames from 'classnames'
 import { Box } from '@mui/material'
 import { BASEMAP } from '@deck.gl/carto'
 import { MapViewProps, MapViewState } from './interface/map'
-import MapGoogle from './MapGoogle'
-import MapLibre from './MapLibre'
+import MapGoogle, { MapGoogleRef } from './MapGoogle'
+import MapLibre, { MapLibreRef } from './MapLibre'
 import MapTools from './MapTools'
 
 const MAX_ZOOM = 10
@@ -16,9 +16,32 @@ const INITIAL_VIEW_STATE: MapViewState = {
 	zoom: 5,
 }
 
-const MapView: React.FC<MapViewProps> = ({ className = '' }) => {
+export interface MapViewRef {
+	setMapExtent: (bounds: number[][]) => void
+}
+
+function MapView({ className = '' }: MapViewProps, ref: React.Ref<MapViewRef>) {
 	const [viewState, setViewState] = useState<MapViewState>(INITIAL_VIEW_STATE)
 	const [basemap, setBasemap] = useState('carto-light')
+
+	const mapLibreRef = useRef<MapLibreRef | null>(null)
+	const mapGoogleRef = useRef<MapGoogleRef | null>(null)
+
+	useImperativeHandle(ref, () => ({
+		setMapExtent: (bounds: number[][]) => {
+			if (basemap === 'google' && mapGoogleRef.current) {
+				const googleBounds: google.maps.LatLngBoundsLiteral = {
+					north: bounds[1][1],
+					south: bounds[0][1],
+					east: bounds[1][0],
+					west: bounds[0][0],
+				}
+				mapGoogleRef.current.setExtent(googleBounds)
+			} else if (mapLibreRef.current) {
+				mapLibreRef.current.setExtent(bounds)
+			}
+		},
+	}))
 
 	const onViewStateChange = useCallback((v: any) => {
 		setViewState(v)
@@ -48,15 +71,16 @@ const MapView: React.FC<MapViewProps> = ({ className = '' }) => {
 			</Box>
 			{basemap !== 'google' ? (
 				<MapLibre
+					ref={mapLibreRef}
 					viewState={viewState as any}
 					mapStyle={basemap === 'carto-light' ? BASEMAP.VOYAGER : BASEMAP.DARK_MATTER}
 					onViewStateChange={onViewStateChange}
 				/>
 			) : (
-				<MapGoogle viewState={viewState} onViewStateChange={onViewStateChange} />
+				<MapGoogle ref={mapGoogleRef} viewState={viewState} onViewStateChange={onViewStateChange} />
 			)}
 		</div>
 	)
 }
 
-export default memo(MapView)
+export default forwardRef(MapView)
