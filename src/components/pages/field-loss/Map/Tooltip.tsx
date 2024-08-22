@@ -53,7 +53,7 @@ const Tooltip: React.FC<TooltipProps> = ({ hoverInfo, setHoverInfo }) => {
 				{hoverInfo.layerName !== 'endLayer' && (
 					<IconButton
 						onClick={() => handleClickTooltip(hoverInfo.layerName, hoverInfo.areaCode)}
-						className='h-6 w-6 rounded-lg border border-solid border-gray p-1'
+						className='ml-2 h-6 w-6 rounded-lg border border-solid border-gray p-1'
 					>
 						<Icon path={mdiArrowRight} className='h-4 w-4 font-normal text-black' />
 					</IconButton>
