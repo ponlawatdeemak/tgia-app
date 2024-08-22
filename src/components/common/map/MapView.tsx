@@ -20,7 +20,7 @@ export interface MapViewRef {
 	setMapExtent: (bounds: number[][]) => void
 }
 
-const MapView = forwardRef<MapViewRef, MapViewProps>(({ className = '' }, ref) => {
+function MapView({ className = '' }: MapViewProps, ref: React.Ref<MapViewRef>) {
 	const [viewState, setViewState] = useState<MapViewState>(INITIAL_VIEW_STATE)
 	const [basemap, setBasemap] = useState('carto-light')
 
@@ -81,6 +81,6 @@ const MapView = forwardRef<MapViewRef, MapViewProps>(({ className = '' }, ref) =
 			)}
 		</div>
 	)
-})
+}
 
-export default memo(MapView)
+export default forwardRef(MapView)

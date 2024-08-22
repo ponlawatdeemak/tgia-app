@@ -27,39 +27,40 @@ export interface MapLibreRef {
 	setExtent: (bounds: number[][]) => void
 }
 
-const MapLibre = forwardRef<MapLibreRef, MapLibreProps>(
-	({ layers, mapStyle, viewState, onViewStateChange, ...props }, ref) => {
-		const mapRef = useRef<any>(null)
-		const overlay = useLayerStore((state) => state.overlay)
+function MapLibre(
+	{ layers, mapStyle, viewState, onViewStateChange, ...props }: MapLibreProps,
+	ref: React.Ref<MapLibreRef>,
+) {
+	const mapRef = useRef<any>(null)
+	const overlay = useLayerStore((state) => state.overlay)
 
-		useImperativeHandle(ref, () => ({
-			setExtent: (bounds: number[][]) => {
-				if (mapRef.current) {
-					mapRef.current.fitBounds(bounds)
-				}
-			},
-		}))
-
-		useEffect(() => {
-			return () => {
-				overlay?.setProps({ layers: [] })
+	useImperativeHandle(ref, () => ({
+		setExtent: (bounds: number[][]) => {
+			if (mapRef.current) {
+				mapRef.current.fitBounds(bounds)
 			}
-		}, [overlay])
+		},
+	}))
 
-		return (
-			<Map
-				{...props}
-				initialViewState={viewState}
-				mapStyle={mapStyle}
-				preserveDrawingBuffer={true}
-				zoom={viewState?.zoom}
-				onMove={(e) => onViewStateChange?.(e.viewState)}
-				ref={mapRef}
-			>
-				<DeckGLOverlay />
-			</Map>
-		)
-	},
-)
+	useEffect(() => {
+		return () => {
+			overlay?.setProps({ layers: [] })
+		}
+	}, [overlay])
 
-export default MapLibre
+	return (
+		<Map
+			{...props}
+			initialViewState={viewState}
+			mapStyle={mapStyle}
+			preserveDrawingBuffer={true}
+			zoom={viewState?.zoom}
+			onMove={(e) => onViewStateChange?.(e.viewState)}
+			ref={mapRef}
+		>
+			<DeckGLOverlay />
+		</Map>
+	)
+}
+
+export default forwardRef(MapLibre)

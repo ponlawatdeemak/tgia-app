@@ -26,7 +26,7 @@ export interface MapGoogleRef {
 	setExtent: (bounds: google.maps.LatLngBoundsLiteral) => void
 }
 
-const MapGoogle = forwardRef<MapGoogleRef, MapGoogleProps>(({ viewState, onViewStateChange }, ref) => {
+function MapGoogle({ viewState, onViewStateChange }: MapGoogleProps, ref: React.Ref<MapGoogleRef>) {
 	const mapRef = useRef<google.maps.Map | null>(null)
 	const overlay = useLayerStore((state) => state.overlay)
 
@@ -69,6 +69,6 @@ const MapGoogle = forwardRef<MapGoogleRef, MapGoogleProps>(({ viewState, onViewS
 			</Map>
 		</APIProvider>
 	)
-})
+}
 
-export default MapGoogle
+export default forwardRef(MapGoogle)
