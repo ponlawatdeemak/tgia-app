@@ -41,16 +41,37 @@ const DatePickerHorizontal: React.FC<DatePickerHorizontalProps> = ({ startDate, 
 	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	let monthSliderRef = useRef<Slider | null>(null)
 	let dateSliderRef = useRef<Slider | null>(null)
-	const [slideIndex, setSlideIndex] = useState(0)
+	const [slideIndex, setSlideIndex] = useState<number>(0)
+	const [slidesToShow, setSlidesToShow] = useState<number>(0)
 
 	const settings = {
 		infinite: false,
-		slidesToShow: 1,
+		slidesToShow: 16,
 		swipeToSlide: true,
 		slidesToScroll: 4,
-		variableWidth: true,
 		arrows: false,
+		responsive: [
+			{
+				breakpoint: 1919,
+				settings: {
+					slidesToShow: 15,
+				},
+			},
+			{
+				breakpoint: 1365,
+				settings: {
+					slidesToShow: 10,
+				},
+			},
+		],
 	}
+
+	useEffect(() => {
+		if (dateSliderRef.current) {
+			const slidesToShowValue = (dateSliderRef.current as any).innerSlider.props.slidesToShow
+			setSlidesToShow(slidesToShowValue)
+		}
+	}, [dateSliderRef.current, slideIndex])
 
 	const dateRanges = useMemo(() => getDateInRange(startDate, endDate), [startDate, endDate])
 
@@ -83,50 +104,52 @@ const DatePickerHorizontal: React.FC<DatePickerHorizontalProps> = ({ startDate, 
 	}
 
 	return (
-		<div className='w-full rounded-lg bg-white p-1'>
+		<div className='rounded-lg bg-white p-1'>
 			<div className='rounded bg-[#F5F5F5] p-1'>
-				<Slider
-					{...settings}
-					className='slider variable-width h-[30px] border-0 border-x-2 border-solid border-transparent [&_.slick-track]:left-6 [&_.slick-track]:h-[30px]'
-					draggable={false}
-					ref={monthSliderRef}
-				>
-					{dateRanges.map((date, index) => {
-						return (
-							<div
-								key={index}
-								className='box-border flex h-[30px] !w-12 min-w-12 items-center justify-center border-0 border-r border-solid border-transparent'
-							>
-								{(index === 0 ||
-									slideIndex === index ||
-									(dateRanges[index - 1].getMonth() !== dateRanges[index].getMonth() &&
-										index >= slideIndex)) && (
-									<div
-										className={classNames('relative left-[-1px] flex h-full', {
-											'!left-[-24px]': index === 0 || slideIndex === index,
-										})}
-									>
-										<Divider
-											orientation='vertical'
-											variant='middle'
-											flexItem
-											className='border-r bg-[#C2C5CC]'
-										/>
-										<span className='my-auto ml-2 whitespace-nowrap text-sm text-[#7A7A7A]'>
-											{formatDate(date, 'MMM yyyy', i18n.language)}
-										</span>
-									</div>
-								)}
-							</div>
-						)
-					})}
-				</Slider>
-
-				<div className='relative border border-solid border-[#D6D6D6] px-6'>
+				<div className='px-6'>
 					<Slider
 						{...settings}
-						className='slider variable-width calendar-slider min-w-0 border-0 border-x border-solid border-gray'
+						className='slider variable-width left-[-26px] h-[30px] border-0 border-x border-solid border-transparent [&_.slick-track]:h-[30px]'
+						draggable={false}
+						ref={monthSliderRef}
+					>
+						{dateRanges.map((date, index) => {
+							return (
+								<div
+									key={index}
+									className='box-border flex h-[30px] min-w-12 items-center justify-center border-0 border-l border-solid border-transparent'
+								>
+									{(index === 0 ||
+										slideIndex === index ||
+										(dateRanges[index - 1].getMonth() !== dateRanges[index].getMonth() &&
+											index >= slideIndex)) && (
+										<div
+											className={classNames('relative left-[25px] flex h-full', {
+												'!left-[-1px]': index === 0 || slideIndex === index,
+											})}
+										>
+											<Divider
+												orientation='vertical'
+												variant='middle'
+												flexItem
+												className='border-r bg-[#C2C5CC]'
+											/>
+											<span className='my-auto ml-2 whitespace-nowrap text-sm text-[#7A7A7A]'>
+												{formatDate(date, 'MMM yyyy', i18n.language)}
+											</span>
+										</div>
+									)}
+								</div>
+							)
+						})}
+					</Slider>
+				</div>
+
+				<div className='relative px-6 outline outline-1 outline-gray'>
+					<Slider
 						ref={dateSliderRef}
+						{...settings}
+						className='slider variable-width calendar-slider min-w-0 border-0 border-x border-solid border-gray'
 						afterChange={(index) => {
 							setSlideIndex(index)
 							monthSliderRef.current?.slickGoTo(index, true)
@@ -141,10 +164,12 @@ const DatePickerHorizontal: React.FC<DatePickerHorizontalProps> = ({ startDate, 
 								<Button
 									key={index}
 									className={classNames(
-										'!flex h-8 !w-12 min-w-12 flex-col items-center justify-center gap-0.5 rounded-none border-0 border-r border-solid border-gray bg-white p-0',
+										'!flex h-8 min-w-12 flex-col items-center justify-center gap-0.5 rounded-none border-0 border-l border-solid border-gray bg-white p-0',
 										{ '!bg-[#F5F5F5] [&_span]:!text-[#959595]': noData },
 										{
-											'!border-2 border-primary': queryParams.selectedDateHorizontal === date,
+											'border-l-0 !bg-primary [&_span]:text-white':
+												queryParams.selectedDateHorizontal === date,
+											'border-l-0': index === slideIndex,
 										},
 									)}
 									onClick={() => handleDateClick(date)}
@@ -181,7 +206,7 @@ const DatePickerHorizontal: React.FC<DatePickerHorizontalProps> = ({ startDate, 
 							path={mdiChevronRight}
 							size={1}
 							className={classNames('text-black', {
-								'text-gray': slideIndex >= dateRanges.length - settings.slidesToShow,
+								'text-gray': slideIndex >= dateRanges.length - slidesToShow,
 							})}
 						/>
 					</IconButton>
