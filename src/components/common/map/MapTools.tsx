@@ -79,7 +79,7 @@ const MapTools: React.FC<MapToolsProps> = ({ onBasemapChange, onZoomIn, onZoomOu
 						value={basemap}
 						onChange={handleChange}
 						className='flex items-start'
-						sx={{ flexDirection: { xs: 'column', md: 'row' } }}
+						sx={{ flexDirection: 'row' }}
 					>
 						{basemapList.map((item, index) => {
 							return (
