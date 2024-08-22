@@ -36,6 +36,7 @@
     "searchResults": "ผลลัพธ์การค้นหา",
     "favoriteAreas": "พื้นที่ในรายการโปรด",
     "recentSearches": "ค้นหาล่าสุด",
+    "thailand": "ประเทศไทย",
 	"warning": {
 		"inputEmail": "กรุณากรอกอีเมล",
 		"inputPassword": "กรุณากรอกรหัสผ่าน",
@@ -51,7 +52,8 @@
 		"minPasswordSymbol": "ต้องมีอักขระพิเศษอย่างน้อย 1 ตัว",
 		"inputFirstName": "กรุณากรอกชื่อ",
 		"inputLastName": "กรุณากรอกนามสกุล",
-		"inputProvince": "กรุณาเลือกจังหวัด"
+		"inputProvince": "กรุณาเลือกจังหวัด",
+		"inputDistrict": "กรุณาเลือกอำเภอ"
 	},
 	"success": {},
 	"error": {
