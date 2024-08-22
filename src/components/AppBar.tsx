@@ -151,12 +151,7 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 										MenuListProps={{
 											'aria-labelledby': 'basic-button',
 										}}
-										sx={{
-											'.MuiPaper-root': {
-												width: '160px',
-												border: '1px solid #D6D6D6',
-											},
-										}}
+										className='[&_.MuiPaper-root]:w-40 [&_.MuiPaper-root]:border [&_.MuiPaper-root]:border-solid [&_.MuiPaper-root]:border-gray'
 									>
 										{menu?.children?.map((subMenu) =>
 											(subMenu.access?.length || 0) > 0 ? (
@@ -246,7 +241,6 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 							{menuAreaString}
 						</Button>
 						<Menu
-							// id='basic-menu2'
 							anchorEl={anchorToggleMenuEl}
 							open={openToggleMenu}
 							onClose={() => setAnchorToggleMenuEl(null)}
@@ -261,35 +255,18 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 								vertical: 'top',
 								horizontal: 'right',
 							}}
-							sx={{
-								'.MuiPaper-root': {
-									width: '240px',
-									padding: '16px',
-									border: '1px solid #D6D6D6',
-								},
-								'.MuiList-root': {
-									padding: 0,
-									display: 'flex',
-									flexDirection: 'column',
-									gap: 1.5,
-								},
-								'button.MuiButtonBase-root': {
-									borderColor: 'transparent',
-								},
-								'.MuiButtonBase-root.Mui-selected': {
-									backgroundColor: 'white',
-									border: '1px solid #0C626D',
-									color: '#0C626D',
+							slotProps={{
+								paper: {
+									className:
+										'w-60 p-4 border border-solid border-gray [&_.MuiList-root]:p-0 [&_.MuiList-root]:flex [&_.MuiList-root]:flex-col [&_.MuiList-root]:gap-3',
 								},
 							}}
+							className='[&_.MuiButtonBase-root.Mui-selected]:border [&_.MuiButtonBase-root.Mui-selected]:border-solid [&_.MuiButtonBase-root.Mui-selected]:border-primary [&_.MuiButtonBase-root.Mui-selected]:bg-white [&_.MuiButtonBase-root.Mui-selected]:text-primary [&_button.MuiButtonBase-root]:border-transparent'
 						>
-							<MenuItem
-								sx={{ borderBottom: '1px solid #D6D6D6' }}
-								className='flex flex-col items-start gap-2 bg-transparent p-0 pb-3'
-							>
+							<MenuItem className='flex flex-col items-start gap-2 border-0 border-b border-solid border-gray bg-transparent p-0 pb-3'>
 								<Typography className='text-sm'>{t('menu.areaType')}</Typography>
 								<ToggleButtonGroup
-									className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
+									className='box-border flex w-full gap-1 bg-gray-light3 p-1'
 									value={areaType}
 									exclusive
 									onChange={handleAreaTypeChange}
@@ -310,13 +287,10 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 									</ToggleButton>
 								</ToggleButtonGroup>
 							</MenuItem>
-							<MenuItem
-								sx={{ borderBottom: '1px solid #D6D6D6' }}
-								className='flex flex-col items-start gap-2 bg-transparent p-0 pb-3'
-							>
+							<MenuItem className='flex flex-col items-start gap-2 border-0 border-b border-solid border-gray bg-transparent p-0 pb-3'>
 								<Typography className='text-sm'> {t('menu.areaUnit')} </Typography>
 								<ToggleButtonGroup
-									className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
+									className='box-border flex w-full gap-1 bg-gray-light3 p-1'
 									value={areaUnit}
 									exclusive
 									onChange={handleAreaUnitChange}
@@ -340,7 +314,7 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 							<MenuItem className='flex flex-col items-start gap-2 bg-transparent p-0'>
 								<Typography className='text-sm'> {t('menu.language')} </Typography>
 								<ToggleButtonGroup
-									className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
+									className='box-border flex w-full gap-1 bg-gray-light3 p-1'
 									value={i18n.language}
 									exclusive
 									onChange={handleLanguageChange}
@@ -413,20 +387,9 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 							<Icon path={mdiClose} size={1} />
 						</IconButton>
 					</div>
-					<Divider sx={{ borderBottomWidth: '1px', borderColor: '#D6D6D6' }} />
+					<Divider className='border-0 border-b border-solid border-gray' />
 					<div className='m-4 flex flex-col overflow-auto'>
-						<List
-							className='h-full p-0'
-							sx={{
-								'li.MuiListItem-root': {
-									px: 1.5,
-									borderBottom: '1px solid #D6D6D6',
-								},
-								'span.MuiTypography-root': {
-									fontWeight: 500,
-								},
-							}}
-						>
+						<List className='h-full p-0 [&_li.MuiListItem-root]:border-0 [&_li.MuiListItem-root]:border-b [&_li.MuiListItem-root]:border-solid [&_li.MuiListItem-root]:border-gray [&_li.MuiListItem-root]:px-3 [&_span.MuiTypography-root]:font-medium'>
 							{appMenuConfig.map((menu) =>
 								(menu.children?.length || 0) > 0 ? (
 									<div key={menu.path}>
@@ -505,50 +468,50 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 						</div>
 					</div>
 					{toggle && (
-						<div className='flex flex-col border-0 border-t-[1px] border-solid border-[#D6D6D6] [&_.Mui-selected]:bg-white [&_.Mui-selected]:text-primary [&_.MuiButtonBase-root.Mui-selected]:border-primary [&_.MuiButtonBase-root]:border-transparent'>
+						<div className='flex flex-col border-0 border-t-[1px] border-solid border-gray [&_.Mui-selected]:bg-white [&_.Mui-selected]:text-primary [&_.MuiButtonBase-root.Mui-selected]:border-primary [&_.MuiButtonBase-root]:border-transparent'>
 							<div className='flex flex-col gap-2 px-3 py-2'>
 								<Typography className='text-sm font-medium'>{t('menu.areaType')}</Typography>
 								<ToggleButtonGroup
-									className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
+									className='box-border flex w-full gap-1 bg-gray-light3 p-1'
 									value={areaType}
 									exclusive
 									onChange={handleAreaTypeChange}
 								>
 									<ToggleButton
 										className='w-full px-3 py-1.5 text-base font-semibold'
-										value='registration'
+										value={AreaTypeKey.Registration}
 										aria-label='left aligned'
 									>
 										{t('menu.areaTypeUnit.registration')}
 									</ToggleButton>
 									<ToggleButton
 										className='w-full rounded px-3 py-1.5 text-base font-semibold'
-										value='insurance'
+										value={AreaTypeKey.Insurance}
 										aria-label='right aligned'
 									>
 										{t('menu.areaTypeUnit.insurance')}
 									</ToggleButton>
 								</ToggleButtonGroup>
 							</div>
-							<div className='flex border-0 border-t-[1px] border-solid border-[#D6D6D6]'>
-								<div className='flex w-full flex-col gap-2 border-0 border-r-[1px] border-solid border-[#D6D6D6] p-3'>
+							<div className='flex border-0 border-t-[1px] border-solid border-gray'>
+								<div className='flex w-full flex-col gap-2 border-0 border-r-[1px] border-solid border-gray p-3'>
 									<Typography className='text-sm font-medium'> {t('menu.areaUnit')}</Typography>
 									<ToggleButtonGroup
-										className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
+										className='box-border flex w-full gap-1 bg-gray-light3 p-1'
 										value={areaUnit}
 										exclusive
 										onChange={handleAreaUnitChange}
 									>
 										<ToggleButton
 											className='w-full px-3 py-1.5 text-base font-semibold'
-											value='rai'
+											value={AreaUnitKey.Rai}
 											aria-label='left aligned'
 										>
 											{t('menu.areaUnitUnit.rai')}
 										</ToggleButton>
 										<ToggleButton
 											className='w-full rounded px-3 py-1.5 text-base font-semibold'
-											value='landPlot'
+											value={AreaUnitKey.LandPlot}
 											aria-label='right aligned'
 										>
 											{t('menu.areaUnitUnit.landPlot')}
@@ -558,21 +521,21 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 								<div className='flex w-full flex-col gap-2 p-3'>
 									<Typography className='text-sm font-medium'>ภาษา</Typography>
 									<ToggleButtonGroup
-										className='box-border flex w-full gap-1 bg-[#F5F5F5B2] p-1'
+										className='box-border flex h-full w-full gap-1 bg-gray-light3 p-1'
 										value={i18n.language}
 										exclusive
 										onChange={handleLanguageChange}
 									>
 										<ToggleButton
 											className='w-full rounded px-3 py-1.5 text-base font-semibold'
-											value='th'
+											value={Language.TH}
 											aria-label='left aligned'
 										>
 											TH
 										</ToggleButton>
 										<ToggleButton
 											className='w-full rounded px-3 py-1.5 text-base font-semibold'
-											value='en'
+											value={Language.EN}
 											aria-label='right aligned'
 										>
 											EN
