@@ -1,5 +1,6 @@
 import {
 	GetAreaStatisticDtoIn,
+	GetExtentAdminPolyDtoIn,
 	GetSearchAdminPolyDtoIn,
 	GetSummaryAreaDtoIn,
 	GetSummaryPredictedLossDtoIn,
@@ -7,6 +8,7 @@ import {
 } from './dto-in.dto'
 import {
 	GetAreaStatisticDtoOut,
+	GetExtentAdminPolyDtoOut,
 	GetSearchAdminPolyDtoOut,
 	GetSummaryAreaDtoOut,
 	GetSummaryPredictedLossDtoOut,
@@ -24,6 +26,13 @@ const fieldLoss = {
 		if (payload.keyword) params.append('keyword', payload.keyword)
 
 		return await api.get(`/admin-poly/search?${params}`, APIService.DisasterAPI)
+	},
+	getExtentAdminPoly: async (payload: GetExtentAdminPolyDtoIn): Promise<ResponseDto<GetExtentAdminPolyDtoOut>> => {
+		const params = new URLSearchParams()
+
+		if (payload.id !== undefined) params.append('id', payload.id.toString())
+
+		return await api.get(`/admin-poly/extent?${params}`, APIService.DisasterAPI)
 	},
 	getSummaryPredictedLoss: async (
 		payload: GetSummaryPredictedLossDtoIn,

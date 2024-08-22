@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import MapView from '@/components/common/map/MapView'
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react'
+import MapView, { MapViewRef } from '@/components/common/map/MapView'
 import { Box, Breadcrumbs, Link, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
@@ -82,9 +82,10 @@ const DefaultLineWidth = 0
 
 interface MapDetailProps {
 	areaDetail: string
+	mapViewRef: any
 }
 
-const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
+const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
@@ -856,7 +857,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 				/>
 			</Box>
 			<Tooltip hoverInfo={hoverInfo} setHoverInfo={setHoverInfo} />
-			<MapView />
+			<MapView ref={mapViewRef} />
 		</div>
 	)
 }

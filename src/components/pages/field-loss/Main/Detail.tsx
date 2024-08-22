@@ -9,9 +9,13 @@ import useResponsive from '@/hook/responsive'
 import MapDetail from '../Detail/MapDetail'
 import { useTranslation } from 'react-i18next'
 
-interface FieldLossDetailProps {}
+interface FieldLossDetailProps {
+	mapViewRef: any
+}
 
-const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
+// const mapViewRef = useRef<MapViewRef>(null)
+
+const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ mapViewRef }) => {
 	const [areaDetail, setAreaDetail] = useState('summary-area')
 	const { t } = useTranslation('field-loss')
 
@@ -57,7 +61,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 					{t('byTime')}
 				</ToggleButton>
 			</ToggleButtonGroup>
-			<MapDetail areaDetail={areaDetail} />
+			<MapDetail areaDetail={areaDetail} mapViewRef={mapViewRef} />
 			<TableDetail areaDetail={areaDetail} />
 			<ChartDetail areaDetail={areaDetail} />
 		</Paper>

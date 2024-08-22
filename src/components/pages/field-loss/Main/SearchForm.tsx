@@ -29,9 +29,11 @@ const ProvinceCodeLength = 2
 const DistrictCodeLength = 4
 const SubDistrictCodeLength = 6
 
-interface SearchFormProps {}
+interface SearchFormProps {
+	mapViewRef: any
+}
 
-const SearchForm: React.FC<SearchFormProps> = () => {
+const SearchForm: React.FC<SearchFormProps> = ({ mapViewRef }) => {
 	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	const [inputValue, setInputValue] = useState<string>('')
 	const [selectedOption, setSeletedOption] = useState<OptionType | null>(null)
@@ -45,6 +47,12 @@ const SearchForm: React.FC<SearchFormProps> = () => {
 		queryFn: () => service.fieldLoss.getSearchAdminPoly({ keyword: inputValue }),
 		enabled: !!inputValue,
 	})
+
+	// const { data: extenthData, isLoading: isExtentDataLoading } = useQuery({
+	// 	queryKey: ['getExtentAdminPoly', inputValue],
+	// 	queryFn: () => service.fieldLoss.getEAdminPoly({ keyword: inputValue }),
+	// 	enabled: !!inputValue,
+	// })
 
 	const optionList = useMemo(() => {
 		if (userId) {
@@ -70,6 +78,7 @@ const SearchForm: React.FC<SearchFormProps> = () => {
 
 	useEffect(() => {
 		const displaySearchOption = async () => {
+			let adminPolyCode = null
 			if (queryParams.provinceCode && queryParams.districtCode && queryParams.subDistrictCode) {
 				try {
 					const subDistrict = (
@@ -79,6 +88,7 @@ const SearchForm: React.FC<SearchFormProps> = () => {
 						? { name: subDistrict.name, id: subDistrict.id, searchType: 'search' }
 						: null
 					setSeletedOption(subDistrictOption)
+					adminPolyCode = queryParams.subDistrictCode
 				} catch (error) {
 					console.log('error: ', error)
 				}
@@ -90,6 +100,7 @@ const SearchForm: React.FC<SearchFormProps> = () => {
 						? { name: district.name, id: district.id, searchType: 'search' }
 						: null
 					setSeletedOption(districtOption)
+					adminPolyCode = queryParams.districtCode
 				} catch (error) {
 					console.log('error: ', error)
 				}
@@ -101,11 +112,23 @@ const SearchForm: React.FC<SearchFormProps> = () => {
 						? { name: province.name, id: province.id, searchType: 'search' }
 						: null
 					setSeletedOption(provinceOption)
+					adminPolyCode = queryParams.provinceCode
 				} catch (error) {
 					console.log('error: ', error)
 				}
 			} else {
 				setSeletedOption(null)
+			}
+
+			try {
+				if (adminPolyCode === null) return
+
+				const extentProvince = (await service.fieldLoss.getExtentAdminPoly({ id: adminPolyCode })).data
+				if (mapViewRef.current) {
+					mapViewRef.current.setMapExtent(extentProvince?.extent)
+				}
+			} catch (error) {
+				console.log('error zoom extent: ', error)
 			}
 		}
 
