@@ -60,7 +60,7 @@ interface Data {
 
 interface HeadCell {
 	disablePadding: boolean
-	id: keyof Data
+	id: string
 	label: string
 	numeric: boolean
 	minWidth: string
@@ -86,7 +86,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 }) => {
 	const { data: session } = useSession()
 	const [order, setOrder] = React.useState<SortType>(SortType.ASC)
-	const [orderBy, setOrderBy] = React.useState<keyof Data>('firstName')
+	const [orderBy, setOrderBy] = React.useState<string>('firstName')
 	const [selected, setSelected] = React.useState<readonly string[]>([])
 	const [dense, setDense] = React.useState(false)
 	const queryClient = useQueryClient()
@@ -218,7 +218,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	}, [isSearch])
 
 	const handleRequestSort = React.useCallback(
-		(event: React.MouseEvent<unknown>, property: keyof Data) => {
+		(event: React.MouseEvent<unknown>, property: string) => {
 			const isAsc = orderBy === property && order === SortType.ASC
 			setSearchParams((prevSearch) => ({
 				...prevSearch,
@@ -246,7 +246,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	)
 
 	const createSortHandler = React.useCallback(
-		(property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+		(property: string) => (event: React.MouseEvent<unknown>) => {
 			handleRequestSort(event, property)
 		},
 		[handleRequestSort],
