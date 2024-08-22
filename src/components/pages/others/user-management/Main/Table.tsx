@@ -443,7 +443,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					</Typography>
 				</div>
 
-				<Box className='flex h-[70vh] flex-col gap-[16px]'>
+				<Box className='flex h-[calc(100vh-200px)] flex-col gap-[16px] lg:h-[calc(100vh-220px)]'>
 					<TableContainer
 						className='flex flex-col overflow-y-auto'
 						sx={{ minHeight: '90%', flex: 1 }}

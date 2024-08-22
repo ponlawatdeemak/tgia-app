@@ -284,7 +284,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 				onSubmit={handleSubmitUser}
 				fullWidth
 				scroll='paper'
-				className={classNames('[&_.MuiPaper-root]:h-[636px] [&_.MuiPaper-root]:max-w-[800px]', {
+				className={classNames('[&_.MuiPaper-root]:h-[636px] [&_.MuiPaper-root]:max-w-[700px]', {
 					'': !isDesktop,
 				})}
 			>
@@ -303,22 +303,13 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 						<FormControlLabel
 							sx={{
 								pointerEvents: 'none',
+								margin: 0,
 							}}
 							className='max-lg:pt-1'
 							control={
 								<div className='pointer-events-auto'>
 									<IOSSwitch
-										sx={{
-											m: 1,
-											'& .MuiSwitch-switchBase': {
-												'&.Mui-checked': {
-													'& + .MuiSwitch-track': {
-														backgroundColor: '#0C626D',
-													},
-												},
-											},
-											marginLeft: '14px',
-										}}
+										className='m-0 mr-2 [&_.Mui-checked+.MuiSwitch-track]:bg-[#0C626D]'
 										checked={formik.values.flagStatus === 'A' ? true : false}
 										onChange={(event) => {
 											formik.setFieldValue('flagStatus', event.target.checked ? 'A' : 'C')
