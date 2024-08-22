@@ -1,5 +1,5 @@
 'use client'
-import './inject'
+import '@/components/common/map/inject'
 import React, { useRef } from 'react'
 import MapView, { MapViewRef } from '@/components/common/map/MapView'
 import { Box, IconButton, Container, Paper } from '@mui/material'

@@ -1,5 +1,6 @@
 'use client'
 
+import '@/components/common/map/inject'
 import { Paper } from '@mui/material'
 import SearchForm from './SearchForm'
 import FieldLossSummary from './Summary'
