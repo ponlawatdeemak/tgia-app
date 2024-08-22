@@ -673,7 +673,8 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								{emptyRows > 0 && (
 									<TableRow
 										style={{
-											height: (dense ? 33 : 53) * emptyRows,
+											// height: (dense ? 33 : 53) * emptyRows,
+											height: 168 * emptyRows,
 										}}
 									>
 										<TableCell colSpan={10} />

@@ -1,4 +1,15 @@
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, FormControlLabel } from '@mui/material'
+import {
+	Alert,
+	Box,
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Snackbar,
+	FormControlLabel,
+	CircularProgress,
+} from '@mui/material'
 import React, { FormEvent, useState, useCallback, useEffect } from 'react'
 import IOSSwitch from '@/components/common/switch/IOSSwitch'
 import ProfileForm from '@/components/shared/ProfileForm'
@@ -18,6 +29,7 @@ import Icon from '@mdi/react'
 import { mdiTrashCanOutline } from '@mdi/js'
 import useResponsive from '@/hook/responsive'
 import classNames from 'classnames'
+import LoadingButton from '@mui/lab/LoadingButton'
 
 export interface UserManagementProps {
 	open: boolean
@@ -43,7 +55,7 @@ const defaultFormValues: UMFormValues = {
 	role: '',
 	responsibleProvinceCode: '',
 	responsibleDistrictCode: '',
-	flagStatus: 'C',
+	flagStatus: 'A',
 }
 
 export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
@@ -71,6 +83,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 		lastName: yup.string().required(t('warning.inputLastName')),
 		email: yup.string().email(t('warning.invalidEmailFormat')).required(t('warning.inputEmail')),
 		responsibleProvinceCode: yup.string().required(t('warning.inputProvince')),
+		responsibleDistrictCode: yup.string().required(t('warning.inputDistrict')),
 	})
 	const {
 		data: userData,
@@ -131,7 +144,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 				})
 			}
 		},
-		[ session?.user.id, t, setIsSearch, setOpen],
+		[session?.user.id, t, setIsSearch, setOpen],
 	)
 
 	const onSubmit = useCallback(
@@ -194,6 +207,8 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 						})
 						console.log('res :: ', res)
 						setIsSearch(true)
+						setOpen(false)
+						formik.resetForm()
 					} catch (error: any) {
 						console.log(error)
 						setAlertInfo({
@@ -279,13 +294,25 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 						<ProfileForm
 							formik={formik}
 							loading={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
+							isFormUM={true}
+							isEditFormUM={isEdit}
+							isDisabledProfile={userId === session?.user.id}
 						/>
 					</div>
 					{session?.user.id !== userId && (
 						<FormControlLabel
 							control={
 								<IOSSwitch
-									sx={{ m: 1 }}
+									sx={{
+										m: 1,
+										'& .MuiSwitch-switchBase': {
+											'&.Mui-checked': {
+												'& + .MuiSwitch-track': {
+													backgroundColor: '#0C626D',
+												},
+											},
+										},
+									}}
 									checked={formik.values.flagStatus === 'A' ? true : false}
 									onChange={(event) => {
 										formik.setFieldValue('flagStatus', event.target.checked ? 'A' : 'C')
@@ -328,15 +355,17 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 						>
 							{t('cancel')}
 						</Button>
-						<Button
-							type='submit'
+						<LoadingButton
+							fullWidth
+							loading={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
+							loadingPosition='start'
+							startIcon={<CircularProgress size={0} />}
 							variant='contained'
-							color='primary'
-							className='h-[40px] w-[71px] text-sm [&_.MuiButtonBase-root]:w-[71px]'
-							disabled={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
+							type='submit'
+							className='h-[40px] w-[71px] text-sm [&_.MuiButton-startIcon]:m-0 [&_.MuiButtonBase-root]:w-[71px]'
 						>
-							{t('save', { ns: 'um' })}
-						</Button>
+							<span>{t('save', { ns: 'um' })}</span>
+						</LoadingButton>
 					</div>
 				</DialogActions>
 			</Dialog>

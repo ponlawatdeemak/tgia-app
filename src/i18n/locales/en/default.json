@@ -52,7 +52,8 @@
 		"minPasswordSymbol": "Password must contain at least 1 special symbol.",
 		"inputFirstName": "Please enter your first name.",
 		"inputLastName": "Please enter your last name.",
-		"inputProvince": "Please select your province."
+		"inputProvince": "Please select your province.",
+		"inputDistrict": "Please select your district."
 	},
 	"success": {},
 	"error": {
