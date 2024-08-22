@@ -29,6 +29,7 @@ import { GetSummaryAreaDtoIn } from '@/api/field-loss/dto-in.dto'
 import useSearchFieldLoss from '../Main/context'
 import { Feature, Geometry } from 'geojson'
 import { useTranslation } from 'react-i18next'
+import classNames from 'classnames'
 
 interface FilterRangeMonthType {
 	startDate: string
@@ -133,7 +134,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 	const { data: summaryAreaData, isLoading: isSummaryAreaDataLoading } = useQuery({
 		queryKey: ['getSummaryArea', filterSummaryArea],
 		queryFn: () => service.fieldLoss.getSummaryArea(filterSummaryArea),
-		enabled: areaDetail === 'summary-area' || !isDesktop,
+		//enabled: areaDetail === 'summary-area' || !isDesktop,
 	})
 
 	const summaryAreaId = useMemo(() => {
@@ -769,7 +770,11 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 	}
 
 	return (
-		<div className='relative h-[390px] w-full max-lg:overflow-hidden max-lg:rounded lg:h-full'>
+		<div
+			className={classNames('relative h-[390px] w-full max-lg:overflow-hidden max-lg:rounded lg:h-full', {
+				'lg:hidden': areaDetail !== 'summary-area',
+			})}
+		>
 			<Box
 				role='presentation'
 				className='absolute left-3 top-3 z-10 flex h-7 items-center gap-2 rounded-lg bg-white px-2 py-1'

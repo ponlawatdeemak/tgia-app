@@ -12,9 +12,8 @@ import { useTranslation } from 'react-i18next'
 interface FieldLossDetailProps {}
 
 const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
-	const { isDesktop } = useResponsive()
 	const [areaDetail, setAreaDetail] = useState('summary-area')
-	const { t, i18n } = useTranslation('field-loss')
+	const { t } = useTranslation('field-loss')
 
 	const handleAreaDetailChange = useCallback((_event: React.MouseEvent<HTMLElement>, newAreaDetail: string) => {
 		setAreaDetail((prev) => newAreaDetail || prev)
@@ -58,9 +57,9 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 					{t('byTime')}
 				</ToggleButton>
 			</ToggleButtonGroup>
-			{(areaDetail === 'summary-area' || !isDesktop) && <MapDetail areaDetail={areaDetail} />}
-			{(areaDetail === 'area-statistic' || !isDesktop) && <TableDetail areaDetail={areaDetail} />}
-			{(areaDetail === 'time-statistic' || !isDesktop) && <ChartDetail areaDetail={areaDetail} />}
+			<MapDetail areaDetail={areaDetail} />
+			<TableDetail areaDetail={areaDetail} />
+			<ChartDetail areaDetail={areaDetail} />
 		</Paper>
 	)
 }
