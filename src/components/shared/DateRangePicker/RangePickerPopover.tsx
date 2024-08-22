@@ -15,7 +15,7 @@ interface RangePickerPopoverProps {
 }
 
 const RangePickerPopover: React.FC<RangePickerPopoverProps> = ({ anchorEl, setAnchorEl, className = '' }) => {
-	const { i18n } = useTranslation()
+	const { t, i18n } = useTranslation(['field-loss', 'default'])
 	const { open, setOpen, resetDateRanges } = useRangePicker()
 	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	const [ranges, setRanges] = useState<DateRangeTypes>()
@@ -72,25 +72,39 @@ const RangePickerPopover: React.FC<RangePickerPopoverProps> = ({ anchorEl, setAn
 				<div className='w-[172px] border-0 border-l border-solid border-gray px-6 py-4'>
 					<FormInput
 						name='startDate'
-						label='วันที่เริ่มต้น'
+						label={t('startDate')}
 						value={
 							ranges?.startDate ? formatDate(ranges.startDate, 'd MMM yyyy', i18n.language) : undefined
 						}
-						className='[&_#startDate-label]:!text-sm [&_#startDate-label]:!font-medium'
+						className='[&_#startDate-label]:!text-sm [&_#startDate-label]:!font-medium [&_.MuiOutlinedInput-root]:rounded-lg'
 					/>
 					<FormInput
 						name='endDate'
-						label='วันที่สิ้นสุด'
+						label={t('endDate')}
 						value={ranges?.endDate ? formatDate(ranges.endDate, 'd MMM yyyy', i18n.language) : undefined}
-						className='mt-4 [&_#endDate-label]:!text-sm [&_#endDate-label]:!font-medium'
+						className='mt-4 [&_#endDate-label]:!text-sm [&_#endDate-label]:!font-medium [&_.MuiOutlinedInput-root]:rounded-lg'
 					/>
-					<div className='mt-4 flex justify-center gap-2'>
-						<Button variant='outlined' onClick={onReset}>
-							รีเซ็ท
+					<div className='mt-4 flex justify-start gap-2'>
+						<Button
+							variant='outlined'
+							className='border border-solid border-gray text-black'
+							onClick={onReset}
+						>
+							{t('reset')}
 						</Button>
 						<Button variant='contained' onClick={onSubmit}>
-							ใช้งาน
+							{t('use')}
 						</Button>
+					</div>
+					<div className='mt-4 flex flex-col'>
+						<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
+							<span className='h-2.5 w-2.5 rounded-sm bg-lossType-drought'></span>
+							<span className='text-base font-medium text-black'>{t('drought', { ns: 'default' })}</span>
+						</div>
+						<div className='flex flex-row items-center gap-1 px-2 py-0.5'>
+							<span className='h-2.5 w-2.5 rounded-sm bg-lossType-flood'></span>
+							<span className='text-base font-medium text-black'>{t('flood', { ns: 'default' })}</span>
+						</div>
 					</div>
 				</div>
 			</div>
