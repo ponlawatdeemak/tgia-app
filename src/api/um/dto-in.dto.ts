@@ -22,6 +22,7 @@ export interface PutProfileDtoIn {
 export interface GetSearchUMDtoIn extends TablePagination {
 	keyword: string
 	firstName: string
+	respLang: string
 }
 
 export interface PatchStatusDtoIn {

@@ -47,7 +47,7 @@ import { mdiAccountOff } from '@mdi/js'
 import { FormMain } from '../Form'
 
 interface Data {
-	id: number
+	id: string
 	firstName: string
 	email: string
 	organization: string
@@ -130,7 +130,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			minWidth: '140px',
 		},
 		{
-			id: 'responsibleProvinceName',
+			id: 'respProvince',
 			numeric: false,
 			disablePadding: false,
 			label: t('belongProvince', { ns: 'um' }),
@@ -138,7 +138,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			minWidth: '160px',
 		},
 		{
-			id: 'responsibleDistrictName',
+			id: 'respDistrict',
 			numeric: false,
 			disablePadding: false,
 			label: t('belongDistrict', { ns: 'um' }),
@@ -224,6 +224,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 				...prevSearch,
 				sortField: property,
 				sortOrder: isAsc ? SortType.DESC : SortType.ASC,
+				respLang: i18n.language,
 			}))
 			setIsSearch(true)
 			setOrder(isAsc ? SortType.DESC : SortType.ASC)
@@ -403,11 +404,13 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 				setSearchParams((prevSearch) => ({
 					...prevSearch,
 					offset: page < value ? prevSearch.offset + 10 : prevSearch.offset - 10,
+					respLang: i18n.language,
 				}))
 			} else {
 				setSearchParams((prevSearch) => ({
 					...prevSearch,
 					offset: (value - 1) * 10,
+					respLang: i18n.language,
 				}))
 			}
 			setIsSearch(true)
