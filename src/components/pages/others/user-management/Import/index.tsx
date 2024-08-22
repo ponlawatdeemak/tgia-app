@@ -305,19 +305,14 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 												{importError.map((error) => {
 													if (error.success === false) {
 														return (
-															// <div key={error.firstName}>
-															// 	<p key={error.firstName}>
-															// 		{error.rowNo} :{error.result}
-															// 	</p>
-															// </div>
 															<div
-																className='flex items-center justify-between p-2'
+																className='relative flex items-center justify-between p-2'
 																key={error.firstName}
 															>
-																<div className='mr-[16px] w-12 text-left'>
+																<div className='absolute left-[8px] top-[9px] w-12 text-left lg:static lg:mr-[16px] lg:flex-none'>
 																	{error.rowNo}
 																</div>
-																<div className='flex-shrink flex-grow basis-0'>
+																<div className='ml-12 flex-shrink flex-grow basis-0 lg:ml-0'>
 																	:{error.result}
 																</div>
 															</div>
