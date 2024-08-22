@@ -203,9 +203,9 @@ const FavoriteSearchForm: React.FC<FavoriteSearchFormProp> = ({
 						) : null
 					) : option.searchType === 'favorite' ? (
 						<li key={`favorite-${key}`} {...optionProps}>
-							<div className='flex w-full items-center justify-between'>
-								<div className='flex items-center gap-2'>
-									<IconButton className='p-0'>
+							<div className='flex w-full items-start justify-between'>
+								<div className='flex items-start gap-2'>
+									<IconButton className='mt-1 p-0'>
 										<StarBorder className='h-5 w-5 text-yellow' />
 									</IconButton>
 									<div>
@@ -224,7 +224,7 @@ const FavoriteSearchForm: React.FC<FavoriteSearchFormProp> = ({
 								</div>
 								{!inputValue && (
 									<IconButton
-										className='p-0'
+										className='mt-1 p-0'
 										onClick={(event) => handleRemoveFavorite(event, option.id)}
 									>
 										<Remove className='h-5 w-5 font-light text-gray-light4' />
