@@ -1,28 +1,16 @@
 'use client'
 import service from '@/api'
-import DatePickerHorizontal from '@/components/shared/DatePickerHorizontal'
-import { Box, Button, Tab, Tabs, ToggleButton, ToggleButtonGroup } from '@mui/material'
-import { addDays, addYears } from 'date-fns'
+import { Box, Button, Tab, Tabs, Paper } from '@mui/material'
 import React, { ChangeEvent, useEffect, useMemo, useState } from 'react'
-import LossStatistic from './LossStatistic'
-import PlantStatistic from './PlantStatistic'
-import RiceStatistic from './RiceStatistic'
 import FavoriteSearchForm from '@/components/shared/FavoriteSearchForm'
 import { useQuery } from '@tanstack/react-query'
 import { useLocalStorage } from '@/hook/local-storage'
 import { useSession } from 'next-auth/react'
 import { ResponseLanguage } from '@/api/interface'
-import SearchFormAnnualAnalysis from './SearchForm'
-import { useTranslation } from 'react-i18next'
-import clsx from 'clsx'
-import { useSearchAnnualAnalysis } from './context'
-import { LossType, SortType } from '@/enum'
-
-interface TabPanelProps {
-	children?: React.ReactNode
-	index: number
-	value: number
-}
+import DateRangePicker from '@/components/shared/DateRangePicker'
+import { Fullscreen } from '@mui/icons-material'
+import { onCapture } from '@/utils/screenshot'
+import YearPicker from './YearPicker'
 
 interface OptionType {
 	name: ResponseLanguage
@@ -40,38 +28,12 @@ const ProvinceCodeLength = 2
 const DistrictCodeLength = 4
 const SubDistrictCodeLength = 6
 
-function CustomTabPanel(props: TabPanelProps) {
-	const { children, value, index, ...other } = props
-
-	return (
-		<div
-			role='tabpanel'
-			hidden={value !== index}
-			id={`simple-tabpanel-${index}`}
-			aria-labelledby={`simple-tab-${index}`}
-			{...other}
-		>
-			{value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-		</div>
-	)
-}
-
-function a11yProps(index: number) {
-	return {
-		id: `simple-tab-${index}`,
-		'aria-controls': `simple-tabpanel-${index}`,
-	}
-}
-
-const AnnualAnalysisMain = () => {
-	const [value, setValue] = useState(0)
-	const { queryParams, setQueryParams } = useSearchAnnualAnalysis()
+const SearchFormAnnualAnalysis = () => {
 	const [inputValue, setInputValue] = useState<string>('')
 	const [selectedOption, setSeletedOption] = useState<OptionType | null>(null)
 	const [history, setHistory] = useLocalStorage<HistoryType>('fieldLoss.history', {})
 	const [favorite, setFavorite] = useLocalStorage<HistoryType>('fieldLoss.favorite', {})
 	const { data: session } = useSession()
-	const { t, i18n } = useTranslation(['default', 'field-loss'])
 	const userId = session?.user.id ?? null
 
 	const { data: searchData, isLoading: isSearchDataLoading } = useQuery({
@@ -79,10 +41,6 @@ const AnnualAnalysisMain = () => {
 		queryFn: () => service.fieldLoss.getSearchAdminPoly({ keyword: inputValue }),
 		enabled: !!inputValue,
 	})
-
-	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-		setValue(newValue)
-	}
 
 	const optionList = useMemo(() => {
 		if (userId) {
@@ -192,83 +150,29 @@ const AnnualAnalysisMain = () => {
 		setInputValue('')
 		setSeletedOption(null)
 	}
-
-	const handleTypeClick = (_event: React.MouseEvent<HTMLElement>, newAlignment: LossType | null) => {
-		// let sortTypeField: keyof Data
-		// if (newAlignment) {
-		// 	if (newAlignment === LossType.Drought) {
-		// 		sortTypeField = 'droughtPredicted'
-		// 	} else {
-		// 		sortTypeField = 'floodPredicted'
-		// 	}
-		// } else {
-		// 	sortTypeField = 'totalPredicted'
-		// }
-		setQueryParams({})
-	}
-
 	return (
-		<>
-			<div className='flex flex-col justify-center'>
-				<SearchFormAnnualAnalysis />
-				<Box>
-					{/* Tab group */}
-					<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-						<Tabs value={value} onChange={handleChange} aria-label='basic tabs example'>
-							<Tab label='พื้นที่ขึ้นทะเบียนเกษตรกร' {...a11yProps(0)} />
-							<Tab label='พื้นที่ปลูกข้าว' {...a11yProps(1)} />
-							<Tab label='พื้นที่เสียหายจากภัยพิบัติ' {...a11yProps(2)} />
-						</Tabs>
-					</Box>
-					{/* Control group */}
-					<ToggleButtonGroup
-						value={queryParams.lossType}
-						exclusive
-						onChange={handleTypeClick}
-						aria-label='loss-type'
-						className='flex gap-2 max-lg:py-3 lg:gap-1 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
-					>
-						<ToggleButton
-							className={clsx('text-base', {
-								'bg-primary font-semibold text-white': Boolean(queryParams.lossType) === false,
-								'text-gray-dark2': Boolean(queryParams.lossType) !== false,
-							})}
-							value={''}
-						>
-							{t('allDisasters')}
-						</ToggleButton>
-						<ToggleButton
-							className={clsx('text-base', {
-								'bg-primary font-semibold text-white': queryParams.lossType === LossType.Drought,
-								'text-gray-dark2': queryParams.lossType !== LossType.Drought,
-							})}
-							value={LossType.Drought}
-						>
-							{t('drought')}
-						</ToggleButton>
-						<ToggleButton
-							className={clsx('text-base', {
-								'bg-primary font-semibold text-white': queryParams.lossType === LossType.Flood,
-								'text-gray-dark2': queryParams.lossType !== LossType.Flood,
-							})}
-							value={LossType.Flood}
-						>
-							{t('flood')}
-						</ToggleButton>
-					</ToggleButtonGroup>
-					<CustomTabPanel value={value} index={0}>
-						<PlantStatistic />
-					</CustomTabPanel>
-					<CustomTabPanel value={value} index={1}>
-						<RiceStatistic />
-					</CustomTabPanel>
-					<CustomTabPanel value={value} index={2}>
-						<LossStatistic />
-					</CustomTabPanel>
-				</Box>
-			</div>
-		</>
+		<Paper className='mx-4 flex gap-1.5 bg-gray-dark4 p-1.5'>
+			<FavoriteSearchForm
+				optionList={optionList}
+				inputValue={inputValue}
+				selectedOption={selectedOption}
+				setInputValue={setInputValue}
+				handleSelectOption={handleSelectOption}
+				handleSelectFavorite={handleSelectFavorite}
+				handleRemoveHistory={handleRemoveHistory}
+				handleRemoveFavorite={handleRemoveFavorite}
+				handleClear={handleClear}
+			/>
+			<YearPicker />
+			<Button
+				className='h-10 min-w-10 bg-white p-2 text-sm font-medium text-black [&_.MuiButton-startIcon]:m-0'
+				variant='contained'
+				color='primary'
+				startIcon={<Fullscreen className='h-6 w-6' />}
+				onClick={() => onCapture()}
+			></Button>
+		</Paper>
 	)
 }
 
-export default AnnualAnalysisMain
+export default SearchFormAnnualAnalysis
