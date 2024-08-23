@@ -358,7 +358,24 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 						>
 							{t('cancel')}
 						</Button>
-						<LoadingButton
+						<Button
+							className='h-[40px] w-[71px] px-[16px] py-[8px] text-base text-sm font-semibold'
+							variant='contained'
+							onClick={handleSubmitUser}
+							color='primary'
+							disabled={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
+							startIcon={
+								isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading ? (
+									<CircularProgress
+										className='[&_.MuiCircularProgress-circle]:text-[#00000042]'
+										size={16}
+									/>
+								) : null
+							}
+						>
+							{t('save', { ns: 'um' })}
+						</Button>
+						{/* <LoadingButton
 							fullWidth
 							loading={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
 							loadingPosition='start'
@@ -369,7 +386,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 							className='h-[40px] w-[71px] text-sm [&_.MuiButton-startIcon]:m-0 [&_.MuiButtonBase-root]:w-[71px]'
 						>
 							<span>{t('save', { ns: 'um' })}</span>
-						</LoadingButton>
+						</LoadingButton> */}
 					</div>
 				</DialogActions>
 			</Dialog>
