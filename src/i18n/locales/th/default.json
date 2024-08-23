@@ -53,7 +53,9 @@
 		"inputFirstName": "กรุณากรอกชื่อ",
 		"inputLastName": "กรุณากรอกนามสกุล",
 		"inputProvince": "กรุณาเลือกจังหวัด",
-		"inputDistrict": "กรุณาเลือกอำเภอ"
+		"inputDistrict": "กรุณาเลือกอำเภอ",
+		"inputOrgCode": "กรุณาเลือกหน่วยงาน",
+		"inputRole": "กรุณาเลือกบทบาท"
 	},
 	"success": {},
 	"error": {
