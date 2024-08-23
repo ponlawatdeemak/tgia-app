@@ -213,49 +213,61 @@ const AnnualAnalysisMain = () => {
 				<SearchFormAnnualAnalysis />
 				<Box>
 					{/* Tab group */}
-					<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-						<Tabs value={value} onChange={handleChange} aria-label='basic tabs example'>
+					<Box className='ml-[24px] mr-[24px]'>
+						<Tabs
+							value={value}
+							onChange={handleChange}
+							aria-label='basic tabs example'
+							className='[&_.MuiTabs-scroller]:border-0 [&_.MuiTabs-scroller]:border-b-[1px] [&_.MuiTabs-scroller]:border-solid [&_.MuiTabs-scroller]:border-[#C2C5CC]'
+						>
 							<Tab label='พื้นที่ขึ้นทะเบียนเกษตรกร' {...a11yProps(0)} />
 							<Tab label='พื้นที่ปลูกข้าว' {...a11yProps(1)} />
 							<Tab label='พื้นที่เสียหายจากภัยพิบัติ' {...a11yProps(2)} />
 						</Tabs>
 					</Box>
 					{/* Control group */}
-					<ToggleButtonGroup
-						value={queryParams.lossType}
-						exclusive
-						onChange={handleTypeClick}
-						aria-label='loss-type'
-						className='flex gap-2 max-lg:py-3 lg:gap-1 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
-					>
-						<ToggleButton
-							className={clsx('text-base', {
-								'bg-primary font-semibold text-white': Boolean(queryParams.lossType) === false,
-								'text-gray-dark2': Boolean(queryParams.lossType) !== false,
-							})}
-							value={''}
-						>
-							{t('allDisasters')}
-						</ToggleButton>
-						<ToggleButton
-							className={clsx('text-base', {
-								'bg-primary font-semibold text-white': queryParams.lossType === LossType.Drought,
-								'text-gray-dark2': queryParams.lossType !== LossType.Drought,
-							})}
-							value={LossType.Drought}
-						>
-							{t('drought')}
-						</ToggleButton>
-						<ToggleButton
-							className={clsx('text-base', {
-								'bg-primary font-semibold text-white': queryParams.lossType === LossType.Flood,
-								'text-gray-dark2': queryParams.lossType !== LossType.Flood,
-							})}
-							value={LossType.Flood}
-						>
-							{t('flood')}
-						</ToggleButton>
-					</ToggleButtonGroup>
+					{/* Only in Loss Statistic */}
+					{value === 2 && (
+						<Box className='pl-[24px] pr-[24px]'>
+							<ToggleButtonGroup
+								value={queryParams.lossType}
+								exclusive
+								onChange={handleTypeClick}
+								aria-label='loss-type'
+								className='flex gap-2 max-lg:py-3 lg:gap-1 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
+							>
+								<ToggleButton
+									className={clsx('text-base', {
+										'bg-primary font-semibold text-white': Boolean(queryParams.lossType) === false,
+										'text-gray-dark2': Boolean(queryParams.lossType) !== false,
+									})}
+									value={''}
+								>
+									{t('allDisasters')}
+								</ToggleButton>
+								<ToggleButton
+									className={clsx('text-base', {
+										'bg-primary font-semibold text-white':
+											queryParams.lossType === LossType.Drought,
+										'text-gray-dark2': queryParams.lossType !== LossType.Drought,
+									})}
+									value={LossType.Drought}
+								>
+									{t('drought')}
+								</ToggleButton>
+								<ToggleButton
+									className={clsx('text-base', {
+										'bg-primary font-semibold text-white': queryParams.lossType === LossType.Flood,
+										'text-gray-dark2': queryParams.lossType !== LossType.Flood,
+									})}
+									value={LossType.Flood}
+								>
+									{t('flood')}
+								</ToggleButton>
+							</ToggleButtonGroup>
+						</Box>
+					)}
+
 					<CustomTabPanel value={value} index={0}>
 						<PlantStatistic />
 					</CustomTabPanel>

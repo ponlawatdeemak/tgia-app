@@ -2,7 +2,8 @@ import React from 'react'
 import bb, { bar, line } from 'billboard.js'
 import 'billboard.js/dist/billboard.css'
 import BillboardJS from '@billboard.js/react'
-import { Box } from '@mui/material'
+import { Box, Grid } from '@mui/material'
+import PlantStatisticTable from './PlantStatisticTable'
 
 const PlantStatistic = () => {
 	const options = {
@@ -29,9 +30,22 @@ const PlantStatistic = () => {
 		},
 	}
 	return (
-		<Box p={1}>
-			<BillboardJS bb={bb} options={options} className={'bb'} />
-			<BillboardJS bb={bb} options={options2} className={'bb'} />
+		<Box>
+			<Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+				<Grid item xs={6}>
+					<Box className='rounded bg-white shadow'>
+						<BillboardJS bb={bb} options={options2} className={'bb'} />
+					</Box>
+				</Grid>
+				<Grid item xs={6}>
+					<Box className='rounded bg-white shadow'>
+						<BillboardJS bb={bb} options={options} className={'bb'} />
+					</Box>
+				</Grid>
+			</Grid>
+			<Box className='mt-3'>
+				<PlantStatisticTable />
+			</Box>
 		</Box>
 	)
 }

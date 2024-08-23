@@ -98,6 +98,9 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 			>
 				{formatDateRange}
 			</Button>
+			{/* Change Popover to selection fields to handle mobile case
+                the modal popup isn't large so we should considered using select items?
+            */}
 			<Popover
 				id='year-picker-popover'
 				open={open}
