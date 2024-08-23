@@ -138,7 +138,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 							label={t('belongDistrict', { ns: 'um' })}
 							formik={formik}
 							disabled={isDistricDataLoading || loading || !formik.values.responsibleProvinceCode}
-							required={isFormUM}
 						/>
 					</div>
 					<div

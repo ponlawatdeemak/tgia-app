@@ -91,7 +91,6 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 		lastName: yup.string().required(t('warning.inputLastName')),
 		email: yup.string().email(t('warning.invalidEmailFormat')).required(t('warning.inputEmail')),
 		responsibleProvinceCode: yup.string().required(t('warning.inputProvince')),
-		responsibleDistrictCode: yup.string().required(t('warning.inputDistrict')),
 		orgCode: yup.string().required(t('warning.inputOrgCode')),
 		role: yup.string().required(t('warning.inputRole')),
 	})
