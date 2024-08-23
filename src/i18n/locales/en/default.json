@@ -46,7 +46,9 @@
 		"inputFirstName": "Please enter your first name.",
 		"inputLastName": "Please enter your last name.",
 		"inputProvince": "Please select your province.",
-		"inputDistrict": "Please select your district."
+		"inputDistrict": "Please select your district.",
+		"inputOrgCode": "Please select your organization",
+		"inputRole": "Please select your role"
 	},
 	"success": {},
 	"error": {
