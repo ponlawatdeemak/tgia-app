@@ -30,7 +30,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 				onChange={handleAreaDetailChange}
 			>
 				<ToggleButton
-					className={clsx('border border-solid text-base', {
+					className={clsx('border border-solid text-sm xl:text-base', {
 						'border-primary bg-white font-semibold text-primary': areaDetail === 'summary-area',
 						'border-transparent font-medium text-gray-dark2': areaDetail !== 'summary-area',
 					})}
@@ -39,7 +39,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 					{t('byMap')}
 				</ToggleButton>
 				<ToggleButton
-					className={clsx('border border-solid text-base', {
+					className={clsx('border border-solid text-sm xl:text-base', {
 						'border-primary bg-white font-semibold text-primary': areaDetail === 'area-statistic',
 						'border-transparent font-medium text-gray-dark2': areaDetail !== 'area-statistic',
 					})}
@@ -48,7 +48,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 					{t('byRank')}
 				</ToggleButton>
 				<ToggleButton
-					className={clsx('border border-solid text-base', {
+					className={clsx('border border-solid text-sm xl:text-base', {
 						'border-primary bg-white font-semibold text-primary': areaDetail === 'time-statistic',
 						'border-transparent font-medium text-gray-dark2': areaDetail !== 'time-statistic',
 					})}
