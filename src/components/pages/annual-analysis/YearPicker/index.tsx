@@ -1,13 +1,17 @@
 'use client'
 
-import useSearchFieldLoss from '@/components/pages/field-loss/Main/context'
 import useResponsive from '@/hook/responsive'
 import { formatDate } from '@/utils/date'
 import { mdiCalendarMonthOutline } from '@mdi/js'
 import Icon from '@mdi/react'
-import { Button, IconButton, Popover } from '@mui/material'
+import { Button, Checkbox, IconButton, Menu, MenuItem, Popover } from '@mui/material'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useSearchAnnualAnalysis } from '../Main/context'
+import { useQuery } from '@tanstack/react-query'
+import lookup from '@/api/lookup'
+import service from '@/api'
+import { GetLookupOutDto } from '@/api/lookup/dto-out.dto'
 import { useYearPicker } from './context'
 
 export type DateRangeTypes = {
@@ -17,34 +21,29 @@ export type DateRangeTypes = {
 
 interface YearPickerProps {}
 
-//  mock data return from API
-const yearRange = [
-	{
-		value: { th: 2563, en: 2020 },
-	},
-	{
-		value: { th: 2564, en: 2021 },
-	},
-	{
-		value: { th: 2565, en: 2022 },
-	},
-	{
-		value: { th: 2566, en: 2023 },
-	},
-]
 const YearPicker: React.FC<YearPickerProps> = () => {
-	const { open, setOpen, resetDateRanges } = useYearPicker()
-	const { queryParams } = useSearchFieldLoss()
+	const { open, setOpen } = useYearPicker()
+	const { queryParams } = useSearchAnnualAnalysis()
 	const { isDesktop } = useResponsive()
 	const { i18n } = useTranslation()
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 	const [ranges, setRanges] = useState<DateRangeTypes>()
-	const [yearData, setYearData] = useState<any>()
+	const [selectedYear, setSelectedYear] = useState<[]>([])
+
+	const { data: yearData, isLoading: isYearDataLoading } = useQuery({
+		queryKey: ['getLookupYears'],
+		queryFn: async () => {
+			const res = await service.lookup.get('years')
+			console.log('yearData :: ', res)
+			return res
+		},
+		enabled: true,
+	})
 
 	useEffect(() => {
-		if (open && queryParams?.startDate && queryParams?.endDate) {
-			setRanges({ startDate: queryParams.startDate, endDate: queryParams.endDate })
-		}
+		// if (open && queryParams?.startDate && queryParams?.endDate) {
+		// 	setRanges({ startDate: queryParams.startDate, endDate: queryParams.endDate })
+		// }
 	}, [queryParams, open])
 
 	const handleClose = () => {
@@ -64,22 +63,23 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 	}
 
 	const onReset = () => {
-		setRanges(resetDateRanges)
+		// array of range of index
+		// setRanges(resetDateRanges)
 	}
 
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+		setAnchorEl(event.currentTarget)
 		if (isDesktop) {
-			setAnchorEl(event.currentTarget)
 			setOpen(!!event.currentTarget)
 		} else {
 			setOpen(!open)
 		}
 	}
 
-	const formatDateRange =
-		queryParams.startDate && queryParams.endDate
-			? `${formatDate(queryParams.startDate, 'dd MMM yyyy', i18n.language)} - ${formatDate(queryParams.endDate, 'dd MMM yyyy', i18n.language)}`
-			: ''
+	// const formatDateRange =
+	// 	queryParams.startDate && queryParams.endDate
+	// 		? `${formatDate(queryParams.startDate, 'dd MMM yyyy', i18n.language)} - ${formatDate(queryParams.endDate, 'dd MMM yyyy', i18n.language)}`
+	// 		: ''
 
 	return (
 		<>
@@ -96,12 +96,35 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 				startIcon={<Icon path={mdiCalendarMonthOutline} size={1} />}
 				onClick={handleClick}
 			>
-				{formatDateRange}
+				{/* {formatDateRange} */}
 			</Button>
 			{/* Change Popover to selection fields to handle mobile case
                 the modal popup isn't large so we should considered using select items?
             */}
-			<Popover
+
+			<Menu
+				open={open}
+				anchorEl={anchorEl}
+				onClose={handleClose}
+				anchorOrigin={{
+					vertical: 'bottom',
+					horizontal: 'right',
+				}}
+				transformOrigin={{
+					vertical: -4,
+					horizontal: 'right',
+				}}
+			>
+				{yearData?.data?.map((item: GetLookupOutDto) => {
+					return (
+						<MenuItem disableRipple key={item.code}>
+							<Checkbox color='primary' />
+							{item.code}
+						</MenuItem>
+					)
+				})}
+			</Menu>
+			{/* <Popover
 				id='year-picker-popover'
 				open={open}
 				anchorEl={anchorEl}
@@ -120,10 +143,10 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 			>
 				<div className='flex'>
 					<div className='w-[172px] border-0 border-l border-solid border-gray px-6 py-4'>
-						<div className='mt-4 flex justify-center gap-2'>{}</div>
+						<div className='mt-4 flex justify-center gap-2'></div>
 					</div>
 				</div>
-			</Popover>
+			</Popover> */}
 		</>
 	)
 }
