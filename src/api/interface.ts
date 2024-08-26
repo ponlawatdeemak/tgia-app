@@ -69,6 +69,14 @@ export type ResponseStatisticDto<T = any, T2 = any> = ResponseDto<T> & {
 	dataTotal?: T2
 }
 
+export type ResponseAnnualAnalysisBarDto<T = any, T2 = any> = ResponseDto<T> & {
+	legend?: T2
+}
+
+export type ResponseAnnualAnalysisLineDto<T = any, T2 = any, T3 = any> = ResponseAnnualAnalysisBarDto<T, T2> & {
+	values?: T3
+}
+
 export interface Tokens {
 	idToken: string
 	accessToken: string
