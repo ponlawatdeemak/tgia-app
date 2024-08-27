@@ -1,8 +1,8 @@
-import { PlotMonitoringMain } from '@/components/pages/plot-monitoring'
+import { PlotMonitoringResultMain } from '@/components/pages/plot-monitoring/result'
 import React from 'react'
 
 const PlotMonitoringResultPage = () => {
-	return <PlotMonitoringMain />
+	return <PlotMonitoringResultMain />
 }
 
 export default PlotMonitoringResultPage
