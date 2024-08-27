@@ -84,6 +84,12 @@ const PlantStatistic = () => {
 				show: true,
 			},
 		},
+		padding: {
+			top: 5,
+		},
+		legend: {
+			position: 'bottom',
+		},
 	}
 	const options2 = {
 		data: {
@@ -92,9 +98,9 @@ const PlantStatistic = () => {
 				[
 					'x',
 					'พื้นที่ทบก. ทั้งหมด',
-					'พื้นที่ขึ้นทะเบียน ทบก. มีขอบแปลง',
-					'พื้นที่เอาประกันทั้งหมด',
-					'พื้นที่เอาประกันที่มีขอบแปลง',
+					'พื้นที่ขึ้นทะเบียน ทบก.\n มีขอบแปลง',
+					'พื้นที่เอาประกัน\nทั้งหมด',
+					'พื้นที่เอาประกัน\nที่มีขอบแปลง',
 				],
 				['พื้นที่ไร่', 14000000, 10000000, 10000000, 9000000], //format num x,xxx,xxx
 			],
@@ -138,21 +144,31 @@ const PlantStatistic = () => {
 				show: true,
 			},
 		},
+		padding: {
+			mode: 'fit' as const,
+			top: 10,
+			bottom: 20,
+			right: 20,
+		},
 	}
 	return (
 		<Box>
 			{/* <div>{JSON.stringify(queryParams)}</div> */}
 			<Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
 				<Grid item xs={6}>
-					<Box className='rounded bg-white shadow'>
-						<Typography>พื้นที่ทั้งหมด (ไร่)</Typography>
+					<Box className='h-[372px] rounded bg-white p-[24px] shadow'>
+						<Typography className='text-md font-semibold' component='div'>
+							พื้นที่ทั้งหมด (ไร่)
+						</Typography>
 						{/* Custom Legends */}
 						<BillboardJS bb={bb} options={options2} className={'bb'} />
 					</Box>
 				</Grid>
 				<Grid item xs={6}>
-					<Box className='rounded bg-white shadow'>
-						<Typography>เปรียบเทียบพื้นที่ทั้งหมดรายปี (ไร่)</Typography>
+					<Box className='h-[372px] rounded bg-white p-[24px] shadow'>
+						<Typography className='text-md font-semibold' component='div'>
+							เปรียบเทียบพื้นที่ทั้งหมดรายปี (ไร่)
+						</Typography>
 						{/* Custom Legends */}
 						<BillboardJS bb={bb} options={options} className={'bb'} />
 					</Box>

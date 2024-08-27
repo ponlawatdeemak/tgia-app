@@ -477,10 +477,10 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 		<Box sx={{ width: '100%' }}>
 			<Paper sx={{ width: '100%' }}>
 				<Toolbar>
-					<Typography sx={{ flex: '1 1 100%' }} variant='h6' id='tableTitle' component='div'>
+					<Typography className='text-md font-semibold' id='tableTitle' component='div'>
 						{/* Dynamic Depends on AppBar */}
 						อันดับผลรวมข้อมูลทั้งหมด (ไร่){' '}
-						<span className='text-sm text-[#7A7A7A]'>(ตัวกรอง: ประเทศไทย, 2562-2566)</span>
+						<span className='text-sm font-normal text-[#7A7A7A]'>(ตัวกรอง: ประเทศไทย, 2562-2566)</span>
 					</Typography>
 				</Toolbar>
 				<Box className='flex h-[70vh] flex-col gap-[16px] pl-[24px] pr-[24px]'>
