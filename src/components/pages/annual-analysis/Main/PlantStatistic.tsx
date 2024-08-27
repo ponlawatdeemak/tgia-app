@@ -2,11 +2,13 @@ import React from 'react'
 import bb, { bar, line } from 'billboard.js'
 import 'billboard.js/dist/billboard.css'
 import BillboardJS from '@billboard.js/react'
-import { Box, Grid } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import PlantStatisticTable from '../PlantStatistic/PlantStatisticTable'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchAnnualAnalysis } from './context'
 import service from '@/api'
+import { text } from 'stream/consumers'
+import './chart.css'
 
 const PlantStatistic = () => {
 	const { queryParams } = useSearchAnnualAnalysis()
@@ -61,6 +63,13 @@ const PlantStatistic = () => {
 				พื้นที่เอาประกันที่มีขอบแปลง: '#E7A9B5',
 			},
 		},
+		point: {
+			// r: 4,
+			// type: 'circle',
+			pattern: [
+				"<g><circle cx='8' cy='8' r='8'></circle><circle cx='8' cy='8' r='4' style='fill:#fff'></circle></g>",
+			],
+		},
 		axis: {
 			x: {
 				type: 'category' as const,
@@ -68,7 +77,12 @@ const PlantStatistic = () => {
 			},
 		},
 		line: {
-			classes: ['width : 10px'],
+			classes: ['line-chart'],
+		},
+		grid: {
+			y: {
+				show: true,
+			},
 		},
 	}
 	const options2 = {
@@ -109,9 +123,7 @@ const PlantStatistic = () => {
 			},
 			y: {
 				tick: {
-					// calculate count something function ???
 					format: function (x: number) {
-						// format round something ???
 						const usformatter = Intl.NumberFormat('en-US', { notation: 'compact', compactDisplay: 'short' })
 						return usformatter.format(x)
 					},
@@ -121,6 +133,11 @@ const PlantStatistic = () => {
 		legend: {
 			show: false,
 		},
+		grid: {
+			y: {
+				show: true,
+			},
+		},
 	}
 	return (
 		<Box>
@@ -128,17 +145,21 @@ const PlantStatistic = () => {
 			<Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
 				<Grid item xs={6}>
 					<Box className='rounded bg-white shadow'>
+						<Typography>พื้นที่ทั้งหมด (ไร่)</Typography>
+						{/* Custom Legends */}
 						<BillboardJS bb={bb} options={options2} className={'bb'} />
 					</Box>
 				</Grid>
 				<Grid item xs={6}>
 					<Box className='rounded bg-white shadow'>
+						<Typography>เปรียบเทียบพื้นที่ทั้งหมดรายปี (ไร่)</Typography>
+						{/* Custom Legends */}
 						<BillboardJS bb={bb} options={options} className={'bb'} />
 					</Box>
 				</Grid>
 			</Grid>
 			<Box className='mt-3'>
-				<PlantStatisticTable />
+				<PlantStatisticTable plantTableData={plantTableData?.data} />
 			</Box>
 		</Box>
 	)

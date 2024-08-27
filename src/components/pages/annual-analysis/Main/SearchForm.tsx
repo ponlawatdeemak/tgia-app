@@ -229,7 +229,7 @@ const SearchFormAnnualAnalysis = () => {
 		setInputValue('')
 		setSeletedOption(null)
 	}
-	console.log(selectedOption)
+	// console.log(selectedOption)
 	return (
 		<Paper className='mx-4 flex gap-1.5 bg-gray-dark4 p-1.5'>
 			<FavoriteSearchForm
