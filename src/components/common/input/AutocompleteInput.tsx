@@ -14,6 +14,7 @@ export interface AutocompleteInputProps extends Omit<AutocompleteProps<any, fals
 	name: string
 	formik?: FormikProps<any>
 	label: string
+	placeholder?: string
 	required?: boolean
 }
 
@@ -22,6 +23,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
 	formik,
 	label,
 	options,
+	placeholder = '',
 	className,
 	size = 'small',
 	required = false,
@@ -51,6 +53,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
 							{...otherParams}
 							{...params.InputProps}
 							id={`${name}-input`}
+							placeholder={placeholder}
 							error={formik?.touched[name] && Boolean(formik?.errors[name])}
 						/>
 					)
