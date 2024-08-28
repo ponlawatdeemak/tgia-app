@@ -14,7 +14,9 @@ const PlantDetail = ({ plantDetailData }: { plantDetailData?: GetPlotActivityPla
 
 	return (
 		<div className='flex flex-col gap-2 pt-2'>
-			<div className='mb-2 mt-2 flex text-md font-semibold'>ข้อมูลจากทบก.</div>
+			<div className='mb-2 mt-2 flex text-md font-semibold'>
+				{t('informationFromTBOG', { ns: 'plot-monitoring' })}
+			</div>
 			<div className='flex w-full flex-row justify-between text-md'>
 				<div className='flex shrink-0'>{`${t('cultivationStartDate', { ns: 'plot-monitoring' })} :`}</div>
 				<div className='flex flex-wrap font-medium'>{plantDetailData?.plantDate[language]}</div>
@@ -31,11 +33,13 @@ const PlantDetail = ({ plantDetailData }: { plantDetailData?: GetPlotActivityPla
 				<div className='flex shrink-0'>{`${t('cropType', { ns: 'plot-monitoring' })} :`}</div>
 				<div className='flex flex-wrap font-medium'>{plantDetailData?.detailType[language]}</div>
 			</div>
-			<div className='my-2 flex w-full flex-row text-base text-gray-400'>
+			<div className='my-2 flex w-full flex-row text-base text-gray-light4'>
 				<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} --??--`}</div>
 			</div>
 
-			<div className='mb-2 mt-2 flex text-md font-semibold'>วิเคราะห์ข้อมูลพื้นที่ปลูกข้าว</div>
+			<div className='mb-2 mt-2 flex text-md font-semibold'>
+				{t('analyzeRiceCultivationAreaData', { ns: 'plot-monitoring' })}
+			</div>
 			<Box className='flex flex-col gap-2 rounded-lg border border-solid border-gray p-2'>
 				<Box className='flex items-center justify-between'>
 					<div className='flex items-center gap-1'>
@@ -82,7 +86,7 @@ const PlantDetail = ({ plantDetailData }: { plantDetailData?: GetPlotActivityPla
 					</div>
 				</Box>
 			</Box>
-			<div className='my-2 flex w-full flex-row text-base text-gray-400'>
+			<div className='my-2 flex w-full flex-row text-base text-gray-light4'>
 				<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} --??--`}</div>
 			</div>
 		</div>
