@@ -215,6 +215,8 @@ const AnnualAnalysisMain = () => {
 					{/* Tab group */}
 					<Box className='ml-[24px] mr-[24px]'>
 						<Tabs
+							variant='scrollable'
+							scrollButtons='auto'
 							value={value}
 							onChange={handleChange}
 							aria-label='basic tabs example'
@@ -267,16 +269,17 @@ const AnnualAnalysisMain = () => {
 							</ToggleButtonGroup>
 						</Box>
 					)} */}
-
-					<CustomTabPanel value={value} index={0}>
-						<PlantStatistic />
-					</CustomTabPanel>
-					<CustomTabPanel value={value} index={1}>
-						<RiceStatistic />
-					</CustomTabPanel>
-					<CustomTabPanel value={value} index={2}>
-						<LossStatistic />
-					</CustomTabPanel>
+					<Box className='h-[calc(100vh-194px)] overflow-y-auto'>
+						<CustomTabPanel value={value} index={0}>
+							<PlantStatistic />
+						</CustomTabPanel>
+						<CustomTabPanel value={value} index={1}>
+							<RiceStatistic />
+						</CustomTabPanel>
+						<CustomTabPanel value={value} index={2}>
+							<LossStatistic />
+						</CustomTabPanel>
+					</Box>
 				</Box>
 			</div>
 		</>

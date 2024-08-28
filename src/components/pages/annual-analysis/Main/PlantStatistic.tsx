@@ -1,22 +1,38 @@
 import React from 'react'
-import bb, { bar, line } from 'billboard.js'
+import bb, { bar, ChartOptions, line } from 'billboard.js'
 import 'billboard.js/dist/billboard.css'
-import BillboardJS from '@billboard.js/react'
+import BillboardJS, { IChart } from '@billboard.js/react'
 import { Box, Grid, Typography } from '@mui/material'
 import PlantStatisticTable from '../PlantStatistic/PlantStatisticTable'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchAnnualAnalysis } from './context'
 import service from '@/api'
-import { text } from 'stream/consumers'
 import './chart.css'
+import useResponsive from '@/hook/responsive'
+import useAreaType from '@/store/area-type'
+import useAreaUnit from '@/store/area-unit'
+import { useTranslation } from 'react-i18next'
+import { ResponseLanguage } from '@/api/interface'
+import PlantStatisticBar from '../PlantStatistic/PlantStatisticBar'
 
 const PlantStatistic = () => {
 	const { queryParams } = useSearchAnnualAnalysis()
+	const { isDesktop } = useResponsive()
+	const { areaType } = useAreaType()
+	const { areaUnit } = useAreaUnit()
+	const { t, i18n } = useTranslation(['default'])
+	const language = i18n.language as keyof ResponseLanguage
+
+	const [colorArr, setColorArr] = React.useState<string[] | null>(null) //array dynamic
+	const [plantBarColumns, setPlantBarColumns] = React.useState<any>()
+
+	const plantLineChart = React.useRef<IChart>(null)
+
 	const { data: plantTableData, isLoading: isTableDataLoading } = useQuery({
 		queryKey: ['getTablePlantStatistic', queryParams],
 		queryFn: async () => {
 			const res = await service.annualAnalysis.getTablePlantStatistic(queryParams)
-			console.log('Plant Table :: ', res)
+			// console.log('Plant Table :: ', res)
 			return res
 		},
 		enabled: true,
@@ -26,7 +42,7 @@ const PlantStatistic = () => {
 		queryKey: ['getLinePlantStatistic', queryParams],
 		queryFn: async () => {
 			const res = await service.annualAnalysis.getLinePlantStatistic(queryParams)
-			console.log('Plant Line :: ', res)
+			// console.log('Plant Line :: ', res)
 			return res
 		},
 		enabled: true,
@@ -41,59 +57,36 @@ const PlantStatistic = () => {
 		},
 		enabled: true,
 	})
+	// console.log('areaType :: ', areaType)
+	// console.log('areaUnit :: ', areaUnit)
+	// console.log('language :: ', language)
+	// console.log('plantBarData :: ', plantBarData)
+	// console.log('plantLineData :: ', plantLineData)
+
+	React.useEffect(() => {
+		console.log('plantBarData :: ', plantBarData)
+		if (plantBarData) {
+			const tempBarColumns = [['x'], ['พื้นที่ไร่/แปลง']] //
+			const tempBarColor = [] as string[]
+			for (let i = 0; i < plantBarData?.data.length; i++) {
+				tempBarColumns[0].push(plantBarData?.data[i]?.name[language])
+				tempBarColumns[1].push(plantBarData?.data[i]?.categories[0]?.value?.area['areaRai'])
+			}
+			for (let i = 0; i < plantBarData?.legend.items.length; i++) {
+				tempBarColor.push(plantBarData?.legend.items[i].color)
+			}
+			setColorArr(tempBarColor)
+			setPlantBarColumns(tempBarColumns)
+		}
+	}, [plantBarData])
 
 	const options = {
-		data: {
-			// 4 lines พื้นที่ทบก. ทั้งหมด , พื้นที่ ทบก. มีขอบแปลง , พื้นที่เอาประกันทั้งหมด , พื้นที่เอาประกันที่มีขอบแปลง
-			// ['x', '2562', '2563', '2564', '2565', '2566'],
-			columns: [
-				['พื้นที่ทบก. ทั้งหมด', 10000, 20000, 30000, 40000, 50000],
-				['พื้นที่ ทบก. มีขอบแปลง', 5000, 15000, 21000, 31000, 25000],
-				['พื้นที่เอาประกันทั้งหมด', 17500, 22000, 23000, 45000, 51000],
-				['พื้นที่เอาประกันที่มีขอบแปลง', 12000, 45000, 32000, 18000, 48000],
-			],
-			type: line(),
-			// color: (color: string, d: any) => {
-			// 	return ['#545454FF', '#959595', '#B1334C', '#E7A9B5'][d.index]
-			// }
-			colors: {
-				'พื้นที่ทบก. ทั้งหมด': '#545454FF',
-				'พื้นที่ ทบก. มีขอบแปลง': '#959595',
-				พื้นที่เอาประกันทั้งหมด: '#B1334C',
-				พื้นที่เอาประกันที่มีขอบแปลง: '#E7A9B5',
-			},
+		size: {
+			height: 442,
 		},
-		point: {
-			// r: 4,
-			// type: 'circle',
-			pattern: [
-				"<g><circle cx='8' cy='8' r='8'></circle><circle cx='8' cy='8' r='4' style='fill:#fff'></circle></g>",
-			],
-		},
-		axis: {
-			x: {
-				type: 'category' as const,
-				categories: ['2562', '2563', '2564', '2565', '2566'],
-			},
-		},
-		line: {
-			classes: ['line-chart'],
-		},
-		grid: {
-			y: {
-				show: true,
-			},
-		},
-		padding: {
-			top: 5,
-		},
-		legend: {
-			position: 'bottom',
-		},
-	}
-	const options2 = {
 		data: {
 			x: 'x',
+			// plantBarColumns,
 			columns: [
 				[
 					'x',
@@ -119,13 +112,18 @@ const PlantStatistic = () => {
 		},
 		bar: {
 			width: {
-				ratio: 0.5,
+				ratio: 0.85,
 			},
 		},
 		axis: {
 			x: {
 				// show: false,
 				type: 'category' as const,
+				tick: {
+					format: function (index: number, categoryName: string) {
+						return isDesktop ? categoryName : categoryName.substring(0, 10) + '...' //handle เอง
+					},
+				},
 			},
 			y: {
 				tick: {
@@ -151,26 +149,86 @@ const PlantStatistic = () => {
 			right: 20,
 		},
 	}
+	const options2 = {
+		size: {
+			height: 462,
+		},
+		data: {
+			// 4 lines พื้นที่ทบก. ทั้งหมด , พื้นที่ ทบก. มีขอบแปลง , พื้นที่เอาประกันทั้งหมด , พื้นที่เอาประกันที่มีขอบแปลง
+			// ['x', '2562', '2563', '2564', '2565', '2566'],
+			columns: [
+				['พื้นที่ทบก. ทั้งหมด', 10000, 20000, 30000, 40000, 50000],
+				['พื้นที่ ทบก. มีขอบแปลง', 5000, 15000, 21000, 31000, 25000],
+				['พื้นที่เอาประกันทั้งหมด', 17500, 22000, 23000, 45000, 51000],
+				['พื้นที่เอาประกันที่มีขอบแปลง', 12000, 45000, 32000, 18000, 48000],
+			],
+			type: line(),
+			// color: (color: string, d: any) => {
+			// 	return ['#545454FF', '#959595', '#B1334C', '#E7A9B5'][d.index]
+			// }
+			colors: {
+				'พื้นที่ทบก. ทั้งหมด': '#545454FF',
+				'พื้นที่ ทบก. มีขอบแปลง': '#959595',
+				พื้นที่เอาประกันทั้งหมด: '#B1334C',
+				พื้นที่เอาประกันที่มีขอบแปลง: '#E7A9B5',
+			},
+		},
+		point: {
+			// r: 4,
+			// type: 'circle',
+			pattern: [
+				"<g><circle cx='6' cy='6' r='6'></circle><circle cx='6' cy='6' r='3' style='fill:#fff'></circle></g>",
+			],
+		},
+		axis: {
+			x: {
+				type: 'category' as const,
+				categories: ['2562', '2563', '2564', '2565', '2566'],
+			},
+		},
+		line: {
+			classes: ['line-chart'],
+		},
+		grid: {
+			y: {
+				show: true,
+			},
+		},
+		padding: {
+			// left: -2,
+			top: 10,
+		},
+		legend: {
+			position: 'bottom',
+		},
+	}
 	return (
 		<Box>
-			{/* <div>{JSON.stringify(queryParams)}</div> */}
-			<Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+			{/* text font Anuphan ไม่ส่งต่อให้ text ใน g element svg ใน BillboardJS*/}
+			<Grid container rowSpacing={1} columnSpacing={1.5} direction={isDesktop ? 'row' : 'column'}>
 				<Grid item xs={6}>
-					<Box className='h-[372px] rounded bg-white p-[24px] shadow'>
+					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
 						<Typography className='text-md font-semibold' component='div'>
 							พื้นที่ทั้งหมด (ไร่)
 						</Typography>
-						{/* Custom Legends */}
-						<BillboardJS bb={bb} options={options2} className={'bb'} />
+						{colorArr && (
+							<>
+								<PlantStatisticBar plantBarColumns={plantBarColumns} plantBarColorArr={colorArr} />
+							</>
+						)}
 					</Box>
 				</Grid>
 				<Grid item xs={6}>
-					<Box className='h-[372px] rounded bg-white p-[24px] shadow'>
+					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
 						<Typography className='text-md font-semibold' component='div'>
 							เปรียบเทียบพื้นที่ทั้งหมดรายปี (ไร่)
 						</Typography>
-						{/* Custom Legends */}
-						<BillboardJS bb={bb} options={options} className={'bb'} />
+						<BillboardJS
+							bb={bb}
+							options={options2}
+							ref={plantLineChart}
+							className={'bb annual-analysis-line'}
+						/>
 					</Box>
 				</Grid>
 			</Grid>

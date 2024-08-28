@@ -485,7 +485,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 				</Toolbar>
 				<Box className='flex h-[70vh] flex-col gap-[16px] pl-[24px] pr-[24px]'>
 					<TableContainer
-						className='flex flex-col overflow-y-auto'
+						className='flex flex-col overflow-hidden overflow-x-auto'
 						sx={{ minHeight: '90%', flex: 1 }}
 						component={'div'}
 					>

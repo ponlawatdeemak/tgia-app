@@ -1,3 +1,20 @@
- .bb-line {
-    stroke-width: 6px;
+/* @import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@100..700&display=swap'); */
+
+/* .plant-line{
+    font-family: 'Courier New', Courier, monospace;
+} */
+
+/* .bb-legend {
+    font-family: 'Anuphan', Courier, monospace;
+} */
+.annual-analysis-line {
+    margin-left: -8px;
+}
+
+.annual-analysis-line .bb-line {
+    stroke-width: 3px
+}
+
+.annual-analysis-line .bb-focused .bb-lines .bb-line{
+    stroke-width: 3px
 }
