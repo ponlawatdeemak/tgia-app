@@ -1,4 +1,4 @@
-import { Box, Tab, Tabs, Divider } from '@mui/material'
+import { Box, Tab, Tabs, Divider, Button } from '@mui/material'
 import React, { useState } from 'react'
 import PlantDetail from '../Detail/PlantDetail'
 import LossDetail from '../Detail/LossDetail'
@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import service from '@/api'
 import { useQuery } from '@tanstack/react-query'
 import { ResponseLanguage } from '@/api/interface'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 interface SummaryDetailProps {
 	activityId: number
@@ -31,7 +32,15 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({ activityId }) => {
 		<div className='lg:bg-bg-white box-border flex flex-col gap-0 bg-white p-4 lg:w-[30%] lg:min-w-[360px] lg:max-w-[580px] lg:gap-4 lg:overflow-auto lg:px-6 lg:py-4'>
 			<Box className='flex h-full flex-col gap-4 overflow-y-auto'>
 				<div className='flex flex-col gap-1'>
-					<div className='mb-2 flex text-md font-semibold'>{`${t('referenceCode', { ns: 'plot-monitoring' })} : ${activityId}`}</div>
+					<div className='mb-2 flex flex-row items-center'>
+						<Button>
+							<ArrowBackIcon fontSize='small' className='text-black' />
+						</Button>
+						<div className='flex text-md font-semibold'>
+							{`${t('referenceCode', { ns: 'plot-monitoring' })} : ${activityId}`}
+						</div>
+					</div>
+
 					<Divider />
 					<div className='mb-2 mt-3 flex text-base font-semibold'>
 						{`${t(`${lossDetailData?.data?.lossPredicted.lossType}`)} ${t('occurrence', { ns: 'plot-monitoring' })} --??--`}
