@@ -11,7 +11,7 @@ const LossDetail = ({ lossDetailData }: { lossDetailData?: GetPlotActivityLossDe
 
 	return (
 		<div className='flex flex-col gap-2 pt-2'>
-			<div className='mb-2 mt-2 flex text-md font-semibold'>
+			<div className='mb-2 mt-2 flex text-base font-semibold'>
 				{t('damagedAreaReportedAccordingToGSO.02', { ns: 'plot-monitoring' })}
 			</div>
 			<Box className='flex flex-col rounded-lg border border-solid border-gray'>
@@ -42,22 +42,22 @@ const LossDetail = ({ lossDetailData }: { lossDetailData?: GetPlotActivityLossDe
 					</Box>
 				</div>
 				<Divider />
-				<div className='flex flex-col gap-2 bg-gray-light p-2'>
-					<span className='text-left text-base font-normal text-black'>
+				<div className='flex flex-col gap-2 bg-gray-light2 p-2'>
+					<span className='text-left text-sm font-normal text-black'>
 						{t('damageReportDateAccordingToGSO.02', { ns: 'plot-monitoring' })}
 					</span>
-					<span className='text-left text-base font-semibold text-black-light'>
+					<span className='text-left text-sm font-semibold text-black-light'>
 						{lossDetailData?.updateDisasterDate[language]}
 					</span>
 				</div>
 			</Box>
-			<div className='my-2 flex w-full flex-row text-base text-gray-light4'>
+			<div className='my-2 flex w-full flex-row text-sm text-gray-light4'>
 				<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} --??--`}</div>
 			</div>
 
 			<Divider />
 
-			<div className='mb-2 mt-2 flex text-md font-semibold'>
+			<div className='mb-2 mt-2 flex text-base font-semibold'>
 				{t('totalDamagedAreaFromAnalysis', { ns: 'plot-monitoring' })}
 			</div>
 			<Box className='flex flex-col rounded-lg border border-solid border-gray'>
@@ -98,16 +98,16 @@ const LossDetail = ({ lossDetailData }: { lossDetailData?: GetPlotActivityLossDe
 					</Box>
 				</div>
 				<Divider />
-				<div className='flex flex-col gap-2 bg-gray-light p-2'>
-					<span className='text-left text-base font-normal text-black'>
+				<div className='flex flex-col gap-2 bg-gray-light2 p-2'>
+					<span className='text-left text-sm font-normal text-black'>
 						{t('damagedAreaDateFromAnalysis', { ns: 'plot-monitoring' })}
 					</span>
-					<span className='text-left text-base font-semibold text-black-light'>
+					<span className='text-left text-sm font-semibold text-black-light'>
 						{`${lossDetailData?.startObsDate[language]} - ${lossDetailData?.endObsDate[language]}`}
 					</span>
 				</div>
 			</Box>
-			<div className='my-2 flex w-full flex-row text-base text-gray-light4'>
+			<div className='my-2 flex w-full flex-row text-sm text-gray-light4'>
 				<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} --??--`}</div>
 			</div>
 		</div>
