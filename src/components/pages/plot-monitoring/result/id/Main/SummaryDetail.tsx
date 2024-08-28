@@ -38,10 +38,10 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({ activityId }) => {
 					<div className='mb-2 flex text-lg font-semibold'>{`${t('referenceCode', { ns: 'plot-monitoring' })} : ${activityId}`}</div>
 					<Divider />
 					<div className='mb-2 mt-3 flex text-md font-semibold'>
-						{t(`${lossDetailData?.data?.lossPredicted.lossType}`)} ครั้งที่ --??--
+						{`${t(`${lossDetailData?.data?.lossPredicted.lossType}`)} ${t('occurrence', { ns: 'plot-monitoring' })} --??--`}
 					</div>
 					<div className='flex w-full flex-row gap-1'>
-						<div className='flex shrink-0 text-base'>ปีชุดข้อมูล</div>:
+						<div className='flex shrink-0 text-base'>{t('dataSetYear', { ns: 'plot-monitoring' })}</div>:
 						<div className='flex flex-wrap font-semibold'>{plantDetailData?.data?.year[language]}</div>
 					</div>
 					<div className='flex w-full flex-row gap-1'>
@@ -51,8 +51,7 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({ activityId }) => {
 					<div className='flex w-full flex-row gap-1'>
 						<div className='flex shrink-0 text-base'>{`${t('area')}`}</div>:
 						<div className='flex flex-wrap font-semibold'>
-							{plantDetailData?.data?.actArea.areaRai} ไร่ {plantDetailData?.data?.actArea.areaNgan} งาน{' '}
-							{plantDetailData?.data?.actArea.areaWa} ตารางวา
+							{`${plantDetailData?.data?.actArea.areaRai} ${t('areaRai')} ${plantDetailData?.data?.actArea.areaNgan} ${t('areaNgan')} ${plantDetailData?.data?.actArea.areaWa} ${t('squareWa')}`}
 						</div>
 					</div>
 					<div className='flex w-full flex-row gap-1'>
@@ -90,8 +89,16 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({ activityId }) => {
 								setValue(newValue)
 							}}
 						>
-							<Tab className='font-semibold' label='ข้อมูลเพราะปลูก' value={'plantDetail'} />
-							<Tab className='font-semibold' label='ข้อมูลภัยพิบัติ' value={'lossDetail'} />
+							<Tab
+								className='text-base font-semibold'
+								label={t('cultivationData', { ns: 'plot-monitoring' })}
+								value={'plantDetail'}
+							/>
+							<Tab
+								className='text-base font-semibold'
+								label={t('disasterInformation', { ns: 'plot-monitoring' })}
+								value={'lossDetail'}
+							/>
 						</Tabs>
 					</Box>
 
