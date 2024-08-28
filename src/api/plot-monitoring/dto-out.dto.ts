@@ -28,3 +28,53 @@ export interface GetSearchPlotTotalDtoOut {
 export interface GetAreaSearchPlotDtoOut {
 	activityId: number
 }
+
+interface ResponseActArea {
+    areaRai:number
+    areaNgan:number
+    areaWa:number
+}
+interface ResponsePredeicted {
+    areaRai:number
+    percent:number
+}
+
+export interface GetPlotActivityPlantDetailDtoOut{
+    activityId:number
+    address:ResponseLanguage
+    year:ResponseLanguage
+    insuredType:ResponseLanguage
+    publicStatus:ResponseLanguage
+    riskType:ResponseLanguage
+    riceType:ResponseLanguage
+    detailType:ResponseLanguage
+    plantDate:ResponseLanguage
+    produceDate:ResponseLanguage
+    actArea:ResponseActArea
+    predictedRiceArea:ResponsePredeicted
+    predictedNonRiceArea:ResponsePredeicted
+}
+
+interface ResponselossPredicted {
+    lossType:string
+    areaRai:number
+    percent:number
+}
+
+export interface GetPlotActivityLossDetailDtoOut{
+    activityId:number
+    address:ResponseLanguage
+    year:ResponseLanguage
+    insuredType:ResponseLanguage
+    publicStatus:ResponseLanguage
+    riskType:ResponseLanguage
+    actArea:ResponseActArea
+    disasterArea:number
+    predictedRiceArea : number
+    lossPredicted : ResponselossPredicted   
+    updateDisasterDate : ResponseLanguage
+    startObsDate :string
+    endObsDate: string
+}
+
+
