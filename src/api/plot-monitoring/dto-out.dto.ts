@@ -61,6 +61,10 @@ interface ResponselossPredicted {
     percent:number
 }
 
+interface ResponseDisasterArea {
+    areaRai:number
+}
+
 export interface GetPlotActivityLossDetailDtoOut{
     activityId:number
     address:ResponseLanguage
@@ -69,12 +73,12 @@ export interface GetPlotActivityLossDetailDtoOut{
     publicStatus:ResponseLanguage
     riskType:ResponseLanguage
     actArea:ResponseActArea
-    disasterArea:number
-    predictedRiceArea : number
+    disasterArea:ResponseDisasterArea
+    predictedRiceArea : ResponsePredeicted
     lossPredicted : ResponselossPredicted   
     updateDisasterDate : ResponseLanguage
-    startObsDate :string
-    endObsDate: string
+    startObsDate :ResponseLanguage
+    endObsDate: ResponseLanguage
 }
 
 
