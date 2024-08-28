@@ -14,6 +14,10 @@ import useAreaUnit from '@/store/area-unit'
 import { useTranslation } from 'react-i18next'
 import { ResponseLanguage } from '@/api/interface'
 import PlantStatisticBar from '../PlantStatistic/PlantStatisticBar'
+import PlantStatisticLine from '../PlantStatistic/PlantStatisticLine'
+type lineColorType = {
+	[key: string]: string
+}
 
 const PlantStatistic = () => {
 	const { queryParams } = useSearchAnnualAnalysis()
@@ -23,16 +27,20 @@ const PlantStatistic = () => {
 	const { t, i18n } = useTranslation(['default'])
 	const language = i18n.language as keyof ResponseLanguage
 
-	const [colorArr, setColorArr] = React.useState<string[] | null>(null) //array dynamic
+	// bar chart
+	const [barColorArr, setBarColorArr] = React.useState<string[] | null>(null) //array dynamic
 	const [plantBarColumns, setPlantBarColumns] = React.useState<any>()
 
-	const plantLineChart = React.useRef<IChart>(null)
+	// line chart
+	const [lineColorArr, setLineColorArr] = React.useState<lineColorType | null>(null) // array dynamic
+	const [plantLineColumns, setPlantLineColumns] = React.useState<(number | string)[][]>([])
+	const [lineCategoriesArr, setLineCategoriesArr] = React.useState<string[]>([])
 
 	const { data: plantTableData, isLoading: isTableDataLoading } = useQuery({
 		queryKey: ['getTablePlantStatistic', queryParams],
 		queryFn: async () => {
 			const res = await service.annualAnalysis.getTablePlantStatistic(queryParams)
-			// console.log('Plant Table :: ', res)
+			console.log('Plant Table :: ', res)
 			return res
 		},
 		enabled: true,
@@ -42,7 +50,7 @@ const PlantStatistic = () => {
 		queryKey: ['getLinePlantStatistic', queryParams],
 		queryFn: async () => {
 			const res = await service.annualAnalysis.getLinePlantStatistic(queryParams)
-			// console.log('Plant Line :: ', res)
+			console.log('Plant Line :: ', res)
 			return res
 		},
 		enabled: true,
@@ -75,10 +83,52 @@ const PlantStatistic = () => {
 			for (let i = 0; i < plantBarData?.legend.items.length; i++) {
 				tempBarColor.push(plantBarData?.legend.items[i].color)
 			}
-			setColorArr(tempBarColor)
+			setBarColorArr(tempBarColor)
 			setPlantBarColumns(tempBarColumns)
 		}
 	}, [plantBarData])
+
+	React.useEffect(() => {
+		console.log('plantLineData :: ', plantLineData)
+		if (plantLineData) {
+			// columns: [
+			// 	['พื้นที่ทบก. ทั้งหมด', 10000, 20000, 30000, 40000, 50000],
+			// 	['พื้นที่ ทบก. มีขอบแปลง', 5000, 15000, 21000, 31000, 25000],
+			// 	['พื้นที่เอาประกันทั้งหมด', 17500, 22000, 23000, 45000, 51000],
+			// 	['พื้นที่เอาประกันที่มีขอบแปลง', 12000, 45000, 32000, 18000, 48000],
+			// ],
+			// colors: {
+			// 	'พื้นที่ทบก. ทั้งหมด': '#545454FF',
+			// 	'พื้นที่ ทบก. มีขอบแปลง': '#959595',
+			// 	พื้นที่เอาประกันทั้งหมด: '#B1334C',
+			// 	พื้นที่เอาประกันที่มีขอบแปลง: '#E7A9B5',
+			// },
+			// categories: ['2562', '2563', '2564', '2565', '2566'],
+			const tempLineColumns = [] as (number | string)[][] //
+			const tempLineColor: lineColorType = {}
+			const tempLineCategories = [] as string[]
+			for (let i = 0; i < plantLineData.values.length; i++) {
+				const tempArr = [plantLineData.values[i].label[language]].concat(
+					plantLineData.values[i].area['areaRai'],
+				)
+				tempLineColumns.push(tempArr)
+			}
+			for (let i = 0; i < plantLineData.data.length; i++) {
+				tempLineCategories.push(plantLineData.data[i].name[language])
+			}
+			for (let i = 0; i < plantLineData.legend.items.length; i++) {
+				const label: string = plantLineData.legend.items[i].label[language]
+				if (label) {
+					tempLineColor[label] = plantLineData.legend.items[i].color
+				} else {
+					// some error handling
+				}
+			}
+			setLineColorArr(tempLineColor)
+			setPlantLineColumns(tempLineColumns)
+			setLineCategoriesArr(tempLineCategories)
+		}
+	}, [plantLineData])
 
 	const options = {
 		size: {
@@ -211,9 +261,9 @@ const PlantStatistic = () => {
 						<Typography className='text-md font-semibold' component='div'>
 							พื้นที่ทั้งหมด (ไร่)
 						</Typography>
-						{colorArr && (
+						{barColorArr && (
 							<>
-								<PlantStatisticBar plantBarColumns={plantBarColumns} plantBarColorArr={colorArr} />
+								<PlantStatisticBar plantBarColumns={plantBarColumns} plantBarColorArr={barColorArr} />
 							</>
 						)}
 					</Box>
@@ -223,12 +273,21 @@ const PlantStatistic = () => {
 						<Typography className='text-md font-semibold' component='div'>
 							เปรียบเทียบพื้นที่ทั้งหมดรายปี (ไร่)
 						</Typography>
-						<BillboardJS
+						{lineColorArr && (
+							<>
+								<PlantStatisticLine
+									plantLineColumns={plantLineColumns}
+									plantLineColorArr={lineColorArr}
+									lineCategoriesArr={lineCategoriesArr}
+								/>
+							</>
+						)}
+						{/* <BillboardJS
 							bb={bb}
 							options={options2}
 							ref={plantLineChart}
 							className={'bb annual-analysis-line'}
-						/>
+						/> */}
 					</Box>
 				</Grid>
 			</Grid>
