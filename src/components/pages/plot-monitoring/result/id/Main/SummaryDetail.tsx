@@ -82,6 +82,24 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({ activityId }) => {
 						<div className='flex flex-wrap font-semibold'>{plantDetailData?.data?.riskType[language]}</div>
 					</div>
 				</div>
+				<div className='flex flex-col'>
+					<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+						<Tabs
+							value={value}
+							onChange={(event, newValue) => {
+								setValue(newValue)
+							}}
+						>
+							<Tab className='font-semibold' label='ข้อมูลเพราะปลูก' value={'plantDetail'} />
+							<Tab className='font-semibold' label='ข้อมูลภัยพิบัติ' value={'lossDetail'} />
+						</Tabs>
+					</Box>
+
+					{value === 'plantDetail' ? (
+						<PlantDetail plantDetailData={plantDetailData?.data} />
+					) : (
+						<LossDetail lossDetailData={lossDetailData?.data} />
+					)}
 				</div>
 			</Box>
 		</div>
