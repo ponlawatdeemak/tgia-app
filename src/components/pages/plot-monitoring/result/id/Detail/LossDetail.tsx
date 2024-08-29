@@ -52,7 +52,7 @@ const LossDetail = ({ lossDetailData }: { lossDetailData?: GetPlotActivityLossDe
 				</div>
 			</Box>
 			<div className='my-2 flex w-full flex-row text-sm text-gray-light4'>
-				<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} --??--`}</div>
+				<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} ${lossDetailData?.updateDisasterDate[language]}`}</div>
 			</div>
 
 			<Divider />
@@ -108,7 +108,7 @@ const LossDetail = ({ lossDetailData }: { lossDetailData?: GetPlotActivityLossDe
 				</div>
 			</Box>
 			<div className='my-2 flex w-full flex-row text-sm text-gray-light4'>
-				<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} --??--`}</div>
+				<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} ${lossDetailData?.predictedLossDate[language]}`}</div>
 			</div>
 		</div>
 	)

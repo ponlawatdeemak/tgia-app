@@ -30,7 +30,7 @@ const PlantDetail = ({ plantDetailData }: { plantDetailData?: GetPlotActivityPla
 				<div className='flex flex-wrap font-medium'>{plantDetailData?.detailType[language]}</div>
 			</div>
 			<div className='my-2 flex w-full flex-row text-sm text-gray-light4'>
-				<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} --??--`}</div>
+				<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} ${plantDetailData?.updateDoaeDate[language]}`}</div>
 			</div>
 
 			<div className='mb-2 mt-2 flex text-base font-semibold'>
@@ -83,7 +83,7 @@ const PlantDetail = ({ plantDetailData }: { plantDetailData?: GetPlotActivityPla
 				</Box>
 			</Box>
 			<div className='my-2 flex w-full flex-row text-sm text-gray-light4'>
-				<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} --??--`}</div>
+				<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} ${plantDetailData?.predictedRiceAreaDate[language]}`}</div>
 			</div>
 		</div>
 	)

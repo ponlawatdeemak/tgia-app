@@ -32,55 +32,60 @@ export interface GetAreaSearchPlotDtoOut {
 }
 
 interface ResponseActArea {
-    areaRai:number
-    areaNgan:number
-    areaWa:number
+	areaRai: number
+	areaNgan: number
+	areaWa: number
 }
 interface ResponsePredeicted {
-    areaRai:number
-    percent:number
+	areaRai: number
+	percent: number
 }
 
-export interface GetPlotActivityPlantDetailDtoOut{
-    activityId:number
-    address:ResponseLanguage
-    year:ResponseLanguage
-    insuredType:ResponseLanguage
-    publicStatus:ResponseLanguage
-    riskType:ResponseLanguage
-    riceType:ResponseLanguage
-    detailType:ResponseLanguage
-    plantDate:ResponseLanguage
-    produceDate:ResponseLanguage
-    actArea:ResponseActArea
-    predictedRiceArea:ResponsePredeicted
-    predictedNonRiceArea:ResponsePredeicted
+export interface GetPlotActivityPlantDetailDtoOut {
+	activityId: number
+	count: number
+	address: ResponseLanguage
+	year: ResponseLanguage
+	insuredStatus: ResponseLanguage
+	insuredType: ResponseLanguage
+	publicStatus: ResponseLanguage
+	riskType: ResponseLanguage
+	riceType: ResponseLanguage
+	detailType: ResponseLanguage
+	plantDate: ResponseLanguage
+	produceDate: ResponseLanguage
+	actArea: ResponseActArea
+	predictedRiceArea: ResponsePredeicted
+	predictedNonRiceArea: ResponsePredeicted
+	updateDoaeDate: ResponseLanguage
+	predictedRiceAreaDate: ResponseLanguage
 }
 
 interface ResponselossPredicted {
-    lossType:string
-    areaRai:number
-    percent:number
+	lossType: string
+	areaRai: number
+	percent: number
 }
 
 interface ResponseDisasterArea {
-    areaRai:number
+	areaRai: number
 }
 
-export interface GetPlotActivityLossDetailDtoOut{
-    activityId:number
-    address:ResponseLanguage
-    year:ResponseLanguage
-    insuredType:ResponseLanguage
-    publicStatus:ResponseLanguage
-    riskType:ResponseLanguage
-    actArea:ResponseActArea
-    disasterArea:ResponseDisasterArea
-    predictedRiceArea : ResponsePredeicted
-    lossPredicted : ResponselossPredicted   
-    updateDisasterDate : ResponseLanguage
-    startObsDate :ResponseLanguage
-    endObsDate: ResponseLanguage
+export interface GetPlotActivityLossDetailDtoOut {
+	activityId: number
+	address: ResponseLanguage
+	year: ResponseLanguage
+	insuredStatus: ResponseLanguage
+	insuredType: ResponseLanguage
+	publicStatus: ResponseLanguage
+	riskType: ResponseLanguage
+	actArea: ResponseActArea
+	disasterArea: ResponseDisasterArea
+	predictedRiceArea: ResponsePredeicted
+	lossPredicted: ResponselossPredicted
+	updateDisasterDate: ResponseLanguage
+	startObsDate: ResponseLanguage
+	endObsDate: ResponseLanguage
+	updateLossDate: ResponseLanguage
+	predictedLossDate: ResponseLanguage
 }
-
-

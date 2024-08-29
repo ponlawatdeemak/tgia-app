@@ -43,7 +43,7 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({ activityId }) => {
 
 					<Divider />
 					<div className='mb-2 mt-3 flex text-base font-semibold'>
-						{`${t(`${lossDetailData?.data?.lossPredicted.lossType}`)} ${t('occurrence', { ns: 'plot-monitoring' })} --??--`}
+						{`${t(`${lossDetailData?.data?.lossPredicted.lossType}`)} ${t('occurrence', { ns: 'plot-monitoring' })} ${plantDetailData?.data?.count}`}
 					</div>
 					<div className='flex w-full flex-row gap-1 text-sm'>
 						<div className='flex shrink-0'>{t('dataSetYear', { ns: 'plot-monitoring' })}</div>:
@@ -68,12 +68,14 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({ activityId }) => {
 					<div className='flex w-full flex-row gap-1 text-sm'>
 						<div className='flex shrink-0'>{`${t('insuranceStatus', { ns: 'plot-monitoring' })}`}</div>:
 						<div className='flex flex-wrap font-semibold'>
-							{plantDetailData?.data?.insuredType[language]}
+							{plantDetailData?.data?.insuredStatus[language]}
 						</div>
 					</div>
 					<div className='flex w-full flex-row gap-1 text-sm'>
 						<div className='flex shrink-0'>{`${t('insurance', { ns: 'plot-monitoring' })}`}</div>:
-						<div className='flex flex-wrap font-semibold'>--??--</div>
+						<div className='flex flex-wrap font-semibold'>
+							{plantDetailData?.data?.insuredType[language]}
+						</div>
 					</div>
 					<div className='flex w-full flex-row gap-1 text-sm'>
 						<div className='flex shrink-0'>{`${t('riskAreas', { ns: 'plot-monitoring' })}`}</div>:
