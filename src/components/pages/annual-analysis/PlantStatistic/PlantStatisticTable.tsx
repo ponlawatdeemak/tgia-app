@@ -17,15 +17,10 @@ import { visuallyHidden } from '@mui/utils'
 import { useTranslation } from 'react-i18next'
 import { useSwitchLanguage } from '@/i18n/client'
 import { Language, SortType } from '@/enum'
-
-interface Data {
-	id: number
-	name: string
-	totalRegistrationArea: number
-	totalRegistrationAreaBoundaries: number
-	totalClaimArea: number
-	totalClaimAreaBoundaries: number
-}
+import { ResponseLanguage } from '@/api/interface'
+import useAreaUnit from '@/store/area-unit'
+import useAreaType from '@/store/area-type'
+import useResponsive from '@/hook/responsive'
 
 // Response
 const response = {
@@ -398,6 +393,27 @@ function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) 
 	return stabilizedThis.map((el) => el[0])
 }
 
+interface Data {
+	id: string
+	name: ResponseLanguage
+	totalRegistrationArea: {
+		areaRai: number
+		areaPlot: number
+	}
+	totalRegistrationAreaBoundaries: {
+		areaRai: number
+		areaPlot: number
+	}
+	totalClaimArea: {
+		areaRai: number
+		areaPlot: number
+	}
+	totalClaimAreaBoundaries: {
+		areaRai: number
+		areaPlot: number
+	}
+	order: number
+}
 interface HeadCell {
 	disablePadding: boolean
 	id: keyof Data
@@ -449,27 +465,96 @@ interface PlantStatisticTableProps {
 }
 
 const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableData }) => {
-	const { t, i18n } = useTranslation(['default', 'um'])
-	const [order, setOrder] = React.useState<Order>('asc')
+	const { isDesktop } = useResponsive()
+	const { areaType } = useAreaType()
+	const { areaUnit } = useAreaUnit()
+	const { t, i18n } = useTranslation(['default'])
+	const language = i18n.language as keyof ResponseLanguage
+
+	const [order, setOrder] = React.useState<SortType>(SortType.DESC)
 	const [orderBy, setOrderBy] = React.useState<keyof Data>('totalRegistrationArea')
 	const [dense, setDense] = React.useState(false)
 	const [tableData, setTableData] = React.useState<any[]>([]) // change from any to dto out
 
 	const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-		console.log('sorting :: ', property)
+		// console.log('sorting :: ', property)
 		handleRequestSort(event, property)
 	}
 	const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
-		const isAsc = orderBy === property && order === 'asc'
-		setOrder(isAsc ? 'desc' : 'asc')
+		const isAsc = orderBy === property && order === SortType.ASC
+		setOrder(isAsc ? SortType.DESC : SortType.ASC)
 		setOrderBy(property)
 	}
 
 	React.useEffect(() => {
-		console.log(plantTableData)
-		// setTableData(plantTableData || [])
-		setTableData(response.data || [])
+		if (plantTableData) {
+			// init state of table sort at totalRegistrationArea
+			const tmpArr: Data[] = []
+			plantTableData.forEach((data) => {
+				tmpArr.push({
+					id: data.id,
+					name: data.name,
+					totalRegistrationArea: data.areas[0],
+					totalRegistrationAreaBoundaries: data.areas[1],
+					totalClaimArea: data.areas[2],
+					totalClaimAreaBoundaries: data.areas[3],
+					order: 0,
+				})
+			})
+			tmpArr.sort((a, b) => b.totalRegistrationArea[areaUnit] - a.totalRegistrationArea[areaUnit])
+
+			let currRank = 1
+			tmpArr[0].order = currRank
+			for (let i = 1; i < tmpArr.length; i++) {
+				if (tmpArr[i].totalRegistrationArea[areaUnit] === tmpArr[i - 1].totalRegistrationArea[areaUnit]) {
+					tmpArr[i].order = currRank
+				} else {
+					currRank = i + 1
+					tmpArr[i].order = currRank
+				}
+			}
+
+			setTableData(tmpArr)
+		}
 	}, [plantTableData])
+
+	const filterOrder = React.useMemo(() => {
+		const filter = {
+			sort: orderBy || 'totalRegistrationArea',
+			sortType: order || SortType.DESC,
+		}
+		return filter
+	}, [areaType, orderBy, order])
+
+	const rows = React.useMemo(() => {
+		const data = tableData
+		console.log('sorting data :: ', data, filterOrder, areaUnit)
+		data?.sort((a, b) => {
+			return filterOrder.sortType === SortType.ASC
+				? a[filterOrder?.sort][areaUnit] - b[filterOrder?.sort][areaUnit]
+				: b[filterOrder?.sort][areaUnit] - a[filterOrder?.sort][areaUnit]
+		})
+
+		let rowNum = 1
+
+		for (let i = 0; i < (data?.length || 0); i++) {
+			if (i === 0) {
+				data[i].order = 1
+			} else {
+				if (
+					filterOrder.sortType === SortType.ASC
+						? data[i]?.[filterOrder?.sort][areaUnit] > data?.[i - 1]?.[filterOrder?.sort][areaUnit]
+						: data[i]?.[filterOrder?.sort][areaUnit] < data?.[i - 1]?.[filterOrder?.sort][areaUnit]
+				) {
+					rowNum = rowNum + 1
+				} else {
+					rowNum
+				}
+				data[i].order = rowNum
+			}
+		}
+		return data || []
+	}, [tableData, filterOrder, areaUnit])
 
 	// const visibleRows = React.useMemo(() => stableSort(tableData, getComparator(order, orderBy)), [order, orderBy])
 
@@ -535,7 +620,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{tableData.map((row, index) => {
+								{rows.map((row, index) => {
 									return (
 										<TableRow hover={false} tabIndex={-1} key={row.id}>
 											<TableCell
@@ -544,7 +629,9 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 												padding='none'
 												sx={{ borderRight: '1px solid rgb(224, 224, 224)' }}
 											>
-												{row.name[i18n.language]}
+												<span>
+													{row.order} {row.name[i18n.language]}
+												</span>
 											</TableCell>
 											<TableCell
 												align='right'
@@ -553,7 +640,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 														orderBy === 'totalRegistrationArea' ? '#F8FAFD' : 'inherit',
 												}}
 											>
-												{row.areas[0].areaRai}
+												{row.totalRegistrationArea[areaUnit]}
 											</TableCell>
 											<TableCell
 												align='right'
@@ -564,7 +651,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 															: 'inherit',
 												}}
 											>
-												{row.areas[1].areaRai}
+												{row.totalRegistrationAreaBoundaries[areaUnit]}
 											</TableCell>
 											<TableCell
 												align='right'
@@ -573,7 +660,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 														orderBy === 'totalClaimArea' ? '#F8FAFD' : 'inherit',
 												}}
 											>
-												{row.areas[2].areaRai}
+												{row.totalClaimArea[areaUnit]}
 											</TableCell>
 											<TableCell
 												align='right'
@@ -582,7 +669,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 														orderBy === 'totalClaimAreaBoundaries' ? '#F8FAFD' : 'inherit',
 												}}
 											>
-												{row.areas[3].areaRai}
+												{row.totalClaimAreaBoundaries[areaUnit]}
 											</TableCell>
 										</TableRow>
 									)
