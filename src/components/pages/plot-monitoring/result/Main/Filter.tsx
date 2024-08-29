@@ -14,7 +14,7 @@ import {
 } from '@mui/material'
 import React, { useRef, useState } from 'react'
 import clsx from 'clsx'
-import { LossType } from '@/enum'
+import { BreedType, DetailType, InsuredType, LossType, PublicType, RiskType } from '@/enum'
 import { useTranslation } from 'react-i18next'
 import useSearchPlotMonitoring from './context'
 import { useRouter } from 'next/navigation'
@@ -22,6 +22,12 @@ import { AppPath } from '@/config/app'
 import classNames from 'classnames'
 import { color } from 'html2canvas/dist/types/css/types/color'
 import { CheckBoxOutlined } from '@mui/icons-material'
+
+const defaultRiskType: { [key: string]: boolean } = {
+	high: false,
+	medium: false,
+	low: false,
+}
 
 interface PlotMonitoringFilterProps {
 	isFullList: boolean
@@ -33,21 +39,7 @@ const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList 
 
 	const [inputActivityId, setInputActivityId] = useState<string>('')
 	const activityIdRef = useRef<HTMLInputElement>(null)
-
-	const [state, setState] = React.useState({
-		gilad: true,
-		jason: false,
-		antoine: false,
-	})
-
-	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setState({
-			...state,
-			[event.target.name]: event.target.checked,
-		})
-	}
-
-	const { gilad, jason, antoine } = state
+	const [riskType, setRiskType] = React.useState<{ [key: string]: boolean }>(defaultRiskType)
 
 	const handleChangeActivityIdInput = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const inputValue = event.target.value
@@ -57,7 +49,7 @@ const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList 
 
 	const handleSubmitActivityId = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		console.log('Form Submit!!!')
+		//console.log('Form Submit!!!')
 		setQueryParams({ ...queryParams, activityId: parseInt(inputActivityId) })
 		if (activityIdRef.current) {
 			activityIdRef.current.blur()
@@ -65,11 +57,54 @@ const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList 
 	}
 
 	const handleLossTypeClick = (_event: React.MouseEvent<HTMLElement>, lossType: LossType | null) => {
-		console.log('lossType', lossType)
+		//console.log('lossType', lossType)
 		setQueryParams({
 			...queryParams,
 			lossType: lossType,
 		})
+	}
+
+	const handlePublicStatusClick = (_event: React.MouseEvent<HTMLElement>, publicStatus: PublicType | null) => {
+		setQueryParams({
+			...queryParams,
+			publicStatus: publicStatus,
+		})
+	}
+
+	const handleRiceTypeClick = (_event: React.MouseEvent<HTMLElement>, riceType: DetailType | null) => {
+		setQueryParams({
+			...queryParams,
+			riceType: riceType,
+		})
+	}
+
+	const handleDetailTypeClick = (_event: React.MouseEvent<HTMLElement>, detailType: BreedType | null) => {
+		setQueryParams({
+			...queryParams,
+			detailType: detailType,
+		})
+	}
+
+	const handleInsuredTypeClick = (_event: React.MouseEvent<HTMLElement>, insuredType: InsuredType | null) => {
+		setQueryParams({
+			...queryParams,
+			insuredType: insuredType,
+		})
+	}
+
+	const handleRiskTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setRiskType({
+			...riskType,
+			[event.target.name]: event.target.checked,
+		})
+		const riskTypes: RiskType[] = queryParams.riskType || []
+		if (event.target.checked) {
+			riskTypes.push(event.target.name as RiskType)
+			setQueryParams({ ...queryParams, riskType: riskTypes })
+		} else {
+			const filteredRiskTypes = riskTypes.filter((item) => item !== event.target.name)
+			setQueryParams({ ...queryParams, riskType: filteredRiskTypes })
+		}
 	}
 
 	return (
@@ -151,152 +186,165 @@ const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList 
 			<Box className='flex flex-col gap-3 border-0 border-b border-solid border-gray py-4'>
 				<Typography className='text-sm font-medium text-black-dark'>สถานะประชาคม</Typography>
 				<ToggleButtonGroup
-					value={queryParams.lossType}
+					value={queryParams.publicStatus}
 					exclusive
-					//onChange={handleLossTypeClick}
+					onChange={handlePublicStatusClick}
 					aria-label='loss-type'
-					className='flex gap-2 max-lg:py-3 [&_*]:m-0 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
+					className='flex flex-wrap gap-2 max-lg:py-3 [&_*]:m-0 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
 				>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': Boolean(queryParams.lossType) === false,
-							'text-gray-dark2': Boolean(queryParams.lossType) !== false,
+							'bg-primary font-semibold text-white': typeof queryParams.publicStatus !== 'number',
+							'text-gray-dark2': typeof queryParams.publicStatus === 'number',
 						})}
 						value={''}
 					>
-						{t('allDisasters')}
+						{'ทั้งหมด'}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': queryParams.lossType === LossType.Drought,
-							'text-gray-dark2': queryParams.lossType !== LossType.Drought,
+							'bg-primary font-semibold text-white': queryParams.publicStatus === PublicType.NoPublic,
+							'text-gray-dark2': queryParams.publicStatus !== PublicType.NoPublic,
 						})}
-						value={LossType.Drought}
+						value={PublicType.NoPublic}
 					>
-						{t('drought')}
+						{'ยังไม่ประชาคม'}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': queryParams.lossType === LossType.Flood,
-							'text-gray-dark2': queryParams.lossType !== LossType.Flood,
+							'bg-primary font-semibold text-white': queryParams.publicStatus === PublicType.Public,
+							'text-gray-dark2': queryParams.publicStatus !== PublicType.Public,
 						})}
-						value={LossType.Flood}
+						value={PublicType.Public}
 					>
-						{t('flood')}
+						{'ประชาคมแล้ว'}
 					</ToggleButton>
 				</ToggleButtonGroup>
 			</Box>
 			<Box className='flex flex-col gap-3 border-0 border-b border-solid border-gray py-4'>
 				<Typography className='text-sm font-medium text-black-dark'>ประเภทของพันธุ์ข้าว</Typography>
 				<ToggleButtonGroup
-					value={queryParams.lossType}
+					value={queryParams.riceType}
 					exclusive
-					//onChange={handleLossTypeClick}
+					onChange={handleRiceTypeClick}
 					aria-label='loss-type'
-					className='flex gap-2 max-lg:py-3 [&_*]:m-0 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
+					className='flex flex-wrap gap-2 max-lg:py-3 [&_*]:m-0 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
 				>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': Boolean(queryParams.lossType) === false,
-							'text-gray-dark2': Boolean(queryParams.lossType) !== false,
+							'bg-primary font-semibold text-white': !queryParams.riceType,
+							'text-gray-dark2': !!queryParams.riceType,
 						})}
 						value={''}
 					>
-						{t('allDisasters')}
+						{'ทั้งหมด'}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': queryParams.lossType === LossType.Drought,
-							'text-gray-dark2': queryParams.lossType !== LossType.Drought,
+							'bg-primary font-semibold text-white':
+								queryParams.riceType === DetailType.PhotoperiodSensitiveRice,
+							'text-gray-dark2': queryParams.riceType !== DetailType.PhotoperiodSensitiveRice,
 						})}
-						value={LossType.Drought}
+						value={DetailType.PhotoperiodSensitiveRice}
 					>
-						{t('drought')}
+						{'ข้าวไวแสง'}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': queryParams.lossType === LossType.Flood,
-							'text-gray-dark2': queryParams.lossType !== LossType.Flood,
+							'bg-primary font-semibold text-white':
+								queryParams.riceType === DetailType.NonPhotoperiodSensitiveRice,
+							'text-gray-dark2': queryParams.riceType !== DetailType.NonPhotoperiodSensitiveRice,
 						})}
-						value={LossType.Flood}
+						value={DetailType.NonPhotoperiodSensitiveRice}
 					>
-						{t('flood')}
+						{'ข้าวไม่ไวแสง'}
 					</ToggleButton>
 				</ToggleButtonGroup>
 			</Box>
 			<Box className='flex flex-col gap-3 border-0 border-b border-solid border-gray py-4'>
 				<Typography className='text-sm font-medium text-black-dark'>ชนิดของพันธุ์ข้าว</Typography>
 				<ToggleButtonGroup
-					value={queryParams.lossType}
+					value={queryParams.detailType}
 					exclusive
-					//onChange={handleLossTypeClick}
+					onChange={handleDetailTypeClick}
 					aria-label='loss-type'
-					className='flex gap-2 max-lg:py-3 [&_*]:m-0 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
+					className='flex flex-wrap gap-2 max-lg:py-3 [&_*]:m-0 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
 				>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': Boolean(queryParams.lossType) === false,
-							'text-gray-dark2': Boolean(queryParams.lossType) !== false,
+							'bg-primary font-semibold text-white': !queryParams.detailType,
+							'text-gray-dark2': !!queryParams.detailType,
 						})}
 						value={''}
 					>
-						{t('allDisasters')}
+						{'ทั้งหมด'}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': queryParams.lossType === LossType.Drought,
-							'text-gray-dark2': queryParams.lossType !== LossType.Drought,
+							'bg-primary font-semibold text-white': queryParams.detailType === BreedType.JasmineRice,
+							'text-gray-dark2': queryParams.detailType !== BreedType.JasmineRice,
 						})}
-						value={LossType.Drought}
+						value={BreedType.JasmineRice}
 					>
-						{t('drought')}
+						{'ข้าวเจ้า'}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': queryParams.lossType === LossType.Flood,
-							'text-gray-dark2': queryParams.lossType !== LossType.Flood,
+							'bg-primary font-semibold text-white': queryParams.detailType === BreedType.GlutinousRice,
+							'text-gray-dark2': queryParams.detailType !== BreedType.GlutinousRice,
 						})}
-						value={LossType.Flood}
+						value={BreedType.GlutinousRice}
 					>
-						{t('flood')}
+						{'ข้าวเหนียว'}
 					</ToggleButton>
 				</ToggleButtonGroup>
 			</Box>
 			<Box className='flex flex-col gap-3 border-0 border-b border-solid border-gray py-4'>
 				<Typography className='text-sm font-medium text-black-dark'>ประกันภัย</Typography>
 				<ToggleButtonGroup
-					value={queryParams.lossType}
+					value={queryParams.insuredType}
 					exclusive
-					//onChange={handleLossTypeClick}
+					onChange={handleInsuredTypeClick}
 					aria-label='loss-type'
-					className='flex gap-2 max-lg:py-3 [&_*]:m-0 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
+					className='flex flex-wrap gap-2 max-lg:py-3 [&_*]:m-0 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
 				>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': Boolean(queryParams.lossType) === false,
-							'text-gray-dark2': Boolean(queryParams.lossType) !== false,
+							'bg-primary font-semibold text-white': typeof queryParams.insuredType !== 'number',
+							'text-gray-dark2': typeof queryParams.insuredType === 'number',
 						})}
 						value={''}
 					>
-						{t('allDisasters')}
+						{'ทั้งหมด'}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': queryParams.lossType === LossType.Drought,
-							'text-gray-dark2': queryParams.lossType !== LossType.Drought,
+							'bg-primary font-semibold text-white':
+								queryParams.insuredType === InsuredType.BasicInsurance,
+							'text-gray-dark2': queryParams.insuredType !== InsuredType.BasicInsurance,
 						})}
-						value={LossType.Drought}
+						value={InsuredType.BasicInsurance}
 					>
-						{t('drought')}
+						{'ประกันภัยพื้นฐาน (Tier 1)'}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': queryParams.lossType === LossType.Flood,
-							'text-gray-dark2': queryParams.lossType !== LossType.Flood,
+							'bg-primary font-semibold text-white':
+								queryParams.insuredType === InsuredType.VoluntaryInsurance,
+							'text-gray-dark2': queryParams.insuredType !== InsuredType.VoluntaryInsurance,
 						})}
-						value={LossType.Flood}
+						value={InsuredType.VoluntaryInsurance}
 					>
-						{t('flood')}
+						{'ประกันภัยโดยสมัครใจ (Tier 2)'}
+					</ToggleButton>
+					<ToggleButton
+						className={clsx('text-base', {
+							'bg-primary font-semibold text-white': queryParams.insuredType === InsuredType.NoInsurance,
+							'text-gray-dark2': queryParams.insuredType !== InsuredType.NoInsurance,
+						})}
+						value={InsuredType.NoInsurance}
+					>
+						{'ไม่มีประกันภัย'}
 					</ToggleButton>
 				</ToggleButtonGroup>
 			</Box>
@@ -308,9 +356,9 @@ const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList 
 							control={
 								<Checkbox
 									checkedIcon={<CheckBoxOutlined />}
-									checked={gilad}
-									onChange={handleChange}
-									name='gilad'
+									checked={riskType.high}
+									onChange={handleRiskTypeChange}
+									name={RiskType.High}
 								/>
 							}
 							label='ความเสี่ยงสูง'
@@ -320,9 +368,9 @@ const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList 
 							control={
 								<Checkbox
 									checkedIcon={<CheckBoxOutlined />}
-									checked={jason}
-									onChange={handleChange}
-									name='jason'
+									checked={riskType.medium}
+									onChange={handleRiskTypeChange}
+									name={RiskType.Medium}
 								/>
 							}
 							label='ความเสี่ยงกลาง'
@@ -332,9 +380,9 @@ const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList 
 							control={
 								<Checkbox
 									checkedIcon={<CheckBoxOutlined />}
-									checked={antoine}
-									onChange={handleChange}
-									name='antoine'
+									checked={riskType.low}
+									onChange={handleRiskTypeChange}
+									name={RiskType.Low}
 								/>
 							}
 							label='ความเสี่ยงต่ำ'
