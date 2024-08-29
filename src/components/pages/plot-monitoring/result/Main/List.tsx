@@ -1,16 +1,18 @@
 'use client'
 
 import React, { useCallback, useState } from 'react'
-import { Paper, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Box, IconButton, Paper, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import clsx from 'clsx'
 import CardList from '../List/CardList'
 import MapList from '../List/MapList'
+import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
 
 interface PlotMonitoringListProps {
 	isFullList: boolean
+	setIsFullList: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList }) => {
+const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, setIsFullList }) => {
 	const [areaDetail, setAreaDetail] = useState('cards')
 
 	const handleAreaDetailChange = useCallback((_event: React.MouseEvent<HTMLElement>, newAreaDetail: string) => {
@@ -19,6 +21,16 @@ const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList }) =
 
 	return (
 		<Paper className='relative max-lg:flex max-lg:flex-col max-lg:gap-3 max-lg:bg-gray-light lg:block lg:flex-grow'>
+			<IconButton
+				className='absolute left-0 top-3 z-10 flex items-center justify-center rounded-s-none border-0 border-l border-solid border-[#F2F2F2] bg-white px-1 py-3'
+				onClick={() => setIsFullList(!isFullList)}
+			>
+				{isFullList ? (
+					<ArrowForwardIos className='h-4 w-4 font-normal text-black-dark' />
+				) : (
+					<ArrowBackIosNew className='h-4 w-4 font-normal text-black-dark' />
+				)}
+			</IconButton>
 			<ToggleButtonGroup
 				size='small'
 				exclusive

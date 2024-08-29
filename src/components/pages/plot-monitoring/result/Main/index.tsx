@@ -15,7 +15,7 @@ export const PlotMonitoringResultMain = () => {
 			<Paper className='flex h-full overflow-hidden rounded-none lg:mx-4 lg:mb-4 lg:h-[calc(100vh-154px)] lg:rounded-lg'>
 				<div className='box-border flex w-full overflow-auto px-4 max-lg:flex-col max-lg:gap-3 max-lg:bg-gray-light max-lg:pb-4 lg:px-0'>
 					<PlotMonitoringFilter isFullList={isFullList} />
-					<PlotMonitoringList isFullList={isFullList} />
+					<PlotMonitoringList isFullList={isFullList} setIsFullList={setIsFullList} />
 				</div>
 			</Paper>
 		</div>
