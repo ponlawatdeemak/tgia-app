@@ -40,7 +40,7 @@ const PlantStatistic = () => {
 		queryKey: ['getTablePlantStatistic', queryParams],
 		queryFn: async () => {
 			const res = await service.annualAnalysis.getTablePlantStatistic(queryParams)
-			console.log('Plant Table :: ', res)
+			// console.log('Plant Table :: ', res)
 			return res
 		},
 		enabled: true,
@@ -50,7 +50,7 @@ const PlantStatistic = () => {
 		queryKey: ['getLinePlantStatistic', queryParams],
 		queryFn: async () => {
 			const res = await service.annualAnalysis.getLinePlantStatistic(queryParams)
-			console.log('Plant Line :: ', res)
+			// console.log('Plant Line :: ', res)
 			return res
 		},
 		enabled: true,
@@ -60,14 +60,14 @@ const PlantStatistic = () => {
 		queryKey: ['getBarPlantStatistic', queryParams],
 		queryFn: async () => {
 			const res = await service.annualAnalysis.getBarPlantStatistic(queryParams)
-			console.log('Plant Bar :: ', res)
+			// console.log('Plant Bar :: ', res)
 			return res
 		},
 		enabled: true,
 	})
 
 	React.useEffect(() => {
-		console.log('plantBarData :: ', plantBarData)
+		// console.log('plantBarData :: ', plantBarData)
 		if (plantBarData?.data && plantBarData?.legend) {
 			const tempBarColumns = [['x'], ['พื้นที่ไร่/แปลง']] as (string | number)[][] //
 			const tempBarColor = [] as string[]
@@ -79,9 +79,9 @@ const PlantStatistic = () => {
 				} else {
 					tempBarColumns[1].push(70000)
 				}
-				console.log('areaUnit Plot :: ', plantBarData?.data[i]?.categories[0]?.value?.area[areaUnit], areaUnit)
+				// console.log('areaUnit Plot :: ', plantBarData?.data[i]?.categories[0]?.value?.area[areaUnit], areaUnit)
 			}
-			console.log('tempBarColumns :: ', tempBarColumns)
+			// console.log('tempBarColumns :: ', tempBarColumns)
 			for (let i = 0; i < plantBarData?.legend.items.length; i++) {
 				tempBarColor.push(plantBarData?.legend.items[i].color)
 			}
@@ -91,7 +91,7 @@ const PlantStatistic = () => {
 	}, [plantBarData, areaUnit, language])
 
 	React.useEffect(() => {
-		console.log('plantLineData :: ', plantLineData)
+		// console.log('plantLineData :: ', plantLineData)
 		if (plantLineData?.values && plantLineData?.data && plantLineData?.legend) {
 			const tempLineColumns: (number | string)[][] = []
 			const tempLineColor: lineColorType = {}
@@ -114,9 +114,9 @@ const PlantStatistic = () => {
 					// some error handling
 				}
 			}
-			console.log('tempLineColumns :: ', tempLineColumns)
-			console.log('tempLineColor :: ', tempLineColor)
-			console.log('tempLineCategories :: ', tempLineCategories)
+			// console.log('tempLineColumns :: ', tempLineColumns)
+			// console.log('tempLineColor :: ', tempLineColor)
+			// console.log('tempLineCategories :: ', tempLineCategories)
 
 			setLineColorArr(tempLineColor)
 			setPlantLineColumns(tempLineColumns)

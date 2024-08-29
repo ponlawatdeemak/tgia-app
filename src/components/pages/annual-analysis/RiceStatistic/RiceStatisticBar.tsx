@@ -7,11 +7,11 @@ import { useTranslation } from 'react-i18next'
 import { ResponseLanguage } from '@/api/interface'
 
 interface PlantStatisticTableProps {
-	plantBarColumns?: any
-	plantBarColorArr?: any
+	riceBarColumns?: any
+	riceBarColorArr?: any
 }
 
-const PlantStatisticBar: React.FC<PlantStatisticTableProps> = ({ plantBarColumns, plantBarColorArr }) => {
+const RiceStatisticBar: React.FC<PlantStatisticTableProps> = ({ riceBarColumns, riceBarColorArr }) => {
 	const plantBarChart = React.useRef<IChart>(null)
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
@@ -35,7 +35,7 @@ const PlantStatisticBar: React.FC<PlantStatisticTableProps> = ({ plantBarColumns
 					},
 				},
 				color: function (color: string, d: any) {
-					return plantBarColorArr[d.index]
+					return riceBarColorArr[d.index]
 				},
 			},
 			bar: {
@@ -79,20 +79,20 @@ const PlantStatisticBar: React.FC<PlantStatisticTableProps> = ({ plantBarColumns
 				right: 20,
 			},
 		}
-	}, [plantBarColumns, plantBarColorArr])
+	}, [riceBarColumns, riceBarColorArr])
 
 	React.useEffect(() => {
 		const chart = plantBarChart.current?.instance
-		// console.log('plantBarColumns :: ', plantBarColumns)
+		// console.log('riceBarColumns :: ', riceBarColumns)
 		if (chart) {
 			chart.load({
-				columns: plantBarColumns,
+				columns: riceBarColumns,
 			})
 		}
-	}, [plantBarColumns, plantBarColorArr])
+	}, [riceBarColumns, riceBarColorArr])
 
-	// pass columns data and plantBarColorArr as props create option
+	// pass columns data and riceBarColorArr as props create option
 	return <BillboardJS bb={bb} options={barOption} ref={plantBarChart} className={'bb annual-analysis-bar'} />
 }
 
-export default PlantStatisticBar
+export default RiceStatisticBar

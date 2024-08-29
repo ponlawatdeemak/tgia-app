@@ -528,7 +528,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 
 	const rows = React.useMemo(() => {
 		const data = tableData
-		console.log('sorting data :: ', data, filterOrder, areaUnit)
+		// console.log('sorting data :: ', data, filterOrder, areaUnit)
 		data?.sort((a, b) => {
 			return filterOrder.sortType === SortType.ASC
 				? a[filterOrder?.sort][areaUnit] - b[filterOrder?.sort][areaUnit]

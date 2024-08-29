@@ -1,7 +1,7 @@
 import { AreaUnitKey } from '@/enum'
 import { ResponseArea, ResponseLanguage } from '../interface'
 
-interface dataAreas extends ResponseArea {
+export interface dataAreas extends ResponseArea {
 	column: ResponseLanguage
 }
 interface plantLegendItems {
