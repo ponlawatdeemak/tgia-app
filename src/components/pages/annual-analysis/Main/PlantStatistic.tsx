@@ -65,20 +65,15 @@ const PlantStatistic = () => {
 		},
 		enabled: true,
 	})
-	// console.log('areaType :: ', areaType)
-	// console.log('areaUnit :: ', areaUnit)
-	// console.log('language :: ', language)
-	// console.log('plantBarData :: ', plantBarData)
-	// console.log('plantLineData :: ', plantLineData)
 
 	React.useEffect(() => {
 		console.log('plantBarData :: ', plantBarData)
-		if (plantBarData) {
-			const tempBarColumns = [['x'], ['พื้นที่ไร่/แปลง']] //
+		if (plantBarData?.data && plantBarData?.legend) {
+			const tempBarColumns = [['x'], ['พื้นที่ไร่/แปลง']] as (string | number)[][] //
 			const tempBarColor = [] as string[]
 			for (let i = 0; i < plantBarData?.data.length; i++) {
 				tempBarColumns[0].push(plantBarData?.data[i]?.name[language])
-				tempBarColumns[1].push(plantBarData?.data[i]?.categories[0]?.value?.area['areaRai'])
+				tempBarColumns[1].push(plantBarData?.data[i]?.categories[0]?.value?.area[areaUnit])
 			}
 			for (let i = 0; i < plantBarData?.legend.items.length; i++) {
 				tempBarColor.push(plantBarData?.legend.items[i].color)
@@ -90,26 +85,14 @@ const PlantStatistic = () => {
 
 	React.useEffect(() => {
 		console.log('plantLineData :: ', plantLineData)
-		if (plantLineData) {
-			// columns: [
-			// 	['พื้นที่ทบก. ทั้งหมด', 10000, 20000, 30000, 40000, 50000],
-			// 	['พื้นที่ ทบก. มีขอบแปลง', 5000, 15000, 21000, 31000, 25000],
-			// 	['พื้นที่เอาประกันทั้งหมด', 17500, 22000, 23000, 45000, 51000],
-			// 	['พื้นที่เอาประกันที่มีขอบแปลง', 12000, 45000, 32000, 18000, 48000],
-			// ],
-			// colors: {
-			// 	'พื้นที่ทบก. ทั้งหมด': '#545454FF',
-			// 	'พื้นที่ ทบก. มีขอบแปลง': '#959595',
-			// 	พื้นที่เอาประกันทั้งหมด: '#B1334C',
-			// 	พื้นที่เอาประกันที่มีขอบแปลง: '#E7A9B5',
-			// },
-			// categories: ['2562', '2563', '2564', '2565', '2566'],
+		if (plantLineData?.values && plantLineData?.data && plantLineData?.legend) {
 			const tempLineColumns = [] as (number | string)[][] //
 			const tempLineColor: lineColorType = {}
 			const tempLineCategories = [] as string[]
-			for (let i = 0; i < plantLineData.values.length; i++) {
+
+			for (let i = 0; i < plantLineData?.values?.length; i++) {
 				const tempArr = [plantLineData.values[i].label[language]].concat(
-					plantLineData.values[i].area['areaRai'],
+					plantLineData.values[i].area[areaUnit].map(String), // Convert numbers to strings
 				)
 				tempLineColumns.push(tempArr)
 			}
@@ -130,128 +113,6 @@ const PlantStatistic = () => {
 		}
 	}, [plantLineData])
 
-	const options = {
-		size: {
-			height: 442,
-		},
-		data: {
-			x: 'x',
-			// plantBarColumns,
-			columns: [
-				[
-					'x',
-					'พื้นที่ทบก. ทั้งหมด',
-					'พื้นที่ขึ้นทะเบียน ทบก.\n มีขอบแปลง',
-					'พื้นที่เอาประกัน\nทั้งหมด',
-					'พื้นที่เอาประกัน\nที่มีขอบแปลง',
-				],
-				['พื้นที่ไร่', 14000000, 10000000, 10000000, 9000000], //format num x,xxx,xxx
-			],
-			type: bar(), // for ESM specify as: bar()
-			labels: {
-				centered: true,
-				colors: 'white' as string,
-				format: (x: number) => {
-					return x.toLocaleString()
-				},
-				// format?: FormatFunction | { [key: string]: FormatFunction };
-			},
-			color: (color: string, d: any) => {
-				return ['#545454FF', '#959595', '#B1334C', '#E7A9B5'][d.index]
-			},
-		},
-		bar: {
-			width: {
-				ratio: 0.85,
-			},
-		},
-		axis: {
-			x: {
-				// show: false,
-				type: 'category' as const,
-				tick: {
-					format: function (index: number, categoryName: string) {
-						return isDesktop ? categoryName : categoryName.substring(0, 10) + '...' //handle เอง
-					},
-				},
-			},
-			y: {
-				tick: {
-					format: function (x: number) {
-						const usformatter = Intl.NumberFormat('en-US', { notation: 'compact', compactDisplay: 'short' })
-						return usformatter.format(x)
-					},
-				},
-			},
-		},
-		legend: {
-			show: false,
-		},
-		grid: {
-			y: {
-				show: true,
-			},
-		},
-		padding: {
-			mode: 'fit' as const,
-			top: 10,
-			bottom: 20,
-			right: 20,
-		},
-	}
-	const options2 = {
-		size: {
-			height: 462,
-		},
-		data: {
-			// 4 lines พื้นที่ทบก. ทั้งหมด , พื้นที่ ทบก. มีขอบแปลง , พื้นที่เอาประกันทั้งหมด , พื้นที่เอาประกันที่มีขอบแปลง
-			// ['x', '2562', '2563', '2564', '2565', '2566'],
-			columns: [
-				['พื้นที่ทบก. ทั้งหมด', 10000, 20000, 30000, 40000, 50000],
-				['พื้นที่ ทบก. มีขอบแปลง', 5000, 15000, 21000, 31000, 25000],
-				['พื้นที่เอาประกันทั้งหมด', 17500, 22000, 23000, 45000, 51000],
-				['พื้นที่เอาประกันที่มีขอบแปลง', 12000, 45000, 32000, 18000, 48000],
-			],
-			type: line(),
-			// color: (color: string, d: any) => {
-			// 	return ['#545454FF', '#959595', '#B1334C', '#E7A9B5'][d.index]
-			// }
-			colors: {
-				'พื้นที่ทบก. ทั้งหมด': '#545454FF',
-				'พื้นที่ ทบก. มีขอบแปลง': '#959595',
-				พื้นที่เอาประกันทั้งหมด: '#B1334C',
-				พื้นที่เอาประกันที่มีขอบแปลง: '#E7A9B5',
-			},
-		},
-		point: {
-			// r: 4,
-			// type: 'circle',
-			pattern: [
-				"<g><circle cx='6' cy='6' r='6'></circle><circle cx='6' cy='6' r='3' style='fill:#fff'></circle></g>",
-			],
-		},
-		axis: {
-			x: {
-				type: 'category' as const,
-				categories: ['2562', '2563', '2564', '2565', '2566'],
-			},
-		},
-		line: {
-			classes: ['line-chart'],
-		},
-		grid: {
-			y: {
-				show: true,
-			},
-		},
-		padding: {
-			// left: -2,
-			top: 10,
-		},
-		legend: {
-			position: 'bottom',
-		},
-	}
 	return (
 		<Box>
 			{/* text font Anuphan ไม่ส่งต่อให้ text ใน g element svg ใน BillboardJS*/}
@@ -282,12 +143,6 @@ const PlantStatistic = () => {
 								/>
 							</>
 						)}
-						{/* <BillboardJS
-							bb={bb}
-							options={options2}
-							ref={plantLineChart}
-							className={'bb annual-analysis-line'}
-						/> */}
 					</Box>
 				</Grid>
 			</Grid>
