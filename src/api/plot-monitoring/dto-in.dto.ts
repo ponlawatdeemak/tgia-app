@@ -1,4 +1,4 @@
-export interface GetSearchPlotDtoIn {
+export interface GetAreaSearchPlotDtoIn {
 	activityId?: number
 	year: number
 	provinceCode?: number
@@ -10,18 +10,18 @@ export interface GetSearchPlotDtoIn {
 	riskType?: string[]
 	riceType?: number
 	detailType?: number
+}
+
+export interface GetSearchPlotDtoIn extends GetAreaSearchPlotDtoIn {
 	orderBy?: string
 	offset?: number
 	limit?: number
 }
 
-export interface GetAreaSearchPlotDtoIn extends GetSearchPlotDtoIn {}
-
-export interface GetPlotActivityPlantDetailDtoIn{
-    activityId?:number
+export interface GetPlotActivityPlantDetailDtoIn {
+	activityId?: number
 }
 
-export interface GetPlotActivityLossDetailDtoIn{
-    activityId?:number
+export interface GetPlotActivityLossDetailDtoIn {
+	activityId?: number
 }
-

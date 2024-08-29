@@ -48,9 +48,6 @@ const plotMonitoring = {
 		if (payload.riskType !== undefined) payload.riskType.forEach((item) => params.append('riskType', item))
 		if (payload.riceType !== undefined) params.append('riceType', payload.riceType.toString())
 		if (payload.detailType !== undefined) params.append('detailType', payload.detailType.toString())
-		if (payload.orderBy) params.append('orderBy', payload.orderBy)
-		if (payload.offset !== undefined) params.append('offset', payload.offset.toString())
-		if (payload.limit !== undefined) params.append('limit', payload.limit.toString())
 
 		return await api.get(`/plot/search/area?${params}`, APIService.DisasterAPI)
 	},
