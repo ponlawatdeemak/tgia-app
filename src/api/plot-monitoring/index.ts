@@ -1,12 +1,10 @@
 import { GetAreaSearchPlotDtoIn, GetSearchPlotDtoIn } from './dto-in.dto'
-import { GetAreaSearchPlotDtoOut, GetSearchPlotDtoOut, GetSearchPlotTotalDtoOut } from './dto-out.dto'
-import { APIService, ResponseDto, ResponseStatisticDto } from '@/api/interface'
+import { GetAreaSearchPlotDtoOut, GetSearchPlotDtoOut } from './dto-out.dto'
+import { APIService, ResponseDto } from '@/api/interface'
 import { api } from '../core'
 
 const plotMonitoring = {
-	getSearchPlot: async (
-		payload: GetSearchPlotDtoIn,
-	): Promise<ResponseStatisticDto<GetSearchPlotDtoOut[], GetSearchPlotTotalDtoOut>> => {
+	getSearchPlot: async (payload: GetSearchPlotDtoIn): Promise<ResponseDto<GetSearchPlotDtoOut[]>> => {
 		const params = new URLSearchParams()
 
 		if (payload.activityId !== undefined) params.append('activityId', payload.activityId.toString())

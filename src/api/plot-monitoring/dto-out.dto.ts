@@ -1,8 +1,14 @@
 import { Polygon } from 'geojson'
 import { ResponseArea, ResponseLanguage } from '../interface'
+import { LossType } from '@/enum'
 
-interface LossPredicted extends ResponseArea {
+interface PredictedRiceArea {
+	areaRai: number
 	percent: number
+}
+
+interface LossPredicted extends PredictedRiceArea {
+	lossType: string
 }
 
 export interface GetSearchPlotDtoOut {
@@ -11,7 +17,7 @@ export interface GetSearchPlotDtoOut {
 	order: number
 	address: ResponseLanguage
 	year: ResponseLanguage
-	predictedRiceArea: ResponseArea
+	predictedRiceArea: PredictedRiceArea
 	lossPredicted: LossPredicted
 	publicStatus: ResponseLanguage
 	riceType: ResponseLanguage
@@ -19,10 +25,6 @@ export interface GetSearchPlotDtoOut {
 	insuredType: ResponseLanguage
 	riskType: ResponseLanguage
 	geometry: Polygon
-}
-
-export interface GetSearchPlotTotalDtoOut {
-	total: number
 }
 
 export interface GetAreaSearchPlotDtoOut {
