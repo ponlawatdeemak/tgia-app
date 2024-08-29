@@ -21,17 +21,14 @@ import classNames from 'classnames'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useSearchPlotMonitoring from '../Main/context'
-import { useInfiniteQuery, useQuery, QueryFunctionContext } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { GetSearchPlotDtoIn } from '@/api/plot-monitoring/dto-in.dto'
 import service from '@/api'
-import { SortType } from '@/enum'
-import { GetSearchPlotDtoOut } from '@/api/plot-monitoring/dto-out.dto'
 import CardDetail from '../Card'
-import { GetSearchUMDtoOut } from '@/api/um/dto-out.dto'
-import { LastPage } from '@mui/icons-material'
 import { useInView } from 'react-intersection-observer'
 import { AppPath } from '@/config/app'
 import { useRouter } from 'next/navigation'
+import { OrderBy } from '@/enum/plot-monitoring.enum'
 
 const LimitCardsPerPage = 10
 
@@ -41,11 +38,11 @@ interface CardListProps {
 
 const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 	const router = useRouter()
-	const { queryParams } = useSearchPlotMonitoring()
+	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const [orderBy, setOrderBy] = useState<string>('รหัสอ้างอิง')
+	const [orderBy, setOrderBy] = useState<string>(OrderBy.ActivityId)
 	const [isOrderByOpen, setIsOrderByOpen] = useState<boolean>(false)
 	const { t, i18n } = useTranslation(['default', 'field-loss'])
 	const language = i18n.language as keyof ResponseLanguage
@@ -59,13 +56,13 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 			districtCode: queryParams.districtCode || undefined,
 			subDistrictCode: queryParams.subDistrictCode || undefined,
 			lossType: typeof queryParams.lossType === 'number' ? Number(queryParams.lossType) : undefined,
-			insuredType: queryParams.insuredType || undefined,
-			publicStatus: queryParams.publicStatus || undefined,
+			insuredType: typeof queryParams.insuredType === 'number' ? Number(queryParams.insuredType) : undefined,
+			publicStatus: typeof queryParams.publicStatus === 'number' ? Number(queryParams.publicStatus) : undefined,
 			riskType: queryParams.riskType || undefined,
 			riceType: queryParams.riceType || undefined,
 			detailType: queryParams.detailType || undefined,
-			orderBy: queryParams.orderBy,
-			limit: queryParams.limit,
+			orderBy: queryParams.orderBy || OrderBy.ActivityId,
+			limit: queryParams.limit || LimitCardsPerPage,
 		}
 		return filter
 	}, [queryParams])
@@ -150,6 +147,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 
 	const handleSelectOrderBy = (event: SelectChangeEvent) => {
 		setOrderBy(event.target.value)
+		setQueryParams({ ...queryParams, orderBy: event.target.value })
 	}
 
 	return (
@@ -195,18 +193,20 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 						>
 							<MenuItem
 								className={classNames('flex items-center gap-2 bg-transparent p-2', {
-									'!bg-gray-light2': orderBy === 'รหัสอ้างอิง',
+									'!bg-gray-light2': orderBy === OrderBy.ActivityId,
 								})}
-								value='รหัสอ้างอิง'
+								value={OrderBy.ActivityId}
 							>
 								<ListItemIcon className='!min-w-4'>
-									{orderBy === 'รหัสอ้างอิง' && <Check className='h-4 w-4 font-normal text-black' />}
+									{orderBy === OrderBy.ActivityId && (
+										<Check className='h-4 w-4 font-normal text-black' />
+									)}
 								</ListItemIcon>
 								<ListItemText
 									className={classNames(
 										'[&_span]:text-base [&_span]:font-normal [&_span]:text-black',
 										{
-											'[&_span]:!font-medium': orderBy === 'รหัสอ้างอิง',
+											'[&_span]:!font-medium': orderBy === OrderBy.ActivityId,
 										},
 									)}
 									primary='รหัสอ้างอิง'
@@ -214,12 +214,12 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 							</MenuItem>
 							<MenuItem
 								className={classNames('flex items-center gap-2 bg-transparent p-2', {
-									'!bg-gray-light2': orderBy === 'พื้นที่ปลูกข้าว',
+									'!bg-gray-light2': orderBy === OrderBy.PredictedRiceArea,
 								})}
-								value='พื้นที่ปลูกข้าว'
+								value={OrderBy.PredictedRiceArea}
 							>
 								<ListItemIcon className='!min-w-4'>
-									{orderBy === 'พื้นที่ปลูกข้าว' && (
+									{orderBy === OrderBy.PredictedRiceArea && (
 										<Check className='h-4 w-4 font-normal text-black' />
 									)}
 								</ListItemIcon>
@@ -227,7 +227,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 									className={classNames(
 										'[&_span]:text-base [&_span]:font-normal [&_span]:text-black',
 										{
-											'[&_span]:!font-medium': orderBy === 'พื้นที่ปลูกข้าว',
+											'[&_span]:!font-medium': orderBy === OrderBy.PredictedRiceArea,
 										},
 									)}
 									primary='พื้นที่ปลูกข้าว'
@@ -235,12 +235,12 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 							</MenuItem>
 							<MenuItem
 								className={classNames('flex items-center gap-2 bg-transparent p-2', {
-									'!bg-gray-light2': orderBy === 'พื้นที่ความเสียหาย',
+									'!bg-gray-light2': orderBy === OrderBy.LossPredicted,
 								})}
-								value='พื้นที่ความเสียหาย'
+								value={OrderBy.LossPredicted}
 							>
 								<ListItemIcon className='!min-w-4'>
-									{orderBy === 'พื้นที่ความเสียหาย' && (
+									{orderBy === OrderBy.LossPredicted && (
 										<Check className='h-4 w-4 font-normal text-black' />
 									)}
 								</ListItemIcon>
@@ -248,7 +248,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 									className={classNames(
 										'[&_span]:text-base [&_span]:font-normal [&_span]:text-black',
 										{
-											'[&_span]:!font-medium': orderBy === 'พื้นที่ความเสียหาย',
+											'[&_span]:!font-medium': orderBy === OrderBy.LossPredicted,
 										},
 									)}
 									primary='พื้นที่ความเสียหาย'
