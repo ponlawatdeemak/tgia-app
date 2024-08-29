@@ -1,5 +1,15 @@
-import { GetAreaSearchPlotDtoIn, GetSearchPlotDtoIn } from './dto-in.dto'
-import { GetAreaSearchPlotDtoOut, GetSearchPlotDtoOut } from './dto-out.dto'
+import {
+	GetAreaSearchPlotDtoIn,
+	GetPlotActivityLossDetailDtoIn,
+	GetPlotActivityPlantDetailDtoIn,
+	GetSearchPlotDtoIn,
+} from './dto-in.dto'
+import {
+	GetAreaSearchPlotDtoOut,
+	GetPlotActivityLossDetailDtoOut,
+	GetPlotActivityPlantDetailDtoOut,
+	GetSearchPlotDtoOut,
+} from './dto-out.dto'
 import { APIService, ResponseDto } from '@/api/interface'
 import { api } from '../core'
 
@@ -43,6 +53,16 @@ const plotMonitoring = {
 		if (payload.limit !== undefined) params.append('limit', payload.limit.toString())
 
 		return await api.get(`/plot/search/area?${params}`, APIService.DisasterAPI)
+	},
+	getPlotActivityPlantDetail: async (
+		payload: GetPlotActivityPlantDetailDtoIn,
+	): Promise<ResponseDto<GetPlotActivityPlantDetailDtoOut>> => {
+		return await api.get(`/plot/${payload.activityId}/plant-detail`, APIService.DisasterAPI)
+	},
+	getPlotActivityLossDetail: async (
+		payload: GetPlotActivityLossDetailDtoIn,
+	): Promise<ResponseDto<GetPlotActivityLossDetailDtoOut>> => {
+		return await api.get(`/plot/${payload.activityId}/loss-detail`, APIService.DisasterAPI)
 	},
 }
 
