@@ -78,16 +78,18 @@ const PlantStatisticLine: React.FC<PlantStatisticLineProps> = ({
 				position: 'bottom',
 			},
 		}
-	}, [plantLineColumns, plantLineColorArr])
+	}, [plantLineColumns, plantLineColorArr, language])
 
 	React.useEffect(() => {
 		const chart = plantLineChart.current?.instance
 		if (chart) {
+			// chart.unload()
 			chart.load({
 				columns: plantLineColumns,
+				append: false,
 			})
 		}
-	}, [plantLineColumns, plantLineColorArr, lineCategoriesArr])
+	}, [plantLineColumns, plantLineColorArr, lineCategoriesArr, language])
 
 	// pass columns data and plantBarColorArr as props create option
 	return <BillboardJS bb={bb} options={barOption} ref={plantLineChart} className={'bb annual-analysis-line'} />

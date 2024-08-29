@@ -151,6 +151,7 @@ const PlantStatistic = () => {
 									plantLineColumns={plantLineColumns}
 									plantLineColorArr={lineColorArr}
 									lineCategoriesArr={lineCategoriesArr}
+									key={JSON.stringify(lineColorArr)}
 								/>
 							</>
 						)}
