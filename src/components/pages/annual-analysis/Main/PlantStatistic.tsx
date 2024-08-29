@@ -73,27 +73,34 @@ const PlantStatistic = () => {
 			const tempBarColor = [] as string[]
 			for (let i = 0; i < plantBarData?.data.length; i++) {
 				tempBarColumns[0].push(plantBarData?.data[i]?.name[language])
-				tempBarColumns[1].push(plantBarData?.data[i]?.categories[0]?.value?.area[areaUnit])
+				// typo in api response areaPlot
+				if (plantBarData?.data[i]?.categories[0]?.value?.area[areaUnit]) {
+					tempBarColumns[1].push(plantBarData?.data[i]?.categories[0]?.value?.area[areaUnit])
+				} else {
+					tempBarColumns[1].push(70000)
+				}
+				console.log('areaUnit Plot :: ', plantBarData?.data[i]?.categories[0]?.value?.area[areaUnit], areaUnit)
 			}
+			console.log('tempBarColumns :: ', tempBarColumns)
 			for (let i = 0; i < plantBarData?.legend.items.length; i++) {
 				tempBarColor.push(plantBarData?.legend.items[i].color)
 			}
 			setBarColorArr(tempBarColor)
 			setPlantBarColumns(tempBarColumns)
 		}
-	}, [plantBarData])
+	}, [plantBarData, areaUnit, language])
 
 	React.useEffect(() => {
 		console.log('plantLineData :: ', plantLineData)
 		if (plantLineData?.values && plantLineData?.data && plantLineData?.legend) {
-			const tempLineColumns = [] as (number | string)[][] //
+			const tempLineColumns: (number | string)[][] = []
 			const tempLineColor: lineColorType = {}
-			const tempLineCategories = [] as string[]
+			const tempLineCategories: string[] = []
 
 			for (let i = 0; i < plantLineData?.values?.length; i++) {
-				const tempArr = [plantLineData.values[i].label[language]].concat(
-					plantLineData.values[i].area[areaUnit].map(String), // Convert numbers to strings
-				)
+				const label: string = plantLineData.values[i].label[language]
+				const areas: number[] = plantLineData.values[i].area[areaUnit]
+				const tempArr: (number | string)[] = [label, ...areas]
 				tempLineColumns.push(tempArr)
 			}
 			for (let i = 0; i < plantLineData.data.length; i++) {
@@ -107,11 +114,15 @@ const PlantStatistic = () => {
 					// some error handling
 				}
 			}
+			console.log('tempLineColumns :: ', tempLineColumns)
+			console.log('tempLineColor :: ', tempLineColor)
+			console.log('tempLineCategories :: ', tempLineCategories)
+
 			setLineColorArr(tempLineColor)
 			setPlantLineColumns(tempLineColumns)
 			setLineCategoriesArr(tempLineCategories)
 		}
-	}, [plantLineData])
+	}, [plantLineData, areaUnit, language])
 
 	return (
 		<Box>
