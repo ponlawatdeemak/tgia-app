@@ -26,17 +26,17 @@
 	"setting": "ตั้งค่า",
 	"back": "ย้อนกลับ",
 	"allDisasters": "ภัยพิบัติทั้งหมด",
-    "all": "ทั้งหมด",
-    "total": "รวมทั้งหมด",
+	"all": "ทั้งหมด",
+	"total": "รวมทั้งหมด",
 	"status": "สถานะ",
 	"nameSurname": "ชื่อ นามสกุล",
 	"previous": "ก่อนหน้า",
 	"next": "ถัดไป",
-    "rank": "อันดับ",
-    "searchResults": "ผลลัพธ์การค้นหา",
-    "favoriteAreas": "พื้นที่ในรายการโปรด",
-    "recentSearches": "ค้นหาล่าสุด",
-    "thailand": "ประเทศไทย",
+	"rank": "อันดับ",
+	"searchResults": "ผลลัพธ์การค้นหา",
+	"favoriteAreas": "พื้นที่ในรายการโปรด",
+	"recentSearches": "ค้นหาล่าสุด",
+	"thailand": "ประเทศไทย",
 	"warning": {
 		"inputEmail": "กรุณากรอกอีเมล",
 		"inputPassword": "กรุณากรอกรหัสผ่าน",
@@ -53,7 +53,9 @@
 		"inputFirstName": "กรุณากรอกชื่อ",
 		"inputLastName": "กรุณากรอกนามสกุล",
 		"inputProvince": "กรุณาเลือกจังหวัด",
-		"inputDistrict": "กรุณาเลือกอำเภอ"
+		"inputDistrict": "กรุณาเลือกอำเภอ",
+		"inputOrgCode": "กรุณาเลือกหน่วยงาน",
+		"inputRole": "กรุณาเลือกบทบาท"
 	},
 	"success": {},
 	"error": {
@@ -72,5 +74,11 @@
 		"confirmLogoutContent": "ต้องการยืนยันการออกจากระบบใช่หรือไม่",
 		"confirmEditPassword": "ยืนยันการแก้รหัสผ่าน",
 		"confirmChangePassword": "ต้องการยืนยันการแก้รหัสผ่านของผู้ใช้งานนี้ใช่หรือไม่"
+	},
+	"map": {
+		"mapType": "ประเภทแผนที่",
+		"street": "เส้นถนน",
+		"satellite": "ภูมิประเทศ",
+		"hybrid": "ผสม"
 	}
 }

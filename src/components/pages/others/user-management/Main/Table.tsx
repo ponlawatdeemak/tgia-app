@@ -21,6 +21,7 @@ import {
 	Snackbar,
 	Alert,
 	PaginationItem,
+	CircularProgress,
 } from '@mui/material'
 import { visuallyHidden } from '@mui/utils'
 import { SortType } from '@/enum'
@@ -46,7 +47,7 @@ import { mdiAccountOff } from '@mdi/js'
 import { FormMain } from '../Form'
 
 interface Data {
-	id: number
+	id: string
 	firstName: string
 	email: string
 	organization: string
@@ -59,7 +60,7 @@ interface Data {
 
 interface HeadCell {
 	disablePadding: boolean
-	id: keyof Data
+	id: string
 	label: string
 	numeric: boolean
 	minWidth: string
@@ -85,7 +86,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 }) => {
 	const { data: session } = useSession()
 	const [order, setOrder] = React.useState<SortType>(SortType.ASC)
-	const [orderBy, setOrderBy] = React.useState<keyof Data>('firstName')
+	const [orderBy, setOrderBy] = React.useState<string>('firstName')
 	const [selected, setSelected] = React.useState<readonly string[]>([])
 	const [dense, setDense] = React.useState(false)
 	const queryClient = useQueryClient()
@@ -129,7 +130,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			minWidth: '140px',
 		},
 		{
-			id: 'responsibleProvinceName',
+			id: 'respProvince',
 			numeric: false,
 			disablePadding: false,
 			label: t('belongProvince', { ns: 'um' }),
@@ -137,7 +138,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 			minWidth: '160px',
 		},
 		{
-			id: 'responsibleDistrictName',
+			id: 'respDistrict',
 			numeric: false,
 			disablePadding: false,
 			label: t('belongDistrict', { ns: 'um' }),
@@ -217,12 +218,13 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	}, [isSearch])
 
 	const handleRequestSort = React.useCallback(
-		(event: React.MouseEvent<unknown>, property: keyof Data) => {
+		(event: React.MouseEvent<unknown>, property: string) => {
 			const isAsc = orderBy === property && order === SortType.ASC
 			setSearchParams((prevSearch) => ({
 				...prevSearch,
 				sortField: property,
 				sortOrder: isAsc ? SortType.DESC : SortType.ASC,
+				respLang: i18n.language,
 			}))
 			setIsSearch(true)
 			setOrder(isAsc ? SortType.DESC : SortType.ASC)
@@ -244,7 +246,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	)
 
 	const createSortHandler = React.useCallback(
-		(property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+		(property: string) => (event: React.MouseEvent<unknown>) => {
 			handleRequestSort(event, property)
 		},
 		[handleRequestSort],
@@ -402,11 +404,13 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 				setSearchParams((prevSearch) => ({
 					...prevSearch,
 					offset: page < value ? prevSearch.offset + 10 : prevSearch.offset - 10,
+					respLang: i18n.language,
 				}))
 			} else {
 				setSearchParams((prevSearch) => ({
 					...prevSearch,
 					offset: (value - 1) * 10,
+					respLang: i18n.language,
 				}))
 			}
 			setIsSearch(true)
@@ -431,7 +435,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 				'pb-[8px] pt-[12px]': !isDesktop,
 			})}
 		>
-			<Paper className='flex flex-col gap-[8px] px-[24px] py-[16px]'>
+			<Paper className='relative flex flex-col gap-[8px] px-[24px] py-[16px]'>
 				<div className='flex items-baseline gap-[12px]'>
 					<Typography variant='body1' className='font-semibold'>
 						{t('userList', { ns: 'um' })}
@@ -442,7 +446,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					</Typography>
 				</div>
 
-				<Box className='flex h-[70vh] flex-col gap-[16px]'>
+				<Box className='flex h-[calc(100vh-200px)] flex-col gap-[16px] lg:h-[calc(100vh-220px)]'>
 					<TableContainer
 						className='flex flex-col overflow-y-auto'
 						sx={{ minHeight: '90%', flex: 1 }}
@@ -724,6 +728,24 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 							)}
 						/>
 					</Box>
+				</Box>
+				{/* OverlayLoading */}
+				<Box
+					sx={{
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						width: '100%',
+						height: '100%',
+						display: isTableDataLoading ? 'flex' : 'none',
+						alignItems: 'center',
+						justifyContent: 'center',
+						backgroundColor: 'rgba(255, 255, 255, 0.7)',
+						zIndex: 10,
+						borderRadius: '8px',
+					}}
+				>
+					<CircularProgress />
 				</Box>
 			</Paper>
 			{/* <AlertConfirm/> x 4 forEach function */}

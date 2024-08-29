@@ -5,6 +5,11 @@ export interface GetSearchAdminPolyDtoOut {
 	id: string
 	name: ResponseLanguage
 }
+export interface GetExtentAdminPolyDtoOut {
+	id: string
+	name: ResponseLanguage
+	extent: number[]
+}
 
 interface ClaimedArea extends ResponseArea {
 	percent: number

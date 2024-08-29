@@ -21,5 +21,10 @@
     "national": "National",
     "disasterDamageRank": "Disaster Damage Rank",
     "monthlyDisasterDamage": "Monthly Disaster Damage",
-    "cultivationYear": "Cultivation Year"
+    "cultivationYear": "Cultivation Year",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "use": "Use",
+    "reset": "Reset",
+    "noData": "No Data"
 }

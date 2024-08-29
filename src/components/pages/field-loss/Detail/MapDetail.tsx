@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import MapView from '@/components/common/map/MapView'
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react'
+import MapView, { MapViewRef } from '@/components/common/map/MapView'
 import { Box, Breadcrumbs, Link, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
@@ -29,6 +29,7 @@ import { GetSummaryAreaDtoIn } from '@/api/field-loss/dto-in.dto'
 import useSearchFieldLoss from '../Main/context'
 import { Feature, Geometry } from 'geojson'
 import { useTranslation } from 'react-i18next'
+import classNames from 'classnames'
 
 interface FilterRangeMonthType {
 	startDate: string
@@ -81,9 +82,10 @@ const DefaultLineWidth = 0
 
 interface MapDetailProps {
 	areaDetail: string
+	mapViewRef: any
 }
 
-const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
+const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 	const { queryParams, setQueryParams } = useSearchFieldLoss()
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
@@ -133,7 +135,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 	const { data: summaryAreaData, isLoading: isSummaryAreaDataLoading } = useQuery({
 		queryKey: ['getSummaryArea', filterSummaryArea],
 		queryFn: () => service.fieldLoss.getSummaryArea(filterSummaryArea),
-		enabled: areaDetail === 'summary-area' || !isDesktop,
+		//enabled: areaDetail === 'summary-area' || !isDesktop,
 	})
 
 	const summaryAreaId = useMemo(() => {
@@ -698,7 +700,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 												y: info.y,
 												area: subDistrict,
 												areaCode: info.object.properties.subDistrictCode,
-												layerName: info.object.properties.layerName,
+												layerName: 'endLayer',
 											})
 										} else {
 											setHoverInfo(null)
@@ -712,7 +714,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 												y: info.y,
 												area: subDistrict,
 												areaCode: info.object.properties.subDistrictCode,
-												layerName: info.object.properties.layerName,
+												layerName: 'endLayer',
 											})
 										} else {
 											setHoverInfo(null)
@@ -725,7 +727,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 											y: info.y,
 											area: subDistrict,
 											areaCode: info.object.properties.subDistrictCode,
-											layerName: info.object.properties.layerName,
+											layerName: 'endLayer',
 										})
 										break
 									}
@@ -746,6 +748,8 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 		queryParams.lossType,
 		checkLevelTileColor,
 		queryParams.layerName,
+		queryParams.provinceCode,
+		queryParams.districtCode,
 		queryParams.subDistrictCode,
 		summaryAreaId,
 	])
@@ -769,16 +773,22 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 	}
 
 	return (
-		<div className='relative h-[390px] w-full max-lg:overflow-hidden max-lg:rounded lg:h-full'>
+		<div
+			className={classNames('relative h-[390px] w-full max-lg:overflow-hidden max-lg:rounded lg:h-full', {
+				'lg:hidden': areaDetail !== 'summary-area',
+			})}
+		>
 			<Box
 				role='presentation'
 				className='absolute left-3 top-3 z-10 flex h-7 items-center gap-2 rounded-lg bg-white px-2 py-1'
 			>
-				<Typography className='text-base font-medium text-black'>{`${t('level', { ns: 'field-loss' })}:`}</Typography>
-				<Breadcrumbs aria-label='breadcrumb'>
+				{isDesktop && (
+					<Typography className='text-sm font-medium text-black xl:text-base'>{`${t('level', { ns: 'field-loss' })}:`}</Typography>
+				)}
+				<Breadcrumbs aria-label='breadcrumb' className='max-xl:[&_li.MuiBreadcrumbs-separator]:mx-1.5'>
 					{queryParams.layerName && (
 						<Link
-							className='text-base font-normal text-black'
+							className='text-sm font-normal text-black xl:text-base'
 							underline='hover'
 							href='#'
 							onClick={handleCountryClick}
@@ -789,7 +799,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 					{queryParams.layerName &&
 						(queryParams.layerName === 'district' || queryParams.layerName === 'subdistrict') && (
 							<Link
-								className='text-base font-normal text-black'
+								className='text-sm font-normal text-black xl:text-base'
 								underline='hover'
 								href='#'
 								onClick={handleProvinceClick}
@@ -799,7 +809,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 						)}
 					{queryParams.layerName && queryParams.layerName === 'subdistrict' && (
 						<Link
-							className='text-base font-normal text-black'
+							className='text-sm font-normal text-black xl:text-base'
 							underline='hover'
 							href='#'
 							onClick={handleDistrictClick}
@@ -807,7 +817,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 							{t('district')}
 						</Link>
 					)}
-					<Typography className='text-base font-semibold text-black' color='text.primary'>
+					<Typography className='text-sm font-semibold text-black xl:text-base'>
 						{queryParams.layerName
 							? queryParams.layerName === 'province'
 								? t('province')
@@ -841,15 +851,15 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail }) => {
 					/>
 				)}
 			</Box>
-			<Box className='absolute bottom-2 left-[68px] z-10 w-[calc(100%-84px)] max-lg:hidden'>
+			<Box className='absolute bottom-2 left-[68px] z-10 w-[calc(100%-76px)] max-lg:hidden'>
 				<DatePickerHorizontal
 					startDate={queryParams.startDate || new Date()}
 					endDate={queryParams.endDate || addDays(new Date(), 15)}
 					calendarData={calendarData}
 				/>
 			</Box>
-			<Tooltip info={hoverInfo} setHoverInfo={setHoverInfo} />
-			<MapView />
+			<Tooltip hoverInfo={hoverInfo} setHoverInfo={setHoverInfo} />
+			<MapView ref={mapViewRef} />
 		</div>
 	)
 }

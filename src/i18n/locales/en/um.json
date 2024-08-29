@@ -30,6 +30,7 @@
 	"fileDataError": "Invalid data in file",
 	"userDocExample": "User Document Example",
 	"downloadTemplate": "Download Template",
+	"successImport": "User import successfully",
 	"alert": {
 		"deleteUserProfile": "Delete user",
 		"enableUserProfile": "Enable User",

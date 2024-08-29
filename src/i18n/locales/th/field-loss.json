@@ -21,5 +21,10 @@
     "national": "ประเทศ",
     "disasterDamageRank": "อันดับความเสียหายจากภัยพิบัติ",
     "monthlyDisasterDamage": "ความเสียหายจากภัยพิบัติ (รายเดือน)",
-    "cultivationYear": "ปีการเพาะปลูก"
+    "cultivationYear": "ปีการเพาะปลูก",
+    "startDate": "วันที่เริ่มต้น",
+    "endDate": "วันที่สิ้นสุด",
+    "use": "ใช้งาน",
+    "reset": "รีเซ็ต",
+    "noData": "ไม่มีข้อมูล"
 }

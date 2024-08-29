@@ -9,12 +9,15 @@ import useResponsive from '@/hook/responsive'
 import MapDetail from '../Detail/MapDetail'
 import { useTranslation } from 'react-i18next'
 
-interface FieldLossDetailProps {}
+interface FieldLossDetailProps {
+	mapViewRef: any
+}
 
-const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
-	const { isDesktop } = useResponsive()
+// const mapViewRef = useRef<MapViewRef>(null)
+
+const FieldLossDetail: React.FC<FieldLossDetailProps> = ({ mapViewRef }) => {
 	const [areaDetail, setAreaDetail] = useState('summary-area')
-	const { t, i18n } = useTranslation('field-loss')
+	const { t } = useTranslation('field-loss')
 
 	const handleAreaDetailChange = useCallback((_event: React.MouseEvent<HTMLElement>, newAreaDetail: string) => {
 		setAreaDetail((prev) => newAreaDetail || prev)
@@ -31,7 +34,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 				onChange={handleAreaDetailChange}
 			>
 				<ToggleButton
-					className={clsx('border border-solid text-base', {
+					className={clsx('border border-solid text-sm xl:text-base', {
 						'border-primary bg-white font-semibold text-primary': areaDetail === 'summary-area',
 						'border-transparent font-medium text-gray-dark2': areaDetail !== 'summary-area',
 					})}
@@ -40,7 +43,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 					{t('byMap')}
 				</ToggleButton>
 				<ToggleButton
-					className={clsx('border border-solid text-base', {
+					className={clsx('border border-solid text-sm xl:text-base', {
 						'border-primary bg-white font-semibold text-primary': areaDetail === 'area-statistic',
 						'border-transparent font-medium text-gray-dark2': areaDetail !== 'area-statistic',
 					})}
@@ -49,7 +52,7 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 					{t('byRank')}
 				</ToggleButton>
 				<ToggleButton
-					className={clsx('border border-solid text-base', {
+					className={clsx('border border-solid text-sm xl:text-base', {
 						'border-primary bg-white font-semibold text-primary': areaDetail === 'time-statistic',
 						'border-transparent font-medium text-gray-dark2': areaDetail !== 'time-statistic',
 					})}
@@ -58,9 +61,9 @@ const FieldLossDetail: React.FC<FieldLossDetailProps> = () => {
 					{t('byTime')}
 				</ToggleButton>
 			</ToggleButtonGroup>
-			{(areaDetail === 'summary-area' || !isDesktop) && <MapDetail areaDetail={areaDetail} />}
-			{(areaDetail === 'area-statistic' || !isDesktop) && <TableDetail areaDetail={areaDetail} />}
-			{(areaDetail === 'time-statistic' || !isDesktop) && <ChartDetail areaDetail={areaDetail} />}
+			<MapDetail areaDetail={areaDetail} mapViewRef={mapViewRef} />
+			<TableDetail areaDetail={areaDetail} />
+			<ChartDetail areaDetail={areaDetail} />
 		</Paper>
 	)
 }

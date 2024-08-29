@@ -301,23 +301,18 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 												<Icon path={mdiCloseCircleOutline} size={1} />
 												<Typography>{t('fileDataError', { ns: 'um' })}</Typography>
 											</div>
-											<div className='divide-x-0 divide-y divide-solid divide-gray'>
+											<div className='divide-x-0 divide-y divide-solid divide-gray pt-3'>
 												{importError.map((error) => {
 													if (error.success === false) {
 														return (
-															// <div key={error.firstName}>
-															// 	<p key={error.firstName}>
-															// 		{error.rowNo} :{error.result}
-															// 	</p>
-															// </div>
 															<div
-																className='flex items-center justify-between p-2'
+																className='relative flex items-center justify-between p-2'
 																key={error.firstName}
 															>
-																<div className='mr-[16px] w-12 text-left'>
+																<div className='absolute left-[8px] top-[9px] w-12 text-left lg:static lg:mr-[16px] lg:flex-none'>
 																	{error.rowNo}
 																</div>
-																<div className='flex-shrink flex-grow basis-0'>
+																<div className='ml-12 flex-shrink flex-grow basis-0 lg:ml-0'>
 																	:{error.result}
 																</div>
 															</div>

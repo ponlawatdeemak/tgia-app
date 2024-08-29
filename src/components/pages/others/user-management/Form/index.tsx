@@ -73,9 +73,17 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 	const { data: session, update } = useSession()
 	const { isDesktop } = useResponsive()
 	const queryClient = useQueryClient()
+
 	const handleSubmitUser = async (event: FormEvent) => {
 		event.preventDefault()
-		isEdit ? setIsConfirmEditOpen(true) : setIsConfirmAddOpen(true)
+		formik.validateForm().then((errors) => {
+			if (Object.keys(errors).length === 0) {
+				isEdit ? setIsConfirmEditOpen(true) : setIsConfirmAddOpen(true)
+			} else {
+				formik.handleSubmit()
+			}
+		})
+		// isEdit ? setIsConfirmEditOpen(true) : setIsConfirmAddOpen(true)
 	}
 
 	const validationSchema = yup.object({
@@ -83,7 +91,8 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 		lastName: yup.string().required(t('warning.inputLastName')),
 		email: yup.string().email(t('warning.invalidEmailFormat')).required(t('warning.inputEmail')),
 		responsibleProvinceCode: yup.string().required(t('warning.inputProvince')),
-		responsibleDistrictCode: yup.string().required(t('warning.inputDistrict')),
+		orgCode: yup.string().required(t('warning.inputOrgCode')),
+		role: yup.string().required(t('warning.inputRole')),
 	})
 	const {
 		data: userData,
@@ -151,7 +160,6 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 		async (values: UMFormValues) => {
 			try {
 				// images is newly added
-				console.log('values.image :: ', values.image)
 				if (values.image instanceof File) {
 					// New image uploaded
 					const imagePayload: PostUploadFilesDtoIn = {
@@ -176,7 +184,6 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 							responsibleDistrictCode: values.responsibleDistrictCode,
 							flagStatus: values.flagStatus,
 						}
-						console.log('Editing user :: ', payload)
 						const res = await mutatePutProfileUM(payload)
 						// update session on userId
 						if (session?.user.id === values.id) {
@@ -205,7 +212,6 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 							severity: 'success',
 							message: t('profileUpdateSuccess', { ns: 'um' }),
 						})
-						console.log('res :: ', res)
 						setIsSearch(true)
 						setOpen(false)
 						formik.resetForm()
@@ -232,14 +238,12 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 							responsibleDistrictCode: values.responsibleDistrictCode,
 							flagStatus: values.flagStatus,
 						}
-						console.log('Adding new user :: ', payload)
 						const res = await mutatePostProfileUM(payload)
 						setAlertInfo({
 							open: true,
 							severity: 'success',
 							message: t('profileAddSuccess', { ns: 'um' }),
 						})
-						console.log('res :: ', res)
 						setIsSearch(true)
 						setOpen(false)
 						formik.resetForm()
@@ -281,16 +285,16 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 				open={open}
 				onClose={handleOnClose}
 				component='form'
-				onSubmit={handleSubmitUser}
+				// onSubmit={handleSubmitUser}
 				fullWidth
 				scroll='paper'
-				className={classNames('[&_.MuiPaper-root]:h-[636px] [&_.MuiPaper-root]:max-w-[800px]', {
+				className={classNames('[&_.MuiPaper-root]:h-[636px] [&_.MuiPaper-root]:max-w-[700px]', {
 					'': !isDesktop,
 				})}
 			>
 				<DialogTitle>{isEdit ? t('editUserAccount', { ns: 'um' }) : t('addUser', { ns: 'um' })}</DialogTitle>
 				<DialogContent dividers={true} className='flex flex-col justify-between max-lg:gap-3'>
-					<div className='flex flex-col items-center justify-center gap-3 max-lg:block lg:flex-row'>
+					<div className='flex flex-col items-center gap-3 max-lg:block lg:flex-row'>
 						<ProfileForm
 							formik={formik}
 							loading={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
@@ -301,23 +305,21 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 					</div>
 					{session?.user.id !== userId && (
 						<FormControlLabel
+							sx={{
+								pointerEvents: 'none',
+								margin: 0,
+							}}
+							className='max-lg:pt-1'
 							control={
-								<IOSSwitch
-									sx={{
-										m: 1,
-										'& .MuiSwitch-switchBase': {
-											'&.Mui-checked': {
-												'& + .MuiSwitch-track': {
-													backgroundColor: '#0C626D',
-												},
-											},
-										},
-									}}
-									checked={formik.values.flagStatus === 'A' ? true : false}
-									onChange={(event) => {
-										formik.setFieldValue('flagStatus', event.target.checked ? 'A' : 'C')
-									}}
-								/>
+								<div className='pointer-events-auto'>
+									<IOSSwitch
+										className='m-0 mr-2 [&_.Mui-checked+.MuiSwitch-track]:bg-[#0C626D]'
+										checked={formik.values.flagStatus === 'A' ? true : false}
+										onChange={(event) => {
+											formik.setFieldValue('flagStatus', event.target.checked ? 'A' : 'C')
+										}}
+									/>
+								</div>
 							}
 							label={t('enableUser', { ns: 'um' })}
 						/>
@@ -330,7 +332,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 				>
 					{session?.user.id !== userId && isEdit && (
 						<Button
-							className='text-red h-[40px] w-[124px] bg-white text-sm text-error'
+							className='text-red h-[40px] w-[136px] bg-white text-sm text-error'
 							variant='contained'
 							onClick={() => {
 								setIsConfirmDeleteOpen(true)
@@ -355,17 +357,35 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 						>
 							{t('cancel')}
 						</Button>
-						<LoadingButton
+						<Button
+							className='h-[40px] w-[71px] px-[16px] py-[8px] text-base text-sm font-semibold'
+							variant='contained'
+							onClick={handleSubmitUser}
+							color='primary'
+							disabled={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
+							startIcon={
+								isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading ? (
+									<CircularProgress
+										className='[&_.MuiCircularProgress-circle]:text-[#00000042]'
+										size={16}
+									/>
+								) : null
+							}
+						>
+							{t('save', { ns: 'um' })}
+						</Button>
+						{/* <LoadingButton
 							fullWidth
 							loading={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
 							loadingPosition='start'
 							startIcon={<CircularProgress size={0} />}
 							variant='contained'
-							type='submit'
+							// type='submit'
+							onClick={handleSubmitUser}
 							className='h-[40px] w-[71px] text-sm [&_.MuiButton-startIcon]:m-0 [&_.MuiButtonBase-root]:w-[71px]'
 						>
 							<span>{t('save', { ns: 'um' })}</span>
-						</LoadingButton>
+						</LoadingButton> */}
 					</div>
 				</DialogActions>
 			</Dialog>
@@ -378,8 +398,8 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 					setIsConfirmAddOpen(false)
 				}}
 				onConfirm={() => {
-					console.log('Confirm Add')
-					onSubmit(formik.values)
+					formik.handleSubmit()
+					// onSubmit(formik.values)
 					setIsConfirmAddOpen(false)
 				}}
 			/>
@@ -392,8 +412,8 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 					setIsConfirmEditOpen(false)
 				}}
 				onConfirm={() => {
-					console.log('Confirm Edit')
-					onSubmit(formik.values)
+					formik.handleSubmit()
+					// onSubmit(formik.values)
 					setIsConfirmEditOpen(false)
 				}}
 			/>

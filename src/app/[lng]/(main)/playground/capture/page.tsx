@@ -1,9 +1,8 @@
 'use client'
-
-// import './inject'
-import MapView from '@/components/common/map/MapView'
-import { Box, IconButton, Container } from '@mui/material'
-import { Paper } from '@mui/material'
+import '@/components/common/map/inject'
+import React, { useRef } from 'react'
+import MapView, { MapViewRef } from '@/components/common/map/MapView'
+import { Box, IconButton, Container, Paper } from '@mui/material'
 import StickyHeadTable from './table'
 import AlignItemsList from './list'
 import FormPropsTextFields from './form'
@@ -14,6 +13,7 @@ import { mdiFullscreen } from '@mdi/js'
 import Icon from '@mdi/react'
 
 export default function Page() {
+	const mapViewRef = useRef<MapViewRef>(null)
 	const onCapture = () => {
 		const timestamp = new Date().toISOString().replace(/[:.-]/g, '_')
 		const filename = `screenshot_${timestamp}.png`
@@ -41,10 +41,21 @@ export default function Page() {
 		})
 	}
 
+	const handleSetExtent = () => {
+		if (mapViewRef.current) {
+			const bounds = [
+				[100.5, 13.7],
+				[100.7, 13.9],
+			]
+			mapViewRef.current.setMapExtent(bounds)
+		}
+	}
+
 	return (
 		<Container>
 			<Paper className='flex h-full flex-col overflow-hidden p-1'>
 				<Box className='flex justify-end p-2'>
+					<button onClick={handleSetExtent}>Set Map Extent</button>
 					<IconButton disableRipple onClick={() => onCapture()}>
 						<Icon path={mdiFullscreen} size={1} />
 					</IconButton>
@@ -52,7 +63,7 @@ export default function Page() {
 				<Box display='flex' sx={{ flexDirection: { xs: 'column', lg: 'row' } }}>
 					<Box p={1} flex={1} sx={{ width: { xs: '100%', lg: '50%' } }}>
 						<Box height={500} className='w-full p-1'>
-							<MapView />
+							<MapView ref={mapViewRef} />
 						</Box>
 						<StickyHeadTable />
 						<QuiltedImageList />

@@ -1,11 +1,11 @@
 'use client'
-import React, { useMemo, useEffect } from 'react'
+import React, { forwardRef, useImperativeHandle, useMemo, useEffect, useRef } from 'react'
 import { APIProvider, Map, useMap } from '@vis.gl/react-google-maps'
 import { GoogleMapsOverlay } from '@deck.gl/google-maps'
 import useLayerStore from './store/map'
 import { MapInterface } from './interface/map'
 
-function DeckGLOverlay() {
+const DeckGLOverlay = () => {
 	const layers = useLayerStore((state) => state.layers)
 	const setOverlay = useLayerStore((state) => state.setOverlay)
 	const map = useMap()
@@ -20,16 +20,30 @@ function DeckGLOverlay() {
 	return null
 }
 
-export default function MapGoogle({ viewState, onViewStateChange }: MapInterface) {
+interface MapGoogleProps extends MapInterface {}
+
+export interface MapGoogleRef {
+	setExtent: (bounds: google.maps.LatLngBoundsLiteral) => void
+}
+
+function MapGoogle({ viewState, onViewStateChange }: MapGoogleProps, ref: React.Ref<MapGoogleRef>) {
+	const mapRef = useRef<google.maps.Map | null>(null)
 	const overlay = useLayerStore((state) => state.overlay)
+
+	useImperativeHandle(ref, () => ({
+		setExtent: (bounds: google.maps.LatLngBoundsLiteral) => {
+			if (mapRef.current) {
+				mapRef.current.fitBounds(bounds)
+			}
+		},
+	}))
+
 	useEffect(() => {
-		console.log('Google mapKey ', process.env.GOOGLE_MAPS_API_KEY)
-		console.log('Google mapId ', process.env.GOOGLE_MAPS_API_MAP_ID)
-		
 		return () => {
 			overlay?.setProps({ layers: [] })
 		}
 	}, [overlay])
+
 	return (
 		<APIProvider apiKey={process.env.GOOGLE_MAPS_API_KEY}>
 			<Map
@@ -42,16 +56,19 @@ export default function MapGoogle({ viewState, onViewStateChange }: MapInterface
 				zoom={viewState?.zoom}
 				streetViewControl={false}
 				mapTypeId='hybrid'
-				onBoundsChanged={(evt) =>
+				onBoundsChanged={(evt) => {
+					mapRef.current = evt.map
 					onViewStateChange?.({
 						latitude: evt.detail.center.lat,
 						longitude: evt.detail.center.lng,
 						zoom: evt.detail.zoom,
 					})
-				}
+				}}
 			>
 				<DeckGLOverlay />
 			</Map>
 		</APIProvider>
 	)
 }
+
+export default forwardRef(MapGoogle)

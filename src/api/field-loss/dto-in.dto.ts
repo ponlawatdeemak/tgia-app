@@ -4,6 +4,10 @@ export interface GetSearchAdminPolyDtoIn {
 	id?: number
 }
 
+export interface GetExtentAdminPolyDtoIn {
+	id?: number
+}
+
 export interface GetSummaryPredictedLossDtoIn {
 	lossType?: number
 	startDate: string

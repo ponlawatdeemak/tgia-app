@@ -2,22 +2,23 @@ import React, { useCallback, useState } from 'react'
 import { Box, ToggleButton, ToggleButtonGroup, Typography, IconButton, Popover } from '@mui/material'
 import { mdiLayersOutline, mdiMinus, mdiPlus } from '@mdi/js'
 import Icon from '@mdi/react'
+import { useTranslation } from 'react-i18next'
 
 const basemapList = [
 	{
 		value: 'carto-light',
 		image: '/map/basemap_bright.png',
-		label: 'Bright',
+		label: 'map.street',
 	},
 	{
 		value: 'carto-dark',
 		image: '/map/basemap_satellite.png',
-		label: 'Satellite',
+		label: 'map.satellite',
 	},
 	{
 		value: 'google',
 		image: '/map/basemap_satellite_hybrid.png',
-		label: 'Satellite Hybrid',
+		label: 'map.hybrid',
 	},
 ]
 
@@ -30,6 +31,8 @@ interface MapToolsProps {
 const MapTools: React.FC<MapToolsProps> = ({ onBasemapChange, onZoomIn, onZoomOut }) => {
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 	const [basemap, setBasemap] = useState('carto-light')
+
+	const { t, i18n } = useTranslation()
 
 	const handleChange = useCallback((_: React.MouseEvent<HTMLElement>, newBasemap: string) => {
 		setBasemap((prev) => newBasemap || prev)
@@ -70,7 +73,7 @@ const MapTools: React.FC<MapToolsProps> = ({ onBasemapChange, onZoomIn, onZoomOu
 						variant={'body2'}
 						className='font-bold'
 					>
-						ประเภทแผนที่
+						{t('map.mapType')}
 					</Typography>
 					<ToggleButtonGroup
 						size='small'
@@ -79,7 +82,7 @@ const MapTools: React.FC<MapToolsProps> = ({ onBasemapChange, onZoomIn, onZoomOu
 						value={basemap}
 						onChange={handleChange}
 						className='flex items-start'
-						sx={{ flexDirection: { xs: 'column', md: 'row' } }}
+						sx={{ flexDirection: 'row' }}
 					>
 						{basemapList.map((item, index) => {
 							return (
@@ -99,9 +102,9 @@ const MapTools: React.FC<MapToolsProps> = ({ onBasemapChange, onZoomIn, onZoomOu
 									}}
 									value={item.value}
 								>
-									<img src={item.image} className='w-full' />
+									<img src={item.image} className='h-[60px] w-[60px]' />
 									<Typography variant={'body2'} align='center' className='text-sm'>
-										{item.label}
+										{t(`${item.label}`)}
 									</Typography>
 								</ToggleButton>
 							)

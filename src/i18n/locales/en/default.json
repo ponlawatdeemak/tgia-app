@@ -26,17 +26,17 @@
 	"setting": "Setting",
 	"back": "Back",
 	"allDisasters": "All Disasters",
-    "all": "All",
-    "total": "Total",
+	"all": "All",
+	"total": "Total",
 	"status": "Status",
 	"nameSurname": "Name Surname",
 	"previous": "Previous",
 	"next": "Next",
-    "rank": "Rank",
-    "searchResults": "Search Results",
-    "favoriteAreas": "Favorite Areas",
-    "recentSearches": "Recent Searches",
-    "thailand": "Thailand",
+	"rank": "Rank",
+	"searchResults": "Search Results",
+	"favoriteAreas": "Favorite Areas",
+	"recentSearches": "Recent Searches",
+	"thailand": "Thailand",
 	"warning": {
 		"inputEmail": "Please enter your email.",
 		"inputPassword": "Please enter your password.",
@@ -53,7 +53,9 @@
 		"inputFirstName": "Please enter your first name.",
 		"inputLastName": "Please enter your last name.",
 		"inputProvince": "Please select your province.",
-		"inputDistrict": "Please select your district."
+		"inputDistrict": "Please select your district.",
+		"inputOrgCode": "Please select your organization",
+		"inputRole": "Please select your role"
 	},
 	"success": {},
 	"error": {
@@ -71,5 +73,11 @@
 		"confirmLogoutContent": "Are you sure you want to log out?",
 		"confirmEditPassword": "Confirm password change?",
 		"confirmChangePassword": "Do you want change user password?"
+	},
+	"map": {
+		"mapType": "Map Type",
+		"street": "Street",
+		"satellite": "Satellite",
+		"hybrid": "Satellite Hybrid"
 	}
 }

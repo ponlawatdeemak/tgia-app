@@ -26,13 +26,13 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 	const [openImport, setOpenImport] = useState<boolean>(false)
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const { isDesktop } = useResponsive()
-
 	const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
 		// setSearchString(event.target.value)
 		setSearchParams((prevSearch) => ({
 			...prevSearch,
 			offset: 0,
 			keyword: event.target.value,
+			respLang: i18n.language,
 		}))
 		setPage(1)
 	}
