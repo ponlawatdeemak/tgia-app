@@ -32,7 +32,7 @@ const initialParams = {
 	detailType: undefined,
 	orderBy: undefined,
 	offset: undefined,
-	limit: undefined,
+	limit: 10,
 }
 
 interface SearchPlotMonitoringContextType {
