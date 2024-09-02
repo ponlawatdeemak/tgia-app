@@ -2,12 +2,14 @@ import {
 	GetAreaSearchPlotDtoIn,
 	GetPlotActivityLossDetailDtoIn,
 	GetPlotActivityPlantDetailDtoIn,
+	GetPositionSearchPlotDtoIn,
 	GetSearchPlotDtoIn,
 } from './dto-in.dto'
 import {
 	GetAreaSearchPlotDtoOut,
 	GetPlotActivityLossDetailDtoOut,
 	GetPlotActivityPlantDetailDtoOut,
+	GetPositionSearchPlotDtoOut,
 	GetSearchPlotDtoOut,
 } from './dto-out.dto'
 import { APIService, ResponseDto } from '@/api/interface'
@@ -50,6 +52,17 @@ const plotMonitoring = {
 		if (payload.detailType !== undefined) params.append('detailType', payload.detailType.toString())
 
 		return await api.get(`/plot/search/area?${params}`, APIService.DisasterAPI)
+	},
+	getPositionSearchPlot: async (
+		payload: GetPositionSearchPlotDtoIn,
+	): Promise<ResponseDto<GetPositionSearchPlotDtoOut>> => {
+		const params = new URLSearchParams()
+
+		if (payload.lat !== undefined) params.append('lat', payload.lat.toString())
+		if (payload.lon !== undefined) params.append('lon', payload.lon.toString())
+		if (payload.year !== undefined) params.append('year', payload.year.toString())
+
+		return await api.get(`/plot/search/position?${params}`, APIService.DisasterAPI)
 	},
 	getPlotActivityPlantDetail: async (
 		payload: GetPlotActivityPlantDetailDtoIn,

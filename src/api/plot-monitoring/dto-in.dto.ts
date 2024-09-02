@@ -18,6 +18,12 @@ export interface GetSearchPlotDtoIn extends GetAreaSearchPlotDtoIn {
 	limit?: number
 }
 
+export interface GetPositionSearchPlotDtoIn {
+	lat: number
+	lon: number
+	year?: number
+}
+
 export interface GetPlotActivityPlantDetailDtoIn {
 	activityId?: number
 }

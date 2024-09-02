@@ -31,6 +31,18 @@ export interface GetAreaSearchPlotDtoOut {
 	activityId: number
 }
 
+interface PositionSearchResult {
+	count: number
+	lossType: string
+	lossPredicted: LossPredicted
+}
+
+export interface GetPositionSearchPlotDtoOut {
+	activityId: number
+	predictedRiceArea: PredictedRiceArea
+	results: PositionSearchResult[]
+}
+
 interface ResponseActArea {
 	areaRai: number
 	areaNgan: number
