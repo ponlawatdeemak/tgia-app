@@ -269,7 +269,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 												ref={ref}
 												key={detail.order}
 												onClick={() =>
-													router.push(`${AppPath.PlotMonitoring}/result/${detail.activityId}`)
+													router.push(`${AppPath.PlotMonitoringResult}/${detail.activityId}`)
 												}
 											>
 												<CardDetail detail={detail} />
@@ -281,7 +281,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 											className='rounded-lg p-0 hover:bg-transparent'
 											key={detail.order}
 											onClick={() =>
-												router.push(`${AppPath.PlotMonitoring}/result/${detail.activityId}`)
+												router.push(`${AppPath.PlotMonitoringResult}/${detail.activityId}`)
 											}
 										>
 											<CardDetail detail={detail} />

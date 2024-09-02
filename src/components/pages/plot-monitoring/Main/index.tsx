@@ -35,21 +35,24 @@ export const PlotMonitoringSearchMain = () => {
 		year: yup.number().required(t('warning.inputDataYear')),
 	})
 
-	const onSubmit = useCallback(async (values: SearchFormType) => {
-		try {
-			setQueryParams({
-				...queryParams,
-				provinceCode: values.provinceCode,
-				districtCode: values.districtCode,
-				subDistrictCode: values.subDistrictCode,
-				activityId: values.activityId,
-				year: values.year,
-			})
-			router.push(AppPath.PlotMonitoringResult)
-		} catch (error) {
-			console.log('error: ', error)
-		}
-	}, [])
+	const onSubmit = useCallback(
+		async (values: SearchFormType) => {
+			try {
+				setQueryParams({
+					...queryParams,
+					provinceCode: values.provinceCode,
+					districtCode: values.districtCode,
+					subDistrictCode: values.subDistrictCode,
+					activityId: values.activityId,
+					year: values.year,
+				})
+				router.push(AppPath.PlotMonitoringResult)
+			} catch (error) {
+				console.log('error: ', error)
+			}
+		},
+		[queryParams, router, setQueryParams],
+	)
 
 	const formik = useFormik<SearchFormType>({
 		enableReinitialize: true,

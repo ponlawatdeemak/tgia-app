@@ -43,7 +43,12 @@ const PlotMonitoringSearchForm = () => {
 	) => {
 		if (AutocompleteCloseReason === 'selectOption') {
 			if (newSelectedValue) {
-				setQueryParams({ ...queryParams, provinceCode: newSelectedValue.code })
+				setQueryParams({
+					...queryParams,
+					provinceCode: newSelectedValue.code,
+					districtCode: undefined,
+					subDistrictCode: undefined,
+				})
 			}
 		} else if (AutocompleteCloseReason === 'clear') {
 			setQueryParams({
@@ -62,7 +67,7 @@ const PlotMonitoringSearchForm = () => {
 	) => {
 		if (AutocompleteCloseReason === 'selectOption') {
 			if (newSelectedValue) {
-				setQueryParams({ ...queryParams, districtCode: newSelectedValue.code })
+				setQueryParams({ ...queryParams, districtCode: newSelectedValue.code, subDistrictCode: undefined })
 			}
 		} else if (AutocompleteCloseReason === 'clear') {
 			setQueryParams({ ...queryParams, districtCode: undefined, subDistrictCode: undefined })
