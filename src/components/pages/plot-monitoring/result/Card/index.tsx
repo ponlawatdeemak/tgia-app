@@ -35,7 +35,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 				color = LossTypeColor.flood
 				break
 			default:
-				color = LossTypeColor.rnr
+				color = LossTypeColor.noData
 				break
 		}
 		return color

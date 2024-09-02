@@ -92,6 +92,11 @@ export const FloodTileColor: { [key: string]: [number, number, number, number] }
 	level10: [8, 81, 156, 255],
 }
 
+export const AreaPlotTileColor: { [key: string]: [number, number, number, number] } = {
+	default: [226, 226, 226, 100],
+	rnr: [56, 167, 0, 153],
+}
+
 export const BoundaryTileColor: { [key: string]: [number, number, number, number] } = {
 	default: [0, 0, 0, 0],
 }
