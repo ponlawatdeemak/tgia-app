@@ -22,6 +22,7 @@ import useAreaUnit from '@/store/area-unit'
 import useAreaType from '@/store/area-type'
 import useResponsive from '@/hook/responsive'
 import { dataAreas } from '@/api/annual-analysis/dto-out.dto'
+import { TextColor } from '@/config/color'
 
 interface Data {
 	id: string
@@ -41,44 +42,20 @@ interface HeadCell {
 	sortable: boolean
 }
 
-const headCells: readonly HeadCell[] = [
-	{
-		id: 'name',
-		numeric: false,
-		disablePadding: true,
-		label: 'พื้นที่',
-		sortable: false,
-	},
-	{
-		id: 'totalActArea',
-		numeric: true,
-		disablePadding: false,
-		label: 'พื้นที่ขึ้นทะเบียนทั้งหมด',
-		sortable: true,
-	},
-	{
-		id: 'totalPredictedRiceArea',
-		numeric: true,
-		disablePadding: false,
-		label: 'พื้นที่ขึ้นทะเบียนที่มีขอบแปลง',
-		sortable: true,
-	},
-	{
-		id: 'actAreas',
-		numeric: true,
-		disablePadding: false,
-		label: 'พื้นที่เอาประกัน',
-		sortable: true,
-	},
-	{
-		id: 'predictedRiceAreas',
-		numeric: true,
-		disablePadding: false,
-		label: 'พื้นที่เอาประกันที่มีขอบแปลง',
-		sortable: true,
-	},
-]
-
+type CellType = {
+	order: number
+	name: ResponseLanguage
+	actAreas: {
+		column: ResponseLanguage
+		areaRai: number
+		areaPlot: number
+	}
+	predictedRiceAreas: {
+		column: ResponseLanguage
+		areaRai: number
+		areaPlot: number
+	}
+}
 interface RiceStatisticTableProps {
 	riceTableData?: any[]
 }
@@ -90,11 +67,10 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 	const { t, i18n } = useTranslation(['default'])
 	const id = React.useId()
 	const language = i18n.language as keyof ResponseLanguage
-
 	const [order, setOrder] = React.useState<SortType>(SortType.DESC)
 	const [orderBy, setOrderBy] = React.useState<keyof Data>('totalActArea')
 	const [dense, setDense] = React.useState(false)
-	const [tableHead, setTableHead] = React.useState<any[]>([])
+	const [tableHead, setTableHead] = React.useState<HeadCell[]>([])
 	const [tableData, setTableData] = React.useState<any[]>([]) // change from any to dto out
 
 	const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
@@ -154,6 +130,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
                 ]
             */
 			// init table rows data
+			console.log('riceTableData :: ', riceTableData)
 			riceTableData.forEach((data) => {
 				const tmpRow: any[] = []
 				tmpRow.push({
@@ -164,8 +141,8 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 				tmpRow.push({
 					id: 'totalActPredicted',
 					name: 'totalActPredicted',
-					totalActArea: data.totalActArea,
-					totalPredictedRiceArea: data.totalPredictedRiceArea,
+					actAreas: data.totalActArea,
+					predictedRiceAreas: data.totalPredictedRiceArea,
 				})
 				for (let i = 0; i < data.actAreas.length; i++) {
 					tmpRow.push({
@@ -194,10 +171,16 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 				label: 'ผลรวม การวิเคราะห์',
 				sortable: true,
 			})
-			// for(let i=0;i< riceTableData[0].data;i++){
-
-			// }
-
+			for (let i = 0; i < riceTableData[0].actAreas.length; i++) {
+				tmpHead.push({
+					id: riceTableData[0].actAreas[i].column[language],
+					numeric: true,
+					disablePadding: false,
+					label: riceTableData[0].actAreas[i].column[language],
+					sortable: false,
+				})
+			}
+			console.log('tmpHead :: ', tmpHead)
 			// tmpArr.sort((a, b) => b.totalActArea[areaUnit] - a.totalActArea[areaUnit])
 
 			// let currRank = 1
@@ -210,7 +193,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 			// 		tmpArr[i].order = currRank
 			// 	}
 			// }
-
+			setTableHead(tmpHead)
 			setTableData(tmpArr)
 		}
 	}, [riceTableData, language, areaUnit])
@@ -225,6 +208,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 
 	const rows = React.useMemo(() => {
 		const data = tableData
+		console.log('rows :: ', data)
 		// console.log('sorting data :: ', data, filterOrder, areaUnit)
 		// data?.sort((a, b) => {
 		// 	return filterOrder.sortType === SortType.ASC
@@ -272,73 +256,86 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 						<Table aria-labelledby='tableTitle' size={dense ? 'small' : 'medium'}>
 							<TableHead>
 								<TableRow>
-									{headCells.map((headCell) => {
-										const isSorted = orderBy === headCell.id
-										return headCell.sortable ? (
-											<TableCell
-												key={headCell.id}
-												align={'right'}
-												padding={headCell.disablePadding ? 'none' : 'normal'}
-												sortDirection={orderBy === headCell.id ? order : false}
-												sx={{
-													backgroundColor: isSorted ? '#F8FAFD' : 'inherit',
-												}}
-											>
-												<TableSortLabel
-													active={orderBy === headCell.id}
-													direction={orderBy === headCell.id ? order : SortType.ASC}
-													onClick={createSortHandler(headCell.id)}
-													className='flex-row'
+									{tableHead &&
+										tableHead.map((headCell) => {
+											const isSorted = orderBy === headCell.id
+											return headCell.sortable ? (
+												<TableCell
+													key={headCell.id}
+													align={'right'}
+													padding={headCell.disablePadding ? 'none' : 'normal'}
+													sortDirection={orderBy === headCell.id ? order : false}
+													sx={{
+														backgroundColor: isSorted ? '#F8FAFD' : 'inherit',
+													}}
+												>
+													<TableSortLabel
+														active={orderBy === headCell.id}
+														direction={orderBy === headCell.id ? order : SortType.ASC}
+														onClick={createSortHandler(headCell.id)}
+														className='flex-row'
+													>
+														{headCell.label}
+														{orderBy === headCell.id ? (
+															<Box component='span' sx={visuallyHidden}>
+																{order === SortType.DESC
+																	? 'sorted descending'
+																	: 'sorted ascending'}
+															</Box>
+														) : null}
+													</TableSortLabel>
+												</TableCell>
+											) : (
+												<TableCell
+													key={headCell.id}
+													align={headCell.id === 'name' ? 'left' : 'right'}
+													padding={headCell.disablePadding ? 'none' : 'normal'}
+													sortDirection={orderBy === headCell.id ? order : false}
+													sx={{
+														borderRight:
+															headCell.id === 'name'
+																? '1px solid rgb(224, 224, 224)'
+																: '',
+													}}
 												>
 													{headCell.label}
-													{orderBy === headCell.id ? (
-														<Box component='span' sx={visuallyHidden}>
-															{order === SortType.DESC
-																? 'sorted descending'
-																: 'sorted ascending'}
-														</Box>
-													) : null}
-												</TableSortLabel>
-											</TableCell>
-										) : (
-											<TableCell
-												key={headCell.id}
-												align={'left'}
-												padding={headCell.disablePadding ? 'none' : 'normal'}
-												sortDirection={orderBy === headCell.id ? order : false}
-												sx={{ borderRight: '1px solid rgb(224, 224, 224)' }}
-											>
-												{headCell.label}
-											</TableCell>
-										)
-									})}
+												</TableCell>
+											)
+										})}
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{rows.map((row, index) => {
-									return (
-										<TableRow hover={false} tabIndex={-1} key={id}>
-											{/* <TableCell
-												component='th'
-												scope='row'
+								{rows.map((row, rowIndex) => (
+									<TableRow key={rowIndex}>
+										{row.map((cell: CellType, cellIndex: number) => (
+											<TableCell
+												key={cellIndex}
+												component={cellIndex === 0 ? 'th' : 'td'}
+												scope={cellIndex === 0 ? 'row' : undefined}
 												padding='none'
-												sx={{ borderRight: '1px solid rgb(224, 224, 224)' }}
+												rowSpan={2}
+												align={cellIndex === 0 ? 'left' : 'right'}
+												sx={{
+													borderRight: cellIndex === 0 ? '1px solid rgb(224, 224, 224)' : '',
+												}}
 											>
-												<span>
-													{row.order} {row.name[i18n.language]}
-												</span>
+												{cellIndex === 0 ? (
+													<>
+														{cell.order} {cell.name[language]}
+													</>
+												) : (
+													<>
+														<span>{cell.actAreas[areaUnit].toLocaleString()}</span>
+														<br />
+														<span className={`text-[#9F1853]`}>
+															{cell.predictedRiceAreas[areaUnit].toLocaleString()}
+														</span>
+													</>
+												)}
 											</TableCell>
-											<TableCell align='right'>{row.totalRegistrationArea[areaUnit]}</TableCell>
-											<TableCell align='right'>
-												{row.totalRegistrationAreaBoundaries[areaUnit]}
-											</TableCell>
-											<TableCell align='right'>{row.totalClaimArea[areaUnit]}</TableCell>
-											<TableCell align='right'>
-												{row.totalClaimAreaBoundaries[areaUnit]}
-											</TableCell> */}
-										</TableRow>
-									)
-								})}
+										))}
+									</TableRow>
+								))}
 							</TableBody>
 						</Table>
 					</TableContainer>
