@@ -1,6 +1,12 @@
 import { api } from '../core'
 import { APIService, ResponseAnnualAnalysisBarDto, ResponseAnnualAnalysisLineDto, ResponseDto } from '../interface'
-import { DataPlantStatisticDtoOut, LegendPlantStatisticDtoOut, ValuesPlantStatisticDtoOut } from './dto-out.dto'
+import {
+	DataLossStatisticDtoOut,
+	DataPlantStatisticDtoOut,
+	LegendLossStatisticDtoOut,
+	LegendPlantStatisticDtoOut,
+	ValuesPlantStatisticDtoOut,
+} from './dto-out.dto'
 
 const annualAnalysis = {
 	getTablePlantStatistic: async (
@@ -32,6 +38,14 @@ const annualAnalysis = {
 		payload: any,
 	): Promise<ResponseAnnualAnalysisBarDto> => // add dtoout T2 = legends
 		await api.get(`/summary/rice-statistic/bar`, APIService.DisasterAPI),
+	getTableLossStatistic: async (payload: any): Promise<ResponseDto> =>
+		await api.get(`/summary/loss-statistic/table`, APIService.DisasterAPI),
+	getLineLossStatistic: async (payload: any): Promise<ResponseAnnualAnalysisLineDto> =>
+		await api.get(`/summary/loss-statistic/line`, APIService.DisasterAPI),
+	getBarLossStatistic: async (
+		payload: any,
+	): Promise<ResponseAnnualAnalysisBarDto<DataLossStatisticDtoOut[], LegendLossStatisticDtoOut>> =>
+		await api.get(`/summary/loss-statistic/bar`, APIService.DisasterAPI),
 }
 
 export default annualAnalysis

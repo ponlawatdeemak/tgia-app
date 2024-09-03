@@ -36,3 +36,17 @@ export interface ValuesPlantStatisticDtoOut {
 	label: ResponseLanguage
 	area: valuesArea
 }
+
+export interface DataLossStatisticDtoOut {
+	name: ResponseLanguage
+	label: ResponseLanguage
+	value: {
+		area: ResponseArea
+		percent: ResponseArea
+	}
+	categories: dataCategories[]
+}
+
+export interface LegendLossStatisticDtoOut extends LegendPlantStatisticDtoOut {}
+
+export interface ValuesLossStatisticDtoOut {}
