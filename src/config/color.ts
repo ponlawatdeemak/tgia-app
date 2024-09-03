@@ -1,6 +1,8 @@
+
 export const Boundary = {
 	green: '#38A700',
-	gray: '#E2E2E2',
+	gray: '#E2E2E2'
+	 
 }
 
 export const BoundaryTileColor: { [key: string]: [number, number, number, number] } = {
