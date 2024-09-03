@@ -85,6 +85,8 @@ interface ResponseDisasterArea {
 
 export interface GetPlotActivityLossDetailDtoOut {
 	activityId: number
+	count: number
+	lossType: string
 	address: ResponseLanguage
 	year: ResponseLanguage
 	insuredStatus: ResponseLanguage
