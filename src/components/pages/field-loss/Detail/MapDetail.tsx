@@ -835,11 +835,13 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 				role='presentation'
 				className='absolute left-3 top-3 z-10 flex h-7 items-center gap-2 rounded-lg bg-white px-2 py-1'
 			>
-				<Typography className='text-base font-medium text-black'>{`${t('level', { ns: 'field-loss' })}:`}</Typography>
-				<Breadcrumbs aria-label='breadcrumb'>
+				{isDesktop && (
+					<Typography className='text-sm font-medium text-black xl:text-base'>{`${t('level', { ns: 'field-loss' })}:`}</Typography>
+				)}
+				<Breadcrumbs aria-label='breadcrumb' className='max-xl:[&_li.MuiBreadcrumbs-separator]:mx-1.5'>
 					{queryParams.layerName && (
 						<Link
-							className='text-base font-normal text-black'
+							className='text-sm font-normal text-black xl:text-base'
 							underline='hover'
 							href='#'
 							onClick={handleCountryClick}
@@ -850,7 +852,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 					{queryParams.layerName &&
 						(queryParams.layerName === 'district' || queryParams.layerName === 'subdistrict') && (
 							<Link
-								className='text-base font-normal text-black'
+								className='text-sm font-normal text-black xl:text-base'
 								underline='hover'
 								href='#'
 								onClick={handleProvinceClick}
@@ -860,7 +862,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 						)}
 					{queryParams.layerName && queryParams.layerName === 'subdistrict' && (
 						<Link
-							className='text-base font-normal text-black'
+							className='text-sm font-normal text-black xl:text-base'
 							underline='hover'
 							href='#'
 							onClick={handleDistrictClick}
@@ -868,7 +870,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 							{t('district')}
 						</Link>
 					)}
-					<Typography className='text-base font-semibold text-black' color='text.primary'>
+					<Typography className='text-sm font-semibold text-black xl:text-base'>
 						{queryParams.layerName
 							? queryParams.layerName === 'province'
 								? t('province')
