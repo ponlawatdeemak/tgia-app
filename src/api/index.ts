@@ -6,6 +6,7 @@ import annualAnalysis from './annual-analysis'
 import { api } from './core'
 import { APIService } from './interface'
 import calendar from './calendar'
+import plotMonitoring from './plot-monitoring'
 
 const service = {
 	auth,

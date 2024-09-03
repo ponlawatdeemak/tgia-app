@@ -2,8 +2,11 @@
 	"appName": "Technology System Development Project",
 	"subAppName": "For Annual Rice Insurance",
 	"province": "Province",
+    "allProvinces": "All Provinces",
 	"district": "District",
+    "allDistricts": "All Districts",
 	"subDistrict": "Sub District",
+    "allSubDistricts": "All Sub District",
 	"village": "Village",
 	"areaRai": "Rai",
 	"areaPlot": "LandPlot",
@@ -37,6 +40,8 @@
 	"favoriteAreas": "Favorite Areas",
 	"recentSearches": "Recent Searches",
 	"thailand": "Thailand",
+    "search": "Search",
+    "dataYear": "Data Year",
 	"warning": {
 		"inputEmail": "Please enter your email.",
 		"inputPassword": "Please enter your password.",
@@ -54,8 +59,7 @@
 		"inputLastName": "Please enter your last name.",
 		"inputProvince": "Please select your province.",
 		"inputDistrict": "Please select your district.",
-		"inputOrgCode": "Please select your organization",
-		"inputRole": "Please select your role"
+        "inputDataYear": "Please select data year"
 	},
 	"success": {},
 	"error": {
@@ -79,5 +83,7 @@
 		"street": "Street",
 		"satellite": "Satellite",
 		"hybrid": "Satellite Hybrid"
-	}
+	},
+    "dataSetYear": "Data Set Year",
+    "area": "Area"
 }

@@ -2,8 +2,11 @@
 	"appName": "โครงการพัฒนาระบบเทคโนโลยี",
 	"subAppName": "เพื่องานประกันภัยข้าวนาปี",
 	"province": "จังหวัด",
+    "allProvinces": "จังหวัดทั้งหมด",
 	"district": "อำเภอ",
+    "allDistricts": "อำเภอทั้งหมด",
 	"subDistrict": "ตำบล",
+    "allSubDistricts": "ตำบลทั้งหมด",
 	"village": "หมู่บ้าน",
 	"areaRai": "ไร่",
 	"areaPlot": "แปลง",
@@ -37,6 +40,8 @@
 	"favoriteAreas": "พื้นที่ในรายการโปรด",
 	"recentSearches": "ค้นหาล่าสุด",
 	"thailand": "ประเทศไทย",
+    "search": "ค้นหา",
+    "dataYear": "ปีของข้อมูล",
 	"warning": {
 		"inputEmail": "กรุณากรอกอีเมล",
 		"inputPassword": "กรุณากรอกรหัสผ่าน",
@@ -54,8 +59,7 @@
 		"inputLastName": "กรุณากรอกนามสกุล",
 		"inputProvince": "กรุณาเลือกจังหวัด",
 		"inputDistrict": "กรุณาเลือกอำเภอ",
-		"inputOrgCode": "กรุณาเลือกหน่วยงาน",
-		"inputRole": "กรุณาเลือกบทบาท"
+        "inputDataYear": "กรุณาเลือกปีของข้อมูล"
 	},
 	"success": {},
 	"error": {
@@ -80,5 +84,7 @@
 		"street": "เส้นถนน",
 		"satellite": "ภูมิประเทศ",
 		"hybrid": "ผสม"
-	}
+	},
+    "dataSetYear": "ปีชุดข้อมูล",
+    "area": "พื้นที่"
 }

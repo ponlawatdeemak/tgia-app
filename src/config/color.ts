@@ -5,12 +5,25 @@ export const Boundary = {
 	 
 }
 
+export const BoundaryTileColor: { [key: string]: [number, number, number, number] } = {
+	default: [0, 0, 0, 0],
+	green: [56, 167, 0, 153],
+	gray: [226, 226, 226, 217],
+}
+
 export const LossTypeColor = {
 	total: '#B23B56',
 	noData: '#38A700',
 	drought: '#E34A33',
 	flood: '#3182BD',
 	rnr: '#38A700',
+}
+
+export const LossTypeTileColor: { [key: string]: [number, number, number, number] } = {
+	default: [226, 226, 226, 100],
+	drought: [227, 74, 51, 153],
+	flood: [49, 130, 189, 153],
+	rnr: [56, 167, 0, 153],
 }
 
 export const LossTypeIconColor = {
@@ -92,10 +105,6 @@ export const FloodTileColor: { [key: string]: [number, number, number, number] }
 	level8: [49, 130, 189, 255],
 	level9: [10, 98, 186, 255],
 	level10: [8, 81, 156, 255],
-}
-
-export const BoundaryTileColor: { [key: string]: [number, number, number, number] } = {
-	default: [0, 0, 0, 0],
 }
 
 export const LineWidthColor: { [key: string]: [number, number, number, number] } = {

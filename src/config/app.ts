@@ -12,6 +12,7 @@ export const authPathPrefix = '/auth'
 export enum PrivatePath {
 	FieldLoss = '/field-loss',
 	PlotMonitoring = '/plot-monitoring',
+	PlotMonitoringResult = '/plot-monitoring/result',
 	AnnualAnalysis = '/annual-analysis',
 	Others = '/others',
 	Report = '/others/report',

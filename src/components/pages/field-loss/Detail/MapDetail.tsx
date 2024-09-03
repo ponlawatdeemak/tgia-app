@@ -30,6 +30,7 @@ import useSearchFieldLoss from '../Main/context'
 import { Feature, Geometry } from 'geojson'
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
+import { apiAccessToken } from '@/api/core'
 
 interface FilterRangeMonthType {
 	startDate: string
@@ -187,6 +188,14 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 				new MVTLayer({
 					id: 'province',
 					name: 'province',
+					loadOptions: {
+						fetch: {
+							headers: {
+								'content-type': 'application/json',
+								Authorization: `Bearer ${apiAccessToken}`,
+							},
+						},
+					},
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/province/tiles.json',
 					filled: true,
 					lineWidthUnits: 'pixels',
@@ -301,6 +310,14 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 				new MVTLayer({
 					id: 'province-district',
 					name: 'province-district',
+					loadOptions: {
+						fetch: {
+							headers: {
+								'content-type': 'application/json',
+								Authorization: `Bearer ${apiAccessToken}`,
+							},
+						},
+					},
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/province/tiles.json',
 					filled: true,
 					lineWidthUnits: 'pixels',
@@ -322,6 +339,14 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 				new MVTLayer({
 					id: 'district',
 					name: 'district',
+					loadOptions: {
+						fetch: {
+							headers: {
+								'content-type': 'application/json',
+								Authorization: `Bearer ${apiAccessToken}`,
+							},
+						},
+					},
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/district/tiles.json',
 					filled: true,
 					//visible: layer.layerName === 'province',
@@ -457,6 +482,15 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 			setLayers([
 				new MVTLayer({
 					id: 'district-subDistrict',
+					name: 'district-subDistrict',
+					loadOptions: {
+						fetch: {
+							headers: {
+								'content-type': 'application/json',
+								Authorization: `Bearer ${apiAccessToken}`,
+							},
+						},
+					},
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/district/tiles.json',
 					filled: true,
 					//visible: layer.layerName === 'province',
@@ -476,6 +510,15 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 				}),
 				new MVTLayer({
 					id: 'subDistrict',
+					name: 'subDistrict',
+					loadOptions: {
+						fetch: {
+							headers: {
+								'content-type': 'application/json',
+								Authorization: `Bearer ${apiAccessToken}`,
+							},
+						},
+					},
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/subdistrict/tiles.json',
 					filled: true,
 					lineWidthUnits: 'pixels',
@@ -610,6 +653,16 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 		} else if (queryParams.layerName === 'subdistrict') {
 			setLayers([
 				new MVTLayer({
+					id: 'subDistrict-subDistrict',
+					name: 'subDistrict-subDistrict',
+					loadOptions: {
+						fetch: {
+							headers: {
+								'content-type': 'application/json',
+								Authorization: `Bearer ${apiAccessToken}`,
+							},
+						},
+					},
 					data: 'https://tileserver.cropinsurance-dev.thaicom.io/subdistrict/tiles.json',
 					filled: true,
 					//visible: layer.layerName === 'subdistrict',
