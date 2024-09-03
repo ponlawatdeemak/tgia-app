@@ -14,6 +14,7 @@ const service = {
 	lookup,
 	fieldLoss,
 	annualAnalysis,
+	plotMonitoring,
 	calendar,
 	example: { getVersion: async (): Promise<any> => await api.get('/version', APIService.DisasterAPI) },
 }
