@@ -16,8 +16,7 @@ import useLayerStore from '@/components/common/map/store/map'
 import { MVTLayer } from '@deck.gl/geo-layers'
 import { Feature, Geometry } from 'geojson'
 import { apiAccessToken } from '@/api/core'
-import { AreaPlotTileColor, BoundaryTileColor, LineWidthColor, LossTypeColor, TotalTileColor } from '@/config/color'
-import { PickingInfo } from '@deck.gl/core'
+import { BoundaryTileColor, LineWidthColor, LossTypeTileColor } from '@/config/color'
 import InfoWindows from '../Map/InfoWindows'
 import { GetPositionSearchPlotDtoOut } from '@/api/plot-monitoring/dto-out.dto'
 
@@ -108,6 +107,10 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 	const areaSearchPlotId = useMemo(() => {
 		return areaSearchPlot?.data?.map((item) => item.activityId) || []
 	}, [areaSearchPlot])
+
+	// const areaSearchPlotId = useMemo(() => {
+	// 	return [204092124, 204148174, 204513425, 204457339, 204091737] || []
+	// }, [areaSearchPlot])
 
 	const handlePositionClick = useCallback(
 		async (x: number, y: number, coordinate: number[], year: number) => {
@@ -207,9 +210,9 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 					filled: true,
 					getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
 						if (areaSearchPlotId.includes(d.properties.activity_id)) {
-							return AreaPlotTileColor.rnr
+							return LossTypeTileColor.rnr
 						}
-						return AreaPlotTileColor.default
+						return LossTypeTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, BoundaryLayerType>) {
 						return LineWidthColor.default
@@ -291,9 +294,9 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 					filled: true,
 					getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
 						if (areaSearchPlotId.includes(d.properties.activity_id)) {
-							return AreaPlotTileColor.rnr
+							return LossTypeTileColor.rnr
 						}
-						return AreaPlotTileColor.default
+						return LossTypeTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, BoundaryLayerType>) {
 						return LineWidthColor.default
@@ -375,9 +378,9 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 					filled: true,
 					getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
 						if (areaSearchPlotId.includes(d.properties.activity_id)) {
-							return AreaPlotTileColor.rnr
+							return LossTypeTileColor.rnr
 						}
-						return AreaPlotTileColor.default
+						return LossTypeTileColor.default
 					},
 					getLineColor(d: Feature<Geometry, BoundaryLayerType>) {
 						return LineWidthColor.default
