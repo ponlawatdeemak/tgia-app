@@ -4,7 +4,11 @@ import { Box } from '@mui/material'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
-const PlantDetail = ({ plantDetailData }: { plantDetailData?: GetPlotActivityPlantDetailDtoOut }) => {
+interface PlantDetailProps {
+	plantDetailData?: GetPlotActivityPlantDetailDtoOut
+}
+
+const PlantDetail: React.FC<PlantDetailProps> = ({ plantDetailData }) => {
 	const { t, i18n } = useTranslation(['default', 'plot-monitoring'])
 	const language = i18n.language as keyof ResponseLanguage
 
@@ -74,10 +78,7 @@ const PlantDetail = ({ plantDetailData }: { plantDetailData?: GetPlotActivityPla
 						{t('registeredAreasWithPlotBoundaries', { ns: 'plot-monitoring' })}
 					</span>
 					<div className='flex items-baseline gap-1 text-base'>
-						<span className='font-semibold text-black-light'>
-							{(plantDetailData?.predictedNonRiceArea.areaRai as number) +
-								(plantDetailData?.predictedRiceArea.areaRai as number)}
-						</span>
+						<span className='font-semibold text-black-light'>{plantDetailData?.actArea.areaRai}</span>
 						<span className='font-normal text-black'>{t('areaRai')}</span>
 					</div>
 				</Box>

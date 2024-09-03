@@ -5,7 +5,11 @@ import { Box, Divider } from '@mui/material'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
-const LossDetail = ({ lossDetailData }: { lossDetailData?: GetPlotActivityLossDetailDtoOut }) => {
+interface LossDetailProps {
+	lossDetailData?: GetPlotActivityLossDetailDtoOut
+}
+
+const LossDetail: React.FC<LossDetailProps> = ({ lossDetailData }) => {
 	const { t, i18n } = useTranslation(['default', 'plot-monitoring'])
 	const language = i18n.language as keyof ResponseLanguage
 
