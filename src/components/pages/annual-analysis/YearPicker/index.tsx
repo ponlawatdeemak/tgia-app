@@ -1,85 +1,92 @@
 'use client'
+import React from 'react'
 
 import useResponsive from '@/hook/responsive'
-import { formatDate } from '@/utils/date'
 import { mdiCalendarMonthOutline } from '@mdi/js'
 import Icon from '@mdi/react'
-import { Button, Checkbox, IconButton, Menu, MenuItem, Popover } from '@mui/material'
+import { Button, Checkbox, IconButton, Menu, MenuItem } from '@mui/material'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchAnnualAnalysis } from '../Main/context'
 import { useQuery } from '@tanstack/react-query'
-import lookup from '@/api/lookup'
 import service from '@/api'
 import { GetLookupOutDto } from '@/api/lookup/dto-out.dto'
 import { useYearPicker } from './context'
-
-export type DateRangeTypes = {
-	startDate: Date
-	endDate: Date
-}
 
 interface YearPickerProps {}
 
 const YearPicker: React.FC<YearPickerProps> = () => {
 	const { open, setOpen } = useYearPicker()
-	const { queryParams } = useSearchAnnualAnalysis()
+	const { queryParams, setQueryParams } = useSearchAnnualAnalysis()
 	const { isDesktop } = useResponsive()
-	const { i18n } = useTranslation()
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
-	const [ranges, setRanges] = useState<DateRangeTypes>()
-	const [selectedYear, setSelectedYear] = useState<[]>([])
+	const [selectedYear, setSelectedYear] = useState<number[]>([])
 
-	const { data: yearData, isLoading: isYearDataLoading } = useQuery({
+	const { data: yearData } = useQuery({
 		queryKey: ['getLookupYears'],
 		queryFn: async () => {
 			const res = await service.lookup.get('years')
-			console.log('yearData :: ', res)
 			return res
 		},
 		enabled: true,
 	})
 
 	useEffect(() => {
-		// if (open && queryParams?.startDate && queryParams?.endDate) {
-		// 	setRanges({ startDate: queryParams.startDate, endDate: queryParams.endDate })
-		// }
-	}, [queryParams, open])
+		if (selectedYear.length > 0) {
+			setQueryParams({ ...queryParams, years: selectedYear })
+		} else {
+			setQueryParams({ ...queryParams, years: [] })
+		}
+	}, [selectedYear])
+
+	useEffect(() => {
+		console.log(queryParams)
+	}, [queryParams])
 
 	const handleClose = () => {
 		setAnchorEl(null)
 		setOpen(false)
 	}
 
-	const handleChangeDateRanges = (values: DateRangeTypes) => {
-		setRanges(values)
-	}
-
-	const onSubmit = () => {
-		if (ranges?.startDate && ranges?.endDate) {
-			// setQueryParams({ ...queryParams, startDate: ranges.startDate, endDate: ranges.endDate })
-		}
-		setOpen(false)
-	}
-
-	const onReset = () => {
-		// array of range of index
-		// setRanges(resetDateRanges)
-	}
-
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget)
-		if (isDesktop) {
-			setOpen(!!event.currentTarget)
-		} else {
-			setOpen(!open)
-		}
+		setOpen(!open)
 	}
 
-	// const formatDateRange =
-	// 	queryParams.startDate && queryParams.endDate
-	// 		? `${formatDate(queryParams.startDate, 'dd MMM yyyy', i18n.language)} - ${formatDate(queryParams.endDate, 'dd MMM yyyy', i18n.language)}`
-	// 		: ''
+	const handleSelectYear = (year: number) => {
+		setSelectedYear((prevSelectedYear) => {
+			const updatedSelectedYear = prevSelectedYear.includes(year)
+				? prevSelectedYear.filter((y) => y !== year)
+				: [...prevSelectedYear, year]
+
+			return updatedSelectedYear.sort((a, b) => a - b)
+		})
+	}
+
+	const isYearSelected = (year: number) => selectedYear.includes(year)
+
+	const formatYears = (years: number[]) => {
+		if (years.length === 0) return ''
+
+		const sortedYears = years.map(Number).sort((a, b) => a - b)
+		const ranges: string[] = []
+
+		let start = sortedYears[0]
+		let end = start
+		for (let i = 1; i < sortedYears.length; i++) {
+			const currentYear = sortedYears[i]
+
+			if (currentYear === end + 1) {
+				end = currentYear
+			} else {
+				ranges.push(start === end ? `${start}` : `${start} - ${end}`)
+				start = currentYear
+				end = currentYear
+			}
+		}
+		ranges.push(start === end ? `${start}` : `${start} - ${end}`)
+		return ranges.join(', ')
+	}
 
 	return (
 		<>
@@ -96,11 +103,8 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 				startIcon={<Icon path={mdiCalendarMonthOutline} size={1} />}
 				onClick={handleClick}
 			>
-				{/* {formatDateRange} */}
+				{selectedYear.length > 0 && formatYears(selectedYear)}
 			</Button>
-			{/* Change Popover to selection fields to handle mobile case
-                the modal popup isn't large so we should considered using select items?
-            */}
 
 			<Menu
 				open={open}
@@ -115,38 +119,20 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 					horizontal: 'right',
 				}}
 			>
-				{yearData?.data?.map((item: GetLookupOutDto) => {
-					return (
-						<MenuItem disableRipple key={item.code}>
-							<Checkbox color='primary' />
-							{item.code}
-						</MenuItem>
-					)
-				})}
+				{yearData?.data?.map((item: GetLookupOutDto) => (
+					<MenuItem
+						disableRipple
+						key={item.code}
+						onClick={() => handleSelectYear(item.code)} // Handle year selection
+					>
+						<Checkbox
+							color='primary'
+							checked={isYearSelected(item.code)} // Check the checkbox if the year is selected
+						/>
+						{item.code}
+					</MenuItem>
+				))}
 			</Menu>
-			{/* <Popover
-				id='year-picker-popover'
-				open={open}
-				anchorEl={anchorEl}
-				onClose={handleClose}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'right',
-				}}
-				transformOrigin={{
-					vertical: 'top',
-					horizontal: 'right',
-				}}
-				className={
-					'mt-1 min-w-[280px] [&_.MuiPaper-elevation]:border [&_.MuiPaper-elevation]:border-solid [&_.MuiPaper-elevation]:border-gray'
-				}
-			>
-				<div className='flex'>
-					<div className='w-[172px] border-0 border-l border-solid border-gray px-6 py-4'>
-						<div className='mt-4 flex justify-center gap-2'></div>
-					</div>
-				</div>
-			</Popover> */}
 		</>
 	)
 }

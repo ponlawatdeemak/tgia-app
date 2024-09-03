@@ -3,12 +3,13 @@ import { create } from 'zustand'
 
 export interface AnnualAnalysisParamsType {
 	// years: string[]
-	yearStart?: string
-	yearEnd?: string
+	// yearStart?: string
+	// yearEnd?: string
 	registrationAreaType?: number
 	provinceCode?: number
 	districtCode?: number
 	subDistrictCode?: number
+	years?: number[]
 }
 
 interface SearchAnnualAnalysisContextType {
