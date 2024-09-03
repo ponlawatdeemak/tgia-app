@@ -44,19 +44,21 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 	return (
 		<div className='flex justify-center gap-4 bg-white py-4'>
 			<Paper className='flex w-[204px] items-center justify-center bg-gray-light3'>
-				<PolygonToImage
-					className='!border-none !bg-transparent'
-					polygon={detail.geometry}
-					fill={getColor(detail.lossPredicted?.lossType)}
-					stroke={getColor(detail.lossPredicted?.lossType)}
-				/>
+				{!!detail.geometry.coordinates && (
+					<PolygonToImage
+						className='!border-none !bg-transparent'
+						polygon={detail.geometry}
+						fill={getColor(detail.lossPredicted?.lossType)}
+						stroke={getColor(detail.lossPredicted?.lossType)}
+					/>
+				)}
 			</Paper>
 			<Box className='flex flex-col gap-2'>
 				<div className='flex items-center justify-between'>
 					<Typography className='text-md font-semibold text-black-dark'>{detail.activityId}</Typography>
 					<span className='text-sm font-semibold text-black'>
 						{detail?.lossPredicted
-							? `${t(`${detail.lossPredicted.lossType}`)} ครั้งที่ ${detail.count}`
+							? `ครั้งที่ ${detail.count} ${t(`${detail.lossPredicted.lossType}`)}`
 							: 'ไม่มีภัยพิบัติ'}
 					</span>
 				</div>

@@ -96,40 +96,6 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 		},
 	})
 
-	// const {
-	// 	data: searchPlotData,
-	// 	isLoading: isSearchPlotDataLoading,
-	// 	status,
-	// 	error,
-	// 	fetchNextPage,
-	// 	isFetchingNextPage,
-	// 	hasNextPage,
-	// } = useInfiniteQuery({
-	// 	queryKey: ['todos'],
-	// 	queryFn: async ({ pageParam }: { pageParam: number }) => {
-	// 		try {
-	// 			const response = await service.um.getSearchUM({
-	// 				keyword: '',
-	// 				firstName: '',
-	// 				sortField: '',
-	// 				sortOrder: SortType.ASC,
-	// 				respLang: '',
-	// 				offset: pageParam * 10,
-	// 				limit: 10,
-	// 			})
-	// 			return response
-	// 		} catch (error) {
-	// 			console.log('error: ', error)
-	// 		}
-	// 	},
-	// 	initialPageParam: 0,
-	// 	getNextPageParam: (lastPage, allPages) => {
-	// 		//console.log({ lastPage, allPages })
-	// 		const nextPage = lastPage?.data?.length ? allPages.length : undefined
-	// 		return nextPage
-	// 	},
-	// })
-
 	useEffect(() => {
 		if (inView && hasNextPage) {
 			//console.log('Fire')
