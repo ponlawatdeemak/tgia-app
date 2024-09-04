@@ -51,7 +51,7 @@ const annualAnalysis = {
 				}
 			}
 		}
-		console.log('params :: ', params.toString())
+		// console.log('params :: ', params.toString())
 
 		return await api.get(`/summary/plant-statistic/line?${params}`, APIService.DisasterAPI)
 	},
@@ -94,7 +94,7 @@ const annualAnalysis = {
 				}
 			}
 		}
-		console.log('params :: ', params.toString())
+		// console.log('params :: ', params.toString())
 		return await api.get(`/summary/rice-statistic/line?${params}`, APIService.DisasterAPI)
 	},
 	getBarRiceStatistic: async (payload: GetBarRiceDtoIn): Promise<ResponseAnnualAnalysisBarDto> => {
@@ -107,7 +107,7 @@ const annualAnalysis = {
 				}
 			}
 		}
-		console.log('params :: ', params.toString())
+		// console.log('params :: ', params.toString())
 		return await api.get(`/summary/rice-statistic/bar?${params}`, APIService.DisasterAPI)
 	},
 	getTableLossStatistic: async (payload: GetTableLossDtoIn): Promise<ResponseDto> => {
