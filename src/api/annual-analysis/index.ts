@@ -1,10 +1,13 @@
 import { api } from '../core'
 import { APIService, ResponseAnnualAnalysisBarDto, ResponseAnnualAnalysisLineDto, ResponseDto } from '../interface'
 import {
+	GetBarLossDtoIn,
 	GetBarPlantDtoIn,
 	GetBarRiceDtoIn,
+	GetLineLossDtoIn,
 	GetLinePlantDtoIn,
 	GetLineRiceDtoIn,
+	GetTableLossDtoIn,
 	GetTablePlantDtoIn,
 	GetTableRiceDtoIn,
 } from './dto-in.dto'
@@ -42,7 +45,7 @@ const annualAnalysis = {
 		const params = new URLSearchParams()
 		for (const key in payload) {
 			if (Object.prototype.hasOwnProperty.call(payload, key)) {
-				const value = payload[key as keyof GetTablePlantDtoIn]
+				const value = payload[key as keyof GetLinePlantDtoIn]
 				if (value) {
 					params.append(key, value.toString())
 				}
@@ -59,7 +62,7 @@ const annualAnalysis = {
 		const params = new URLSearchParams()
 		for (const key in payload) {
 			if (Object.prototype.hasOwnProperty.call(payload, key)) {
-				const value = payload[key as keyof GetTablePlantDtoIn]
+				const value = payload[key as keyof GetBarPlantDtoIn]
 				if (value) {
 					params.append(key, value.toString())
 				}
@@ -73,7 +76,7 @@ const annualAnalysis = {
 		const params = new URLSearchParams()
 		for (const key in payload) {
 			if (Object.prototype.hasOwnProperty.call(payload, key)) {
-				const value = payload[key as keyof GetTablePlantDtoIn]
+				const value = payload[key as keyof GetTableRiceDtoIn]
 				if (value) {
 					params.append(key, value.toString())
 				}
@@ -85,7 +88,7 @@ const annualAnalysis = {
 		const params = new URLSearchParams()
 		for (const key in payload) {
 			if (Object.prototype.hasOwnProperty.call(payload, key)) {
-				const value = payload[key as keyof GetTablePlantDtoIn]
+				const value = payload[key as keyof GetLineRiceDtoIn]
 				if (value) {
 					params.append(key, value.toString())
 				}
@@ -98,7 +101,7 @@ const annualAnalysis = {
 		const params = new URLSearchParams()
 		for (const key in payload) {
 			if (Object.prototype.hasOwnProperty.call(payload, key)) {
-				const value = payload[key as keyof GetTablePlantDtoIn]
+				const value = payload[key as keyof GetBarRiceDtoIn]
 				if (value) {
 					params.append(key, value.toString())
 				}
@@ -107,14 +110,44 @@ const annualAnalysis = {
 		console.log('params :: ', params.toString())
 		return await api.get(`/summary/rice-statistic/bar?${params}`, APIService.DisasterAPI)
 	},
-	getTableLossStatistic: async (payload: any): Promise<ResponseDto> =>
-		await api.get(`/summary/loss-statistic/table`, APIService.DisasterAPI),
-	getLineLossStatistic: async (payload: any): Promise<ResponseAnnualAnalysisLineDto> =>
-		await api.get(`/summary/loss-statistic/line`, APIService.DisasterAPI),
+	getTableLossStatistic: async (payload: GetTableLossDtoIn): Promise<ResponseDto> => {
+		const params = new URLSearchParams()
+		for (const key in payload) {
+			if (Object.prototype.hasOwnProperty.call(payload, key)) {
+				const value = payload[key as keyof GetTableLossDtoIn]
+				if (value) {
+					params.append(key, value.toString())
+				}
+			}
+		}
+		return await api.get(`/summary/loss-statistic/table?${params}`, APIService.DisasterAPI)
+	},
+	getLineLossStatistic: async (payload: GetLineLossDtoIn): Promise<ResponseAnnualAnalysisLineDto> => {
+		const params = new URLSearchParams()
+		for (const key in payload) {
+			if (Object.prototype.hasOwnProperty.call(payload, key)) {
+				const value = payload[key as keyof GetLineLossDtoIn]
+				if (value) {
+					params.append(key, value.toString())
+				}
+			}
+		}
+		return await api.get(`/summary/loss-statistic/line?${params}`, APIService.DisasterAPI)
+	},
 	getBarLossStatistic: async (
-		payload: any,
-	): Promise<ResponseAnnualAnalysisBarDto<DataLossStatisticDtoOut[], LegendLossStatisticDtoOut>> =>
-		await api.get(`/summary/loss-statistic/bar`, APIService.DisasterAPI),
+		payload: GetBarLossDtoIn,
+	): Promise<ResponseAnnualAnalysisBarDto<DataLossStatisticDtoOut[], LegendLossStatisticDtoOut>> => {
+		const params = new URLSearchParams()
+		for (const key in payload) {
+			if (Object.prototype.hasOwnProperty.call(payload, key)) {
+				const value = payload[key as keyof GetBarLossDtoIn]
+				if (value) {
+					params.append(key, value.toString())
+				}
+			}
+		}
+		return await api.get(`/summary/loss-statistic/bar?${params}`, APIService.DisasterAPI)
+	},
 }
 
 export default annualAnalysis

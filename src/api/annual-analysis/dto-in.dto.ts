@@ -9,6 +9,10 @@ interface PlantDtoIn {
 }
 
 interface RiceDtoIn extends PlantDtoIn {}
+
+interface LossDtoIn extends PlantDtoIn {
+	lossType?: number
+}
 export interface GetTablePlantDtoIn extends PlantDtoIn {}
 
 export interface GetLinePlantDtoIn extends PlantDtoIn {}
@@ -20,3 +24,9 @@ export interface GetTableRiceDtoIn extends RiceDtoIn {}
 export interface GetLineRiceDtoIn extends RiceDtoIn {}
 
 export interface GetBarRiceDtoIn extends RiceDtoIn {}
+
+export interface GetTableLossDtoIn extends LossDtoIn {}
+
+export interface GetLineLossDtoIn extends LossDtoIn {}
+
+export interface GetBarLossDtoIn extends LossDtoIn {}

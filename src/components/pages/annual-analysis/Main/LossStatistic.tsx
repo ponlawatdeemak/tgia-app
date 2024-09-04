@@ -26,14 +26,14 @@ type lineColorType = {
 }
 
 const LossStatistic = () => {
-	const { queryParams } = useSearchAnnualAnalysis()
+	const { queryParams, setQueryParams } = useSearchAnnualAnalysis() // queryParams lossType = none : all , 1 : flood, 2 : drought
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default'])
 	const language = i18n.language as keyof ResponseLanguage
 
-	const [currentLossType, setCurrentLossType] = React.useState<string>('total') //drought //flood
+	const [currentLossType, setCurrentLossType] = React.useState<string>('') //drought //flood
 
 	// bar chart
 	const [barColorArr, setBarColorArr] = React.useState<lineColorType | null>(null) //array dynamic
@@ -58,6 +58,7 @@ const LossStatistic = () => {
 	const handleTypeClick = (_event: React.MouseEvent<HTMLElement>) => {
 		const target = _event.target as HTMLInputElement
 		setCurrentLossType(target.value)
+		setQueryParams({ ...queryParams, lossType: parseInt(target.value) })
 	}
 
 	const { data: lossLineData, isLoading: isLineDataLoading } = useQuery({
@@ -181,28 +182,28 @@ const LossStatistic = () => {
 				>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': currentLossType === 'total',
-							'text-gray-dark2': currentLossType !== 'total',
+							'bg-primary font-semibold text-white': currentLossType === '',
+							'text-gray-dark2': currentLossType !== '',
 						})}
-						value={'total'}
+						value={''}
 					>
 						{t('allDisasters')}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': currentLossType === 'drought',
-							'text-gray-dark2': currentLossType !== 'drought',
+							'bg-primary font-semibold text-white': currentLossType === '2',
+							'text-gray-dark2': currentLossType !== '2',
 						})}
-						value={'drought'}
+						value={'2'}
 					>
 						{t('drought')}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-base', {
-							'bg-primary font-semibold text-white': currentLossType === 'flood',
-							'text-gray-dark2': currentLossType !== 'flood',
+							'bg-primary font-semibold text-white': currentLossType === '1',
+							'text-gray-dark2': currentLossType !== '1',
 						})}
-						value={'flood'}
+						value={'1'}
 					>
 						{t('flood')}
 					</ToggleButton>
