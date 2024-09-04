@@ -18,12 +18,13 @@ interface SearchAnnualAnalysisContextType {
 }
 
 const initialParams = {
-	yearStart: undefined,
-	yearEnd: undefined,
+	// yearStart: undefined,
+	// yearEnd: undefined,
 	registrationAreaType: undefined,
 	provinceCode: undefined,
 	districtCode: undefined,
 	subDistrictCode: undefined,
+	years: undefined,
 }
 
 const useSearchAnnualAnalysis = create<SearchAnnualAnalysisContextType>((set) => ({

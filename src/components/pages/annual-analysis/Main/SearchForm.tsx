@@ -122,7 +122,7 @@ const SearchFormAnnualAnalysis = () => {
 					provinceCode: parseInt(newSelectedValue.id),
 					districtCode: undefined,
 					subDistrictCode: undefined,
-					layerName: 'province',
+					// layerName: 'province',
 				})
 			} else if (newSelectedValue.id.length === DistrictCodeLength) {
 				const provinceCode = parseInt(newSelectedValue.id.substring(0, 2))
@@ -131,7 +131,7 @@ const SearchFormAnnualAnalysis = () => {
 					provinceCode: provinceCode,
 					districtCode: parseInt(newSelectedValue.id),
 					subDistrictCode: undefined,
-					layerName: 'district',
+					// layerName: 'district',
 				})
 			} else if (newSelectedValue.id.length === SubDistrictCodeLength) {
 				const provinceCode = parseInt(newSelectedValue.id.substring(0, 2))
@@ -141,7 +141,7 @@ const SearchFormAnnualAnalysis = () => {
 					provinceCode: provinceCode,
 					districtCode: districtCode,
 					subDistrictCode: parseInt(newSelectedValue.id),
-					layerName: 'subdistrict',
+					// layerName: 'subdistrict',
 				})
 			}
 		}

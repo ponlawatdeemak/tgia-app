@@ -12,11 +12,13 @@ import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import { GetLookupOutDto } from '@/api/lookup/dto-out.dto'
 import { useYearPicker } from './context'
+import useAreaType from '@/store/area-type'
 
 interface YearPickerProps {}
 
 const YearPicker: React.FC<YearPickerProps> = () => {
 	const { open, setOpen } = useYearPicker()
+	const { areaType } = useAreaType()
 	const { queryParams, setQueryParams } = useSearchAnnualAnalysis()
 	const { isDesktop } = useResponsive()
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -40,8 +42,8 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 	}, [selectedYear])
 
 	useEffect(() => {
-		console.log(queryParams)
-	}, [queryParams])
+		setQueryParams({ ...queryParams, registrationAreaType: areaType })
+	}, [areaType])
 
 	const handleClose = () => {
 		setAnchorEl(null)
