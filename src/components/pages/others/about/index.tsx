@@ -8,24 +8,38 @@ const AboutMain = () => {
 	const { t, i18n } = useTranslation(['appbar'])
 	const language = i18n.language as keyof ResponseLanguage
 
+	const link = 'https://www.youtube.com/embed/l5BuR7T04w4?si=CAeYHE-SQhTYEHbn'
+
 	return (
 		<div className='box-border flex h-full flex-col p-4'>
 			<div className='box-border flex h-full flex-col space-y-4 rounded-lg bg-white p-6'>
 				<Typography className='mb-2 text-base font-semibold'>{t('menu.about')}</Typography>
 				{language === 'th' ? (
 					<div className='space-y-4 overflow-scroll px-6'>
+						<div className='flex justify-center py-4'>
+							<iframe
+								width='560'
+								height='315'
+								className='rounded-xl'
+								src={link}
+								title='YouTube video player'
+								allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+								referrerPolicy='strict-origin-when-cross-origin'
+								allowFullScreen
+							></iframe>
+						</div>
 						<Typography className='text-base font-semibold'>
 							กรมส่งเสริมการเกษตร จับมือกับสมาคมประกันวินาศภัยไทยและไทยคม
 							เพื่อยกระดับมาตรฐานการประกันภัยพืชผลสำหรับเกษตรกรไทย โดยใช้ข้อมูลดาวเทียมและเทคโนโลยีอวกาศ
 						</Typography>
-						<Typography className='text-sm font-normal'>
+						<Typography className='indent-8 text-sm font-normal'>
 							กรมส่งเสริมการเกษตรร่วมกับสององค์กร
 							ลงนามในข้อตกลงความร่วมมือโครงการช่วยเหลือเกษตรกรผู้ประสบภัย
 							โดยนำข้อมูลดาวเทียมมาใช้ในระบบประกันภัยพืชผล
 							เพื่อพัฒนาแนวทางการประยุกต์ใช้วิทยาศาสตร์และเทคโนโลยีในประกันภัยพืชผลสำหรับเกษตรกรไทย
 							พร้อมทั้งยกระดับมาตรฐานการประกันภัยด้านการเกษตรให้มีประสิทธิภาพมากยิ่งขึ้นด้วยเทคโนโลยีอวกาศ
 						</Typography>
-						<Typography className='text-sm font-normal'>
+						<Typography className='indent-8 text-sm font-normal'>
 							ภายใต้ความร่วมมือนี้ กรมส่งเสริมการเกษตร สมาคมประกันวินาศภัยไทย และไทยคม
 							จะร่วมกันพัฒนาการใช้วิทยาศาสตร์และเทคโนโลยีในประกันภัยพืชผล
 							โดยใช้เทคโนโลยีดาวเทียมสำรวจทรัพยากรโลก (Earth Observation Satellite) ระบบวิเคราะห์ข้อมูล
@@ -39,7 +53,7 @@ const AboutMain = () => {
 							และงานวิจัย เพื่อพัฒนาศักยภาพบุคลากรทั้งสามหน่วยงานให้มีความรู้ความสามารถ
 							เพื่อขับเคลื่อนภาคอุตสาหกรรมเกษตรของประเทศให้ก้าวหน้าในอนาคต
 						</Typography>
-						<Typography className='text-sm font-normal'>
+						<Typography className='indent-8 text-sm font-normal'>
 							สำหรับปี 2567 กรมส่งเสริมการเกษตรได้กำหนดแนวทางในการขับเคลื่อนภารกิจ
 							โดยเน้นการส่งเสริมการเกษตรเชิงพื้นที่ สร้างสินค้าเกษตรมูลค่าสูง (High Value)
 							ควบคู่กับการใช้ทรัพยากรอย่างคุ้มค่า ส่งเสริมการทำเกษตรที่เป็นมิตรกับสิ่งแวดล้อม (Low Carbon)
@@ -64,7 +78,7 @@ const AboutMain = () => {
 							อีกทั้งยังช่วยยกระดับคุณภาพชีวิตของเกษตรกรไทยให้มีความเป็นอยู่ที่ดีขึ้นด้วยความมั่นคง
 							เพราะภาคเกษตรกรรมเป็นรากฐานที่สำคัญของระบบเศรษฐกิจของประเทศไทย
 						</Typography>
-						<Typography className='text-sm font-normal'>
+						<Typography className='indent-8 text-sm font-normal'>
 							ปัจจุบัน เกษตรกรไทยต้องเผชิญกับความแปรปรวนของสภาพอากาศ ศัตรูพืช และโรคระบาด
 							ส่งผลให้ความถี่และความรุนแรงของภัยธรรมชาติเพิ่มขึ้น
 							เพื่อให้เกษตรกรมีทางเลือกในการบริหารจัดการความเสี่ยงที่ดีขึ้น
@@ -77,7 +91,7 @@ const AboutMain = () => {
 							และการเก็บข้อมูลรายแปลงด้วย mobile technology
 							และมีแนวคิดที่จะต่อยอดพัฒนารูปแบบการประเมินผลให้ครอบคลุมและมีประสิทธิภาพยิ่งขึ้น
 						</Typography>
-						<Typography className='text-sm font-normal'>
+						<Typography className='indent-8 text-sm font-normal'>
 							ไทยคมมีเจตนารมณ์ในการดำเนินธุรกิจให้เติบโตอย่างมั่นคง ควบคู่กับการพัฒนาประเทศให้ยั่งยืน
 							ด้วยการพัฒนาโซลูชันที่ใช้ Big Data จากอวกาศ วิเคราะห์ร่วมกับ Artificial Intelligence (AI)
 							และ Machine Learning (ML) เพื่อใช้ในการบริหารจัดการในหลายมิติ
@@ -86,34 +100,34 @@ const AboutMain = () => {
 							ย้ำถึงพันธกิจของไทยคมในการนำความเชี่ยวชาญด้านธุรกิจดาวเทียมและเทคโนโลยีอวกาศมาต่อยอดเป็นแพลตฟอร์มประกันภัยพืชผล
 							เพื่อให้เกษตรกรที่ได้รับผลกระทบได้รับประโยชน์สูงสุดจากโครงการนี้
 						</Typography>
+					</div>
+				) : (
+					<div className='space-y-4 overflow-scroll px-6'>
 						<div className='flex justify-center py-4'>
 							<iframe
 								width='560'
 								height='315'
 								className='rounded-xl'
-								src='https://www.youtube.com/embed/l5BuR7T04w4?si=CAeYHE-SQhTYEHbn'
+								src={link}
 								title='YouTube video player'
 								allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
 								referrerPolicy='strict-origin-when-cross-origin'
 								allowFullScreen
 							></iframe>
 						</div>
-					</div>
-				) : (
-					<div className='space-y-4 overflow-scroll px-6'>
 						<Typography className='text-base font-semibold'>
 							The Department of Agricultural Extension partners with the Thai General Insurance
 							Association and Thaicom to elevate the standard of crop insurance for Thai farmers using
 							satellite data and space technology.
 						</Typography>
-						<Typography className='text-sm font-normal'>
+						<Typography className='indent-8 text-sm font-normal'>
 							The Department of Agricultural Extension has joined forces with two organizations to sign a
 							collaboration agreement on a project aimed at assisting farmers affected by disasters. This
 							initiative leverages satellite data in crop insurance systems to jointly develop methods to
 							apply science and technology to crop insurance for Thai farmers, with the goal of raising
 							the standards of agricultural insurance through the effective use of space technology.
 						</Typography>
-						<Typography className='text-sm font-normal'>
+						<Typography className='indent-8 text-sm font-normal'>
 							Under this collaboration, the Department of Agricultural Extension, the Thai General
 							Insurance Association, and Thaicom will work together to integrate science and technology
 							into crop insurance. This will involve using Earth Observation Satellite technology, Data
@@ -128,7 +142,7 @@ const AboutMain = () => {
 							organizations. This will ultimately drive the advancement of the country{"'"}s agricultural
 							sector.
 						</Typography>
-						<Typography className='text-sm font-normal'>
+						<Typography className='indent-8 text-sm font-normal'>
 							For 2024, the Department of Agricultural Extension has outlined its mission to drive
 							agricultural promotion at the regional level, focusing on creating high-value agricultural
 							products and efficiently utilizing available resources. The initiative promotes
@@ -150,7 +164,7 @@ const AboutMain = () => {
 							by providing greater stability, given that agriculture is the foundation of Thailand{"'"}s
 							economy.
 						</Typography>
-						<Typography className='text-sm font-normal'>
+						<Typography className='indent-8 text-sm font-normal'>
 							Currently, Thai farmers face challenges from climate variability, pests, and diseases,
 							leading to an increase in the frequency and severity of natural disasters. To provide
 							farmers with better risk management options, developing a sustainable crop insurance system
@@ -162,7 +176,7 @@ const AboutMain = () => {
 							data, and plot-level data collection using mobile technology, with the aim of further
 							developing these methods to be more comprehensive and efficient.
 						</Typography>
-						<Typography className='text-sm font-normal'>
+						<Typography className='indent-8 text-sm font-normal'>
 							Thaicom is committed to growing its business sustainably while contributing to the country’s
 							development by creating solutions that use space-derived Big Data analyzed with Artificial
 							Intelligence (AI) and Machine Learning (ML) to inform management planning across multiple
@@ -172,18 +186,6 @@ const AboutMain = () => {
 							satellite and space technology to create a crop insurance platform that maximizes benefits
 							for farmers affected by disasters.
 						</Typography>
-						<div className='flex justify-center py-4'>
-							<iframe
-								width='560'
-								height='315'
-								className='rounded-xl'
-								src='https://www.youtube.com/embed/l5BuR7T04w4?si=CAeYHE-SQhTYEHbn'
-								title='YouTube video player'
-								allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
-								referrerPolicy='strict-origin-when-cross-origin'
-								allowFullScreen
-							></iframe>
-						</div>
 					</div>
 				)}
 			</div>
