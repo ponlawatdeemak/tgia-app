@@ -1,5 +1,6 @@
+import { ResponseLanguage } from '../interface'
+
 export interface GetLookupOutDto {
 	code: number
-	name: string
-	[key: string]: unknown
+	name: ResponseLanguage
 }
