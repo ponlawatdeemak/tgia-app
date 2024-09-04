@@ -94,7 +94,13 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 	return (
 		<>
 			{/* Mobile */}
-			<IconButton color='secondary' className='btn-shadow lg:hidden' onClick={handleClick}>
+			<IconButton
+				color='secondary'
+				className={clsx('btn-shadow max-h-[40px] min-h-[40px] min-w-[40px] max-w-[40px] lg:hidden', {
+					'box-border border-2 border-solid border-primary': open,
+				})}
+				onClick={handleClick}
+			>
 				<Icon path={mdiCalendarMonthOutline} size={1} />
 			</IconButton>
 
