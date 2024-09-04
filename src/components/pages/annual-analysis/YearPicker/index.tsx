@@ -13,6 +13,7 @@ import service from '@/api'
 import { GetLookupOutDto } from '@/api/lookup/dto-out.dto'
 import { useYearPicker } from './context'
 import useAreaType from '@/store/area-type'
+import clsx from 'clsx'
 
 interface YearPickerProps {}
 
@@ -101,11 +102,14 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 			<Button
 				variant='contained'
 				color='secondary'
-				className='hidden min-w-[280px] lg:flex'
+				className={clsx('hidden min-w-[200px] max-w-[200px] lg:flex', {
+					'[&_.MuiButton-startIcon]:mr-0': !(selectedYear.length > 0),
+					'border-2 border-solid border-primary': open,
+				})}
 				startIcon={<Icon path={mdiCalendarMonthOutline} size={1} />}
 				onClick={handleClick}
 			>
-				{selectedYear.length > 0 && formatYears(selectedYear)}
+				<div className='truncate'>{selectedYear.length > 0 && formatYears(selectedYear)}</div>
 			</Button>
 
 			<Menu
@@ -119,6 +123,12 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 				transformOrigin={{
 					vertical: -4,
 					horizontal: 'right',
+				}}
+				PaperProps={{
+					style: {
+						width: isDesktop ? 200 : '',
+						boxShadow: '0 0px 6px 0 rgb(0 0 0 / 0.2)',
+					},
 				}}
 			>
 				{yearData?.data?.map((item: GetLookupOutDto) => (
