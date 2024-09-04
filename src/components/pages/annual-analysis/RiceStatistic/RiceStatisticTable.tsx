@@ -23,6 +23,7 @@ import useAreaType from '@/store/area-type'
 import useResponsive from '@/hook/responsive'
 import { dataAreas } from '@/api/annual-analysis/dto-out.dto'
 import { TextColor } from '@/config/color'
+import { bar } from 'billboard.js'
 
 interface Data {
 	id: string
@@ -60,6 +61,306 @@ interface RiceStatisticTableProps {
 	riceTableData?: any[]
 }
 
+// const mockResp = [
+// 	{
+// 		id: '36',
+// 		name: {
+// 			th: 'นครราชสีมา A',
+// 			en: 'Nakhon Ratchasima',
+// 		},
+// 		totalActArea: {
+// 			areaRai: 2132325,
+// 			areaPlot: 20000,
+// 		},
+// 		totalPredictedRiceArea: {
+// 			areaRai: 200000,
+// 			areaPlot: 50000,
+// 		},
+// 		actAreas: [
+// 			{
+// 				column: {
+// 					th: '2562',
+// 					en: '2019',
+// 				},
+// 				areaRai: 2250001,
+// 				areaPlot: 2132325,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2563',
+// 					en: '2020',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2500000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2564',
+// 					en: '2021',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2500000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2565',
+// 					en: '2022',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2500000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2566',
+// 					en: '2023',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2500000,
+// 			},
+// 		],
+// 		predictedRiceAreas: [
+// 			{
+// 				column: {
+// 					th: '2562',
+// 					en: '2019',
+// 				},
+// 				areaRai: 2132325,
+// 				areaPlot: 2002500,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2563',
+// 					en: '2020',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2925000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2564',
+// 					en: '2021',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2925000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2565',
+// 					en: '2022',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2925000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2566',
+// 					en: '2023',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2925000,
+// 			},
+// 		],
+// 	},
+// 	{
+// 		id: '37',
+// 		name: {
+// 			th: 'นครราชสีมา B',
+// 			en: 'Nakhon Ratchasima',
+// 		},
+// 		totalActArea: {
+// 			areaRai: 2132326,
+// 			areaPlot: 20000,
+// 		},
+// 		totalPredictedRiceArea: {
+// 			areaRai: 200000,
+// 			areaPlot: 50000,
+// 		},
+// 		actAreas: [
+// 			{
+// 				column: {
+// 					th: '2562',
+// 					en: '2019',
+// 				},
+// 				areaRai: 2250002,
+// 				areaPlot: 2132325,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2563',
+// 					en: '2020',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2500000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2564',
+// 					en: '2021',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2500000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2565',
+// 					en: '2022',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2500000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2566',
+// 					en: '2023',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2500000,
+// 			},
+// 		],
+// 		predictedRiceAreas: [
+// 			{
+// 				column: {
+// 					th: '2562',
+// 					en: '2019',
+// 				},
+// 				areaRai: 2132325,
+// 				areaPlot: 2002500,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2563',
+// 					en: '2020',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2925000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2564',
+// 					en: '2021',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2925000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2565',
+// 					en: '2022',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2925000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2566',
+// 					en: '2023',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2925000,
+// 			},
+// 		],
+// 	},
+// 	{
+// 		id: '38',
+// 		name: {
+// 			th: 'นครราชสีมา C',
+// 			en: 'Nakhon Ratchasima',
+// 		},
+// 		totalActArea: {
+// 			areaRai: 2132327,
+// 			areaPlot: 20000,
+// 		},
+// 		totalPredictedRiceArea: {
+// 			areaRai: 200000,
+// 			areaPlot: 50000,
+// 		},
+// 		actAreas: [
+// 			{
+// 				column: {
+// 					th: '2562',
+// 					en: '2019',
+// 				},
+// 				areaRai: 2250003,
+// 				areaPlot: 2132325,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2563',
+// 					en: '2020',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2500000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2564',
+// 					en: '2021',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2500000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2565',
+// 					en: '2022',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2500000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2566',
+// 					en: '2023',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2500000,
+// 			},
+// 		],
+// 		predictedRiceAreas: [
+// 			{
+// 				column: {
+// 					th: '2562',
+// 					en: '2019',
+// 				},
+// 				areaRai: 2132325,
+// 				areaPlot: 2002500,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2563',
+// 					en: '2020',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2925000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2564',
+// 					en: '2021',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2925000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2565',
+// 					en: '2022',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2925000,
+// 			},
+// 			{
+// 				column: {
+// 					th: '2566',
+// 					en: '2023',
+// 				},
+// 				areaRai: 2500000,
+// 				areaPlot: 2925000,
+// 			},
+// 		],
+// 	},
+// ]
+
 const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }) => {
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
@@ -96,8 +397,8 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
                         order: 0
                     },
                     {
-                        id: "totalActPredicted",
-                        name: "totalActPredicted"
+                        id: "totalActArea",
+                        name: "totalActArea"
                         totalActArea : {
                             areaRai : number,
                             areaPlot : number
@@ -130,7 +431,6 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
                 ]
             */
 			// init table rows data
-			console.log('riceTableData :: ', riceTableData)
 			riceTableData.forEach((data) => {
 				const tmpRow: any[] = []
 				tmpRow.push({
@@ -139,8 +439,8 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 					order: 0,
 				})
 				tmpRow.push({
-					id: 'totalActPredicted',
-					name: 'totalActPredicted',
+					id: 'totalActArea',
+					name: 'totalActArea',
 					actAreas: data.totalActArea,
 					predictedRiceAreas: data.totalPredictedRiceArea,
 				})
@@ -154,7 +454,6 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 				}
 				tmpArr.push(tmpRow)
 			})
-			console.log('tmpArr :: ', tmpArr)
 			// init table heads
 			const tmpHead: any[] = []
 			tmpHead.push({
@@ -165,7 +464,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 				sortable: false,
 			})
 			tmpHead.push({
-				id: 'totalActPredicted',
+				id: 'totalActArea',
 				numeric: true,
 				disablePadding: false,
 				label: 'ผลรวม การวิเคราะห์',
@@ -177,22 +476,34 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 					numeric: true,
 					disablePadding: false,
 					label: riceTableData[0].actAreas[i].column[language],
-					sortable: false,
+					sortable: true,
 				})
 			}
-			console.log('tmpHead :: ', tmpHead)
-			// tmpArr.sort((a, b) => b.totalActArea[areaUnit] - a.totalActArea[areaUnit])
+			tmpArr.sort((a, b) => {
+				const aTotalAct = a.find((item: any) => item.id === 'totalActArea')
+				const bTotalAct = b.find((item: any) => item.id === 'totalActArea')
 
-			// let currRank = 1
-			// tmpArr[0].order = currRank
-			// for (let i = 1; i < tmpArr.length; i++) {
-			// 	if (tmpArr[i].totalActArea[areaUnit] === tmpArr[i - 1].totalActArea[areaUnit]) {
-			// 		tmpArr[i].order = currRank
-			// 	} else {
-			// 		currRank = i + 1
-			// 		tmpArr[i].order = currRank
-			// 	}
-			// }
+				const aArea = aTotalAct?.actAreas[areaUnit]
+				const bArea = bTotalAct?.actAreas[areaUnit]
+				return bArea - aArea
+			})
+
+			let currRank = 1
+			tmpArr[0].find((item: any) => item.id !== 'totalActArea').order = currRank
+
+			for (let i = 1; i < tmpArr.length; i++) {
+				const currAct = tmpArr[i].find((item: any) => item.id === 'totalActArea')
+				const prevAct = tmpArr[i - 1].find((item: any) => item.id === 'totalActArea')
+
+				const currOrderItem = tmpArr[i].find((item: any) => item.id !== 'totalActArea')
+
+				if (currAct.actAreas.areaRai === prevAct.actAreas.areaRai) {
+					currOrderItem.order = currRank
+				} else {
+					currRank = i + 1
+					currOrderItem.order = currRank
+				}
+			}
 			setTableHead(tmpHead)
 			setTableData(tmpArr)
 		}
@@ -208,32 +519,37 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 
 	const rows = React.useMemo(() => {
 		const data = tableData
-		console.log('rows :: ', data)
-		// console.log('sorting data :: ', data, filterOrder, areaUnit)
-		// data?.sort((a, b) => {
-		// 	return filterOrder.sortType === SortType.ASC
-		// 		? a[filterOrder?.sort][areaUnit] - b[filterOrder?.sort][areaUnit]
-		// 		: b[filterOrder?.sort][areaUnit] - a[filterOrder?.sort][areaUnit]
-		// })
 
-		// let rowNum = 1
+		if (data.length > 0) {
+			data?.sort((a, b) => {
+				const aTotalAct = a.find((item: any) => item.id === filterOrder?.sort)
+				const bTotalAct = b.find((item: any) => item.id === filterOrder?.sort)
 
-		// for (let i = 0; i < (data?.length || 0); i++) {
-		// 	if (i === 0) {
-		// 		data[i].order = 1
-		// 	} else {
-		// 		if (
-		// 			filterOrder.sortType === SortType.ASC
-		// 				? data[i]?.[filterOrder?.sort][areaUnit] > data?.[i - 1]?.[filterOrder?.sort][areaUnit]
-		// 				: data[i]?.[filterOrder?.sort][areaUnit] < data?.[i - 1]?.[filterOrder?.sort][areaUnit]
-		// 		) {
-		// 			rowNum = rowNum + 1
-		// 		} else {
-		// 			rowNum
-		// 		}
-		// 		data[i].order = rowNum
-		// 	}
-		// }
+				const aArea = aTotalAct?.actAreas[areaUnit]
+				const bArea = bTotalAct?.actAreas[areaUnit]
+				return filterOrder.sortType === SortType.ASC ? aArea - bArea : bArea - aArea
+			})
+
+			let rowNum = 1
+			data[0].find((item: any) => item.id !== filterOrder?.sort).order = rowNum
+
+			for (let i = 1; i < data.length; i++) {
+				const currAct = data[i].find((item: any) => {
+					return item.id === filterOrder?.sort
+				})
+				const prevAct = data[i - 1].find((item: any) => item.id === filterOrder?.sort)
+
+				const currOrderItem = data[i].find((item: any) => item.id !== filterOrder?.sort)
+				if (
+					filterOrder.sortType === SortType.ASC
+						? currAct.actAreas[areaUnit] > prevAct.actAreas[areaUnit]
+						: currAct.actAreas[areaUnit] < prevAct.actAreas[areaUnit]
+				) {
+					rowNum++
+				}
+				currOrderItem.order = rowNum
+			}
+		}
 		return data || []
 	}, [tableData, filterOrder, areaUnit])
 
@@ -307,33 +623,37 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 							<TableBody>
 								{rows.map((row, rowIndex) => (
 									<TableRow key={rowIndex}>
-										{row.map((cell: CellType, cellIndex: number) => (
-											<TableCell
-												key={cellIndex}
-												component={cellIndex === 0 ? 'th' : 'td'}
-												scope={cellIndex === 0 ? 'row' : undefined}
-												padding='none'
-												rowSpan={2}
-												align={cellIndex === 0 ? 'left' : 'right'}
-												sx={{
-													borderRight: cellIndex === 0 ? '1px solid rgb(224, 224, 224)' : '',
-												}}
-											>
-												{cellIndex === 0 ? (
-													<>
-														{cell.order} {cell.name[language]}
-													</>
-												) : (
-													<>
-														<span>{cell.actAreas[areaUnit].toLocaleString()}</span>
-														<br />
-														<span className={`text-[#9F1853]`}>
-															{cell.predictedRiceAreas[areaUnit].toLocaleString()}
-														</span>
-													</>
-												)}
-											</TableCell>
-										))}
+										{row.map((cell: any, cellIndex: number) => {
+											const isSorted = orderBy === cell.name
+											return (
+												<TableCell
+													key={cellIndex}
+													component={cellIndex === 0 ? 'th' : 'td'}
+													scope={cellIndex === 0 ? 'row' : undefined}
+													padding='none'
+													align={cellIndex === 0 ? 'left' : 'right'}
+													sx={{
+														borderRight:
+															cellIndex === 0 ? '1px solid rgb(224, 224, 224)' : '',
+														backgroundColor: isSorted ? '#F8FAFD' : 'inherit',
+													}}
+												>
+													{cellIndex === 0 ? (
+														<>
+															{cell.order} {cell.name[language]}
+														</>
+													) : (
+														<>
+															<span>{cell.actAreas[areaUnit].toLocaleString()}</span>
+															<br />
+															<span className={`text-[#9F1853]`}>
+																{cell.predictedRiceAreas[areaUnit].toLocaleString()}
+															</span>
+														</>
+													)}
+												</TableCell>
+											)
+										})}
 									</TableRow>
 								))}
 							</TableBody>

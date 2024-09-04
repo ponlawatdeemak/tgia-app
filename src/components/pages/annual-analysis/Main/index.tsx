@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import clsx from 'clsx'
 import { useSearchAnnualAnalysis } from './context'
 import { LossType, SortType } from '@/enum'
+import useAreaType from '@/store/area-type'
 
 interface TabPanelProps {
 	children?: React.ReactNode
@@ -69,6 +70,8 @@ const AnnualAnalysisMain = () => {
 	const [selectedOption, setSeletedOption] = useState<OptionType | null>(null)
 	const [history, setHistory] = useLocalStorage<HistoryType>('fieldLoss.history', {})
 	const [favorite, setFavorite] = useLocalStorage<HistoryType>('fieldLoss.favorite', {})
+	const { areaType } = useAreaType()
+
 	const { data: session } = useSession()
 	const { t, i18n } = useTranslation(['default', 'field-loss'])
 	const userId = session?.user.id ?? null

@@ -10,9 +10,15 @@ interface PlantStatisticTableProps {
 	lossBarColumns?: any
 	lossBarColorArr?: any
 	lossBarGroupArr?: any
+	isBarInteger?: boolean
 }
 
-const LossStatisticBar: React.FC<PlantStatisticTableProps> = ({ lossBarColumns, lossBarColorArr, lossBarGroupArr }) => {
+const LossStatisticBar: React.FC<PlantStatisticTableProps> = ({
+	lossBarColumns,
+	lossBarColorArr,
+	lossBarGroupArr,
+	isBarInteger,
+}) => {
 	const lossBarChart = React.useRef<IChart>(null)
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
@@ -34,7 +40,7 @@ const LossStatisticBar: React.FC<PlantStatisticTableProps> = ({ lossBarColumns, 
 					centered: true,
 					colors: 'white' as string,
 					format: (x: number) => {
-						return x.toLocaleString()
+						return isBarInteger ? x.toLocaleString() : x.toLocaleString() + ' %'
 					},
 				},
 				colors: lossBarColorArr,

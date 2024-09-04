@@ -7,7 +7,6 @@ import { useQuery } from '@tanstack/react-query'
 import { useLocalStorage } from '@/hook/local-storage'
 import { useSession } from 'next-auth/react'
 import { ResponseLanguage } from '@/api/interface'
-import DateRangePicker from '@/components/shared/DateRangePicker'
 import { Fullscreen } from '@mui/icons-material'
 import { onCapture } from '@/utils/screenshot'
 import YearPicker from '../YearPicker'
@@ -32,7 +31,7 @@ const SubDistrictCodeLength = 6
 const SearchFormAnnualAnalysis = () => {
 	const { queryParams, setQueryParams } = useSearchAnnualAnalysis()
 	const [inputValue, setInputValue] = useState<string>('')
-	const [selectedOption, setSeletedOption] = useState<OptionType | null>(null)
+	const [selectedOption, setSelectedOption] = useState<OptionType | null>(null)
 	const [history, setHistory] = useLocalStorage<HistoryType>('fieldLoss.history', {})
 	const [favorite, setFavorite] = useLocalStorage<HistoryType>('fieldLoss.favorite', {})
 	const { data: session } = useSession()
@@ -69,52 +68,58 @@ const SearchFormAnnualAnalysis = () => {
 		return []
 	}, [history, favorite, userId, searchData])
 
-	useEffect(() => {
-		const displaySearchOption = async () => {
-			if (queryParams.provinceCode && queryParams.districtCode && queryParams.subDistrictCode) {
-				try {
-					const subDistrict = (
-						await service.fieldLoss.getSearchAdminPoly({ id: queryParams.subDistrictCode })
-					).data?.[0]
-					const subDistrictOption: OptionType | null = subDistrict
-						? { name: subDistrict.name, id: subDistrict.id, searchType: 'search' }
-						: null
-					setSeletedOption(subDistrictOption)
-				} catch (error) {
-					console.log('error: ', error)
-				}
-			} else if (queryParams.provinceCode && queryParams.districtCode) {
-				try {
-					const district = (await service.fieldLoss.getSearchAdminPoly({ id: queryParams.districtCode }))
-						.data?.[0]
-					const districtOption: OptionType | null = district
-						? { name: district.name, id: district.id, searchType: 'search' }
-						: null
-					setSeletedOption(districtOption)
-				} catch (error) {
-					console.log('error: ', error)
-				}
-			} else if (queryParams.provinceCode) {
-				try {
-					const province = (await service.fieldLoss.getSearchAdminPoly({ id: queryParams.provinceCode }))
-						.data?.[0]
-					const provinceOption: OptionType | null = province
-						? { name: province.name, id: province.id, searchType: 'search' }
-						: null
-					setSeletedOption(provinceOption)
-				} catch (error) {
-					console.log('error: ', error)
-				}
-			} else {
-				setSeletedOption(null)
-			}
-		}
-
-		displaySearchOption()
-	}, [queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode])
+	// useEffect(() => {
+	// 	// const displaySearchOption = async () => {
+	// 	// 	console.log(queryParams)
+	// 	// 	if (queryParams.provinceCode && queryParams.districtCode && queryParams.subDistrictCode) {
+	// 	// 		try {
+	// 	// 			const subDistrict = (
+	// 	// 				await service.fieldLoss.getSearchAdminPoly({ id: queryParams.subDistrictCode })
+	// 	// 			).data?.[0]
+	// 	// 			const subDistrictOption: OptionType | null = subDistrict
+	// 	// 				? { name: subDistrict.name, id: subDistrict.id, searchType: 'search' }
+	// 	// 				: null
+	// 	// 			console.log('setSelectedOption :: subDistrict :: ', subDistrictOption)
+	// 	// 			setSelectedOption(subDistrictOption)
+	// 	// 		} catch (error) {
+	// 	// 			console.log('error: ', error)
+	// 	// 		}
+	// 	// 	} else if (queryParams.provinceCode && queryParams.districtCode) {
+	// 	// 		try {
+	// 	// 			console.log('setSelectedOption :: payload :: ', queryParams.districtCode)
+	// 	// 			const district = (await service.fieldLoss.getSearchAdminPoly({ id: queryParams.districtCode }))
+	// 	// 				.data?.[0]
+	// 	// 			console.log('setSelectedOption :: res :: ', district)
+	// 	// 			const districtOption: OptionType | null = district
+	// 	// 				? { name: district.name, id: district.id, searchType: 'search' }
+	// 	// 				: null
+	// 	// 			console.log('setSelectedOption :: district :: ', districtOption)
+	// 	// 			setSelectedOption(districtOption)
+	// 	// 		} catch (error) {
+	// 	// 			console.log('error: ', error)
+	// 	// 		}
+	// 	// 	} else if (queryParams.provinceCode) {
+	// 	// 		try {
+	// 	// 			const province = (await service.fieldLoss.getSearchAdminPoly({ id: queryParams.provinceCode }))
+	// 	// 				.data?.[0]
+	// 	// 			const provinceOption: OptionType | null = province
+	// 	// 				? { name: province.name, id: province.id, searchType: 'search' }
+	// 	// 				: null
+	// 	// 			console.log('setSelectedOption :: province :: ', provinceOption)
+	// 	// 			setSelectedOption(provinceOption)
+	// 	// 		} catch (error) {
+	// 	// 			console.log('error: ', error)
+	// 	// 		}
+	// 	// 	} else {
+	// 	// 		console.log('setSelectedOption :: null :: case else', null)
+	// 	// 		setSelectedOption(null)
+	// 	// 	}
+	// 	// }
+	// 	// displaySearchOption()
+	// }, [queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode])
 
 	const handleSelectOption = (_event: ChangeEvent<{}>, newSelectedValue: OptionType | null) => {
-		setSeletedOption(newSelectedValue)
+		setSelectedOption(newSelectedValue)
 		if (newSelectedValue?.id) {
 			if (newSelectedValue.id.length === ProvinceCodeLength) {
 				setQueryParams({
@@ -122,7 +127,7 @@ const SearchFormAnnualAnalysis = () => {
 					provinceCode: parseInt(newSelectedValue.id),
 					districtCode: undefined,
 					subDistrictCode: undefined,
-					layerName: 'province',
+					// layerName: 'province',
 				})
 			} else if (newSelectedValue.id.length === DistrictCodeLength) {
 				const provinceCode = parseInt(newSelectedValue.id.substring(0, 2))
@@ -131,7 +136,7 @@ const SearchFormAnnualAnalysis = () => {
 					provinceCode: provinceCode,
 					districtCode: parseInt(newSelectedValue.id),
 					subDistrictCode: undefined,
-					layerName: 'district',
+					// layerName: 'district',
 				})
 			} else if (newSelectedValue.id.length === SubDistrictCodeLength) {
 				const provinceCode = parseInt(newSelectedValue.id.substring(0, 2))
@@ -141,7 +146,7 @@ const SearchFormAnnualAnalysis = () => {
 					provinceCode: provinceCode,
 					districtCode: districtCode,
 					subDistrictCode: parseInt(newSelectedValue.id),
-					layerName: 'subdistrict',
+					// layerName: 'subdistrict',
 				})
 			}
 		}
@@ -226,8 +231,15 @@ const SearchFormAnnualAnalysis = () => {
 	}
 
 	const handleClear = () => {
+		setQueryParams({
+			...queryParams,
+			provinceCode: undefined,
+			districtCode: undefined,
+			subDistrictCode: undefined,
+			// layerName: 'province',
+		})
 		setInputValue('')
-		setSeletedOption(null)
+		setSelectedOption(null)
 	}
 	// console.log(selectedOption)
 	return (
