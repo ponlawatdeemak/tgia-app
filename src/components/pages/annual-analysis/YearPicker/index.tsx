@@ -102,7 +102,7 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 			<Button
 				variant='contained'
 				color='secondary'
-				className={clsx('hidden min-w-[200px] max-w-[200px] lg:flex', {
+				className={clsx('hidden max-h-[40px] min-h-[40px] min-w-[200px] max-w-[200px] lg:flex', {
 					'[&_.MuiButton-startIcon]:mr-0': !(selectedYear.length > 0),
 					'border-2 border-solid border-primary': open,
 				})}
