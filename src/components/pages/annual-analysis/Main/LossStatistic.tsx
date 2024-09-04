@@ -2,7 +2,7 @@ import React from 'react'
 import bb, { bar, ChartOptions, line } from 'billboard.js'
 import 'billboard.js/dist/billboard.css'
 import BillboardJS, { IChart } from '@billboard.js/react'
-import { Box, Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { Box, Button, Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import PlantStatisticTable from '../PlantStatistic/PlantStatisticTable'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchAnnualAnalysis } from './context'
@@ -20,6 +20,8 @@ import { LossType } from '@/enum'
 import LossStatisticBar from '../LossStatistic/LossStatisticBar'
 import LossStatisticLine from '../LossStatistic/LossStatisticLine'
 import LossStatisticTable from '../LossStatistic/LossStatisticTable'
+import { isInteger } from 'formik'
+import { number } from 'yup'
 
 type lineColorType = {
 	[key: string]: string
@@ -32,6 +34,7 @@ const LossStatistic = () => {
 	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default'])
 	const language = i18n.language as keyof ResponseLanguage
+	const [isBarInteger, setIsBarInteger] = React.useState<boolean>(true)
 
 	const [currentLossType, setCurrentLossType] = React.useState<string>('') //drought //flood
 
@@ -49,7 +52,7 @@ const LossStatistic = () => {
 		queryKey: ['getTableLossStatistic', queryParams],
 		queryFn: async () => {
 			const res = await service.annualAnalysis.getTableLossStatistic(queryParams)
-			console.log('Loss Table :: ', res)
+			// console.log('Loss Table :: ', res)
 			return res
 		},
 		enabled: true,
@@ -82,7 +85,7 @@ const LossStatistic = () => {
 	})
 
 	React.useEffect(() => {
-		console.log('lossBarData :: ', lossBarData)
+		// console.log('lossBarData :: ', lossBarData)
 		if (lossBarData?.data && lossBarData?.legend) {
 			// const tempBarColumns = [['x']] as (string | number)[][]
 			// [
@@ -118,7 +121,7 @@ const LossStatistic = () => {
 						(cat) => cat.label[language] === legendItem.label[language],
 					)
 					if (category) {
-						row.push(category.value.area[areaUnit])
+						row.push(isBarInteger ? category.value.area[areaUnit] : category.value.percent[areaUnit])
 					}
 				})
 				tempBarColumns.push(row)
@@ -133,7 +136,7 @@ const LossStatistic = () => {
 			setBarColorArr(tempBarColor)
 			setBarGroupArr(tempBarGroup)
 		}
-	}, [lossBarData, areaUnit, language])
+	}, [lossBarData, areaUnit, language, isBarInteger])
 
 	React.useEffect(() => {
 		// console.log('lossLineData :: ', lossLineData)
@@ -168,6 +171,18 @@ const LossStatistic = () => {
 			setLineCategoriesArr(tempLineCategories)
 		}
 	}, [lossLineData, areaUnit, language])
+
+	const handleChangeBarNumber = (_event: React.MouseEvent<HTMLElement>) => {
+		const target = _event.target as HTMLInputElement
+		if (isBarInteger && target.value !== 'number') {
+			setIsBarInteger(false)
+			return
+		}
+		if (!isBarInteger && target.value !== 'fracture') {
+			setIsBarInteger(true)
+			return
+		}
+	}
 
 	return (
 		<Box>
@@ -215,13 +230,36 @@ const LossStatistic = () => {
 						<Typography className='text-md font-semibold' component='div'>
 							เปรียบเทียบพื้นที่เสียหาย (เฉพาะที่มีขอบแปลงเท่านั้น)
 						</Typography>
+						<Box className='flex flex-row justify-end'>
+							<Button
+								className={clsx('text-base', {
+									'bg-primary font-semibold text-white': isBarInteger,
+									'text-gray-dark2': !isBarInteger,
+								})}
+								onClick={handleChangeBarNumber}
+								value='number'
+							>
+								จำนวนเต็ม
+							</Button>
+							<Button
+								className={clsx('text-base', {
+									'bg-primary font-semibold text-white': !isBarInteger,
+									'text-gray-dark2': isBarInteger,
+								})}
+								onClick={handleChangeBarNumber}
+								value='fracture'
+							>
+								เปอร์เซ็นต์
+							</Button>
+						</Box>
 						{barColorArr && barGroupArr && lossBarColumns && (
 							<>
 								<LossStatisticBar
-									key={JSON.stringify(barGroupArr)}
+									key={JSON.stringify(barGroupArr + isBarInteger.toString())}
 									lossBarColumns={lossBarColumns}
 									lossBarColorArr={barColorArr}
 									lossBarGroupArr={barGroupArr}
+									isBarInteger={isBarInteger}
 								/>
 							</>
 						)}
@@ -235,10 +273,10 @@ const LossStatistic = () => {
 						{lineColorArr && (
 							<>
 								<LossStatisticLine
+									key={JSON.stringify(lineColorArr)}
 									lossLineColumns={lossLineColumns}
 									lossLineColorArr={lineColorArr}
 									lossCategoriesArr={lineCategoriesArr}
-									key={JSON.stringify(lineColorArr)}
 								/>
 							</>
 						)}

@@ -13,6 +13,7 @@ interface dataCategories {
 	label: ResponseLanguage
 	value: {
 		area: ResponseArea
+		percent: ResponseArea
 	}
 }
 
