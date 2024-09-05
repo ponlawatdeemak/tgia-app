@@ -21,6 +21,7 @@ import { ResponseLanguage } from '@/api/interface'
 import useAreaUnit from '@/store/area-unit'
 import useAreaType from '@/store/area-type'
 import useResponsive from '@/hook/responsive'
+import { useSelectOption } from '../Main/context'
 
 // Response
 const response = {
@@ -469,6 +470,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default'])
+	const { selectOption, setSelectOption } = useSelectOption()
 	const language = i18n.language as keyof ResponseLanguage
 
 	const [order, setOrder] = React.useState<SortType>(SortType.DESC)
@@ -476,8 +478,11 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 	const [dense, setDense] = React.useState(false)
 	const [tableData, setTableData] = React.useState<any[]>([]) // change from any to dto out
 
+	React.useEffect(() => {
+		console.log('selectOption :: ', selectOption)
+	}, [selectOption])
+
 	const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-		// console.log('sorting :: ', property)
 		handleRequestSort(event, property)
 	}
 	const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
@@ -528,7 +533,6 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 
 	const rows = React.useMemo(() => {
 		const data = tableData
-		// console.log('sorting data :: ', data, filterOrder, areaUnit)
 		data?.sort((a, b) => {
 			return filterOrder.sortType === SortType.ASC
 				? a[filterOrder?.sort][areaUnit] - b[filterOrder?.sort][areaUnit]
@@ -557,16 +561,17 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 	}, [tableData, filterOrder, areaUnit])
 
 	// const visibleRows = React.useMemo(() => stableSort(tableData, getComparator(order, orderBy)), [order, orderBy])
-
 	return (
 		<Box sx={{ width: '100%' }}>
 			<Paper sx={{ width: '100%' }}>
-				<Toolbar>
-					<Typography className='text-md font-semibold' id='tableTitle' component='div'>
-						{/* Dynamic Depends on AppBar */}
-						อันดับผลรวมข้อมูลทั้งหมด (ไร่){' '}
-						<span className='text-sm font-normal text-[#7A7A7A]'>(ตัวกรอง: ประเทศไทย, 2562-2566)</span>
-					</Typography>
+				<Toolbar className='overflow-x-auto'>
+					<Box className='flex flex-row'>
+						<Typography className='w-full text-md font-semibold' id='tableTitle' component='div'>
+							{/* Dynamic Depends on AppBar */}
+							อันดับผลรวมข้อมูลทั้งหมด (ไร่){' '}
+							<span className='text-sm font-normal text-[#7A7A7A]'>(ตัวกรอง: ประเทศไทย, 2562-2566)</span>
+						</Typography>
+					</Box>
 				</Toolbar>
 				<Box className='flex h-[70vh] flex-col gap-[16px] pl-[24px] pr-[24px]'>
 					<TableContainer
@@ -640,7 +645,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 														orderBy === 'totalRegistrationArea' ? '#F8FAFD' : 'inherit',
 												}}
 											>
-												{row.totalRegistrationArea[areaUnit]}
+												{row.totalRegistrationArea[areaUnit].toLocaleString()}
 											</TableCell>
 											<TableCell
 												align='right'
@@ -651,7 +656,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 															: 'inherit',
 												}}
 											>
-												{row.totalRegistrationAreaBoundaries[areaUnit]}
+												{row.totalRegistrationAreaBoundaries[areaUnit].toLocaleString()}
 											</TableCell>
 											<TableCell
 												align='right'
@@ -660,7 +665,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 														orderBy === 'totalClaimArea' ? '#F8FAFD' : 'inherit',
 												}}
 											>
-												{row.totalClaimArea[areaUnit]}
+												{row.totalClaimArea[areaUnit].toLocaleString()}
 											</TableCell>
 											<TableCell
 												align='right'
@@ -669,7 +674,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 														orderBy === 'totalClaimAreaBoundaries' ? '#F8FAFD' : 'inherit',
 												}}
 											>
-												{row.totalClaimAreaBoundaries[areaUnit]}
+												{row.totalClaimAreaBoundaries[areaUnit].toLocaleString()}
 											</TableCell>
 										</TableRow>
 									)

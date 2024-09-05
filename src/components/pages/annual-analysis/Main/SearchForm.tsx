@@ -10,7 +10,7 @@ import { ResponseLanguage } from '@/api/interface'
 import { Fullscreen } from '@mui/icons-material'
 import { onCapture } from '@/utils/screenshot'
 import YearPicker from '../YearPicker'
-import { useSearchAnnualAnalysis } from './context'
+import { useSearchAnnualAnalysis, useSelectOption } from './context'
 
 interface OptionType {
 	name: ResponseLanguage
@@ -30,6 +30,7 @@ const SubDistrictCodeLength = 6
 
 const SearchFormAnnualAnalysis = () => {
 	const { queryParams, setQueryParams } = useSearchAnnualAnalysis()
+	const { setSelectOption } = useSelectOption()
 	const [inputValue, setInputValue] = useState<string>('')
 	const [selectedOption, setSelectedOption] = useState<OptionType | null>(null)
 	const [history, setHistory] = useLocalStorage<HistoryType>('fieldLoss.history', {})
@@ -120,6 +121,7 @@ const SearchFormAnnualAnalysis = () => {
 
 	const handleSelectOption = (_event: ChangeEvent<{}>, newSelectedValue: OptionType | null) => {
 		setSelectedOption(newSelectedValue)
+		setSelectOption(newSelectedValue)
 		if (newSelectedValue?.id) {
 			if (newSelectedValue.id.length === ProvinceCodeLength) {
 				setQueryParams({
@@ -240,6 +242,7 @@ const SearchFormAnnualAnalysis = () => {
 		})
 		setInputValue('')
 		setSelectedOption(null)
+		setSelectOption(null)
 	}
 	// console.log(selectedOption)
 	return (

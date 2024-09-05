@@ -7,13 +7,14 @@ import Icon from '@mdi/react'
 import { Button, Checkbox, IconButton, Menu, MenuItem } from '@mui/material'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSearchAnnualAnalysis } from '../Main/context'
+import { useSearchAnnualAnalysis, useSelectOption } from '../Main/context'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import { GetLookupOutDto } from '@/api/lookup/dto-out.dto'
 import { useYearPicker } from './context'
 import useAreaType from '@/store/area-type'
 import clsx from 'clsx'
+import { ResponseLanguage } from '@/api/interface'
 
 interface YearPickerProps {}
 
@@ -22,8 +23,11 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 	const { areaType } = useAreaType()
 	const { queryParams, setQueryParams } = useSearchAnnualAnalysis()
 	const { isDesktop } = useResponsive()
+	const { t, i18n } = useTranslation(['default'])
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 	const [selectedYear, setSelectedYear] = useState<number[]>([])
+	const language = i18n.language as keyof ResponseLanguage
+	const { selectOption, setSelectOption } = useSelectOption()
 
 	const { data: yearData } = useQuery({
 		queryKey: ['getLookupYears'],
@@ -36,8 +40,10 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 
 	useEffect(() => {
 		if (selectedYear.length > 0) {
+			setSelectOption({ ...selectOption, selectedYear: formatYears(selectedYear) })
 			setQueryParams({ ...queryParams, years: selectedYear })
 		} else {
+			setSelectOption({ ...selectOption, selectedYear: '' })
 			setQueryParams({ ...queryParams, years: [] })
 		}
 	}, [selectedYear])
@@ -74,20 +80,13 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 		const sortedYears = years.map(Number).sort((a, b) => a - b)
 		const ranges: string[] = []
 
-		let start = sortedYears[0]
-		let end = start
-		for (let i = 1; i < sortedYears.length; i++) {
-			const currentYear = sortedYears[i]
-
-			if (currentYear === end + 1) {
-				end = currentYear
-			} else {
-				ranges.push(start === end ? `${start}` : `${start} - ${end}`)
-				start = currentYear
-				end = currentYear
-			}
-		}
-		ranges.push(start === end ? `${start}` : `${start} - ${end}`)
+		sortedYears.forEach((year) => {
+			const yearName = yearData?.data?.find((item) => {
+				return item.code === year
+			})
+			const tmpYear = yearName ? yearName.name[language] : String(year)
+			ranges.push(tmpYear)
+		})
 		return ranges.join(', ')
 	}
 
@@ -147,7 +146,7 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 							color='primary'
 							checked={isYearSelected(item.code)} // Check the checkbox if the year is selected
 						/>
-						{item.code}
+						{item.name[language]}
 					</MenuItem>
 				))}
 			</Menu>
