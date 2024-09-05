@@ -9,6 +9,7 @@ import * as yup from 'yup'
 import { Button, Paper, Typography } from '@mui/material'
 import { AppPath } from '@/config/app'
 import useSearchPlotMonitoring from '../result/Main/context'
+import useSearchForm from './context'
 
 interface SearchFormType {
 	provinceCode?: number
@@ -18,18 +19,19 @@ interface SearchFormType {
 	year: number
 }
 
-const defaultFormValues: SearchFormType = {
-	provinceCode: undefined,
-	districtCode: undefined,
-	subDistrictCode: undefined,
-	activityId: undefined,
-	year: new Date().getFullYear(),
-}
-
 export const PlotMonitoringSearchMain = () => {
+	const { setOpen } = useSearchForm()
 	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
 	const router = useRouter()
-	const { t, i18n } = useTranslation(['default', 'plot-monitoring'])
+	const { t } = useTranslation(['default', 'plot-monitoring'])
+
+	const defaultFormValues: SearchFormType = {
+		provinceCode: queryParams.provinceCode || undefined,
+		districtCode: queryParams.districtCode || undefined,
+		subDistrictCode: queryParams.subDistrictCode || undefined,
+		activityId: queryParams.activityId || undefined,
+		year: queryParams.year || new Date().getFullYear(),
+	}
 
 	const validationSchema = yup.object({
 		year: yup.number().required(t('warning.inputDataYear')),
@@ -46,12 +48,13 @@ export const PlotMonitoringSearchMain = () => {
 					activityId: values.activityId,
 					year: values.year,
 				})
+				setOpen(false)
 				router.push(AppPath.PlotMonitoringResult)
 			} catch (error) {
 				console.log('error: ', error)
 			}
 		},
-		[queryParams, router, setQueryParams],
+		[queryParams, setQueryParams, setOpen, router],
 	)
 
 	const formik = useFormik<SearchFormType>({
@@ -62,22 +65,28 @@ export const PlotMonitoringSearchMain = () => {
 	})
 
 	useEffect(() => {
-		if (!formik.values.districtCode) {
+		if (
+			!formik.values.districtCode ||
+			formik.values.districtCode.toString() !== formik.values.subDistrictCode?.toString().substring(0, 4)
+		) {
 			formik.setFieldValue('subDistrictCode', null)
-		} else if (!formik.values.provinceCode) {
+		} else if (
+			!formik.values.provinceCode ||
+			formik.values.provinceCode.toString() !== formik.values.districtCode?.toString().substring(0, 2)
+		) {
 			formik.setFieldValue('districtCode', null)
 		}
 	}, [formik.values.provinceCode, formik.values.districtCode])
 
 	return (
-		<div className='flex h-full w-full items-center justify-center'>
-			<Paper className='flex flex-col gap-4 p-6 shadow-xl'>
-				<Typography className='text-xl font-bold text-black-dark'>
+		<div className='flex justify-center max-lg:p-4 lg:h-full lg:items-center'>
+			<Paper className='flex flex-col gap-4 p-4 shadow-xl max-lg:w-full max-lg:rounded lg:p-6'>
+				<Typography className='text-xl font-semibold text-black-dark lg:font-bold'>
 					{t('searchPlotInfo', { ns: 'plot-monitoring' })}
 				</Typography>
 				<form noValidate onSubmit={formik.handleSubmit} className='flex flex-col gap-4'>
 					<AdminPoly formik={formik} isShowActivityId />
-					<Button className='py-2' fullWidth variant='contained' type='submit'>
+					<Button className='py-2 max-lg:rounded' fullWidth variant='contained' type='submit'>
 						<span className='font-semibold'>{t('search')}</span>
 					</Button>
 				</form>
