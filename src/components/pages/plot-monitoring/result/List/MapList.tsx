@@ -108,10 +108,6 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 		return areaSearchPlot?.data?.map((item) => item.activityId) || []
 	}, [areaSearchPlot])
 
-	// const areaSearchPlotId = useMemo(() => {
-	// 	return [204092124, 204148174, 204513425, 204457339, 204091737] || []
-	// }, [areaSearchPlot])
-
 	const handlePositionClick = useCallback(
 		async (x: number, y: number, coordinate: number[], year: number) => {
 			try {
@@ -426,12 +422,12 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 
 	return (
 		<div
-			className={classNames('relative h-[390px] w-full max-lg:overflow-hidden max-lg:rounded lg:h-full', {
-				'lg:hidden': areaDetail !== 'map',
+			className={classNames('relative h-full w-full', {
+				hidden: areaDetail !== 'map',
 			})}
 		>
 			<InfoWindows clickInfo={clickInfo} setClickInfo={setClickInfo} />
-			<MapView />
+			<MapView className='max-lg:[&_div.MuiBox-root:first-child]:bottom-auto max-lg:[&_div.MuiBox-root:first-child]:left-4 max-lg:[&_div.MuiBox-root:first-child]:top-4 max-lg:[&_div.MuiBox-root:nth-child(2)]:hidden' />
 		</div>
 	)
 }

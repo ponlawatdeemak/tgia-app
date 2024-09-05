@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useState } from 'react'
-import { Box, IconButton, Paper, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { IconButton, Paper, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import clsx from 'clsx'
 import CardList from '../List/CardList'
 import MapList from '../List/MapList'
@@ -20,9 +20,9 @@ const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, set
 	}, [])
 
 	return (
-		<Paper className='relative max-lg:flex max-lg:flex-col max-lg:gap-3 max-lg:bg-gray-light lg:block lg:flex-grow'>
+		<Paper className='relative h-full lg:block lg:flex-grow'>
 			<IconButton
-				className='absolute left-0 top-3 z-10 flex items-center justify-center rounded-s-none border-0 border-l border-solid border-[#F2F2F2] bg-white px-1 py-3'
+				className='absolute left-0 top-3 z-10 flex items-center justify-center rounded-s-none border-0 border-l border-solid border-gray-light bg-white px-1 py-3 max-lg:hidden'
 				onClick={() => setIsFullList(!isFullList)}
 			>
 				{isFullList ? (
@@ -35,12 +35,12 @@ const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, set
 				size='small'
 				exclusive
 				color='primary'
-				className='absolute right-3 top-3 z-10 flex gap-2 rounded-lg bg-gray-light3 p-1 max-lg:hidden [&_*]:px-3 [&_*]:py-1.5'
+				className='absolute right-3 z-10 flex gap-2 rounded bg-[#E5E5E5B2] p-2 max-lg:bottom-3 max-lg:left-3 lg:top-3 lg:rounded-lg lg:bg-gray-light3 lg:p-1 [&_*]:px-3 [&_*]:py-1.5 max-lg:[&_*]:rounded'
 				value={areaDetail}
 				onChange={handleAreaDetailChange}
 			>
 				<ToggleButton
-					className={clsx('border border-solid text-base', {
+					className={clsx('w-full border border-solid text-base', {
 						'border-primary bg-white font-semibold text-primary': areaDetail === 'cards',
 						'border-transparent font-medium text-gray-dark2': areaDetail !== 'cards',
 					})}
@@ -49,7 +49,7 @@ const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, set
 					รายการ
 				</ToggleButton>
 				<ToggleButton
-					className={clsx('border border-solid text-base', {
+					className={clsx('w-full border border-solid text-base', {
 						'border-primary bg-white font-semibold text-primary': areaDetail === 'map',
 						'border-transparent font-medium text-gray-dark2': areaDetail !== 'map',
 					})}
