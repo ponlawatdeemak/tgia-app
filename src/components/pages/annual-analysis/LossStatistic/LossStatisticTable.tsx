@@ -348,9 +348,11 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 														</>
 													) : (
 														<>
-															<span>{cell.disasterAreas[areaUnit].toLocaleString()}</span>
+															<span className={'text-black-light'}>
+																{cell.disasterAreas[areaUnit].toLocaleString()}
+															</span>
 															<br />
-															<span className={`text-[#9F1853]`}>
+															<span className={`text-[${TextColor.text2}]`}>
 																{cell.predictedAreas[areaUnit].toLocaleString()}
 															</span>
 														</>

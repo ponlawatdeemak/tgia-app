@@ -22,7 +22,7 @@ import useAreaUnit from '@/store/area-unit'
 import useAreaType from '@/store/area-type'
 import useResponsive from '@/hook/responsive'
 import { dataAreas } from '@/api/annual-analysis/dto-out.dto'
-import { TextColor } from '@/config/color'
+import { SummaryBarChartColor, TextColor } from '@/config/color'
 import { bar } from 'billboard.js'
 
 interface Data {
@@ -556,11 +556,37 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 	return (
 		<Box sx={{ width: '100%' }}>
 			<Paper sx={{ width: '100%' }}>
-				<Toolbar>
-					<Typography className='text-md font-semibold' id='tableTitle' component='div'>
+				<Toolbar className='overflow-x-auto'>
+					<Typography className='w-full text-md font-semibold' id='tableTitle' component='div'>
 						{/* Dynamic Depends on AppBar */}
-						อันดับผลรวมข้อมูลทั้งหมด (ไร่){' '}
-						<span className='text-sm font-normal text-[#7A7A7A]'>(ตัวกรอง: ประเทศไทย, 2562-2566)</span>
+						<Box className='flex items-center justify-between'>
+							<Box className='flex flex-row'>
+								<Typography noWrap className='text-md font-semibold'>
+									อันดับผลรวมข้อมูลทั้งหมด (ไร่){' '}
+									<span className='text-sm font-normal text-[#7A7A7A]'>
+										(ตัวกรอง: ประเทศไทย, 2562-2566)
+									</span>
+								</Typography>
+							</Box>
+							<Box className={'flex flex-row gap-1'}>
+								<Box
+									className={`flex h-[28px] flex-row items-center text-ellipsis rounded-xl bg-[#F8FAFD] pl-[8px] pr-[8px] text-base font-medium`}
+								>
+									<Box className={`mr-[6px] h-[14px] w-[14px] rounded-sm bg-[#9F9F9F]`}></Box>
+									<Typography noWrap className='text-base font-medium'>
+										ความเสียหายตามกษ.02
+									</Typography>
+								</Box>
+								<Box
+									className={`flex h-[28px] flex-row items-center text-ellipsis rounded-xl bg-[#F8FAFD] pl-[8px] pr-[8px] text-base font-medium`}
+								>
+									<Box className={`mr-[6px] h-[14px] w-[14px] rounded-sm bg-[#B23B56]`}></Box>
+									<Typography noWrap className='text-base font-medium'>
+										ความเสียหายจากระบบวิเคราะห์
+									</Typography>
+								</Box>
+							</Box>
+						</Box>
 					</Typography>
 				</Toolbar>
 				<Box className='flex h-[70vh] flex-col gap-[16px] pl-[24px] pr-[24px]'>
@@ -644,9 +670,11 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 														</>
 													) : (
 														<>
-															<span>{cell.actAreas[areaUnit].toLocaleString()}</span>
+															<span className={'text-black-light'}>
+																{cell.actAreas[areaUnit].toLocaleString()}
+															</span>
 															<br />
-															<span className={`text-[#9F1853]`}>
+															<span className={`text-[${TextColor.text2}]`}>
 																{cell.predictedRiceAreas[areaUnit].toLocaleString()}
 															</span>
 														</>
