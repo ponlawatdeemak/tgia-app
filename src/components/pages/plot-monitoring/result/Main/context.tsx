@@ -1,4 +1,5 @@
 import { BreedType, DetailType, InsuredType, LossType, PublicType, RiskType } from '@/enum'
+import { OrderBy } from '@/enum/plot-monitoring.enum'
 import { create } from 'zustand'
 
 export interface PlotMonitoringParamsType {
@@ -27,10 +28,10 @@ const initialParams = {
 	lossType: undefined,
 	insuredType: undefined,
 	publicStatus: undefined,
-	riskType: undefined,
+	riskType: [RiskType.High, RiskType.Medium, RiskType.Low],
 	riceType: undefined,
 	detailType: undefined,
-	orderBy: undefined,
+	orderBy: OrderBy.ActivityId,
 	offset: undefined,
 	limit: 10,
 }
