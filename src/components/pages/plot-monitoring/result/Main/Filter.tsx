@@ -13,7 +13,7 @@ interface PlotMonitoringFilterProps {
 
 const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList }) => {
 	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
-	const { t, i18n } = useTranslation(['default', 'field-loss'])
+	const { t } = useTranslation(['default', 'plot-monitoring'])
 
 	const [inputActivityId, setInputActivityId] = useState<string>(queryParams.activityId?.toString() || '')
 	const activityIdRef = useRef<HTMLInputElement>(null)
@@ -45,7 +45,7 @@ const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList 
 			)}
 		>
 			<Box className='flex flex-col gap-1'>
-				<Typography className='text-sm font-medium text-black'>รหัสอ้างอิง (Activity ID)</Typography>
+				<Typography className='text-sm font-medium text-black'>{`${t('referenceCode', { ns: 'plot-monitoring' })} (Activity ID)`}</Typography>
 				<form noValidate onSubmit={handleSubmitActivityId} autoComplete='off'>
 					<FormControl className='[&_.Mui-focused>fieldset]:border-primary' fullWidth variant='outlined'>
 						<OutlinedInput
@@ -59,7 +59,7 @@ const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList 
 							value={inputActivityId}
 							onChange={handleChangeActivityIdInput}
 							inputRef={activityIdRef}
-							placeholder='รหัสอ้างอิง'
+							placeholder={t('referenceCode', { ns: 'plot-monitoring' })}
 						/>
 					</FormControl>
 				</form>

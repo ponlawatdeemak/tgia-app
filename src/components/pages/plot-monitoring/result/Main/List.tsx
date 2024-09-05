@@ -6,6 +6,7 @@ import clsx from 'clsx'
 import CardList from '../List/CardList'
 import MapList from '../List/MapList'
 import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
+import { useTranslation } from 'react-i18next'
 
 interface PlotMonitoringListProps {
 	isFullList: boolean
@@ -13,6 +14,7 @@ interface PlotMonitoringListProps {
 }
 
 const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, setIsFullList }) => {
+	const { t } = useTranslation(['default', 'plot-monitoring'])
 	const [areaDetail, setAreaDetail] = useState('cards')
 
 	const handleAreaDetailChange = useCallback((_event: React.MouseEvent<HTMLElement>, newAreaDetail: string) => {
@@ -46,7 +48,7 @@ const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, set
 					})}
 					value={'cards'}
 				>
-					รายการ
+					{t('item')}
 				</ToggleButton>
 				<ToggleButton
 					className={clsx('w-full border border-solid text-base', {
@@ -55,7 +57,7 @@ const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, set
 					})}
 					value={'map'}
 				>
-					แผนที่
+					{t('map', { ns: 'plot-monitoring' })}
 				</ToggleButton>
 			</ToggleButtonGroup>
 			<CardList areaDetail={areaDetail} />

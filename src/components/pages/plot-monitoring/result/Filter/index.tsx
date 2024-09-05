@@ -19,7 +19,7 @@ import clsx from 'clsx'
 
 const FilterButtonMain = () => {
 	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
-	const { t, i18n } = useTranslation(['default', 'field-loss'])
+	const { t } = useTranslation(['default', 'plot-monitoring'])
 
 	const handleLossTypeClick = useCallback(
 		(_event: React.MouseEvent<HTMLElement>, lossType: LossType | null) => {
@@ -99,7 +99,9 @@ const FilterButtonMain = () => {
 	return (
 		<Box className='flex flex-col gap-0'>
 			<Box className='flex flex-col gap-2 border-0 border-b border-solid border-gray py-3 lg:py-4'>
-				<Typography className='text-xs font-medium text-black-dark lg:text-sm'>ประเภทภัยพิบัติ</Typography>
+				<Typography className='text-xs font-medium text-black-dark lg:text-sm'>
+					{t('disasterType', { ns: 'plot-monitoring' })}
+				</Typography>
 				<ToggleButtonGroup
 					value={queryParams.lossType}
 					exclusive
@@ -145,12 +147,14 @@ const FilterButtonMain = () => {
 						})}
 						value={LossType.NoData}
 					>
-						ไม่มีภัยพิบัติ
+						{t('noDisaster')}
 					</ToggleButton>
 				</ToggleButtonGroup>
 			</Box>
 			<Box className='flex flex-col gap-3 border-0 border-b border-solid border-gray py-3 lg:py-4'>
-				<Typography className='text-xs font-medium text-black-dark lg:text-sm'>สถานะประชาคม</Typography>
+				<Typography className='text-xs font-medium text-black-dark lg:text-sm'>
+					{t('complianceStatus', { ns: 'plot-monitoring' })}
+				</Typography>
 				<ToggleButtonGroup
 					value={queryParams.publicStatus}
 					exclusive
@@ -166,7 +170,7 @@ const FilterButtonMain = () => {
 						})}
 						value={''}
 					>
-						{'ทั้งหมด'}
+						{t('all')}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-sm lg:text-base', {
@@ -176,7 +180,7 @@ const FilterButtonMain = () => {
 						})}
 						value={PublicType.NoPublic}
 					>
-						{'ยังไม่ประชาคม'}
+						{t('notComplied', { ns: 'plot-monitoring' })}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-sm lg:text-base', {
@@ -186,12 +190,14 @@ const FilterButtonMain = () => {
 						})}
 						value={PublicType.Public}
 					>
-						{'ประชาคมแล้ว'}
+						{t('alreadyComplied', { ns: 'plot-monitoring' })}
 					</ToggleButton>
 				</ToggleButtonGroup>
 			</Box>
 			<Box className='flex flex-col gap-3 border-0 border-b border-solid border-gray py-3 lg:py-4'>
-				<Typography className='text-xs font-medium text-black-dark lg:text-sm'>ประเภทของพันธุ์ข้าว</Typography>
+				<Typography className='text-xs font-medium text-black-dark lg:text-sm'>
+					{t('riceVarietiesType', { ns: 'plot-monitoring' })}
+				</Typography>
 				<ToggleButtonGroup
 					value={queryParams.riceType}
 					exclusive
@@ -207,7 +213,7 @@ const FilterButtonMain = () => {
 						})}
 						value={''}
 					>
-						{'ทั้งหมด'}
+						{t('all')}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-sm lg:text-base', {
@@ -218,7 +224,7 @@ const FilterButtonMain = () => {
 						})}
 						value={DetailType.PhotoperiodSensitiveRice}
 					>
-						{'ข้าวไวแสง'}
+						{t('photoperiodSensitiveRice', { ns: 'plot-monitoring' })}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-sm lg:text-base', {
@@ -229,12 +235,14 @@ const FilterButtonMain = () => {
 						})}
 						value={DetailType.NonPhotoperiodSensitiveRice}
 					>
-						{'ข้าวไม่ไวแสง'}
+						{t('nonPhotoperiodSensitiveRice', { ns: 'plot-monitoring' })}
 					</ToggleButton>
 				</ToggleButtonGroup>
 			</Box>
 			<Box className='flex flex-col gap-3 border-0 border-b border-solid border-gray py-3 lg:py-4'>
-				<Typography className='text-xs font-medium text-black-dark lg:text-sm'>ชนิดของพันธุ์ข้าว</Typography>
+				<Typography className='text-xs font-medium text-black-dark lg:text-sm'>
+					{t('riceVarieties', { ns: 'plot-monitoring' })}
+				</Typography>
 				<ToggleButtonGroup
 					value={queryParams.detailType}
 					exclusive
@@ -250,7 +258,7 @@ const FilterButtonMain = () => {
 						})}
 						value={''}
 					>
-						{'ทั้งหมด'}
+						{t('all')}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-sm lg:text-base', {
@@ -260,7 +268,7 @@ const FilterButtonMain = () => {
 						})}
 						value={BreedType.JasmineRice}
 					>
-						{'ข้าวเจ้า'}
+						{t('jasmineRice', { ns: 'plot-monitoring' })}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-sm lg:text-base', {
@@ -270,12 +278,14 @@ const FilterButtonMain = () => {
 						})}
 						value={BreedType.GlutinousRice}
 					>
-						{'ข้าวเหนียว'}
+						{t('glutinousRice', { ns: 'plot-monitoring' })}
 					</ToggleButton>
 				</ToggleButtonGroup>
 			</Box>
 			<Box className='flex flex-col gap-3 border-0 border-b border-solid border-gray py-3 lg:py-4'>
-				<Typography className='text-xs font-medium text-black-dark lg:text-sm'>ประกันภัย</Typography>
+				<Typography className='text-xs font-medium text-black-dark lg:text-sm'>
+					{t('insurance', { ns: 'plot-monitoring' })}
+				</Typography>
 				<ToggleButtonGroup
 					value={queryParams.insuredType}
 					exclusive
@@ -291,7 +301,7 @@ const FilterButtonMain = () => {
 						})}
 						value={''}
 					>
-						{'ทั้งหมด'}
+						{t('all')}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-sm lg:text-base', {
@@ -302,7 +312,7 @@ const FilterButtonMain = () => {
 						})}
 						value={InsuredType.BasicInsurance}
 					>
-						{'ประกันภัยพื้นฐาน (Tier 1)'}
+						{t('basicInsurance', { ns: 'plot-monitoring' })}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-sm lg:text-base', {
@@ -313,7 +323,7 @@ const FilterButtonMain = () => {
 						})}
 						value={InsuredType.VoluntaryInsurance}
 					>
-						{'ประกันภัยโดยสมัครใจ (Tier 2)'}
+						{t('voluntaryInsurance', { ns: 'plot-monitoring' })}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-sm lg:text-base', {
@@ -323,12 +333,14 @@ const FilterButtonMain = () => {
 						})}
 						value={InsuredType.NoInsurance}
 					>
-						{'ไม่มีประกันภัย'}
+						{t('noInsurance', { ns: 'plot-monitoring' })}
 					</ToggleButton>
 				</ToggleButtonGroup>
 			</Box>
 			<Box className='flex flex-col gap-3 py-3 lg:hidden'>
-				<Typography className='text-xs font-medium text-black-dark'>พื้นที่ความเสี่ยงภัย</Typography>
+				<Typography className='text-xs font-medium text-black-dark'>
+					{t('riskAreas', { ns: 'plot-monitoring' })}
+				</Typography>
 				<ToggleButtonGroup
 					exclusive
 					onChange={handleRiskTypeClick}
@@ -342,7 +354,7 @@ const FilterButtonMain = () => {
 						})}
 						value={''}
 					>
-						{'ทั้งหมด'}
+						{t('all')}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-sm', {
@@ -353,7 +365,7 @@ const FilterButtonMain = () => {
 						})}
 						value={RiskType.High}
 					>
-						{'สูง'}
+						{t('high', { ns: 'plot-monitoring' })}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-sm', {
@@ -364,7 +376,7 @@ const FilterButtonMain = () => {
 						})}
 						value={RiskType.Medium}
 					>
-						{'กลาง'}
+						{t('medium', { ns: 'plot-monitoring' })}
 					</ToggleButton>
 					<ToggleButton
 						className={clsx('text-sm', {
@@ -375,12 +387,14 @@ const FilterButtonMain = () => {
 						})}
 						value={RiskType.Low}
 					>
-						{'ต่ำ'}
+						{t('low', { ns: 'plot-monitoring' })}
 					</ToggleButton>
 				</ToggleButtonGroup>
 			</Box>
 			<Box className='flex flex-col gap-3 py-3 max-lg:hidden lg:py-4'>
-				<Typography className='text-xs font-medium text-black-dark lg:text-sm'>พื้นที่ความเสี่ยงภัย</Typography>
+				<Typography className='text-xs font-medium text-black-dark lg:text-sm'>
+					{t('riskAreas', { ns: 'plot-monitoring' })}
+				</Typography>
 				<FormControl component='fieldset' variant='standard'>
 					<FormGroup>
 						<FormControlLabel
@@ -392,7 +406,7 @@ const FilterButtonMain = () => {
 									name={RiskType.High}
 								/>
 							}
-							label='ความเสี่ยงสูง'
+							label={t('highRisk', { ns: 'plot-monitoring' })}
 							className='m-0 flex items-center gap-2 p-2 [&_.MuiButtonBase-root>svg]:h-[18px] [&_.MuiButtonBase-root>svg]:w-[18px] [&_.MuiButtonBase-root>svg]:!bg-white [&_.MuiButtonBase-root]:p-0 [&_.MuiTypography-root]:text-base [&_.MuiTypography-root]:font-medium [&_.MuiTypography-root]:text-black'
 						/>
 						<FormControlLabel
@@ -404,7 +418,7 @@ const FilterButtonMain = () => {
 									name={RiskType.Medium}
 								/>
 							}
-							label='ความเสี่ยงกลาง'
+							label={t('mediumRisk', { ns: 'plot-monitoring' })}
 							className='m-0 flex items-center gap-2 p-2 [&_.MuiButtonBase-root>svg]:h-[18px] [&_.MuiButtonBase-root>svg]:w-[18px] [&_.MuiButtonBase-root]:p-0 [&_.MuiTypography-root]:text-base [&_.MuiTypography-root]:font-medium [&_.MuiTypography-root]:text-black'
 						/>
 						<FormControlLabel
@@ -416,7 +430,7 @@ const FilterButtonMain = () => {
 									name={RiskType.Low}
 								/>
 							}
-							label='ความเสี่ยงต่ำ'
+							label={t('lowRisk', { ns: 'plot-monitoring' })}
 							className='m-0 flex items-center gap-2 p-2 [&_.MuiButtonBase-root>svg]:h-[18px] [&_.MuiButtonBase-root>svg]:w-[18px] [&_.MuiButtonBase-root]:p-0 [&_.MuiTypography-root]:text-base [&_.MuiTypography-root]:font-medium [&_.MuiTypography-root]:text-black'
 						/>
 					</FormGroup>

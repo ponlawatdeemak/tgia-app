@@ -52,7 +52,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 	const [isOrderByOpen, setIsOrderByOpen] = useState<boolean>(false)
 	const [selectedToggle, setSelectedToggle] = useState<string>('')
 	const [isSelectedToggleOpen, setIsSelectedToggleOpen] = useState<boolean>(false)
-	const { t, i18n } = useTranslation(['default', 'field-loss'])
+	const { t, i18n } = useTranslation(['default', 'plot-monitoring'])
 	const language = i18n.language as keyof ResponseLanguage
 	const { ref, inView } = useInView({})
 
@@ -155,7 +155,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 							})}
 							value={'filter'}
 						>
-							<span className='p-0 text-md font-medium text-black'>ตัวกรอง</span>
+							<span className='p-0 text-md font-medium text-black'>{t('filter')}</span>
 							{selectedToggle === 'filter' && isSelectedToggleOpen ? (
 								<ExpandLess className='h-6 w-6 text-black' />
 							) : (
@@ -169,7 +169,9 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 							})}
 							value={'order'}
 						>
-							<span className='p-0 text-md font-medium text-black'>การเรียงลำดับ</span>
+							<span className='p-0 text-md font-medium text-black'>
+								{t('orderBy', { ns: 'plot-monitoring' })}
+							</span>
 							{selectedToggle === 'order' && isSelectedToggleOpen ? (
 								<ExpandLess className='h-6 w-6 text-black' />
 							) : (
@@ -203,7 +205,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 									})}
 									value={OrderBy.ActivityId}
 									control={<Radio className='p-0 [&_*>svg]:h-6 [&_*>svg]:w-6' />}
-									label='รหัสอ้างอิง'
+									label={t('referenceCode', { ns: 'plot-monitoring' })}
 								/>
 								<FormControlLabel
 									className={classNames('m-0 flex gap-2 p-1', {
@@ -212,7 +214,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 									})}
 									value={OrderBy.PredictedRiceArea}
 									control={<Radio className='p-0 [&_*>svg]:h-6 [&_*>svg]:w-6' />}
-									label='พื้นที่ปลูกข้าว'
+									label={t('riceCultivationArea')}
 								/>
 								<FormControlLabel
 									className={classNames('m-0 flex gap-2 p-1', {
@@ -221,7 +223,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 									})}
 									value={OrderBy.LossPredicted}
 									control={<Radio className='p-0 [&_*>svg]:h-6 [&_*>svg]:w-6' />}
-									label='พื้นที่เสียหายจากระบบวิเคราะห์'
+									label={t('riceLossPredictedArea', { ns: 'plot-monitoring' })}
 								/>
 							</RadioGroup>
 						</FormControl>
@@ -230,7 +232,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 				<Box className='flex items-center justify-between border-0 border-solid border-gray max-lg:border-t lg:border-b'>
 					<div className='flex items-center'>
 						<Typography className='p-2.5 text-base font-semibold text-black max-lg:py-0 max-lg:pt-3'>
-							ทั้งหมด
+							{t('all')}
 						</Typography>
 						<span className='p-2.5 text-base font-semibold text-black-light max-lg:py-0 max-lg:pt-3'>
 							{searchPlotData?.pages[0]?.total}
@@ -278,7 +280,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 											'[&_span]:!font-medium': queryParams.orderBy === OrderBy.ActivityId,
 										},
 									)}
-									primary='รหัสอ้างอิง'
+									primary={t('referenceCode', { ns: 'plot-monitoring' })}
 								/>
 							</MenuItem>
 							<MenuItem
@@ -299,7 +301,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 											'[&_span]:!font-medium': queryParams.orderBy === OrderBy.PredictedRiceArea,
 										},
 									)}
-									primary='พื้นที่ปลูกข้าว'
+									primary={t('riceCultivationArea')}
 								/>
 							</MenuItem>
 							<MenuItem
@@ -320,7 +322,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 											'[&_span]:!font-medium': queryParams.orderBy === OrderBy.LossPredicted,
 										},
 									)}
-									primary='พื้นที่ความเสียหาย'
+									primary={t('riceLossArea', { ns: 'plot-monitoring' })}
 								/>
 							</MenuItem>
 						</Select>

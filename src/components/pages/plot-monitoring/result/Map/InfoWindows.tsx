@@ -64,14 +64,16 @@ const InfoWindows: React.FC<InfoWindowsProps> = ({ clickInfo, setClickInfo }) =>
 				})}
 			>
 				<Box className='flex items-center gap-1'>
-					<span className='text-sm font-medium text-black'>ปลูกข้าวได้</span>
+					<span className='text-sm font-medium text-black'>
+						{t('canGrowRice', { ns: 'plot-monitoring' })}
+					</span>
 					<span className='text-base font-semibold text-secondary'>{`${clickInfo.area.predictedRiceArea.percent}%`}</span>
 				</Box>
 				<Box className='flex items-center gap-1'>
 					<span className='text-base font-semibold text-secondary'>
 						{clickInfo.area.predictedRiceArea.areaRai}
 					</span>
-					<span className='text-sm font-normal text-black'>ไร่</span>
+					<span className='text-sm font-normal text-black'>{t(areaUnit)}</span>
 				</Box>
 			</Box>
 			{clickInfo.area.results &&
@@ -79,7 +81,7 @@ const InfoWindows: React.FC<InfoWindowsProps> = ({ clickInfo, setClickInfo }) =>
 					return (
 						<Box key={index} className='flex justify-between'>
 							<Box className='flex items-center gap-1'>
-								<span className='text-sm font-medium text-black'>{`${t('occurrence', { ns: 'plot-monitoring' })} ${result.count} ${t(`${result.lossType}`)}`}</span>
+								<span className='text-sm font-medium text-black'>{`${t('occurrence', { ns: 'plot-monitoring' })} ${result.count} ${t(`${result.lossPredicted.lossType}`)}`}</span>
 								<span className='text-base font-semibold text-secondary'>
 									{result.lossPredicted.percent ? `${result.lossPredicted.percent}%` : ''}
 								</span>
@@ -88,7 +90,7 @@ const InfoWindows: React.FC<InfoWindowsProps> = ({ clickInfo, setClickInfo }) =>
 								<span className='text-base font-semibold text-secondary'>
 									{result.lossPredicted.areaRai}
 								</span>
-								<span className='text-sm font-normal text-black'>ไร่</span>
+								<span className='text-sm font-normal text-black'>{t(areaUnit)}</span>
 								<IconButton
 									onClick={() => handleClickInfoWindows(clickInfo.area.activityId)}
 									className='h-6 w-6 rounded-lg border border-solid border-gray p-1'

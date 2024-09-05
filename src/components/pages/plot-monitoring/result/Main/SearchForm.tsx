@@ -387,7 +387,7 @@ const PlotMonitoringSearchForm = () => {
 				>
 					<Icon path={mdiPencilOutline} className='h-6 w-6 font-light text-black' />
 					<span className='text-base font-semibold text-black'>
-						{`${selectedSubDistrict ? `ตำบล${selectedSubDistrict.name[language]} ` : ''}${selectedDistrict ? `อำเภอ${selectedDistrict.name[language]} ` : ''}${selectedProvince ? selectedProvince.name[language] : ''}`}
+						{`${selectedSubDistrict ? `${language === 'th' ? `${t('subDistrict')}` : ''}${selectedSubDistrict.name[language]} ` : ''}${selectedDistrict ? `${language === 'th' ? `${t('district')}` : ''}${selectedDistrict.name[language]} ` : ''}${selectedProvince ? selectedProvince.name[language] : ''}`}
 					</span>
 				</Button>
 			)}

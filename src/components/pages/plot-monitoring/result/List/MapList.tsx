@@ -4,11 +4,6 @@ import MapView from '@/components/common/map/MapView'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import useSearchPlotMonitoring from '../Main/context'
-import useResponsive from '@/hook/responsive'
-import useAreaType from '@/store/area-type'
-import useAreaUnit from '@/store/area-unit'
-import { useTranslation } from 'react-i18next'
-import { ResponseLanguage } from '@/api/interface'
 import { GetAreaSearchPlotDtoIn } from '@/api/plot-monitoring/dto-in.dto'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
@@ -70,12 +65,7 @@ interface MapListProps {
 
 const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 	const { queryParams } = useSearchPlotMonitoring()
-	const { isDesktop } = useResponsive()
-	const { areaType } = useAreaType()
-	const { areaUnit } = useAreaUnit()
 	const [clickInfo, setClickInfo] = useState<ClickInfo | null>(null)
-	const { t, i18n } = useTranslation(['default', 'field-loss'])
-	const language = i18n.language as keyof ResponseLanguage
 	const { layers, addLayer, setLayers } = useLayerStore()
 
 	const filterAreaSearchPlot = useMemo(() => {
@@ -104,8 +94,12 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 		},
 	})
 
+	// const areaSearchPlotId = useMemo(() => {
+	// 	return areaSearchPlot?.data?.map((item) => item.activityId) || []
+	// }, [areaSearchPlot])
+
 	const areaSearchPlotId = useMemo(() => {
-		return areaSearchPlot?.data?.map((item) => item.activityId) || []
+		return [204092124, 204148174, 204513425, 204457339, 204091737] || []
 	}, [areaSearchPlot])
 
 	const handlePositionClick = useCallback(

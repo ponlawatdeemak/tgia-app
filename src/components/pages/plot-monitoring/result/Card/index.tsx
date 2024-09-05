@@ -3,10 +3,6 @@
 import { GetSearchPlotDtoOut } from '@/api/plot-monitoring/dto-out.dto'
 import { Box, Paper, Typography } from '@mui/material'
 import React, { useCallback } from 'react'
-import useSearchPlotMonitoring from '../Main/context'
-import useResponsive from '@/hook/responsive'
-import useAreaType from '@/store/area-type'
-import useAreaUnit from '@/store/area-unit'
 import { useTranslation } from 'react-i18next'
 import { ResponseLanguage } from '@/api/interface'
 import classNames from 'classnames'
@@ -18,10 +14,6 @@ interface CardDetailProps {
 }
 
 const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
-	const { queryParams } = useSearchPlotMonitoring()
-	const { isDesktop } = useResponsive()
-	const { areaType } = useAreaType()
-	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default', 'plot-monitoring'])
 	const language = i18n.language as keyof ResponseLanguage
 
@@ -61,48 +53,56 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 						</Typography>
 						<span className='text-sm font-semibold text-black max-lg:hidden'>
 							{detail?.lossPredicted
-								? `ครั้งที่ ${detail.count} ${t(`${detail.lossPredicted.lossType}`)}`
-								: 'ไม่มีภัยพิบัติ'}
+								? `${t('occurrence', { ns: 'plot-monitoring' })} ${detail.count} ${t(`${detail.lossPredicted.lossType}`)}`
+								: t('noDisaster')}
 						</span>
 						<span className='text-xs font-medium text-black lg:hidden'>{detail.year[language]}</span>
 					</div>
 					<div className='flex flex-col gap-1'>
 						<Box className='flex items-center gap-1 max-lg:hidden'>
-							<span className='text-sm font-normal text-black'>ปีชุดข้อมูล :</span>
+							<span className='text-sm font-normal text-black'>{`${t('dataSetYear')} :`}</span>
 							<span className='text-sm font-semibold text-black'>{detail.year[language]}</span>
 						</Box>
 						<Box className='flex flex-wrap items-center gap-1'>
-							<span className='text-xs font-normal text-black lg:text-sm'>ที่ตั้ง:</span>
+							<span className='text-xs font-normal text-black lg:text-sm'>{`${t('location', { ns: 'plot-monitoring' })}:`}</span>
 							<span className='text-left text-xs font-semibold text-black lg:text-sm'>
 								{detail.address[language]}
 							</span>
 						</Box>
 						<Box className='flex items-center gap-1'>
-							<span className='text-xs font-normal text-black lg:text-sm'>สถานะประชาคม:</span>
+							<span className='text-xs font-normal text-black lg:text-sm'>{`${t('complianceStatus', { ns: 'plot-monitoring' })}:`}</span>
 							<span className='text-xs font-semibold text-black lg:text-sm'>
 								{detail.publicStatus[language]}
 							</span>
 						</Box>
 						<Box className='flex items-center gap-1'>
-							<span className='text-xs font-normal text-black lg:text-sm'>ประเภทของพันธุ์ข้าว</span>
+							<span className='text-xs font-normal text-black lg:text-sm'>
+								{t('riceVarietyType', { ns: 'plot-monitoring' })}
+							</span>
 							<span className='text-xs font-semibold text-black lg:text-sm'>
 								{detail.riceType[language]}
 							</span>
 						</Box>
 						<Box className='flex items-center gap-1'>
-							<span className='text-xs font-normal text-black lg:text-sm'>ชนิดของพันธุ์ข้าว</span>
+							<span className='text-xs font-normal text-black lg:text-sm'>
+								{t('riceVarieties', { ns: 'plot-monitoring' })}
+							</span>
 							<span className='text-xs font-semibold text-black lg:text-sm'>
 								{detail.detailType[language]}
 							</span>
 						</Box>
 						<Box className='flex items-center gap-1'>
-							<span className='text-xs font-normal text-black lg:text-sm'>ประกันภัย</span>
+							<span className='text-xs font-normal text-black lg:text-sm'>
+								{t('insurance', { ns: 'plot-monitoring' })}
+							</span>
 							<span className='text-xs font-semibold text-black lg:text-sm'>
 								{detail.insuredType[language]}
 							</span>
 						</Box>
 						<Box className='flex items-center gap-1'>
-							<span className='text-xs font-normal text-black lg:text-sm'>พื้นที่ความเสี่ยงภัย</span>
+							<span className='text-xs font-normal text-black lg:text-sm'>
+								{t('riskAreas', { ns: 'plot-monitoring' })}
+							</span>
 							<span className='text-xs font-semibold text-black lg:text-sm'>
 								{detail.riskType[language]}
 							</span>
@@ -118,7 +118,9 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 							)}
 						>
 							<div className='flex items-center gap-1'>
-								<span className='text-base font-medium text-black'>ปลูกข้าวได้</span>
+								<span className='text-base font-medium text-black'>
+									{t('canGrowRice', { ns: 'plot-monitoring' })}
+								</span>
 								<span className='text-base font-semibold text-secondary'>
 									{`${detail.predictedRiceArea.percent}%`}
 								</span>
@@ -152,7 +154,9 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 			<div className='flex gap-2 lg:hidden'>
 				<Box className='flex w-full items-center justify-between rounded border border-solid border-gray p-2'>
 					<div className='flex items-center gap-1'>
-						<span className='text-sm font-medium text-black'>ปลูกข้าวได้</span>
+						<span className='text-sm font-medium text-black'>
+							{t('canGrowRice', { ns: 'plot-monitoring' })}
+						</span>
 						<span className='text-sm font-semibold text-secondary'>
 							{`${detail.predictedRiceArea.percent}%`}
 						</span>
