@@ -42,6 +42,10 @@
 	"thailand": "Thailand",
     "search": "Search",
     "dataYear": "Data Year",
+    "noDisaster": "No Disaster",
+    "item": "Item",
+    "riceCultivationArea": "Rice Cultivation Area",
+    "filter": "Filter",
 	"warning": {
 		"inputEmail": "Please enter your email.",
 		"inputPassword": "Please enter your password.",
