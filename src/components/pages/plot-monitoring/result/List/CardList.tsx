@@ -1,9 +1,5 @@
 'use client'
 
-import { ResponseLanguage } from '@/api/interface'
-import useResponsive from '@/hook/responsive'
-import useAreaType from '@/store/area-type'
-import useAreaUnit from '@/store/area-unit'
 import {
 	Box,
 	Button,
@@ -46,14 +42,10 @@ interface CardListProps {
 const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 	const router = useRouter()
 	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
-	const { isDesktop } = useResponsive()
-	const { areaType } = useAreaType()
-	const { areaUnit } = useAreaUnit()
 	const [isOrderByOpen, setIsOrderByOpen] = useState<boolean>(false)
 	const [selectedToggle, setSelectedToggle] = useState<string>('')
 	const [isSelectedToggleOpen, setIsSelectedToggleOpen] = useState<boolean>(false)
-	const { t, i18n } = useTranslation(['default', 'plot-monitoring'])
-	const language = i18n.language as keyof ResponseLanguage
+	const { t } = useTranslation(['default', 'plot-monitoring'])
 	const { ref, inView } = useInView({})
 
 	const filterSearchPlot = useMemo(() => {
@@ -329,13 +321,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 					</FormControl>
 				</Box>
 				<Box>
-					<Box
-						className={classNames('overflow-auto lg:!h-[calc(100vh-261px)]', {
-							'!h-[calc(100vh-221px)]': selectedToggle === '',
-							'!h-[calc(100vh-349px)]': selectedToggle === 'order',
-							'!h-[calc(100vh-802px)]': selectedToggle === 'filter',
-						})}
-					>
+					<Box className='overflow-auto lg:!h-[calc(100vh-261px)]'>
 						<div className='flex flex-col gap-2 py-3 lg:gap-3 lg:py-2'>
 							{searchPlotData?.pages.map((details) =>
 								details?.data?.map((detail, index) => {
@@ -346,7 +332,9 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 												ref={ref}
 												key={detail.order}
 												onClick={() =>
-													router.push(`${AppPath.PlotMonitoringResult}/${detail.activityId}`)
+													router.push(
+														`${AppPath.PlotMonitoringResult}/${detail.activityId}?count=${detail.count}`,
+													)
 												}
 											>
 												<CardDetail detail={detail} />
@@ -358,7 +346,9 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 											className='rounded p-0 hover:bg-transparent lg:rounded-lg'
 											key={detail.order}
 											onClick={() =>
-												router.push(`${AppPath.PlotMonitoringResult}/${detail.activityId}`)
+												router.push(
+													`${AppPath.PlotMonitoringResult}/${detail.activityId}?count=${detail.count}`,
+												)
 											}
 										>
 											<CardDetail detail={detail} />
