@@ -66,7 +66,7 @@ const LossStatisticBar: React.FC<PlantStatisticTableProps> = ({
 								notation: 'compact',
 								compactDisplay: 'short',
 							})
-							return isBarInteger ? usformatter.format(x) : usformatter.format(x) + ' %'
+							return isBarInteger ? usformatter.format(x) : usformatter.format(x) + '%'
 						},
 					},
 				},

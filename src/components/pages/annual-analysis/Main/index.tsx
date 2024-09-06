@@ -65,149 +65,136 @@ function a11yProps(index: number) {
 
 const AnnualAnalysisMain = () => {
 	const [value, setValue] = useState(0)
-	const { queryParams, setQueryParams } = useSearchAnnualAnalysis()
-	const [inputValue, setInputValue] = useState<string>('')
-	const [selectedOption, setSeletedOption] = useState<OptionType | null>(null)
-	const [history, setHistory] = useLocalStorage<HistoryType>('fieldLoss.history', {})
-	const [favorite, setFavorite] = useLocalStorage<HistoryType>('fieldLoss.favorite', {})
-	const { areaType } = useAreaType()
 
 	const { data: session } = useSession()
-	const { t, i18n } = useTranslation(['default', 'field-loss'])
-	const userId = session?.user.id ?? null
-
-	const { data: searchData, isLoading: isSearchDataLoading } = useQuery({
-		queryKey: ['getSearchAdminPoly', inputValue],
-		queryFn: () => service.fieldLoss.getSearchAdminPoly({ keyword: inputValue }),
-		enabled: !!inputValue,
-	})
+	const { t, i18n } = useTranslation(['default', 'annual-analysis'])
 
 	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
 		setValue(newValue)
 	}
 
-	const optionList = useMemo(() => {
-		if (userId) {
-			const historyList = history[userId] || []
-			const favoriteList = favorite[userId] || []
-			const searchDataList: OptionType[] = searchData?.data
-				? searchData.data
-						.filter((data) => {
-							const historyIdList = historyList.map((history) => history.id)
-							const favoriteIdList = favoriteList.map((favorite) => favorite.id)
-							if (historyIdList.includes(data.id) || favoriteIdList.includes(data.id)) {
-								return false
-							} else {
-								return true
-							}
-						})
-						.map((data) => ({ ...data, id: data.id, name: data.name, searchType: 'search' }))
-				: []
-			return [...historyList, ...favoriteList, ...searchDataList]
-		}
-		return []
-	}, [history, favorite, userId, searchData])
+	// const optionList = useMemo(() => {
+	// 	if (userId) {
+	// 		const historyList = history[userId] || []
+	// 		const favoriteList = favorite[userId] || []
+	// 		const searchDataList: OptionType[] = searchData?.data
+	// 			? searchData.data
+	// 					.filter((data) => {
+	// 						const historyIdList = historyList.map((history) => history.id)
+	// 						const favoriteIdList = favoriteList.map((favorite) => favorite.id)
+	// 						if (historyIdList.includes(data.id) || favoriteIdList.includes(data.id)) {
+	// 							return false
+	// 						} else {
+	// 							return true
+	// 						}
+	// 					})
+	// 					.map((data) => ({ ...data, id: data.id, name: data.name, searchType: 'search' }))
+	// 			: []
+	// 		return [...historyList, ...favoriteList, ...searchDataList]
+	// 	}
+	// 	return []
+	// }, [history, favorite, userId, searchData])
 
-	const handleSelectOption = (_event: ChangeEvent<{}>, newSelectedValue: OptionType | null) => {
-		setSeletedOption(newSelectedValue)
+	// const handleSelectOption = (_event: ChangeEvent<{}>, newSelectedValue: OptionType | null) => {
+	// 	setSeletedOption(newSelectedValue)
 
-		if (userId) {
-			const favoriteList = favorite[userId] || []
-			const historyList = history[userId] || []
-			if (newSelectedValue) {
-				const isFavoriteDuplicate = favoriteList.map((item) => item.id).includes(newSelectedValue.id)
-				const isHistoryDuplicate = historyList.map((item) => item.id).includes(newSelectedValue.id)
-				if (!isHistoryDuplicate && !isFavoriteDuplicate) {
-					if (historyList.length === HistoryLengthMax) {
-						historyList.pop()
-						historyList.unshift(newSelectedValue)
-						setHistory({
-							...history,
-							[userId]: historyList.map((history) => ({ ...history, searchType: 'history' })),
-						})
-					} else if (historyList.length < HistoryLengthMax) {
-						historyList.unshift(newSelectedValue)
-						setHistory({
-							...history,
-							[userId]: historyList.map((history) => ({ ...history, searchType: 'history' })),
-						})
-					}
-				}
-			}
-		}
-	}
+	// 	if (userId) {
+	// 		const favoriteList = favorite[userId] || []
+	// 		const historyList = history[userId] || []
+	// 		if (newSelectedValue) {
+	// 			const isFavoriteDuplicate = favoriteList.map((item) => item.id).includes(newSelectedValue.id)
+	// 			const isHistoryDuplicate = historyList.map((item) => item.id).includes(newSelectedValue.id)
+	// 			if (!isHistoryDuplicate && !isFavoriteDuplicate) {
+	// 				if (historyList.length === HistoryLengthMax) {
+	// 					historyList.pop()
+	// 					historyList.unshift(newSelectedValue)
+	// 					setHistory({
+	// 						...history,
+	// 						[userId]: historyList.map((history) => ({ ...history, searchType: 'history' })),
+	// 					})
+	// 				} else if (historyList.length < HistoryLengthMax) {
+	// 					historyList.unshift(newSelectedValue)
+	// 					setHistory({
+	// 						...history,
+	// 						[userId]: historyList.map((history) => ({ ...history, searchType: 'history' })),
+	// 					})
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
 
-	const handleSelectFavorite = (event: React.MouseEvent, selectedFavorite: OptionType | null) => {
-		event.stopPropagation()
-		if (userId) {
-			const favoriteList = favorite[userId] || []
-			const historyList = history[userId] || []
-			if (selectedFavorite) {
-				const isFavoriteDuplicate = favoriteList.map((item) => item.id).includes(selectedFavorite.id)
-				const isHistoryDuplicate = historyList.map((item) => item.id).includes(selectedFavorite.id)
-				if (!isFavoriteDuplicate) {
-					if (favoriteList.length === FavoriteLengthMax) return
-					if (favoriteList.length < FavoriteLengthMax) {
-						if (isHistoryDuplicate) {
-							const newhistoryList = historyList.filter((item) => item.id !== selectedFavorite.id)
-							setHistory({
-								...history,
-								[userId]: newhistoryList,
-							})
-						}
-						favoriteList.push(selectedFavorite)
-						setFavorite({
-							...favorite,
-							[userId]: favoriteList.map((favorite) => ({ ...favorite, searchType: 'favorite' })),
-						})
-					}
-				}
-			}
-		}
-	}
+	// const handleSelectFavorite = (event: React.MouseEvent, selectedFavorite: OptionType | null) => {
+	// 	event.stopPropagation()
+	// 	if (userId) {
+	// 		const favoriteList = favorite[userId] || []
+	// 		const historyList = history[userId] || []
+	// 		if (selectedFavorite) {
+	// 			const isFavoriteDuplicate = favoriteList.map((item) => item.id).includes(selectedFavorite.id)
+	// 			const isHistoryDuplicate = historyList.map((item) => item.id).includes(selectedFavorite.id)
+	// 			if (!isFavoriteDuplicate) {
+	// 				if (favoriteList.length === FavoriteLengthMax) return
+	// 				if (favoriteList.length < FavoriteLengthMax) {
+	// 					if (isHistoryDuplicate) {
+	// 						const newhistoryList = historyList.filter((item) => item.id !== selectedFavorite.id)
+	// 						setHistory({
+	// 							...history,
+	// 							[userId]: newhistoryList,
+	// 						})
+	// 					}
+	// 					favoriteList.push(selectedFavorite)
+	// 					setFavorite({
+	// 						...favorite,
+	// 						[userId]: favoriteList.map((favorite) => ({ ...favorite, searchType: 'favorite' })),
+	// 					})
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
 
-	const handleRemoveHistory = (event: React.MouseEvent, value: string) => {
-		event.stopPropagation()
-		if (userId) {
-			const historyList = history[userId] || []
-			const newHistoryList = historyList.filter((option) => option.id !== value)
-			setHistory({
-				...history,
-				[userId]: newHistoryList,
-			})
-		}
-	}
+	// const handleRemoveHistory = (event: React.MouseEvent, value: string) => {
+	// 	event.stopPropagation()
+	// 	if (userId) {
+	// 		const historyList = history[userId] || []
+	// 		const newHistoryList = historyList.filter((option) => option.id !== value)
+	// 		setHistory({
+	// 			...history,
+	// 			[userId]: newHistoryList,
+	// 		})
+	// 	}
+	// }
 
-	const handleRemoveFavorite = (event: React.MouseEvent, value: string) => {
-		event.stopPropagation()
-		if (userId) {
-			const favoriteList = favorite[userId] || []
-			const newFavoriteList = favoriteList.filter((option) => option.id !== value)
-			setFavorite({
-				...favorite,
-				[userId]: newFavoriteList,
-			})
-		}
-	}
+	// const handleRemoveFavorite = (event: React.MouseEvent, value: string) => {
+	// 	event.stopPropagation()
+	// 	if (userId) {
+	// 		const favoriteList = favorite[userId] || []
+	// 		const newFavoriteList = favoriteList.filter((option) => option.id !== value)
+	// 		setFavorite({
+	// 			...favorite,
+	// 			[userId]: newFavoriteList,
+	// 		})
+	// 	}
+	// }
 
-	const handleClear = () => {
-		setInputValue('')
-		setSeletedOption(null)
-	}
+	// const handleClear = () => {
+	// 	setInputValue('')
+	// 	setSeletedOption(null)
+	// }
 
-	const handleTypeClick = (_event: React.MouseEvent<HTMLElement>, newAlignment: LossType | null) => {
-		// let sortTypeField: keyof Data
-		// if (newAlignment) {
-		// 	if (newAlignment === LossType.Drought) {
-		// 		sortTypeField = 'droughtPredicted'
-		// 	} else {
-		// 		sortTypeField = 'floodPredicted'
-		// 	}
-		// } else {
-		// 	sortTypeField = 'totalPredicted'
-		// }
-		setQueryParams({})
-	}
+	// const handleTypeClick = (_event: React.MouseEvent<HTMLElement>, newAlignment: LossType | null) => {
+	// 	// let sortTypeField: keyof Data
+	// 	// if (newAlignment) {
+	// 	// 	if (newAlignment === LossType.Drought) {
+	// 	// 		sortTypeField = 'droughtPredicted'
+	// 	// 	} else {
+	// 	// 		sortTypeField = 'floodPredicted'
+	// 	// 	}
+	// 	// } else {
+	// 	// 	sortTypeField = 'totalPredicted'
+	// 	// }
+	// 	setQueryParams({})
+	// }
 
 	return (
 		<>
@@ -225,53 +212,11 @@ const AnnualAnalysisMain = () => {
 							aria-label='basic tabs example'
 							className='[&_.MuiTabs-scroller]:border-0 [&_.MuiTabs-scroller]:border-b-[1px] [&_.MuiTabs-scroller]:border-solid [&_.MuiTabs-scroller]:border-[#C2C5CC]'
 						>
-							<Tab label='พื้นที่ขึ้นทะเบียนเกษตรกร' {...a11yProps(0)} />
-							<Tab label='พื้นที่ปลูกข้าว' {...a11yProps(1)} />
-							<Tab label='พื้นที่เสียหายจากภัยพิบัติ' {...a11yProps(2)} />
+							<Tab label={t('farmerRegisteredArea', { ns: 'annual-analysis' })} {...a11yProps(0)} />
+							<Tab label={t('riceCultivationArea', { ns: 'annual-analysis' })} {...a11yProps(1)} />
+							<Tab label={t('damagedAreaFromDisaster', { ns: 'annual-analysis' })} {...a11yProps(2)} />
 						</Tabs>
 					</Box>
-					{/* Control group */}
-					{/* Only in Loss Statistic */}
-					{/* {value === 2 && (
-						<Box className='pl-[24px] pr-[24px]'>
-							<ToggleButtonGroup
-								value={queryParams.lossType}
-								exclusive
-								onChange={handleTypeClick}
-								aria-label='loss-type'
-								className='flex gap-2 max-lg:py-3 lg:gap-1 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
-							>
-								<ToggleButton
-									className={clsx('text-base', {
-										'bg-primary font-semibold text-white': Boolean(queryParams.lossType) === false,
-										'text-gray-dark2': Boolean(queryParams.lossType) !== false,
-									})}
-									value={''}
-								>
-									{t('allDisasters')}
-								</ToggleButton>
-								<ToggleButton
-									className={clsx('text-base', {
-										'bg-primary font-semibold text-white':
-											queryParams.lossType === LossType.Drought,
-										'text-gray-dark2': queryParams.lossType !== LossType.Drought,
-									})}
-									value={LossType.Drought}
-								>
-									{t('drought')}
-								</ToggleButton>
-								<ToggleButton
-									className={clsx('text-base', {
-										'bg-primary font-semibold text-white': queryParams.lossType === LossType.Flood,
-										'text-gray-dark2': queryParams.lossType !== LossType.Flood,
-									})}
-									value={LossType.Flood}
-								>
-									{t('flood')}
-								</ToggleButton>
-							</ToggleButtonGroup>
-						</Box>
-					)} */}
 					<Box className='h-[calc(100vh-194px)] overflow-y-auto'>
 						<CustomTabPanel value={value} index={0}>
 							<PlantStatistic />

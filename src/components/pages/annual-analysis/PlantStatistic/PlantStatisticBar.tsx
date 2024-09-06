@@ -85,8 +85,10 @@ const PlantStatisticBar: React.FC<PlantStatisticTableProps> = ({ plantBarColumns
 		const chart = plantBarChart.current?.instance
 		// console.log('plantBarColumns :: ', plantBarColumns)
 		if (chart) {
+			// console.log('plantBarColumns :: ', plantBarColumns)
 			chart.load({
 				columns: plantBarColumns,
+				append: false,
 			})
 		}
 	}, [plantBarColumns, plantBarColorArr])

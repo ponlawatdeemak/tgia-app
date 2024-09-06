@@ -24,7 +24,7 @@ const PlantStatistic = () => {
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default'])
+	const { t, i18n } = useTranslation(['default', 'annual-analysis'])
 	const language = i18n.language as keyof ResponseLanguage
 
 	// bar chart
@@ -69,7 +69,7 @@ const PlantStatistic = () => {
 	React.useEffect(() => {
 		// console.log('plantBarData :: ', plantBarData)
 		if (plantBarData?.data && plantBarData?.legend) {
-			const tempBarColumns = [['x'], ['พื้นที่ไร่/แปลง']] as (string | number)[][] //
+			const tempBarColumns = [['x'], [t(areaUnit)]] as (string | number)[][] //
 			const tempBarColor = [] as string[]
 			for (let i = 0; i < plantBarData?.data.length; i++) {
 				tempBarColumns[0].push(plantBarData?.data[i]?.name[language])
@@ -131,11 +131,15 @@ const PlantStatistic = () => {
 				<Grid item xs={6}>
 					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
 						<Typography className='text-md font-semibold' component='div'>
-							พื้นที่ทั้งหมด (ไร่)
+							{t('totalArea', { ns: 'annual-analysis' })} ({t(areaUnit)})
 						</Typography>
 						{barColorArr && (
 							<>
-								<PlantStatisticBar plantBarColumns={plantBarColumns} plantBarColorArr={barColorArr} />
+								<PlantStatisticBar
+									plantBarColumns={plantBarColumns}
+									plantBarColorArr={barColorArr}
+									key={JSON.stringify(plantBarColumns)}
+								/>
 							</>
 						)}
 					</Box>
@@ -143,7 +147,7 @@ const PlantStatistic = () => {
 				<Grid item xs={6}>
 					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
 						<Typography className='text-md font-semibold' component='div'>
-							เปรียบเทียบพื้นที่ทั้งหมดรายปี (ไร่)
+							{t('compareTotalAreaYearly', { ns: 'annual-analysis' })} ({t(areaUnit)})
 						</Typography>
 						{lineColorArr && (
 							<>

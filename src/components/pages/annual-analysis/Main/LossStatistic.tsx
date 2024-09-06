@@ -32,7 +32,7 @@ const LossStatistic = () => {
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default'])
+	const { t, i18n } = useTranslation(['default', 'annual-analysis'])
 	const language = i18n.language as keyof ResponseLanguage
 	const [isBarInteger, setIsBarInteger] = React.useState<boolean>(true)
 
@@ -228,7 +228,7 @@ const LossStatistic = () => {
 				<Grid item xs={6}>
 					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
 						<Typography className='text-md font-semibold' component='div'>
-							เปรียบเทียบพื้นที่เสียหาย (เฉพาะที่มีขอบแปลงเท่านั้น)
+							{t('compareDamagedAreaPlotBound', { ns: 'annual-analysis' })}
 						</Typography>
 						<Box className='flex flex-row justify-end'>
 							<Button
@@ -239,7 +239,7 @@ const LossStatistic = () => {
 								onClick={handleChangeBarNumber}
 								value='number'
 							>
-								จำนวนเต็ม
+								{t('integer', { ns: 'annual-analysis' })}
 							</Button>
 							<Button
 								className={clsx('text-base', {
@@ -249,7 +249,7 @@ const LossStatistic = () => {
 								onClick={handleChangeBarNumber}
 								value='fracture'
 							>
-								เปอร์เซ็นต์
+								{t('percentage', { ns: 'annual-analysis' })}
 							</Button>
 						</Box>
 						{barColorArr && barGroupArr && lossBarColumns && (
@@ -268,7 +268,7 @@ const LossStatistic = () => {
 				<Grid item xs={6}>
 					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
 						<Typography className='text-md font-semibold' component='div'>
-							เปรียบเทียบพื้นที่เสียหายรายปี (เฉพาะที่มีขอบแปลงเท่านั้น)
+							{t('compareYearlyDamagedAreaPlotBound', { ns: 'annual-analysis' })}
 						</Typography>
 						{lineColorArr && (
 							<>

@@ -24,6 +24,7 @@ import useResponsive from '@/hook/responsive'
 import { dataAreas } from '@/api/annual-analysis/dto-out.dto'
 import { SummaryBarChartColor, TextColor } from '@/config/color'
 import { bar } from 'billboard.js'
+import { useSelectOption } from '../Main/context'
 
 interface Data {
 	id: string
@@ -366,6 +367,8 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default'])
+	const { selectOption, setSelectOption } = useSelectOption()
+
 	const id = React.useId()
 	const language = i18n.language as keyof ResponseLanguage
 	const [order, setOrder] = React.useState<SortType>(SortType.DESC)
@@ -460,14 +463,14 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 				id: 'name',
 				numeric: false,
 				disablePadding: true,
-				label: 'พื้นที่',
+				label: t('area', { ns: 'annual-analysis' }),
 				sortable: false,
 			})
 			tmpHead.push({
 				id: 'totalActArea',
 				numeric: true,
 				disablePadding: false,
-				label: 'ผลรวม การวิเคราะห์',
+				label: t('totalAnalysis', { ns: 'annual-analysis' }),
 				sortable: true,
 			})
 			for (let i = 0; i < riceTableData[0].actAreas.length; i++) {
@@ -553,6 +556,24 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 		return data || []
 	}, [tableData, filterOrder, areaUnit])
 
+	const filterString = (selectOption: any) => {
+		let tmpStr = ''
+		if (selectOption?.name) {
+			tmpStr += selectOption.name[language]
+		} else {
+			tmpStr += language === 'en' ? 'Thailand' : 'ประเทศไทย'
+		}
+		tmpStr += ', '
+		tmpStr += language === 'en' ? 'Year: ' : 'ปี: '
+		if (selectOption?.selectedYear) {
+			tmpStr += selectOption.selectedYear
+		} else {
+			tmpStr += language === 'en' ? 'All' : 'ทั้งหมด'
+		}
+		// console.log('selectOption :: ', selectOption)
+		return tmpStr
+	}
+
 	return (
 		<Box sx={{ width: '100%' }}>
 			<Paper sx={{ width: '100%' }}>
@@ -562,9 +583,9 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 						<Box className='flex items-center justify-between'>
 							<Box className='flex flex-row'>
 								<Typography noWrap className='text-md font-semibold'>
-									อันดับผลรวมข้อมูลทั้งหมด (ไร่){' '}
+									{t('totalDataRanking', { ns: 'annual-analysis' })} ({t(areaUnit)}){' '}
 									<span className='text-sm font-normal text-[#7A7A7A]'>
-										(ตัวกรอง: ประเทศไทย, 2562-2566)
+										({t('filter', { ns: 'annual-analysis' })}: {filterString(selectOption)})
 									</span>
 								</Typography>
 							</Box>
@@ -574,7 +595,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 								>
 									<Box className={`mr-[6px] h-[14px] w-[14px] rounded-sm bg-[#9F9F9F]`}></Box>
 									<Typography noWrap className='text-base font-medium'>
-										ความเสียหายตามกษ.02
+										{t('damageAccordingGS', { ns: 'annual-analysis' })}
 									</Typography>
 								</Box>
 								<Box
@@ -582,7 +603,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 								>
 									<Box className={`mr-[6px] h-[14px] w-[14px] rounded-sm bg-[#B23B56]`}></Box>
 									<Typography noWrap className='text-base font-medium'>
-										ความเสียหายจากระบบวิเคราะห์
+										{t('analysisSystemDamage', { ns: 'annual-analysis' })}
 									</Typography>
 								</Box>
 							</Box>

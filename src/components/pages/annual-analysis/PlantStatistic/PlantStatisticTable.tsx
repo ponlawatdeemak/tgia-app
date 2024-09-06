@@ -423,44 +423,6 @@ interface HeadCell {
 	sortable: boolean
 }
 
-const headCells: readonly HeadCell[] = [
-	{
-		id: 'name',
-		numeric: false,
-		disablePadding: true,
-		label: 'พื้นที่',
-		sortable: false,
-	},
-	{
-		id: 'totalRegistrationArea',
-		numeric: true,
-		disablePadding: false,
-		label: 'พื้นที่ขึ้นทะเบียนทั้งหมด',
-		sortable: true,
-	},
-	{
-		id: 'totalRegistrationAreaBoundaries',
-		numeric: true,
-		disablePadding: false,
-		label: 'พื้นที่ขึ้นทะเบียนที่มีขอบแปลง',
-		sortable: true,
-	},
-	{
-		id: 'totalClaimArea',
-		numeric: true,
-		disablePadding: false,
-		label: 'พื้นที่เอาประกัน',
-		sortable: true,
-	},
-	{
-		id: 'totalClaimAreaBoundaries',
-		numeric: true,
-		disablePadding: false,
-		label: 'พื้นที่เอาประกันที่มีขอบแปลง',
-		sortable: true,
-	},
-]
-
 interface PlantStatisticTableProps {
 	plantTableData?: any[]
 }
@@ -469,7 +431,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default'])
+	const { t, i18n } = useTranslation(['default', 'annual-analysis'])
 	const { selectOption, setSelectOption } = useSelectOption()
 	const language = i18n.language as keyof ResponseLanguage
 
@@ -478,9 +440,43 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 	const [dense, setDense] = React.useState(false)
 	const [tableData, setTableData] = React.useState<any[]>([]) // change from any to dto out
 
-	React.useEffect(() => {
-		console.log('selectOption :: ', selectOption)
-	}, [selectOption])
+	const headCells: readonly HeadCell[] = [
+		{
+			id: 'name',
+			numeric: false,
+			disablePadding: true,
+			label: t('area', { ns: 'annual-analysis' }),
+			sortable: false,
+		},
+		{
+			id: 'totalRegistrationArea',
+			numeric: true,
+			disablePadding: false,
+			label: t('allFarmerRegisteredArea', { ns: 'annual-analysis' }),
+			sortable: true,
+		},
+		{
+			id: 'totalRegistrationAreaBoundaries',
+			numeric: true,
+			disablePadding: false,
+			label: t('farmerRegisteredAreasPlotBound', { ns: 'annual-analysis' }),
+			sortable: true,
+		},
+		{
+			id: 'totalClaimArea',
+			numeric: true,
+			disablePadding: false,
+			label: t('allInsuredArea', { ns: 'annual-analysis' }),
+			sortable: true,
+		},
+		{
+			id: 'totalClaimAreaBoundaries',
+			numeric: true,
+			disablePadding: false,
+			label: t('insuredAreaPlotBound', { ns: 'annual-analysis' }),
+			sortable: true,
+		},
+	]
 
 	const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
 		handleRequestSort(event, property)
@@ -560,6 +556,24 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 		return data || []
 	}, [tableData, filterOrder, areaUnit])
 
+	const filterString = (selectOption: any) => {
+		let tmpStr = ''
+		if (selectOption?.name) {
+			tmpStr += selectOption.name[language]
+		} else {
+			tmpStr += language === 'en' ? 'Thailand' : 'ประเทศไทย'
+		}
+		tmpStr += ', '
+		tmpStr += language === 'en' ? 'Year: ' : 'ปี: '
+		if (selectOption?.selectedYear) {
+			tmpStr += selectOption.selectedYear
+		} else {
+			tmpStr += language === 'en' ? 'All' : 'ทั้งหมด'
+		}
+		// console.log('selectOption :: ', selectOption)
+		return tmpStr
+	}
+
 	// const visibleRows = React.useMemo(() => stableSort(tableData, getComparator(order, orderBy)), [order, orderBy])
 	return (
 		<Box sx={{ width: '100%' }}>
@@ -568,8 +582,10 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 					<Box className='flex flex-row'>
 						<Typography className='w-full text-md font-semibold' id='tableTitle' component='div'>
 							{/* Dynamic Depends on AppBar */}
-							อันดับผลรวมข้อมูลทั้งหมด (ไร่){' '}
-							<span className='text-sm font-normal text-[#7A7A7A]'>(ตัวกรอง: ประเทศไทย, 2562-2566)</span>
+							{t('totalDataRanking', { ns: 'annual-analysis' })} ({t(areaUnit)}){' '}
+							<span className='text-sm font-normal text-[#7A7A7A]'>
+								({t('filter', { ns: 'annual-analysis' })}: {filterString(selectOption)})
+							</span>
 						</Typography>
 					</Box>
 				</Toolbar>

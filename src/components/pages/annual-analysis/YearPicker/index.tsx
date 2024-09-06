@@ -46,7 +46,7 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 			setSelectOption({ ...selectOption, selectedYear: '' })
 			setQueryParams({ ...queryParams, years: [] })
 		}
-	}, [selectedYear])
+	}, [selectedYear, language])
 
 	useEffect(() => {
 		setQueryParams({ ...queryParams, registrationAreaType: areaType })

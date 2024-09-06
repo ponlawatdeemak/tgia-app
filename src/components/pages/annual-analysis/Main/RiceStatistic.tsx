@@ -27,7 +27,7 @@ const RiceStatistic = () => {
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default'])
+	const { t, i18n } = useTranslation(['default', 'annual-analysis'])
 	const language = i18n.language as keyof ResponseLanguage
 
 	// bar chart
@@ -43,7 +43,7 @@ const RiceStatistic = () => {
 		queryKey: ['getTableRiceStatistic', queryParams],
 		queryFn: async () => {
 			const res = await service.annualAnalysis.getTableRiceStatistic(queryParams)
-			console.log('TableRice :: ', res)
+			// console.log('TableRice :: ', res)
 			return res
 		},
 		enabled: true,
@@ -53,7 +53,7 @@ const RiceStatistic = () => {
 		queryKey: ['getLineRiceStatistic', queryParams],
 		queryFn: async () => {
 			const res = await service.annualAnalysis.getLineRiceStatistic(queryParams)
-			console.log('LineRice :: ', res)
+			// console.log('LineRice :: ', res)
 			return res
 		},
 		enabled: true,
@@ -63,7 +63,7 @@ const RiceStatistic = () => {
 		queryKey: ['getBarRiceStatistic', queryParams],
 		queryFn: async () => {
 			const res = await service.annualAnalysis.getBarRiceStatistic(queryParams)
-			console.log('BarRice :: ', res)
+			// console.log('BarRice :: ', res)
 			return res
 		},
 		enabled: true,
@@ -71,7 +71,7 @@ const RiceStatistic = () => {
 
 	React.useEffect(() => {
 		if (plantBarData?.data && plantBarData?.legend) {
-			const tempBarColumns = [['x'], ['พื้นที่ไร่/แปลง']] as (string | number)[][] //
+			const tempBarColumns = [['x'], [t(areaUnit)]] as (string | number)[][] //
 			const tempBarColor = [] as string[]
 			for (let i = 0; i < plantBarData?.data.length; i++) {
 				tempBarColumns[0].push(plantBarData?.data[i]?.name[language])
@@ -127,11 +127,15 @@ const RiceStatistic = () => {
 				<Grid item xs={6}>
 					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
 						<Typography className='text-md font-semibold' component='div'>
-							เปรียบเทียบพื้นที่ปลูกข้าวเกษตรกร เฉพาะที่มีขอบแปลง (ไร่)
+							{t('compareFarmerRicePlotBound', { ns: 'annual-analysis' })} ({t(areaUnit)})
 						</Typography>
 						{barColorArr && (
 							<>
-								<RiceStatisticBar riceBarColumns={riceBarColumns} riceBarColorArr={barColorArr} />
+								<RiceStatisticBar
+									riceBarColumns={riceBarColumns}
+									riceBarColorArr={barColorArr}
+									key={JSON.stringify(riceBarColumns)}
+								/>
 							</>
 						)}
 					</Box>
@@ -139,7 +143,7 @@ const RiceStatistic = () => {
 				<Grid item xs={6}>
 					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
 						<Typography className='text-md font-semibold' component='div'>
-							เปรียบเทียบพื้นที่ปลูกข้าวเกษตรกรรายปี เฉพาะที่มีขอบแปลง (ไร่)
+							{t('compareFarmerYearlyPlotBound', { ns: 'annual-analysis' })} ({t(areaUnit)})
 						</Typography>
 						{lineColorArr && (
 							<>
