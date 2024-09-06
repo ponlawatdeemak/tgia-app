@@ -31,15 +31,22 @@ export interface GetAreaSearchPlotDtoOut {
 	activityId: number
 }
 
+interface PredictedRiceAreaPosition extends PredictedRiceArea {
+	areaPlot: number
+}
+
+interface LossPredictedPosition extends LossPredicted {
+	areaPlot: number
+}
+
 interface PositionSearchResult {
 	count: number
-	lossType: string
-	lossPredicted: LossPredicted
+	lossPredicted: LossPredictedPosition
 }
 
 export interface GetPositionSearchPlotDtoOut {
 	activityId: number
-	predictedRiceArea: PredictedRiceArea
+	predictedRiceArea: PredictedRiceAreaPosition
 	results: PositionSearchResult[]
 }
 
@@ -56,6 +63,7 @@ interface ResponsePredeicted {
 export interface GetPlotActivityPlantDetailDtoOut {
 	activityId: number
 	count: number
+	lossType: string
 	address: ResponseLanguage
 	year: ResponseLanguage
 	insuredStatus: ResponseLanguage
