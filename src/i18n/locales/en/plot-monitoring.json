@@ -48,5 +48,6 @@
     "map": "Map",
     "riceLossArea": "Rice Loss Area",
     "riceLossPredictedArea": "Rice Loss Predicted Area",
-    "orderBy": "Order By"
+    "orderBy": "Order By",
+    "noSearchResultsFound": "No Search Results Found"
 }

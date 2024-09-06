@@ -48,5 +48,6 @@
     "map": "แผนที่",
     "riceLossArea": "พื้นที่ความเสียหาย",
     "riceLossPredictedArea": "พื้นที่เสียหายจากระบบวิเคราะห์",
-    "orderBy": "การเรียงลำดับ"
+    "orderBy": "การเรียงลำดับ",
+    "noSearchResultsFound": "ไม่พบผลลัพธ์การค้นหา"
 }
