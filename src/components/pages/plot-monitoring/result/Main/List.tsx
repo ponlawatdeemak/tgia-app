@@ -22,7 +22,7 @@ const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, set
 	}, [])
 
 	return (
-		<Paper className='relative h-full lg:block lg:flex-grow'>
+		<Paper className='relative block flex-grow'>
 			<IconButton
 				className='absolute left-0 top-3 z-10 flex items-center justify-center rounded-s-none border-0 border-l border-solid border-gray-light bg-white px-1 py-3 max-lg:hidden'
 				onClick={() => setIsFullList(!isFullList)}
@@ -37,7 +37,7 @@ const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, set
 				size='small'
 				exclusive
 				color='primary'
-				className='absolute right-3 z-10 flex gap-2 rounded bg-[#E5E5E5B2] p-2 max-lg:bottom-3 max-lg:left-3 lg:top-3 lg:rounded-lg lg:bg-gray-light3 lg:p-1 [&_*]:px-3 [&_*]:py-1.5 max-lg:[&_*]:rounded'
+				className='fixed right-3 z-10 flex gap-2 rounded bg-[#E5E5E5B2] p-2 max-lg:bottom-3 max-lg:left-3 lg:absolute lg:top-3 lg:rounded-lg lg:bg-gray-light3 lg:p-1 [&_*]:px-3 [&_*]:py-1.5 max-lg:[&_*]:rounded'
 				value={areaDetail}
 				onChange={handleAreaDetailChange}
 			>

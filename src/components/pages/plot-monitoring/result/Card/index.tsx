@@ -59,51 +59,53 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 						<span className='text-xs font-medium text-black lg:hidden'>{detail.year[language]}</span>
 					</div>
 					<div className='flex flex-col gap-1'>
-						<Box className='flex items-center gap-1 max-lg:hidden'>
-							<span className='text-sm font-normal text-black'>{`${t('dataSetYear')} :`}</span>
-							<span className='text-sm font-semibold text-black'>{detail.year[language]}</span>
+						<Box className='flex gap-1 max-lg:hidden'>
+							<span className='flex shrink-0 text-sm font-normal text-black'>{`${t('dataSetYear')} :`}</span>
+							<span className='flex flex-wrap text-left text-sm font-semibold text-black'>
+								{detail.year[language]}
+							</span>
 						</Box>
-						<Box className='flex flex-wrap items-center gap-1'>
-							<span className='text-xs font-normal text-black lg:text-sm'>{`${t('location', { ns: 'plot-monitoring' })}:`}</span>
-							<span className='text-left text-xs font-semibold text-black lg:text-sm'>
+						<Box className='flex gap-1'>
+							<span className='flex shrink-0 text-xs font-normal text-black lg:text-sm'>{`${t('location', { ns: 'plot-monitoring' })}:`}</span>
+							<span className='flex flex-wrap text-left text-xs font-semibold text-black lg:text-sm'>
 								{detail.address[language]}
 							</span>
 						</Box>
-						<Box className='flex items-center gap-1'>
-							<span className='text-xs font-normal text-black lg:text-sm'>{`${t('complianceStatus', { ns: 'plot-monitoring' })}:`}</span>
-							<span className='text-xs font-semibold text-black lg:text-sm'>
+						<Box className='flex gap-1'>
+							<span className='flex shrink-0 text-xs font-normal text-black lg:text-sm'>{`${t('complianceStatus', { ns: 'plot-monitoring' })}:`}</span>
+							<span className='flex flex-wrap text-left text-xs font-semibold text-black lg:text-sm'>
 								{detail.publicStatus[language]}
 							</span>
 						</Box>
-						<Box className='flex items-center gap-1'>
-							<span className='text-xs font-normal text-black lg:text-sm'>
+						<Box className='flex gap-1'>
+							<span className='flex shrink-0 text-xs font-normal text-black lg:text-sm'>
 								{t('riceVarietyType', { ns: 'plot-monitoring' })}
 							</span>
-							<span className='text-xs font-semibold text-black lg:text-sm'>
+							<span className='flex flex-wrap text-left text-xs font-semibold text-black lg:text-sm'>
 								{detail.riceType[language]}
 							</span>
 						</Box>
-						<Box className='flex items-center gap-1'>
-							<span className='text-xs font-normal text-black lg:text-sm'>
+						<Box className='flex gap-1'>
+							<span className='flex shrink-0 text-xs font-normal text-black lg:text-sm'>
 								{t('riceVarieties', { ns: 'plot-monitoring' })}
 							</span>
-							<span className='text-xs font-semibold text-black lg:text-sm'>
+							<span className='flex flex-wrap text-left text-xs font-semibold text-black lg:text-sm'>
 								{detail.detailType[language]}
 							</span>
 						</Box>
-						<Box className='flex items-center gap-1'>
-							<span className='text-xs font-normal text-black lg:text-sm'>
+						<Box className='flex gap-1'>
+							<span className='flex shrink-0 text-xs font-normal text-black lg:text-sm'>
 								{t('insurance', { ns: 'plot-monitoring' })}
 							</span>
-							<span className='text-xs font-semibold text-black lg:text-sm'>
+							<span className='flex flex-wrap text-left text-xs font-semibold text-black lg:text-sm'>
 								{detail.insuredType[language]}
 							</span>
 						</Box>
-						<Box className='flex items-center gap-1'>
-							<span className='text-xs font-normal text-black lg:text-sm'>
+						<Box className='flex gap-1'>
+							<span className='flex shrink-0 text-xs font-normal text-black lg:text-sm'>
 								{t('riskAreas', { ns: 'plot-monitoring' })}
 							</span>
-							<span className='text-xs font-semibold text-black lg:text-sm'>
+							<span className='flex flex-wrap text-left text-xs font-semibold text-black lg:text-sm'>
 								{detail.riskType[language]}
 							</span>
 						</Box>

@@ -94,13 +94,13 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 		},
 	})
 
-	// const areaSearchPlotId = useMemo(() => {
-	// 	return areaSearchPlot?.data?.map((item) => item.activityId) || []
-	// }, [areaSearchPlot])
-
 	const areaSearchPlotId = useMemo(() => {
-		return [204092124, 204148174, 204513425, 204457339, 204091737] || []
+		return areaSearchPlot?.data?.map((item) => item.activityId) || []
 	}, [areaSearchPlot])
+
+	// const areaSearchPlotId = useMemo(() => {
+	// 	return [204092124, 204148174, 204513425, 204457339, 204091737] || []
+	// }, [areaSearchPlot])
 
 	const handlePositionClick = useCallback(
 		async (x: number, y: number, coordinate: number[], year: number) => {
