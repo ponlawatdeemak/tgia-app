@@ -181,8 +181,8 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 	}, [setLayers, activityId, plotDetail, lossType, queryParams.year])
 
 	return (
-		<Paper className='relative max-lg:flex max-lg:flex-col max-lg:gap-3 max-lg:bg-gray-light lg:block lg:flex-grow'>
-			<div className='relative h-[390px] w-full max-lg:overflow-hidden max-lg:rounded lg:h-full'>
+		<Paper className='relative max-lg:bg-white max-lg:px-4 lg:block lg:flex-grow'>
+			<div className='relative w-full max-lg:aspect-square max-lg:overflow-hidden max-lg:rounded lg:h-full'>
 				<MapView />
 			</div>
 		</Paper>
