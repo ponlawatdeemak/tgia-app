@@ -55,7 +55,9 @@ const PlantDetail: React.FC<PlantDetailProps> = ({ plantDetailData }) => {
 							<div className='flex items-baseline gap-1 text-base'>
 								<span className='text-black'>{t('canGrowRice', { ns: 'plot-monitoring' })}</span>
 								<span className='font-semibold text-secondary'>
-									{plantDetailData?.predictedRiceArea.percent + '%'}
+									{plantDetailData?.predictedRiceArea.percent
+										? `${plantDetailData.predictedRiceArea.percent}%`
+										: ''}
 								</span>
 							</div>
 						</div>
@@ -72,7 +74,9 @@ const PlantDetail: React.FC<PlantDetailProps> = ({ plantDetailData }) => {
 								{t('notARiceCultivationArea', { ns: 'plot-monitoring' })}
 							</span>
 							<span className='text font-semibold text-secondary'>
-								{plantDetailData?.predictedNonRiceArea.percent + '%'}
+								{plantDetailData?.predictedNonRiceArea.percent
+									? `${plantDetailData.predictedNonRiceArea.percent}%`
+									: ''}
 							</span>
 						</div>
 						<div className='flex items-baseline gap-1 text-base'>
@@ -93,7 +97,7 @@ const PlantDetail: React.FC<PlantDetailProps> = ({ plantDetailData }) => {
 					</Box>
 				</Box>
 				<div className='flex w-full flex-row text-sm font-medium text-gray-dark2'>
-					<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} ${plantDetailData?.predictedRiceAreaDate[language]}`}</div>
+					<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} ${plantDetailData?.predictedRiceAreaDate[language] || ''}`}</div>
 				</div>
 			</Box>
 		</div>
