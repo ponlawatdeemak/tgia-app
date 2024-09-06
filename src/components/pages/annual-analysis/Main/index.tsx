@@ -1,7 +1,7 @@
 'use client'
 import service from '@/api'
 import DatePickerHorizontal from '@/components/shared/DatePickerHorizontal'
-import { Box, Button, Tab, Tabs, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Box, Button, FormControl, MenuItem, Select, Tab, Tabs, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { addDays, addYears } from 'date-fns'
 import React, { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import LossStatistic from './LossStatistic'
@@ -53,7 +53,9 @@ function CustomTabPanel(props: TabPanelProps) {
 			aria-labelledby={`simple-tab-${index}`}
 		>
 			{value === index && (
-				<Box className={clsx('p-[24px]', { 'pt-[12px]': index === 2, 'px-0': !isDesktop })}>{children}</Box>
+				<Box className={clsx('p-[24px]', { 'pt-[12px]': index === 2, 'px-0 pt-0': !isDesktop })}>
+					{children}
+				</Box>
 			)}
 		</div>
 	)
@@ -67,7 +69,7 @@ function a11yProps(index: number) {
 }
 
 const AnnualAnalysisMain = () => {
-	const [value, setValue] = useState(0)
+	const [value, setValue] = useState<number>(0)
 	const { isDesktop } = useResponsive()
 
 	const { data: session } = useSession()
@@ -77,129 +79,6 @@ const AnnualAnalysisMain = () => {
 		setValue(newValue)
 	}
 
-	// const optionList = useMemo(() => {
-	// 	if (userId) {
-	// 		const historyList = history[userId] || []
-	// 		const favoriteList = favorite[userId] || []
-	// 		const searchDataList: OptionType[] = searchData?.data
-	// 			? searchData.data
-	// 					.filter((data) => {
-	// 						const historyIdList = historyList.map((history) => history.id)
-	// 						const favoriteIdList = favoriteList.map((favorite) => favorite.id)
-	// 						if (historyIdList.includes(data.id) || favoriteIdList.includes(data.id)) {
-	// 							return false
-	// 						} else {
-	// 							return true
-	// 						}
-	// 					})
-	// 					.map((data) => ({ ...data, id: data.id, name: data.name, searchType: 'search' }))
-	// 			: []
-	// 		return [...historyList, ...favoriteList, ...searchDataList]
-	// 	}
-	// 	return []
-	// }, [history, favorite, userId, searchData])
-
-	// const handleSelectOption = (_event: ChangeEvent<{}>, newSelectedValue: OptionType | null) => {
-	// 	setSeletedOption(newSelectedValue)
-
-	// 	if (userId) {
-	// 		const favoriteList = favorite[userId] || []
-	// 		const historyList = history[userId] || []
-	// 		if (newSelectedValue) {
-	// 			const isFavoriteDuplicate = favoriteList.map((item) => item.id).includes(newSelectedValue.id)
-	// 			const isHistoryDuplicate = historyList.map((item) => item.id).includes(newSelectedValue.id)
-	// 			if (!isHistoryDuplicate && !isFavoriteDuplicate) {
-	// 				if (historyList.length === HistoryLengthMax) {
-	// 					historyList.pop()
-	// 					historyList.unshift(newSelectedValue)
-	// 					setHistory({
-	// 						...history,
-	// 						[userId]: historyList.map((history) => ({ ...history, searchType: 'history' })),
-	// 					})
-	// 				} else if (historyList.length < HistoryLengthMax) {
-	// 					historyList.unshift(newSelectedValue)
-	// 					setHistory({
-	// 						...history,
-	// 						[userId]: historyList.map((history) => ({ ...history, searchType: 'history' })),
-	// 					})
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
-
-	// const handleSelectFavorite = (event: React.MouseEvent, selectedFavorite: OptionType | null) => {
-	// 	event.stopPropagation()
-	// 	if (userId) {
-	// 		const favoriteList = favorite[userId] || []
-	// 		const historyList = history[userId] || []
-	// 		if (selectedFavorite) {
-	// 			const isFavoriteDuplicate = favoriteList.map((item) => item.id).includes(selectedFavorite.id)
-	// 			const isHistoryDuplicate = historyList.map((item) => item.id).includes(selectedFavorite.id)
-	// 			if (!isFavoriteDuplicate) {
-	// 				if (favoriteList.length === FavoriteLengthMax) return
-	// 				if (favoriteList.length < FavoriteLengthMax) {
-	// 					if (isHistoryDuplicate) {
-	// 						const newhistoryList = historyList.filter((item) => item.id !== selectedFavorite.id)
-	// 						setHistory({
-	// 							...history,
-	// 							[userId]: newhistoryList,
-	// 						})
-	// 					}
-	// 					favoriteList.push(selectedFavorite)
-	// 					setFavorite({
-	// 						...favorite,
-	// 						[userId]: favoriteList.map((favorite) => ({ ...favorite, searchType: 'favorite' })),
-	// 					})
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
-
-	// const handleRemoveHistory = (event: React.MouseEvent, value: string) => {
-	// 	event.stopPropagation()
-	// 	if (userId) {
-	// 		const historyList = history[userId] || []
-	// 		const newHistoryList = historyList.filter((option) => option.id !== value)
-	// 		setHistory({
-	// 			...history,
-	// 			[userId]: newHistoryList,
-	// 		})
-	// 	}
-	// }
-
-	// const handleRemoveFavorite = (event: React.MouseEvent, value: string) => {
-	// 	event.stopPropagation()
-	// 	if (userId) {
-	// 		const favoriteList = favorite[userId] || []
-	// 		const newFavoriteList = favoriteList.filter((option) => option.id !== value)
-	// 		setFavorite({
-	// 			...favorite,
-	// 			[userId]: newFavoriteList,
-	// 		})
-	// 	}
-	// }
-
-	// const handleClear = () => {
-	// 	setInputValue('')
-	// 	setSeletedOption(null)
-	// }
-
-	// const handleTypeClick = (_event: React.MouseEvent<HTMLElement>, newAlignment: LossType | null) => {
-	// 	// let sortTypeField: keyof Data
-	// 	// if (newAlignment) {
-	// 	// 	if (newAlignment === LossType.Drought) {
-	// 	// 		sortTypeField = 'droughtPredicted'
-	// 	// 	} else {
-	// 	// 		sortTypeField = 'floodPredicted'
-	// 	// 	}
-	// 	// } else {
-	// 	// 	sortTypeField = 'totalPredicted'
-	// 	// }
-	// 	setQueryParams({})
-	// }
-
 	return (
 		<>
 			<div className='flex flex-col justify-center'>
@@ -207,20 +86,49 @@ const AnnualAnalysisMain = () => {
 				<Box>
 					{/* <div>{JSON.stringify(queryParams)}</div> */}
 					{/* Tab group */}
-					<Box className='ml-[24px] mr-[24px]'>
-						<Tabs
-							variant='scrollable'
-							scrollButtons='auto'
-							value={value}
-							onChange={handleChange}
-							aria-label='basic tabs example'
-							className='[&_.MuiTabs-scroller]:border-0 [&_.MuiTabs-scroller]:border-b-[1px] [&_.MuiTabs-scroller]:border-solid [&_.MuiTabs-scroller]:border-[#C2C5CC]'
-						>
-							<Tab label={t('farmerRegisteredArea', { ns: 'annual-analysis' })} {...a11yProps(0)} />
-							<Tab label={t('riceCultivationArea', { ns: 'annual-analysis' })} {...a11yProps(1)} />
-							<Tab label={t('damagedAreaFromDisaster', { ns: 'annual-analysis' })} {...a11yProps(2)} />
-						</Tabs>
-					</Box>
+					{isDesktop ? (
+						<Box className='ml-[24px] mr-[24px]'>
+							<Tabs
+								variant='scrollable'
+								scrollButtons='auto'
+								value={value}
+								onChange={handleChange}
+								aria-label='basic tabs example'
+								className='[&_.MuiTabs-scroller]:border-0 [&_.MuiTabs-scroller]:border-b-[1px] [&_.MuiTabs-scroller]:border-solid [&_.MuiTabs-scroller]:border-[#C2C5CC]'
+							>
+								<Tab label={t('farmerRegisteredArea', { ns: 'annual-analysis' })} {...a11yProps(0)} />
+								<Tab label={t('riceCultivationArea', { ns: 'annual-analysis' })} {...a11yProps(1)} />
+								<Tab
+									label={t('damagedAreaFromDisaster', { ns: 'annual-analysis' })}
+									{...a11yProps(2)}
+								/>
+							</Tabs>
+						</Box>
+					) : (
+						<Box className='mt-[12px] pb-[12px]'>
+							<FormControl className='h-[40px] w-full p-0'>
+								<Select
+									value={value}
+									onChange={(e) => {
+										const value = e.target.value as number
+										setValue(value)
+									}}
+									displayEmpty
+									inputProps={{ 'aria-label': 'Without label' }}
+									className='mx-[16px] flex h-[40px] items-center bg-white p-0 text-md font-normal'
+								>
+									<MenuItem value={0}>
+										{t('farmerRegisteredArea', { ns: 'annual-analysis' })}
+									</MenuItem>
+									<MenuItem value={1}>{t('riceCultivationArea', { ns: 'annual-analysis' })}</MenuItem>
+									<MenuItem value={2}>
+										{t('damagedAreaFromDisaster', { ns: 'annual-analysis' })}
+									</MenuItem>
+								</Select>
+							</FormControl>
+						</Box>
+					)}
+
 					<Box className='h-[calc(100vh-194px)] overflow-y-auto'>
 						<CustomTabPanel value={value} index={0} isDesktop={isDesktop}>
 							<PlantStatistic />

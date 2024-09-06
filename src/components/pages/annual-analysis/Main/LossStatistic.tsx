@@ -187,16 +187,25 @@ const LossStatistic = () => {
 	return (
 		<Box>
 			{/* text font Anuphan ไม่ส่งต่อให้ text ใน g element svg ใน BillboardJS*/}
-			<Box className='flex-start flex pb-[12px] pr-[24px]'>
+			<Box
+				className={clsx('flex-start flex pb-[12px] pr-[24px]', {
+					'p-0 pb-0 pr-0': !isDesktop,
+				})}
+			>
 				<ToggleButtonGroup
 					// value={queryParams.lossType}
 					exclusive
 					onChange={handleTypeClick}
 					aria-label='loss-type'
-					className='flex gap-4 max-lg:py-3 lg:gap-1 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
+					className={clsx(
+						'flex gap-4 max-lg:py-3 lg:gap-1 [&_*]:rounded-lg [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg',
+						{
+							'mx-[16px] mt-[-12px] pt-0': !isDesktop,
+						},
+					)}
 				>
 					<ToggleButton
-						className={clsx('text-base', {
+						className={clsx('rounded-lg text-base', {
 							'bg-primary font-semibold text-white': currentLossType === '',
 							'text-gray-dark2': currentLossType !== '',
 						})}
@@ -205,7 +214,7 @@ const LossStatistic = () => {
 						{t('allDisasters')}
 					</ToggleButton>
 					<ToggleButton
-						className={clsx('text-base', {
+						className={clsx('rounded-lg text-base', {
 							'bg-primary font-semibold text-white': currentLossType === '2',
 							'text-gray-dark2': currentLossType !== '2',
 						})}
@@ -214,7 +223,7 @@ const LossStatistic = () => {
 						{t('drought')}
 					</ToggleButton>
 					<ToggleButton
-						className={clsx('text-base', {
+						className={clsx('rounded-lg text-base', {
 							'bg-primary font-semibold text-white': currentLossType === '1',
 							'text-gray-dark2': currentLossType !== '1',
 						})}
@@ -226,7 +235,11 @@ const LossStatistic = () => {
 			</Box>
 			<Grid container rowSpacing={1} columnSpacing={1.5} direction={isDesktop ? 'row' : 'column'}>
 				<Grid item xs={6}>
-					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
+					<Box
+						className={clsx('h-[496px] rounded bg-white p-[24px] shadow', {
+							'h-[530px]': !isDesktop,
+						})}
+					>
 						<Typography className='text-md font-semibold' component='div'>
 							{t('compareDamagedAreaPlotBound', { ns: 'annual-analysis' })}
 						</Typography>
@@ -253,7 +266,11 @@ const LossStatistic = () => {
 							</Button>
 						</Box>
 						{barColorArr && barGroupArr && lossBarColumns && (
-							<>
+							<Box
+								className={clsx('', {
+									'ml-[-12px]': isDesktop,
+								})}
+							>
 								<LossStatisticBar
 									key={JSON.stringify(barGroupArr + isBarInteger.toString())}
 									lossBarColumns={lossBarColumns}
@@ -261,24 +278,28 @@ const LossStatistic = () => {
 									lossBarGroupArr={barGroupArr}
 									isBarInteger={isBarInteger}
 								/>
-							</>
+							</Box>
 						)}
 					</Box>
 				</Grid>
 				<Grid item xs={6}>
-					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
+					<Box className='h-[496px] rounded bg-white p-[24px] shadow'>
 						<Typography className='text-md font-semibold' component='div'>
 							{t('compareYearlyDamagedAreaPlotBound', { ns: 'annual-analysis' })}
 						</Typography>
 						{lineColorArr && (
-							<>
+							<Box
+								className={clsx('', {
+									'mt-[22px]': isDesktop,
+								})}
+							>
 								<LossStatisticLine
 									key={JSON.stringify(lineColorArr)}
 									lossLineColumns={lossLineColumns}
 									lossLineColorArr={lineColorArr}
 									lossCategoriesArr={lineCategoriesArr}
 								/>
-							</>
+							</Box>
 						)}
 					</Box>
 				</Grid>

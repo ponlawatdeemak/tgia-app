@@ -295,7 +295,7 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 							})}
 						>
 							<Box className='flex flex-row'>
-								<Typography noWrap className='text-md font-semibold'>
+								<Typography className='text-md font-semibold'>
 									{t('damageAreaRank', { ns: 'annual-analysis' })} ({t(areaUnit)}){' '}
 									<span className='text-sm font-normal text-[#7A7A7A]'>
 										{!isDesktop && <br />}({t('filter', { ns: 'annual-analysis' })}:{' '}
@@ -403,7 +403,7 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 													// 	backgroundColor: isSorted ? '#F8FAFD' : 'inherit',
 													// }}
 													className={clsx('', {
-														'sticky left-0 border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0] bg-white':
+														'sticky left-0 border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0] bg-white pr-[12px]':
 															cellIndex === 0,
 														'bg-[#F8FAFD]': isSorted,
 													})}

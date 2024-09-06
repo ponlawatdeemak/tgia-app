@@ -586,7 +586,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 					})}
 				>
 					<Box className='flex flex-row'>
-						<Typography className='w-full text-md font-semibold' id='tableTitle' component='div'>
+						<Typography className='text-md font-semibold' id='tableTitle' component='div'>
 							{/* Dynamic Depends on AppBar */}
 							{t('totalDataRanking', { ns: 'annual-analysis' })} ({t(areaUnit)}) {!isDesktop && <br />}
 							<span className='text-sm font-normal text-[#7A7A7A]'>
@@ -659,7 +659,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 												scope='row'
 												padding='none'
 												className={
-													'sticky left-0 border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0] bg-white'
+													'sticky left-0 border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0] bg-white pr-[12px]'
 												}
 											>
 												<span>

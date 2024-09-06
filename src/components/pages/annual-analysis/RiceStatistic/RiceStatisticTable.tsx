@@ -593,7 +593,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 							})}
 						>
 							<Box className='flex flex-row'>
-								<Typography noWrap className='text-md font-semibold'>
+								<Typography className='w-full text-md font-semibold'>
 									{t('riceCultivationAreaRank', { ns: 'annual-analysis' })} ({t(areaUnit)}){' '}
 									<span className='text-sm font-normal text-[#7A7A7A]'>
 										{!isDesktop && <br />}({t('filter', { ns: 'annual-analysis' })}:{' '}
@@ -696,7 +696,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 													padding='none'
 													align={cellIndex === 0 ? 'left' : 'right'}
 													className={clsx('', {
-														'sticky left-0 border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0] bg-white':
+														'sticky left-0 border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0] bg-white pr-[12px]':
 															cellIndex === 0,
 														'bg-[#F8FAFD]': isSorted,
 														'[&_.MuiTableCell]:pr-[12px]': !isDesktop,

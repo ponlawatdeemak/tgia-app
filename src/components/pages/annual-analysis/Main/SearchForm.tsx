@@ -22,6 +22,13 @@ interface HistoryType {
 	[key: string]: OptionType[]
 }
 
+const initialSelect = {
+	name: undefined,
+	id: undefined,
+	searchType: undefined,
+	selectedYear: undefined,
+}
+
 const FavoriteLengthMax = 5
 const HistoryLengthMax = 5
 const ProvinceCodeLength = 2
@@ -30,7 +37,7 @@ const SubDistrictCodeLength = 6
 
 const SearchFormAnnualAnalysis = () => {
 	const { queryParams, setQueryParams } = useSearchAnnualAnalysis()
-	const { setSelectOption } = useSelectOption()
+	const { selectOption, setSelectOption } = useSelectOption()
 	const [inputValue, setInputValue] = useState<string>('')
 	const [selectedOption, setSelectedOption] = useState<OptionType | null>(null)
 	const [history, setHistory] = useLocalStorage<HistoryType>('fieldLoss.history', {})
@@ -121,7 +128,7 @@ const SearchFormAnnualAnalysis = () => {
 
 	const handleSelectOption = (_event: ChangeEvent<{}>, newSelectedValue: OptionType | null) => {
 		setSelectedOption(newSelectedValue)
-		setSelectOption(newSelectedValue)
+		setSelectOption({ ...newSelectedValue, selectedYear: selectOption.selectedYear })
 		if (newSelectedValue?.id) {
 			if (newSelectedValue.id.length === ProvinceCodeLength) {
 				setQueryParams({
@@ -242,7 +249,7 @@ const SearchFormAnnualAnalysis = () => {
 		})
 		setInputValue('')
 		setSelectedOption(null)
-		setSelectOption(null)
+		setSelectOption({ ...initialSelect, selectedYear: selectOption.selectedYear })
 	}
 	// console.log(selectedOption)
 	return (
