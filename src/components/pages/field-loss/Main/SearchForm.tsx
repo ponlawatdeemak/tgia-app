@@ -12,6 +12,7 @@ import useSearchFieldLoss from './context'
 import { onCapture } from '@/utils/screenshot'
 import { ResponseLanguage } from '@/api/interface'
 import FavoriteSearchForm from '@/components/shared/FavoriteSearchForm'
+import { useTranslation } from 'react-i18next'
 
 interface OptionType {
 	name: ResponseLanguage
@@ -40,7 +41,9 @@ const SearchForm: React.FC<SearchFormProps> = ({ mapViewRef }) => {
 	const [history, setHistory] = useLocalStorage<HistoryType>('fieldLoss.history', {})
 	const [favorite, setFavorite] = useLocalStorage<HistoryType>('fieldLoss.favorite', {})
 	const { data: session } = useSession()
+	const { i18n } = useTranslation()
 	const userId = session?.user.id ?? null
+	const language = i18n.language as keyof ResponseLanguage
 
 	const { data: searchData, isLoading: isSearchDataLoading } = useQuery({
 		queryKey: ['getSearchAdminPoly', inputValue],
@@ -82,8 +85,8 @@ const SearchForm: React.FC<SearchFormProps> = ({ mapViewRef }) => {
 			if (queryParams.provinceCode && queryParams.districtCode && queryParams.subDistrictCode) {
 				try {
 					const subDistrict = (
-						await service.fieldLoss.getSearchAdminPoly({ id: queryParams.subDistrictCode })
-					).data?.[0]
+						await service.fieldLoss.getExtentAdminPoly({ id: queryParams.subDistrictCode })
+					).data
 					const subDistrictOption: OptionType | null = subDistrict
 						? { name: subDistrict.name, id: subDistrict.id, searchType: 'search' }
 						: null
@@ -94,8 +97,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ mapViewRef }) => {
 				}
 			} else if (queryParams.provinceCode && queryParams.districtCode) {
 				try {
-					const district = (await service.fieldLoss.getSearchAdminPoly({ id: queryParams.districtCode }))
-						.data?.[0]
+					const district = (await service.fieldLoss.getExtentAdminPoly({ id: queryParams.districtCode })).data
 					const districtOption: OptionType | null = district
 						? { name: district.name, id: district.id, searchType: 'search' }
 						: null
@@ -106,8 +108,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ mapViewRef }) => {
 				}
 			} else if (queryParams.provinceCode) {
 				try {
-					const province = (await service.fieldLoss.getSearchAdminPoly({ id: queryParams.provinceCode }))
-						.data?.[0]
+					const province = (await service.fieldLoss.getExtentAdminPoly({ id: queryParams.provinceCode })).data
 					const provinceOption: OptionType | null = province
 						? { name: province.name, id: province.id, searchType: 'search' }
 						: null
@@ -250,6 +251,13 @@ const SearchForm: React.FC<SearchFormProps> = ({ mapViewRef }) => {
 	const handleClear = () => {
 		setInputValue('')
 		setSeletedOption(null)
+		setQueryParams({
+			...queryParams,
+			provinceCode: undefined,
+			districtCode: undefined,
+			subDistrictCode: undefined,
+			layerName: undefined,
+		})
 	}
 
 	return (

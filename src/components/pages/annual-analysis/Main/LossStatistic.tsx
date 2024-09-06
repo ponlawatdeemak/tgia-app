@@ -2,7 +2,7 @@ import React from 'react'
 import bb, { bar, ChartOptions, line } from 'billboard.js'
 import 'billboard.js/dist/billboard.css'
 import BillboardJS, { IChart } from '@billboard.js/react'
-import { Box, Button, Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import PlantStatisticTable from '../PlantStatistic/PlantStatisticTable'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchAnnualAnalysis } from './context'
@@ -32,7 +32,7 @@ const LossStatistic = () => {
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default'])
+	const { t, i18n } = useTranslation(['default', 'annual-analysis'])
 	const language = i18n.language as keyof ResponseLanguage
 	const [isBarInteger, setIsBarInteger] = React.useState<boolean>(true)
 
@@ -187,16 +187,25 @@ const LossStatistic = () => {
 	return (
 		<Box>
 			{/* text font Anuphan ไม่ส่งต่อให้ text ใน g element svg ใน BillboardJS*/}
-			<Box className='flex-start flex pb-[24px] pr-[24px]'>
+			<Box
+				className={clsx('flex-start flex pb-[12px] pr-[24px]', {
+					'p-0 pb-0 pr-0': !isDesktop,
+				})}
+			>
 				<ToggleButtonGroup
 					// value={queryParams.lossType}
 					exclusive
 					onChange={handleTypeClick}
 					aria-label='loss-type'
-					className='flex gap-4 max-lg:py-3 lg:gap-1 [&_*]:rounded [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg'
+					className={clsx(
+						'flex gap-4 max-lg:py-3 lg:gap-1 [&_*]:rounded-lg [&_*]:border-none [&_*]:px-3 [&_*]:py-1.5 lg:[&_*]:rounded-lg',
+						{
+							'mx-[16px] mt-[-12px] pt-0': !isDesktop,
+						},
+					)}
 				>
 					<ToggleButton
-						className={clsx('text-base', {
+						className={clsx('rounded-lg text-base', {
 							'bg-primary font-semibold text-white': currentLossType === '',
 							'text-gray-dark2': currentLossType !== '',
 						})}
@@ -205,7 +214,7 @@ const LossStatistic = () => {
 						{t('allDisasters')}
 					</ToggleButton>
 					<ToggleButton
-						className={clsx('text-base', {
+						className={clsx('rounded-lg text-base', {
 							'bg-primary font-semibold text-white': currentLossType === '2',
 							'text-gray-dark2': currentLossType !== '2',
 						})}
@@ -214,7 +223,7 @@ const LossStatistic = () => {
 						{t('drought')}
 					</ToggleButton>
 					<ToggleButton
-						className={clsx('text-base', {
+						className={clsx('rounded-lg text-base', {
 							'bg-primary font-semibold text-white': currentLossType === '1',
 							'text-gray-dark2': currentLossType !== '1',
 						})}
@@ -226,65 +235,112 @@ const LossStatistic = () => {
 			</Box>
 			<Grid container rowSpacing={1} columnSpacing={1.5} direction={isDesktop ? 'row' : 'column'}>
 				<Grid item xs={6}>
-					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
-						<Typography className='text-md font-semibold' component='div'>
-							เปรียบเทียบพื้นที่เสียหาย (เฉพาะที่มีขอบแปลงเท่านั้น)
-						</Typography>
-						<Box className='flex flex-row justify-end'>
-							<Button
-								className={clsx('text-base', {
-									'bg-primary font-semibold text-white': isBarInteger,
-									'text-gray-dark2': !isBarInteger,
-								})}
-								onClick={handleChangeBarNumber}
-								value='number'
-							>
-								จำนวนเต็ม
-							</Button>
-							<Button
-								className={clsx('text-base', {
-									'bg-primary font-semibold text-white': !isBarInteger,
-									'text-gray-dark2': isBarInteger,
-								})}
-								onClick={handleChangeBarNumber}
-								value='fracture'
-							>
-								เปอร์เซ็นต์
-							</Button>
-						</Box>
-						{barColorArr && barGroupArr && lossBarColumns && (
+					<Box
+						className={clsx('h-[496px] rounded bg-white p-[24px] shadow', {
+							'h-[530px]': !isDesktop,
+							'flex items-center justify-center':
+								isBarDataLoading || isLineDataLoading || isTableDataLoading,
+						})}
+					>
+						{isBarDataLoading || isLineDataLoading || isTableDataLoading ? (
+							<div className='flex grow flex-col items-center justify-center bg-white lg:h-full'>
+								<CircularProgress size={80} color='primary' />
+							</div>
+						) : (
 							<>
-								<LossStatisticBar
-									key={JSON.stringify(barGroupArr + isBarInteger.toString())}
-									lossBarColumns={lossBarColumns}
-									lossBarColorArr={barColorArr}
-									lossBarGroupArr={barGroupArr}
-									isBarInteger={isBarInteger}
-								/>
+								<Typography className='text-md font-semibold' component='div'>
+									{t('compareDamagedAreaPlotBound', { ns: 'annual-analysis' })}
+								</Typography>
+								<Box className='flex flex-row justify-end gap-[4px] pt-[8px]'>
+									<Button
+										className={clsx('text-base', {
+											'bg-primary font-semibold text-white': isBarInteger,
+											'text-gray-dark2': !isBarInteger,
+										})}
+										onClick={handleChangeBarNumber}
+										value='number'
+									>
+										{t('integer', { ns: 'annual-analysis' })}
+									</Button>
+									<Button
+										className={clsx('text-base', {
+											'bg-primary font-semibold text-white': !isBarInteger,
+											'text-gray-dark2': isBarInteger,
+										})}
+										onClick={handleChangeBarNumber}
+										value='fracture'
+									>
+										{t('percentage', { ns: 'annual-analysis' })}
+									</Button>
+								</Box>
+								{barColorArr && barGroupArr && lossBarColumns && (
+									<Box
+										className={clsx('', {
+											'ml-[-12px]': isDesktop,
+										})}
+									>
+										<LossStatisticBar
+											key={JSON.stringify(barGroupArr + isBarInteger.toString())}
+											lossBarColumns={lossBarColumns}
+											lossBarColorArr={barColorArr}
+											lossBarGroupArr={barGroupArr}
+											isBarInteger={isBarInteger}
+										/>
+									</Box>
+								)}
 							</>
 						)}
 					</Box>
 				</Grid>
 				<Grid item xs={6}>
-					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
-						<Typography className='text-md font-semibold' component='div'>
-							เปรียบเทียบพื้นที่เสียหายรายปี (เฉพาะที่มีขอบแปลงเท่านั้น)
-						</Typography>
-						{lineColorArr && (
+					<Box
+						className={clsx('h-[496px] rounded bg-white p-[24px] shadow', {
+							'flex items-center justify-center':
+								isBarDataLoading || isLineDataLoading || isTableDataLoading,
+						})}
+					>
+						{isBarDataLoading || isLineDataLoading || isTableDataLoading ? (
+							<div className='flex grow flex-col items-center justify-center bg-white lg:h-full'>
+								<CircularProgress size={80} color='primary' />
+							</div>
+						) : (
 							<>
-								<LossStatisticLine
-									key={JSON.stringify(lineColorArr)}
-									lossLineColumns={lossLineColumns}
-									lossLineColorArr={lineColorArr}
-									lossCategoriesArr={lineCategoriesArr}
-								/>
+								<Typography className='text-md font-semibold' component='div'>
+									{t('compareYearlyDamagedAreaPlotBound', { ns: 'annual-analysis' })}
+								</Typography>
+								{lineColorArr && (
+									<Box
+										className={clsx('', {
+											'mt-[22px]': isDesktop,
+										})}
+									>
+										<LossStatisticLine
+											key={JSON.stringify(lineColorArr)}
+											lossLineColumns={lossLineColumns}
+											lossLineColorArr={lineColorArr}
+											lossCategoriesArr={lineCategoriesArr}
+										/>
+									</Box>
+								)}
 							</>
 						)}
 					</Box>
 				</Grid>
 			</Grid>
-			<Box className='mt-3'>
-				<LossStatisticTable lossTableData={lossTableData?.data} />
+			<Box
+				className={clsx('mt-3 h-[612px] bg-white', {
+					'flex items-center justify-center': isBarDataLoading || isLineDataLoading || isTableDataLoading,
+				})}
+			>
+				{isBarDataLoading || isLineDataLoading || isTableDataLoading ? (
+					<div className='flex grow flex-col items-center justify-center bg-white lg:h-full'>
+						<CircularProgress size={80} color='primary' />
+					</div>
+				) : (
+					<>
+						<LossStatisticTable lossTableData={lossTableData?.data} />
+					</>
+				)}
 			</Box>
 		</Box>
 	)

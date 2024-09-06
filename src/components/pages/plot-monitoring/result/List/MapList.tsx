@@ -4,11 +4,6 @@ import MapView from '@/components/common/map/MapView'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import useSearchPlotMonitoring from '../Main/context'
-import useResponsive from '@/hook/responsive'
-import useAreaType from '@/store/area-type'
-import useAreaUnit from '@/store/area-unit'
-import { useTranslation } from 'react-i18next'
-import { ResponseLanguage } from '@/api/interface'
 import { GetAreaSearchPlotDtoIn } from '@/api/plot-monitoring/dto-in.dto'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
@@ -70,12 +65,7 @@ interface MapListProps {
 
 const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 	const { queryParams } = useSearchPlotMonitoring()
-	const { isDesktop } = useResponsive()
-	const { areaType } = useAreaType()
-	const { areaUnit } = useAreaUnit()
 	const [clickInfo, setClickInfo] = useState<ClickInfo | null>(null)
-	const { t, i18n } = useTranslation(['default', 'field-loss'])
-	const language = i18n.language as keyof ResponseLanguage
 	const { layers, addLayer, setLayers } = useLayerStore()
 
 	const filterAreaSearchPlot = useMemo(() => {
@@ -426,12 +416,12 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 
 	return (
 		<div
-			className={classNames('relative h-[390px] w-full max-lg:overflow-hidden max-lg:rounded lg:h-full', {
-				'lg:hidden': areaDetail !== 'map',
+			className={classNames('relative h-full w-full', {
+				hidden: areaDetail !== 'map',
 			})}
 		>
 			<InfoWindows clickInfo={clickInfo} setClickInfo={setClickInfo} />
-			<MapView />
+			<MapView className='max-lg:[&_div.MuiBox-root:first-child]:bottom-auto max-lg:[&_div.MuiBox-root:first-child]:left-4 max-lg:[&_div.MuiBox-root:first-child]:top-4 max-lg:[&_div.MuiBox-root:nth-child(2)]:hidden' />
 		</div>
 	)
 }

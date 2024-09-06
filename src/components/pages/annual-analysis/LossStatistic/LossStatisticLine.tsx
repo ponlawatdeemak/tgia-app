@@ -62,6 +62,13 @@ const LossStatisticLine: React.FC<LossStatisticLineProps> = ({
 					type: 'category' as const,
 					categories: lossCategoriesArr,
 				},
+				y: {
+					tick: {
+						format: (x: number) => {
+							return x.toLocaleString()
+						},
+					},
+				},
 			},
 			line: {
 				classes: ['line-chart'],

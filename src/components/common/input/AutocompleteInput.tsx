@@ -14,6 +14,7 @@ export interface AutocompleteInputProps extends Omit<AutocompleteProps<any, fals
 	name: string
 	formik?: FormikProps<any>
 	label: string
+	startAdornment?: React.JSX.Element
 	placeholder?: string
 	required?: boolean
 }
@@ -23,6 +24,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
 	formik,
 	label,
 	options,
+	startAdornment,
 	placeholder = '',
 	className,
 	size = 'small',
@@ -52,6 +54,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
 						<OutlinedInput
 							{...otherParams}
 							{...params.InputProps}
+							startAdornment={startAdornment}
 							id={`${name}-input`}
 							placeholder={placeholder}
 							error={formik?.touched[name] && Boolean(formik?.errors[name])}

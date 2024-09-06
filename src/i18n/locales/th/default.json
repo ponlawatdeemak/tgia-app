@@ -42,6 +42,10 @@
 	"thailand": "ประเทศไทย",
     "search": "ค้นหา",
     "dataYear": "ปีของข้อมูล",
+    "noDisaster": "ไม่มีภัยพิบัติ",
+    "item": "รายการ",
+    "riceCultivationArea": "พื้นที่ปลูกข้าว",
+    "filter": "ตัวกรอง",
 	"warning": {
 		"inputEmail": "กรุณากรอกอีเมล",
 		"inputPassword": "กรุณากรอกรหัสผ่าน",

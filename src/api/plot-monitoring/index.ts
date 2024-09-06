@@ -67,12 +67,22 @@ const plotMonitoring = {
 	getPlotActivityPlantDetail: async (
 		payload: GetPlotActivityPlantDetailDtoIn,
 	): Promise<ResponseDto<GetPlotActivityPlantDetailDtoOut>> => {
-		return await api.get(`/plot/${payload.activityId}/plant-detail`, APIService.DisasterAPI)
+		const params = new URLSearchParams()
+
+		if (payload.count !== undefined) params.append('count', payload.count.toString())
+
+		return await api.get(`/plot/${payload.activityId}/plant-detail?${params}`, APIService.DisasterAPI)
 	},
 	getPlotActivityLossDetail: async (
 		payload: GetPlotActivityLossDetailDtoIn,
 	): Promise<ResponseDto<GetPlotActivityLossDetailDtoOut>> => {
-		return await api.get(`/plot/${payload.activityId}/loss-detail`, APIService.DisasterAPI)
+		const params = new URLSearchParams()
+
+		if (payload.registrationAreaType !== undefined)
+			params.append('registrationAreaType', payload.registrationAreaType.toString())
+		if (payload.count !== undefined) params.append('count', payload.count.toString())
+
+		return await api.get(`/plot/${payload.activityId}/loss-detail?${params}`, APIService.DisasterAPI)
 	},
 }
 

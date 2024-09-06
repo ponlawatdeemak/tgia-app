@@ -66,7 +66,7 @@ const LossStatisticBar: React.FC<PlantStatisticTableProps> = ({
 								notation: 'compact',
 								compactDisplay: 'short',
 							})
-							return usformatter.format(x)
+							return isBarInteger ? usformatter.format(x) : usformatter.format(x) + '%'
 						},
 					},
 				},
@@ -80,10 +80,9 @@ const LossStatisticBar: React.FC<PlantStatisticTableProps> = ({
 				},
 			},
 			padding: {
-				mode: 'fit' as const,
-				top: 10,
-				bottom: 20,
-				right: 20,
+				// mode: 'fit' as const,
+				// bottom: 20,
+				// right: 100,
 			},
 		}
 	}, [lossBarColumns, lossBarColorArr])
