@@ -595,11 +595,8 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 						</Typography>
 					</Box>
 				</Toolbar>
-				<Box className='flex h-[70vh] flex-col gap-[16px] pl-[24px] pr-[24px]'>
-					<TableContainer
-						className='flex min-h-[90%] flex-col overflow-hidden overflow-x-auto'
-						component={'div'}
-					>
+				<Box className='flex h-[548px] flex-col gap-[16px] pl-[24px] pr-[24px]'>
+					<TableContainer className='flex flex-col overflow-hidden overflow-x-auto' component={'div'}>
 						<Table
 							aria-labelledby='tableTitle'
 							size={dense ? 'small' : 'medium'}

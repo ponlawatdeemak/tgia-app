@@ -2,7 +2,7 @@ import React from 'react'
 import bb, { bar, ChartOptions, line } from 'billboard.js'
 import 'billboard.js/dist/billboard.css'
 import BillboardJS, { IChart } from '@billboard.js/react'
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, CircularProgress, Grid, Typography } from '@mui/material'
 import PlantStatisticTable from '../PlantStatistic/PlantStatisticTable'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchAnnualAnalysis } from './context'
@@ -18,6 +18,8 @@ import PlantStatisticLine from '../PlantStatistic/PlantStatisticLine'
 import RiceStatisticBar from '../RiceStatistic/RiceStatisticBar'
 import RiceStatisticLine from '../RiceStatistic/RiceStatisticLine'
 import RiceStatisticTable from '../RiceStatistic/RiceStatisticTable'
+import clsx from 'clsx'
+
 type lineColorType = {
 	[key: string]: string
 }
@@ -125,41 +127,79 @@ const RiceStatistic = () => {
 			{/* text font Anuphan ไม่ส่งต่อให้ text ใน g element svg ใน BillboardJS*/}
 			<Grid container rowSpacing={1} columnSpacing={1.5} direction={isDesktop ? 'row' : 'column'}>
 				<Grid item xs={6}>
-					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
-						<Typography className='text-md font-semibold' component='div'>
-							{t('compareFarmerRicePlotBound', { ns: 'annual-analysis' })} ({t(areaUnit)})
-						</Typography>
-						{barColorArr && (
+					<Box
+						className={clsx('h-[488px] rounded bg-white p-[24px] shadow', {
+							'flex items-center justify-center':
+								isBarDataLoading || isLineDataLoading || isTableDataLoading,
+						})}
+					>
+						{isBarDataLoading || isLineDataLoading || isTableDataLoading ? (
+							<div className='flex grow flex-col items-center justify-center bg-white lg:h-full'>
+								<CircularProgress size={80} color='primary' />
+							</div>
+						) : (
 							<>
-								<RiceStatisticBar
-									riceBarColumns={riceBarColumns}
-									riceBarColorArr={barColorArr}
-									key={JSON.stringify(riceBarColumns)}
-								/>
+								<Typography className='text-md font-semibold' component='div'>
+									{t('compareFarmerRicePlotBound', { ns: 'annual-analysis' })} ({t(areaUnit)})
+								</Typography>
+								{barColorArr && (
+									<>
+										<RiceStatisticBar
+											riceBarColumns={riceBarColumns}
+											riceBarColorArr={barColorArr}
+											key={JSON.stringify(riceBarColumns)}
+										/>
+									</>
+								)}
 							</>
 						)}
 					</Box>
 				</Grid>
 				<Grid item xs={6}>
-					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
-						<Typography className='text-md font-semibold' component='div'>
-							{t('compareFarmerYearlyPlotBound', { ns: 'annual-analysis' })} ({t(areaUnit)})
-						</Typography>
-						{lineColorArr && (
+					<Box
+						className={clsx('h-[488px] rounded bg-white p-[24px] shadow', {
+							'flex items-center justify-center':
+								isBarDataLoading || isLineDataLoading || isTableDataLoading,
+						})}
+					>
+						{isBarDataLoading || isLineDataLoading || isTableDataLoading ? (
+							<div className='flex grow flex-col items-center justify-center bg-white lg:h-full'>
+								<CircularProgress size={80} color='primary' />
+							</div>
+						) : (
 							<>
-								<RiceStatisticLine
-									riceLineColumns={riceLineColumns}
-									riceLineColorArr={lineColorArr}
-									lineCategoriesArr={lineCategoriesArr}
-									key={JSON.stringify(lineColorArr)}
-								/>
+								<Typography className='text-md font-semibold' component='div'>
+									{t('compareFarmerYearlyPlotBound', { ns: 'annual-analysis' })} ({t(areaUnit)})
+								</Typography>
+								{lineColorArr && (
+									<>
+										<RiceStatisticLine
+											riceLineColumns={riceLineColumns}
+											riceLineColorArr={lineColorArr}
+											lineCategoriesArr={lineCategoriesArr}
+											key={JSON.stringify(lineColorArr)}
+										/>
+									</>
+								)}
 							</>
 						)}
 					</Box>
 				</Grid>
 			</Grid>
-			<Box className='mt-3'>
-				<RiceStatisticTable riceTableData={riceTableData?.data} />
+			<Box
+				className={clsx('mt-3 h-[612px] bg-white', {
+					'flex items-center justify-center': isBarDataLoading || isLineDataLoading || isTableDataLoading,
+				})}
+			>
+				{isBarDataLoading || isLineDataLoading || isTableDataLoading ? (
+					<div className='flex grow flex-col items-center justify-center bg-white lg:h-full'>
+						<CircularProgress size={80} color='primary' />
+					</div>
+				) : (
+					<>
+						<RiceStatisticTable riceTableData={riceTableData?.data} />
+					</>
+				)}
 			</Box>
 		</Box>
 	)
