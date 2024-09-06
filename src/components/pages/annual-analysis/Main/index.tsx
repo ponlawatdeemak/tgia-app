@@ -17,11 +17,13 @@ import clsx from 'clsx'
 import { useSearchAnnualAnalysis } from './context'
 import { LossType, SortType } from '@/enum'
 import useAreaType from '@/store/area-type'
+import useResponsive from '@/hook/responsive'
 
 interface TabPanelProps {
 	children?: React.ReactNode
 	index: number
 	value: number
+	isDesktop: boolean
 }
 
 interface OptionType {
@@ -41,7 +43,7 @@ const DistrictCodeLength = 4
 const SubDistrictCodeLength = 6
 
 function CustomTabPanel(props: TabPanelProps) {
-	const { children, value, index, ...other } = props
+	const { children, value, index, isDesktop } = props
 
 	return (
 		<div
@@ -49,9 +51,10 @@ function CustomTabPanel(props: TabPanelProps) {
 			hidden={value !== index}
 			id={`simple-tabpanel-${index}`}
 			aria-labelledby={`simple-tab-${index}`}
-			{...other}
 		>
-			{value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+			{value === index && (
+				<Box className={clsx('p-[24px]', { 'pt-[12px]': index === 2, 'px-0': !isDesktop })}>{children}</Box>
+			)}
 		</div>
 	)
 }
@@ -65,6 +68,7 @@ function a11yProps(index: number) {
 
 const AnnualAnalysisMain = () => {
 	const [value, setValue] = useState(0)
+	const { isDesktop } = useResponsive()
 
 	const { data: session } = useSession()
 	const { t, i18n } = useTranslation(['default', 'annual-analysis'])
@@ -218,13 +222,13 @@ const AnnualAnalysisMain = () => {
 						</Tabs>
 					</Box>
 					<Box className='h-[calc(100vh-194px)] overflow-y-auto'>
-						<CustomTabPanel value={value} index={0}>
+						<CustomTabPanel value={value} index={0} isDesktop={isDesktop}>
 							<PlantStatistic />
 						</CustomTabPanel>
-						<CustomTabPanel value={value} index={1}>
+						<CustomTabPanel value={value} index={1} isDesktop={isDesktop}>
 							<RiceStatistic />
 						</CustomTabPanel>
-						<CustomTabPanel value={value} index={2}>
+						<CustomTabPanel value={value} index={2} isDesktop={isDesktop}>
 							<LossStatistic />
 						</CustomTabPanel>
 					</Box>

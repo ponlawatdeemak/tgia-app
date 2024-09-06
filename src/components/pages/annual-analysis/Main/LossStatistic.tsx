@@ -187,7 +187,7 @@ const LossStatistic = () => {
 	return (
 		<Box>
 			{/* text font Anuphan ไม่ส่งต่อให้ text ใน g element svg ใน BillboardJS*/}
-			<Box className='flex-start flex pb-[24px] pr-[24px]'>
+			<Box className='flex-start flex pb-[12px] pr-[24px]'>
 				<ToggleButtonGroup
 					// value={queryParams.lossType}
 					exclusive
@@ -230,7 +230,7 @@ const LossStatistic = () => {
 						<Typography className='text-md font-semibold' component='div'>
 							{t('compareDamagedAreaPlotBound', { ns: 'annual-analysis' })}
 						</Typography>
-						<Box className='flex flex-row justify-end'>
+						<Box className='flex flex-row justify-end gap-[4px] pt-[8px]'>
 							<Button
 								className={clsx('text-base', {
 									'bg-primary font-semibold text-white': isBarInteger,

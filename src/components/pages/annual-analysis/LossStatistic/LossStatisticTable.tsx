@@ -24,6 +24,7 @@ import useResponsive from '@/hook/responsive'
 import { dataAreas } from '@/api/annual-analysis/dto-out.dto'
 import { TextColor } from '@/config/color'
 import { useSelectOption } from '../Main/context'
+import clsx from 'clsx'
 
 interface Data {
 	id: string
@@ -278,25 +279,65 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 	}
 
 	return (
-		<Box sx={{ width: '100%' }}>
-			<Paper sx={{ width: '100%' }}>
-				<Toolbar>
-					<Typography className='text-md font-semibold' id='tableTitle' component='div'>
+		<Box className='w-full'>
+			<Paper className='w-full'>
+				<Toolbar
+					className={clsx('', {
+						'py-[16px]': !isDesktop,
+					})}
+				>
+					<Typography className='w-full text-md font-semibold' id='tableTitle' component='div'>
 						{/* Dynamic Depends on AppBar */}
-						{t('totalDataRanking', { ns: 'annual-analysis' })} ({t(areaUnit)}){' '}
-						<span className='text-sm font-normal text-[#7A7A7A]'>
-							{' '}
-							({t('filter', { ns: 'annual-analysis' })}: {filterString(selectOption)})
-						</span>
+						<Box
+							className={clsx('flex gap-[12px]', {
+								'flex-col items-start': !isDesktop,
+								'items-center justify-between': isDesktop,
+							})}
+						>
+							<Box className='flex flex-row'>
+								<Typography noWrap className='text-md font-semibold'>
+									{t('damageAreaRank', { ns: 'annual-analysis' })} ({t(areaUnit)}){' '}
+									<span className='text-sm font-normal text-[#7A7A7A]'>
+										{!isDesktop && <br />}({t('filter', { ns: 'annual-analysis' })}:{' '}
+										{filterString(selectOption)})
+									</span>
+								</Typography>
+							</Box>
+							<Box
+								className={clsx('flex flex-row gap-1', {
+									'flex-col': !isDesktop,
+								})}
+							>
+								<Box
+									className={`flex h-[28px] flex-row items-center text-ellipsis rounded-xl bg-[#F8FAFD] pl-[8px] pr-[8px] text-base font-medium`}
+								>
+									<Box className={`mr-[6px] h-[14px] w-[14px] rounded-sm bg-[#9F9F9F]`}></Box>
+									<Typography noWrap className='text-base font-medium'>
+										{t('damageAccordingGS', { ns: 'annual-analysis' })}
+									</Typography>
+								</Box>
+								<Box
+									className={`flex h-[28px] flex-row items-center text-ellipsis rounded-xl bg-[#F8FAFD] pl-[8px] pr-[8px] text-base font-medium`}
+								>
+									<Box className={`mr-[6px] h-[14px] w-[14px] rounded-sm bg-[#B23B56]`}></Box>
+									<Typography noWrap className='text-base font-medium'>
+										{t('analysisSystemDamage', { ns: 'annual-analysis' })}
+									</Typography>
+								</Box>
+							</Box>
+						</Box>
 					</Typography>
 				</Toolbar>
 				<Box className='flex h-[70vh] flex-col gap-[16px] pl-[24px] pr-[24px]'>
 					<TableContainer
-						className='flex flex-col overflow-hidden overflow-x-auto'
-						sx={{ minHeight: '90%', flex: 1 }}
+						className='flex min-h-[90%] flex-col overflow-hidden overflow-x-auto'
 						component={'div'}
 					>
-						<Table aria-labelledby='tableTitle' size={dense ? 'small' : 'medium'}>
+						<Table
+							aria-labelledby='tableTitle'
+							size={dense ? 'small' : 'medium'}
+							className='border-separate'
+						>
 							<TableHead>
 								<TableRow>
 									{tableHead &&
@@ -308,9 +349,7 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 													align={'right'}
 													padding={headCell.disablePadding ? 'none' : 'normal'}
 													sortDirection={orderBy === headCell.id ? order : false}
-													sx={{
-														backgroundColor: isSorted ? '#F8FAFD' : 'inherit',
-													}}
+													className={clsx('inherit', { 'bg-[#F8FAFD]': isSorted })}
 												>
 													<TableSortLabel
 														active={orderBy === headCell.id}
@@ -334,12 +373,10 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 													align={headCell.id === 'name' ? 'left' : 'right'}
 													padding={headCell.disablePadding ? 'none' : 'normal'}
 													sortDirection={orderBy === headCell.id ? order : false}
-													sx={{
-														borderRight:
-															headCell.id === 'name'
-																? '1px solid rgb(224, 224, 224)'
-																: '',
-													}}
+													className={clsx('sticky left-0 z-50 bg-white', {
+														'border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0]':
+															headCell.id === 'name',
+													})}
 												>
 													{headCell.label}
 												</TableCell>
@@ -360,15 +397,20 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 													padding='none'
 													rowSpan={2}
 													align={cellIndex === 0 ? 'left' : 'right'}
-													sx={{
-														borderRight:
-															cellIndex === 0 ? '1px solid rgb(224, 224, 224)' : '',
-														backgroundColor: isSorted ? '#F8FAFD' : 'inherit',
-													}}
+													// sx={{
+													// 	borderRight:
+													// 		cellIndex === 0 ? '1px solid rgb(224, 224, 224)' : '',
+													// 	backgroundColor: isSorted ? '#F8FAFD' : 'inherit',
+													// }}
+													className={clsx('', {
+														'sticky left-0 border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0] bg-white':
+															cellIndex === 0,
+														'bg-[#F8FAFD]': isSorted,
+													})}
 												>
 													{cellIndex === 0 ? (
 														<>
-															{cell.order} {cell.name[language]}
+															{cell.order}&nbsp;{cell.name[language]}
 														</>
 													) : (
 														<>

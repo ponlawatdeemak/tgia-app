@@ -22,6 +22,7 @@ import useAreaUnit from '@/store/area-unit'
 import useAreaType from '@/store/area-type'
 import useResponsive from '@/hook/responsive'
 import { useSelectOption } from '../Main/context'
+import clsx from 'clsx'
 
 // Response
 const response = {
@@ -576,13 +577,18 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 
 	// const visibleRows = React.useMemo(() => stableSort(tableData, getComparator(order, orderBy)), [order, orderBy])
 	return (
-		<Box sx={{ width: '100%' }}>
-			<Paper sx={{ width: '100%' }}>
-				<Toolbar className='overflow-x-auto'>
+		<Box className='w-full'>
+			<Paper className='w-full'>
+				<Toolbar
+					// className='overflow-x-auto'
+					className={clsx('overflow-x-auto', {
+						'py-[16px]': !isDesktop,
+					})}
+				>
 					<Box className='flex flex-row'>
 						<Typography className='w-full text-md font-semibold' id='tableTitle' component='div'>
 							{/* Dynamic Depends on AppBar */}
-							{t('totalDataRanking', { ns: 'annual-analysis' })} ({t(areaUnit)}){' '}
+							{t('totalDataRanking', { ns: 'annual-analysis' })} ({t(areaUnit)}) {!isDesktop && <br />}
 							<span className='text-sm font-normal text-[#7A7A7A]'>
 								({t('filter', { ns: 'annual-analysis' })}: {filterString(selectOption)})
 							</span>
@@ -591,11 +597,14 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 				</Toolbar>
 				<Box className='flex h-[70vh] flex-col gap-[16px] pl-[24px] pr-[24px]'>
 					<TableContainer
-						className='flex flex-col overflow-hidden overflow-x-auto'
-						sx={{ minHeight: '90%', flex: 1 }}
+						className='flex min-h-[90%] flex-col overflow-hidden overflow-x-auto'
 						component={'div'}
 					>
-						<Table aria-labelledby='tableTitle' size={dense ? 'small' : 'medium'}>
+						<Table
+							aria-labelledby='tableTitle'
+							size={dense ? 'small' : 'medium'}
+							className='border-separate'
+						>
 							<TableHead>
 								<TableRow>
 									{headCells.map((headCell) => {
@@ -606,9 +615,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 												align={'right'}
 												padding={headCell.disablePadding ? 'none' : 'normal'}
 												sortDirection={orderBy === headCell.id ? order : false}
-												sx={{
-													backgroundColor: isSorted ? '#F8FAFD' : 'inherit',
-												}}
+												className={clsx('inherit', { 'bg-[#F8FAFD]': isSorted })}
 											>
 												<TableSortLabel
 													active={orderBy === headCell.id}
@@ -632,7 +639,10 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 												align={'left'}
 												padding={headCell.disablePadding ? 'none' : 'normal'}
 												sortDirection={orderBy === headCell.id ? order : false}
-												sx={{ borderRight: '1px solid rgb(224, 224, 224)' }}
+												className={clsx('sticky left-0 z-50 bg-white', {
+													'border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0]':
+														headCell.id === 'name',
+												})}
 											>
 												{headCell.label}
 											</TableCell>
@@ -648,47 +658,43 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 												component='th'
 												scope='row'
 												padding='none'
-												sx={{ borderRight: '1px solid rgb(224, 224, 224)' }}
+												className={
+													'sticky left-0 border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0] bg-white'
+												}
 											>
 												<span>
-													{row.order} {row.name[i18n.language]}
+													{row.order}&nbsp;{row.name[i18n.language]}
 												</span>
 											</TableCell>
 											<TableCell
 												align='right'
-												sx={{
-													backgroundColor:
-														orderBy === 'totalRegistrationArea' ? '#F8FAFD' : 'inherit',
-												}}
+												className={clsx('', {
+													'bg-[#F8FAFD]': orderBy === 'totalRegistrationArea',
+												})}
 											>
 												{row.totalRegistrationArea[areaUnit].toLocaleString()}
 											</TableCell>
 											<TableCell
 												align='right'
-												sx={{
-													backgroundColor:
-														orderBy === 'totalRegistrationAreaBoundaries'
-															? '#F8FAFD'
-															: 'inherit',
-												}}
+												className={clsx('', {
+													'bg-[#F8FAFD]': orderBy === 'totalRegistrationAreaBoundaries',
+												})}
 											>
 												{row.totalRegistrationAreaBoundaries[areaUnit].toLocaleString()}
 											</TableCell>
 											<TableCell
 												align='right'
-												sx={{
-													backgroundColor:
-														orderBy === 'totalClaimArea' ? '#F8FAFD' : 'inherit',
-												}}
+												className={clsx('', {
+													'bg-[#F8FAFD]': orderBy === 'totalClaimArea',
+												})}
 											>
 												{row.totalClaimArea[areaUnit].toLocaleString()}
 											</TableCell>
 											<TableCell
 												align='right'
-												sx={{
-													backgroundColor:
-														orderBy === 'totalClaimAreaBoundaries' ? '#F8FAFD' : 'inherit',
-												}}
+												className={clsx('', {
+													'bg-[#F8FAFD]': orderBy === 'totalClaimAreaBoundaries',
+												})}
 											>
 												{row.totalClaimAreaBoundaries[areaUnit].toLocaleString()}
 											</TableCell>

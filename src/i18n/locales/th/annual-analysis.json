@@ -20,5 +20,7 @@
 	"compareDamagedAreaPlotBound": "เปรียบเทียบพื้นที่เสียหาย (เฉพาะที่มีขอบแปลงเท่านั้น)",
 	"compareYearlyDamagedAreaPlotBound": "เปรียบเทียบพื้นที่เสียหายรายปี (เฉพาะที่มีขอบแปลงเท่านั้น)",
 	"integer": "จำนวนเต็ม",
-	"percentage": "เปอร์เซ็นต์"
+	"percentage": "เปอร์เซ็นต์",
+	"riceCultivationAreaRank": "อันดับพื้นที่เพาะปลูกข้าว",
+	"damageAreaRank": "อันดับพื้นที่เสียหาย"
 }

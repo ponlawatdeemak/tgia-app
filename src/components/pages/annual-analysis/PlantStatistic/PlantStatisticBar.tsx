@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import BillboardJS, { IChart } from '@billboard.js/react'
 import bb, { bar, ChartOptions, line } from 'billboard.js'
@@ -17,11 +18,10 @@ const PlantStatisticBar: React.FC<PlantStatisticTableProps> = ({ plantBarColumns
 	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default'])
 	const language = i18n.language as keyof ResponseLanguage
-
 	const barOption = React.useMemo(() => {
 		return {
 			size: {
-				height: 442,
+				height: 446,
 			},
 			data: {
 				x: 'x',
@@ -77,6 +77,9 @@ const PlantStatisticBar: React.FC<PlantStatisticTableProps> = ({ plantBarColumns
 				top: 10,
 				bottom: 20,
 				right: 20,
+			},
+			resize: {
+				auto: true,
 			},
 		}
 	}, [plantBarColumns, plantBarColorArr])

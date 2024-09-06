@@ -20,5 +20,7 @@
 	"compareDamagedAreaPlotBound": "Compare Damaged Areas (Only with Plot Boundaries)",
 	"compareYearlyDamagedAreaPlotBound": "Compare Yearly Damaged Areas (Only with Plot Boundaries)",
 	"integer": "Integer",
-	"percentage": "Percentage"
+	"percentage": "Percentage",
+	"riceCultivationAreaRank": "Rice Cultivation Area Rank",
+	"damageAreaRank": "Damaged Area Rank"
 }
