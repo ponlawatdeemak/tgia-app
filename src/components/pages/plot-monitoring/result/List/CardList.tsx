@@ -3,6 +3,7 @@
 import {
 	Box,
 	Button,
+	CircularProgress,
 	FormControl,
 	FormControlLabel,
 	LinearProgress,
@@ -130,7 +131,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 				},
 			)}
 		>
-			<div className='flex flex-col'>
+			<div className='flex h-full flex-col'>
 				<Box className='flex flex-col gap-2 py-2 lg:hidden'>
 					<ToggleButtonGroup
 						size='small'
@@ -320,16 +321,41 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 						</Select>
 					</FormControl>
 				</Box>
-				<Box>
-					<Box className='overflow-auto lg:!h-[calc(100vh-261px)]'>
-						<div className='flex flex-col gap-2 py-3 lg:gap-3 lg:py-2'>
-							{searchPlotData?.pages.map((details) =>
-								details?.data?.map((detail, index) => {
-									if (details.data?.length === index + 1) {
+				<Box className='h-full'>
+					<Box className='h-full overflow-auto lg:!h-[calc(100vh-261px)]'>
+						{isSearchPlotDataLoading ? (
+							<div className='flex h-[calc(100vh-261px)] flex-col items-center justify-center bg-transparent lg:h-full lg:bg-white'>
+								<CircularProgress size={80} color='primary' />
+							</div>
+						) : searchPlotData?.pages[0]?.data?.length === 0 ? (
+							<Box className='flex h-full items-center justify-center'>
+								<span className='text-base font-normal text-gray-dark2'>
+									{t('noSearchResultsFound', { ns: 'plot-monitoring' })}
+								</span>
+							</Box>
+						) : (
+							<div className='flex flex-col gap-2 py-3 lg:gap-3 lg:py-2'>
+								{searchPlotData?.pages.map((details) =>
+									details?.data?.map((detail, index) => {
+										if (details.data?.length === index + 1) {
+											return (
+												<Button
+													className='rounded p-0 hover:bg-transparent lg:rounded-lg'
+													ref={ref}
+													key={detail.order}
+													onClick={() =>
+														router.push(
+															`${AppPath.PlotMonitoringResult}/${detail.activityId}?count=${detail.count}`,
+														)
+													}
+												>
+													<CardDetail detail={detail} />
+												</Button>
+											)
+										}
 										return (
 											<Button
 												className='rounded p-0 hover:bg-transparent lg:rounded-lg'
-												ref={ref}
 												key={detail.order}
 												onClick={() =>
 													router.push(
@@ -340,28 +366,15 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 												<CardDetail detail={detail} />
 											</Button>
 										)
-									}
-									return (
-										<Button
-											className='rounded p-0 hover:bg-transparent lg:rounded-lg'
-											key={detail.order}
-											onClick={() =>
-												router.push(
-													`${AppPath.PlotMonitoringResult}/${detail.activityId}?count=${detail.count}`,
-												)
-											}
-										>
-											<CardDetail detail={detail} />
-										</Button>
-									)
-								}),
-							)}
-							{isFetchingNextPage && (
-								<Box className='w-full'>
-									<LinearProgress />
-								</Box>
-							)}
-						</div>
+									}),
+								)}
+								{isFetchingNextPage && (
+									<Box className='w-full'>
+										<LinearProgress />
+									</Box>
+								)}
+							</div>
+						)}
 					</Box>
 				</Box>
 			</div>
