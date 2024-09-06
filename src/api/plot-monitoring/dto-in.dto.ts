@@ -25,9 +25,12 @@ export interface GetPositionSearchPlotDtoIn {
 }
 
 export interface GetPlotActivityPlantDetailDtoIn {
-	activityId?: number
+	activityId: number
+	count?: number
 }
 
 export interface GetPlotActivityLossDetailDtoIn {
-	activityId?: number
+	activityId: number
+	registrationAreaType: number
+	count?: number
 }

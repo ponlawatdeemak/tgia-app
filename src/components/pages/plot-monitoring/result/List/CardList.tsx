@@ -1,24 +1,26 @@
 'use client'
 
-import { ResponseLanguage } from '@/api/interface'
-import useResponsive from '@/hook/responsive'
-import useAreaType from '@/store/area-type'
-import useAreaUnit from '@/store/area-unit'
 import {
 	Box,
 	Button,
+	CircularProgress,
 	FormControl,
+	FormControlLabel,
 	LinearProgress,
 	ListItemIcon,
 	ListItemText,
 	MenuItem,
+	Radio,
+	RadioGroup,
 	Select,
 	SelectChangeEvent,
+	ToggleButton,
+	ToggleButtonGroup,
 	Typography,
 } from '@mui/material'
-import { ExpandMore, Check } from '@mui/icons-material'
+import { ExpandMore, Check, ExpandLess } from '@mui/icons-material'
 import classNames from 'classnames'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useSearchPlotMonitoring from '../Main/context'
 import { useInfiniteQuery } from '@tanstack/react-query'
@@ -29,6 +31,8 @@ import { useInView } from 'react-intersection-observer'
 import { AppPath } from '@/config/app'
 import { useRouter } from 'next/navigation'
 import { OrderBy } from '@/enum/plot-monitoring.enum'
+import clsx from 'clsx'
+import FilterButtonMain from '../Filter'
 
 const LimitCardsPerPage = 10
 
@@ -39,13 +43,10 @@ interface CardListProps {
 const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 	const router = useRouter()
 	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
-	const { isDesktop } = useResponsive()
-	const { areaType } = useAreaType()
-	const { areaUnit } = useAreaUnit()
-	const [orderBy, setOrderBy] = useState<string>(OrderBy.ActivityId)
 	const [isOrderByOpen, setIsOrderByOpen] = useState<boolean>(false)
-	const { t, i18n } = useTranslation(['default', 'field-loss'])
-	const language = i18n.language as keyof ResponseLanguage
+	const [selectedToggle, setSelectedToggle] = useState<string>('')
+	const [isSelectedToggleOpen, setIsSelectedToggleOpen] = useState<boolean>(false)
+	const { t } = useTranslation(['default', 'plot-monitoring'])
 	const { ref, inView } = useInView({})
 
 	const filterSearchPlot = useMemo(() => {
@@ -90,7 +91,6 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 		},
 		initialPageParam: 0,
 		getNextPageParam: (lastPage, allPages) => {
-			//console.log({ lastPage, allPages })
 			const nextPage = lastPage?.data?.length ? allPages.length : undefined
 			return nextPage
 		},
@@ -98,44 +98,142 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 
 	useEffect(() => {
 		if (inView && hasNextPage) {
-			//console.log('Fire')
 			fetchNextPage()
 		}
 	}, [inView, hasNextPage, fetchNextPage])
 
-	// if (status === 'pending') {
-	// 	return <p>Loading...</p>
-	// }
+	const handleSelectOrderBy = useCallback(
+		(event: SelectChangeEvent) => {
+			setQueryParams({ ...queryParams, orderBy: event.target.value })
+		},
+		[queryParams, setQueryParams],
+	)
 
-	// if (status === 'error') {
-	// 	return <p>Error: {error.message}</p>
-	// }
-
-	const handleSelectOrderBy = (event: SelectChangeEvent) => {
-		setOrderBy(event.target.value)
-		setQueryParams({ ...queryParams, orderBy: event.target.value })
-	}
+	const handleSelectedToggle = useCallback(
+		(_event: React.MouseEvent<HTMLElement>, newSelectedValue: string | null) => {
+			if (!newSelectedValue) {
+				setIsSelectedToggleOpen(false)
+				setSelectedToggle('')
+			} else {
+				setIsSelectedToggleOpen(true)
+			}
+			setSelectedToggle((prev) => newSelectedValue || prev)
+		},
+		[],
+	)
 
 	return (
 		<div
 			className={classNames(
-				'box-border flex h-full flex-1 flex-col gap-4 bg-white p-4 max-lg:rounded lg:gap-3 lg:overflow-hidden lg:p-6 lg:pb-0 lg:pt-16',
+				'box-border flex h-full flex-1 flex-col gap-4 bg-white px-4 max-lg:rounded max-lg:bg-gray-light lg:gap-3 lg:overflow-hidden lg:px-6 lg:pt-16',
 				{
-					'lg:hidden': areaDetail !== 'cards',
+					hidden: areaDetail !== 'cards',
 				},
 			)}
 		>
-			<div className='flex flex-col'>
-				<Box className='flex items-center justify-between border-0 border-b border-solid border-gray'>
+			<div className='flex h-full flex-col'>
+				<Box className='flex flex-col gap-2 py-2 lg:hidden'>
+					<ToggleButtonGroup
+						size='small'
+						exclusive
+						color='primary'
+						className='flex gap-2 [&_button]:rounded [&_button]:py-2 [&_button]:pl-3 [&_button]:pr-2.5'
+						value={selectedToggle}
+						onChange={handleSelectedToggle}
+					>
+						<ToggleButton
+							className={clsx('flex items-center gap-2 border-2 border-solid text-base', {
+								'border-primary bg-gray-light': selectedToggle === 'filter',
+								'border-transparent': selectedToggle !== 'filter',
+							})}
+							value={'filter'}
+						>
+							<span className='p-0 text-md font-medium text-black'>{t('filter')}</span>
+							{selectedToggle === 'filter' && isSelectedToggleOpen ? (
+								<ExpandLess className='h-6 w-6 text-black' />
+							) : (
+								<ExpandMore className='h-6 w-6 text-black' />
+							)}
+						</ToggleButton>
+						<ToggleButton
+							className={clsx('flex items-center gap-2 border-2 border-solid text-base', {
+								'border-primary bg-gray-light font-semibold': selectedToggle === 'order',
+								'border-transparent font-medium text-gray-dark2': selectedToggle !== 'order',
+							})}
+							value={'order'}
+						>
+							<span className='p-0 text-md font-medium text-black'>
+								{t('orderBy', { ns: 'plot-monitoring' })}
+							</span>
+							{selectedToggle === 'order' && isSelectedToggleOpen ? (
+								<ExpandLess className='h-6 w-6 text-black' />
+							) : (
+								<ExpandMore className='h-6 w-6 text-black' />
+							)}
+						</ToggleButton>
+					</ToggleButtonGroup>
+					<Box
+						className={classNames('flex flex-col rounded bg-white px-3', {
+							'max-lg:hidden': selectedToggle !== 'filter' || !isSelectedToggleOpen,
+						})}
+					>
+						<FilterButtonMain />
+					</Box>
+					<Box
+						className={classNames('flex flex-col rounded bg-white p-3', {
+							'max-lg:hidden': selectedToggle !== 'order' || !isSelectedToggleOpen,
+						})}
+					>
+						<FormControl>
+							<RadioGroup
+								className='[&_.MuiTypography-root]:text-sm [&_.MuiTypography-root]:font-medium [&_.MuiTypography-root]:text-black-dark'
+								name='radio-order'
+								value={queryParams.orderBy}
+								onChange={handleSelectOrderBy}
+							>
+								<FormControlLabel
+									className={classNames('m-0 flex gap-2 p-1', {
+										'[&_.MuiTypography-root]:!font-semibold':
+											queryParams.orderBy === OrderBy.ActivityId,
+									})}
+									value={OrderBy.ActivityId}
+									control={<Radio className='p-0 [&_*>svg]:h-6 [&_*>svg]:w-6' />}
+									label={t('referenceCode', { ns: 'plot-monitoring' })}
+								/>
+								<FormControlLabel
+									className={classNames('m-0 flex gap-2 p-1', {
+										'[&_.MuiTypography-root]:!font-semibold':
+											queryParams.orderBy === OrderBy.PredictedRiceArea,
+									})}
+									value={OrderBy.PredictedRiceArea}
+									control={<Radio className='p-0 [&_*>svg]:h-6 [&_*>svg]:w-6' />}
+									label={t('riceCultivationArea')}
+								/>
+								<FormControlLabel
+									className={classNames('m-0 flex gap-2 p-1', {
+										'[&_.MuiTypography-root]:!font-semibold':
+											queryParams.orderBy === OrderBy.LossPredicted,
+									})}
+									value={OrderBy.LossPredicted}
+									control={<Radio className='p-0 [&_*>svg]:h-6 [&_*>svg]:w-6' />}
+									label={t('riceLossPredictedArea', { ns: 'plot-monitoring' })}
+								/>
+							</RadioGroup>
+						</FormControl>
+					</Box>
+				</Box>
+				<Box className='flex items-center justify-between border-0 border-solid border-gray max-lg:border-t lg:border-b'>
 					<div className='flex items-center'>
-						<Typography className='p-2.5 text-base font-semibold text-black'>ทั้งหมด</Typography>
-						<span className='p-2.5 text-base font-semibold text-black-light'>
+						<Typography className='p-2.5 text-base font-semibold text-black max-lg:py-0 max-lg:pt-3'>
+							{t('all')}
+						</Typography>
+						<span className='p-2.5 text-base font-semibold text-black-light max-lg:py-0 max-lg:pt-3'>
 							{searchPlotData?.pages[0]?.total}
 						</span>
 					</div>
 					<FormControl
 						variant='standard'
-						className={classNames('min-w-[120px] rounded-lg', {
+						className={classNames('min-w-[120px] rounded-lg max-lg:hidden', {
 							'bg-[#0000001A]': isOrderByOpen,
 						})}
 					>
@@ -151,7 +249,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 								className:
 									'[&_.MuiPaper-root]:w-[200px] [&_.MuiPaper-root]:!left-auto [&_.MuiPaper-root]:!top-[245px] [&_.MuiPaper-root]:right-10 [&_.MuiPaper-root]:border [&_.MuiPaper-root]:border-solid [&_.MuiPaper-root]:border-gray',
 							}}
-							value={orderBy}
+							value={queryParams.orderBy}
 							onChange={handleSelectOrderBy}
 							onOpen={() => setIsOrderByOpen(true)}
 							onClose={() => setIsOrderByOpen(false)}
@@ -159,12 +257,12 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 						>
 							<MenuItem
 								className={classNames('flex items-center gap-2 bg-transparent p-2', {
-									'!bg-gray-light2': orderBy === OrderBy.ActivityId,
+									'!bg-gray-light2': queryParams.orderBy === OrderBy.ActivityId,
 								})}
 								value={OrderBy.ActivityId}
 							>
 								<ListItemIcon className='!min-w-4'>
-									{orderBy === OrderBy.ActivityId && (
+									{queryParams.orderBy === OrderBy.ActivityId && (
 										<Check className='h-4 w-4 font-normal text-black' />
 									)}
 								</ListItemIcon>
@@ -172,20 +270,20 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 									className={classNames(
 										'[&_span]:text-base [&_span]:font-normal [&_span]:text-black',
 										{
-											'[&_span]:!font-medium': orderBy === OrderBy.ActivityId,
+											'[&_span]:!font-medium': queryParams.orderBy === OrderBy.ActivityId,
 										},
 									)}
-									primary='รหัสอ้างอิง'
+									primary={t('referenceCode', { ns: 'plot-monitoring' })}
 								/>
 							</MenuItem>
 							<MenuItem
 								className={classNames('flex items-center gap-2 bg-transparent p-2', {
-									'!bg-gray-light2': orderBy === OrderBy.PredictedRiceArea,
+									'!bg-gray-light2': queryParams.orderBy === OrderBy.PredictedRiceArea,
 								})}
 								value={OrderBy.PredictedRiceArea}
 							>
 								<ListItemIcon className='!min-w-4'>
-									{orderBy === OrderBy.PredictedRiceArea && (
+									{queryParams.orderBy === OrderBy.PredictedRiceArea && (
 										<Check className='h-4 w-4 font-normal text-black' />
 									)}
 								</ListItemIcon>
@@ -193,20 +291,20 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 									className={classNames(
 										'[&_span]:text-base [&_span]:font-normal [&_span]:text-black',
 										{
-											'[&_span]:!font-medium': orderBy === OrderBy.PredictedRiceArea,
+											'[&_span]:!font-medium': queryParams.orderBy === OrderBy.PredictedRiceArea,
 										},
 									)}
-									primary='พื้นที่ปลูกข้าว'
+									primary={t('riceCultivationArea')}
 								/>
 							</MenuItem>
 							<MenuItem
 								className={classNames('flex items-center gap-2 bg-transparent p-2', {
-									'!bg-gray-light2': orderBy === OrderBy.LossPredicted,
+									'!bg-gray-light2': queryParams.orderBy === OrderBy.LossPredicted,
 								})}
 								value={OrderBy.LossPredicted}
 							>
 								<ListItemIcon className='!min-w-4'>
-									{orderBy === OrderBy.LossPredicted && (
+									{queryParams.orderBy === OrderBy.LossPredicted && (
 										<Check className='h-4 w-4 font-normal text-black' />
 									)}
 								</ListItemIcon>
@@ -214,53 +312,69 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 									className={classNames(
 										'[&_span]:text-base [&_span]:font-normal [&_span]:text-black',
 										{
-											'[&_span]:!font-medium': orderBy === OrderBy.LossPredicted,
+											'[&_span]:!font-medium': queryParams.orderBy === OrderBy.LossPredicted,
 										},
 									)}
-									primary='พื้นที่ความเสียหาย'
+									primary={t('riceLossArea', { ns: 'plot-monitoring' })}
 								/>
 							</MenuItem>
 						</Select>
 					</FormControl>
 				</Box>
-				<Box>
-					<Box className='!h-[calc(100vh-261px)] overflow-auto'>
-						<div className='flex flex-col gap-3 py-2'>
-							{searchPlotData?.pages.map((details) =>
-								details?.data?.map((detail, index) => {
-									if (details.data?.length === index + 1) {
+				<Box className='h-full'>
+					<Box className='h-full overflow-auto lg:!h-[calc(100vh-261px)]'>
+						{isSearchPlotDataLoading ? (
+							<div className='flex h-[calc(100vh-261px)] flex-col items-center justify-center bg-transparent lg:h-full lg:bg-white'>
+								<CircularProgress size={80} color='primary' />
+							</div>
+						) : searchPlotData?.pages[0]?.data?.length === 0 ? (
+							<Box className='flex h-full items-center justify-center'>
+								<span className='text-base font-normal text-gray-dark2'>
+									{t('noSearchResultsFound', { ns: 'plot-monitoring' })}
+								</span>
+							</Box>
+						) : (
+							<div className='flex flex-col gap-2 py-3 lg:gap-3 lg:py-2'>
+								{searchPlotData?.pages.map((details) =>
+									details?.data?.map((detail, index) => {
+										if (details.data?.length === index + 1) {
+											return (
+												<Button
+													className='rounded p-0 hover:bg-transparent lg:rounded-lg'
+													ref={ref}
+													key={detail.order}
+													onClick={() =>
+														router.push(
+															`${AppPath.PlotMonitoringResult}/${detail.activityId}?count=${detail.count}`,
+														)
+													}
+												>
+													<CardDetail detail={detail} />
+												</Button>
+											)
+										}
 										return (
 											<Button
-												className='rounded-lg p-0 hover:bg-transparent'
-												ref={ref}
+												className='rounded p-0 hover:bg-transparent lg:rounded-lg'
 												key={detail.order}
 												onClick={() =>
-													router.push(`${AppPath.PlotMonitoringResult}/${detail.activityId}`)
+													router.push(
+														`${AppPath.PlotMonitoringResult}/${detail.activityId}?count=${detail.count}`,
+													)
 												}
 											>
 												<CardDetail detail={detail} />
 											</Button>
 										)
-									}
-									return (
-										<Button
-											className='rounded-lg p-0 hover:bg-transparent'
-											key={detail.order}
-											onClick={() =>
-												router.push(`${AppPath.PlotMonitoringResult}/${detail.activityId}`)
-											}
-										>
-											<CardDetail detail={detail} />
-										</Button>
-									)
-								}),
-							)}
-							{isFetchingNextPage && (
-								<Box className='w-full'>
-									<LinearProgress />
-								</Box>
-							)}
-						</div>
+									}),
+								)}
+								{isFetchingNextPage && (
+									<Box className='w-full'>
+										<LinearProgress />
+									</Box>
+								)}
+							</div>
+						)}
 					</Box>
 				</Box>
 			</div>
