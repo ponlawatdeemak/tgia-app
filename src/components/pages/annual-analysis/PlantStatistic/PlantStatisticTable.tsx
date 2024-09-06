@@ -21,6 +21,8 @@ import { ResponseLanguage } from '@/api/interface'
 import useAreaUnit from '@/store/area-unit'
 import useAreaType from '@/store/area-type'
 import useResponsive from '@/hook/responsive'
+import { useSelectOption } from '../Main/context'
+import clsx from 'clsx'
 
 // Response
 const response = {
@@ -422,44 +424,6 @@ interface HeadCell {
 	sortable: boolean
 }
 
-const headCells: readonly HeadCell[] = [
-	{
-		id: 'name',
-		numeric: false,
-		disablePadding: true,
-		label: 'พื้นที่',
-		sortable: false,
-	},
-	{
-		id: 'totalRegistrationArea',
-		numeric: true,
-		disablePadding: false,
-		label: 'พื้นที่ขึ้นทะเบียนทั้งหมด',
-		sortable: true,
-	},
-	{
-		id: 'totalRegistrationAreaBoundaries',
-		numeric: true,
-		disablePadding: false,
-		label: 'พื้นที่ขึ้นทะเบียนที่มีขอบแปลง',
-		sortable: true,
-	},
-	{
-		id: 'totalClaimArea',
-		numeric: true,
-		disablePadding: false,
-		label: 'พื้นที่เอาประกัน',
-		sortable: true,
-	},
-	{
-		id: 'totalClaimAreaBoundaries',
-		numeric: true,
-		disablePadding: false,
-		label: 'พื้นที่เอาประกันที่มีขอบแปลง',
-		sortable: true,
-	},
-]
-
 interface PlantStatisticTableProps {
 	plantTableData?: any[]
 }
@@ -468,7 +432,8 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default'])
+	const { t, i18n } = useTranslation(['default', 'annual-analysis'])
+	const { selectOption, setSelectOption } = useSelectOption()
 	const language = i18n.language as keyof ResponseLanguage
 
 	const [order, setOrder] = React.useState<SortType>(SortType.DESC)
@@ -476,8 +441,45 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 	const [dense, setDense] = React.useState(false)
 	const [tableData, setTableData] = React.useState<any[]>([]) // change from any to dto out
 
+	const headCells: readonly HeadCell[] = [
+		{
+			id: 'name',
+			numeric: false,
+			disablePadding: true,
+			label: t('area', { ns: 'annual-analysis' }),
+			sortable: false,
+		},
+		{
+			id: 'totalRegistrationArea',
+			numeric: true,
+			disablePadding: false,
+			label: t('allFarmerRegisteredArea', { ns: 'annual-analysis' }),
+			sortable: true,
+		},
+		{
+			id: 'totalRegistrationAreaBoundaries',
+			numeric: true,
+			disablePadding: false,
+			label: t('farmerRegisteredAreasPlotBound', { ns: 'annual-analysis' }),
+			sortable: true,
+		},
+		{
+			id: 'totalClaimArea',
+			numeric: true,
+			disablePadding: false,
+			label: t('allInsuredArea', { ns: 'annual-analysis' }),
+			sortable: true,
+		},
+		{
+			id: 'totalClaimAreaBoundaries',
+			numeric: true,
+			disablePadding: false,
+			label: t('insuredAreaPlotBound', { ns: 'annual-analysis' }),
+			sortable: true,
+		},
+	]
+
 	const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-		// console.log('sorting :: ', property)
 		handleRequestSort(event, property)
 	}
 	const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
@@ -528,7 +530,6 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 
 	const rows = React.useMemo(() => {
 		const data = tableData
-		// console.log('sorting data :: ', data, filterOrder, areaUnit)
 		data?.sort((a, b) => {
 			return filterOrder.sortType === SortType.ASC
 				? a[filterOrder?.sort][areaUnit] - b[filterOrder?.sort][areaUnit]
@@ -556,25 +557,51 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 		return data || []
 	}, [tableData, filterOrder, areaUnit])
 
-	// const visibleRows = React.useMemo(() => stableSort(tableData, getComparator(order, orderBy)), [order, orderBy])
+	const filterString = (selectOption: any) => {
+		let tmpStr = ''
+		if (selectOption?.name) {
+			tmpStr += selectOption.name[language]
+		} else {
+			tmpStr += language === 'en' ? 'Thailand' : 'ประเทศไทย'
+		}
+		tmpStr += ', '
+		tmpStr += language === 'en' ? 'Year: ' : 'ปี: '
+		if (selectOption?.selectedYear) {
+			tmpStr += selectOption.selectedYear
+		} else {
+			tmpStr += language === 'en' ? 'All' : 'ทั้งหมด'
+		}
+		// console.log('selectOption :: ', selectOption)
+		return tmpStr
+	}
 
+	// const visibleRows = React.useMemo(() => stableSort(tableData, getComparator(order, orderBy)), [order, orderBy])
 	return (
-		<Box sx={{ width: '100%' }}>
-			<Paper sx={{ width: '100%' }}>
-				<Toolbar>
-					<Typography className='text-md font-semibold' id='tableTitle' component='div'>
-						{/* Dynamic Depends on AppBar */}
-						อันดับผลรวมข้อมูลทั้งหมด (ไร่){' '}
-						<span className='text-sm font-normal text-[#7A7A7A]'>(ตัวกรอง: ประเทศไทย, 2562-2566)</span>
-					</Typography>
+		<Box className='w-full'>
+			<Paper className='w-full'>
+				<Toolbar
+					// className='overflow-x-auto'
+					className={clsx('overflow-x-auto', {
+						'py-[16px]': !isDesktop,
+					})}
+				>
+					<Box className='flex flex-row'>
+						<Typography className='text-md font-semibold' id='tableTitle' component='div'>
+							{/* Dynamic Depends on AppBar */}
+							{t('totalDataRanking', { ns: 'annual-analysis' })} ({t(areaUnit)}) {!isDesktop && <br />}
+							<span className='text-sm font-normal text-[#7A7A7A]'>
+								({t('filter', { ns: 'annual-analysis' })}: {filterString(selectOption)})
+							</span>
+						</Typography>
+					</Box>
 				</Toolbar>
-				<Box className='flex h-[70vh] flex-col gap-[16px] pl-[24px] pr-[24px]'>
-					<TableContainer
-						className='flex flex-col overflow-hidden overflow-x-auto'
-						sx={{ minHeight: '90%', flex: 1 }}
-						component={'div'}
-					>
-						<Table aria-labelledby='tableTitle' size={dense ? 'small' : 'medium'}>
+				<Box className='flex h-[548px] flex-col gap-[16px] pl-[24px] pr-[24px]'>
+					<TableContainer className='flex flex-col overflow-hidden overflow-x-auto' component={'div'}>
+						<Table
+							aria-labelledby='tableTitle'
+							size={dense ? 'small' : 'medium'}
+							className='border-separate'
+						>
 							<TableHead>
 								<TableRow>
 									{headCells.map((headCell) => {
@@ -585,9 +612,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 												align={'right'}
 												padding={headCell.disablePadding ? 'none' : 'normal'}
 												sortDirection={orderBy === headCell.id ? order : false}
-												sx={{
-													backgroundColor: isSorted ? '#F8FAFD' : 'inherit',
-												}}
+												className={clsx('inherit', { 'bg-[#F8FAFD]': isSorted })}
 											>
 												<TableSortLabel
 													active={orderBy === headCell.id}
@@ -611,7 +636,10 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 												align={'left'}
 												padding={headCell.disablePadding ? 'none' : 'normal'}
 												sortDirection={orderBy === headCell.id ? order : false}
-												sx={{ borderRight: '1px solid rgb(224, 224, 224)' }}
+												className={clsx('sticky left-0 z-50 bg-white', {
+													'border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0]':
+														headCell.id === 'name',
+												})}
 											>
 												{headCell.label}
 											</TableCell>
@@ -627,49 +655,45 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 												component='th'
 												scope='row'
 												padding='none'
-												sx={{ borderRight: '1px solid rgb(224, 224, 224)' }}
+												className={
+													'sticky left-0 border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0] bg-white pr-[12px]'
+												}
 											>
 												<span>
-													{row.order} {row.name[i18n.language]}
+													{row.order}&nbsp;{row.name[i18n.language]}
 												</span>
 											</TableCell>
 											<TableCell
 												align='right'
-												sx={{
-													backgroundColor:
-														orderBy === 'totalRegistrationArea' ? '#F8FAFD' : 'inherit',
-												}}
+												className={clsx('', {
+													'bg-[#F8FAFD]': orderBy === 'totalRegistrationArea',
+												})}
 											>
-												{row.totalRegistrationArea[areaUnit]}
+												{row.totalRegistrationArea[areaUnit].toLocaleString()}
 											</TableCell>
 											<TableCell
 												align='right'
-												sx={{
-													backgroundColor:
-														orderBy === 'totalRegistrationAreaBoundaries'
-															? '#F8FAFD'
-															: 'inherit',
-												}}
+												className={clsx('', {
+													'bg-[#F8FAFD]': orderBy === 'totalRegistrationAreaBoundaries',
+												})}
 											>
-												{row.totalRegistrationAreaBoundaries[areaUnit]}
+												{row.totalRegistrationAreaBoundaries[areaUnit].toLocaleString()}
 											</TableCell>
 											<TableCell
 												align='right'
-												sx={{
-													backgroundColor:
-														orderBy === 'totalClaimArea' ? '#F8FAFD' : 'inherit',
-												}}
+												className={clsx('', {
+													'bg-[#F8FAFD]': orderBy === 'totalClaimArea',
+												})}
 											>
-												{row.totalClaimArea[areaUnit]}
+												{row.totalClaimArea[areaUnit].toLocaleString()}
 											</TableCell>
 											<TableCell
 												align='right'
-												sx={{
-													backgroundColor:
-														orderBy === 'totalClaimAreaBoundaries' ? '#F8FAFD' : 'inherit',
-												}}
+												className={clsx('', {
+													'bg-[#F8FAFD]': orderBy === 'totalClaimAreaBoundaries',
+												})}
 											>
-												{row.totalClaimAreaBoundaries[areaUnit]}
+												{row.totalClaimAreaBoundaries[areaUnit].toLocaleString()}
 											</TableCell>
 										</TableRow>
 									)

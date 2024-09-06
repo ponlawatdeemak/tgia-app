@@ -62,6 +62,13 @@ const PlantStatisticLine: React.FC<PlantStatisticLineProps> = ({
 					type: 'category' as const,
 					categories: lineCategoriesArr,
 				},
+				y: {
+					tick: {
+						format: (x: number) => {
+							return x.toLocaleString()
+						},
+					},
+				},
 			},
 			line: {
 				classes: ['line-chart'],

@@ -7,20 +7,27 @@ import Icon from '@mdi/react'
 import { Button, Checkbox, IconButton, Menu, MenuItem } from '@mui/material'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSearchAnnualAnalysis } from '../Main/context'
+import { useSearchAnnualAnalysis, useSelectOption } from '../Main/context'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import { GetLookupOutDto } from '@/api/lookup/dto-out.dto'
 import { useYearPicker } from './context'
+import useAreaType from '@/store/area-type'
+import clsx from 'clsx'
+import { ResponseLanguage } from '@/api/interface'
 
 interface YearPickerProps {}
 
 const YearPicker: React.FC<YearPickerProps> = () => {
 	const { open, setOpen } = useYearPicker()
+	const { areaType } = useAreaType()
 	const { queryParams, setQueryParams } = useSearchAnnualAnalysis()
 	const { isDesktop } = useResponsive()
+	const { t, i18n } = useTranslation(['default'])
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 	const [selectedYear, setSelectedYear] = useState<number[]>([])
+	const language = i18n.language as keyof ResponseLanguage
+	const { selectOption, setSelectOption } = useSelectOption()
 
 	const { data: yearData } = useQuery({
 		queryKey: ['getLookupYears'],
@@ -33,15 +40,17 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 
 	useEffect(() => {
 		if (selectedYear.length > 0) {
+			setSelectOption({ ...selectOption, selectedYear: formatYears(selectedYear) })
 			setQueryParams({ ...queryParams, years: selectedYear })
 		} else {
+			setSelectOption({ ...selectOption, selectedYear: '' })
 			setQueryParams({ ...queryParams, years: [] })
 		}
-	}, [selectedYear])
+	}, [selectedYear, language])
 
 	useEffect(() => {
-		console.log(queryParams)
-	}, [queryParams])
+		setQueryParams({ ...queryParams, registrationAreaType: areaType })
+	}, [areaType])
 
 	const handleClose = () => {
 		setAnchorEl(null)
@@ -71,27 +80,26 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 		const sortedYears = years.map(Number).sort((a, b) => a - b)
 		const ranges: string[] = []
 
-		let start = sortedYears[0]
-		let end = start
-		for (let i = 1; i < sortedYears.length; i++) {
-			const currentYear = sortedYears[i]
-
-			if (currentYear === end + 1) {
-				end = currentYear
-			} else {
-				ranges.push(start === end ? `${start}` : `${start} - ${end}`)
-				start = currentYear
-				end = currentYear
-			}
-		}
-		ranges.push(start === end ? `${start}` : `${start} - ${end}`)
+		sortedYears.forEach((year) => {
+			const yearName = yearData?.data?.find((item) => {
+				return item.code === year
+			})
+			const tmpYear = yearName ? yearName.name[language] : String(year)
+			ranges.push(tmpYear)
+		})
 		return ranges.join(', ')
 	}
 
 	return (
 		<>
 			{/* Mobile */}
-			<IconButton color='secondary' className='btn-shadow lg:hidden' onClick={handleClick}>
+			<IconButton
+				color='secondary'
+				className={clsx('btn-shadow max-h-[40px] min-h-[40px] min-w-[40px] max-w-[40px] lg:hidden', {
+					'box-border border-2 border-solid border-primary': open,
+				})}
+				onClick={handleClick}
+			>
 				<Icon path={mdiCalendarMonthOutline} size={1} />
 			</IconButton>
 
@@ -99,11 +107,14 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 			<Button
 				variant='contained'
 				color='secondary'
-				className='hidden min-w-[280px] lg:flex'
+				className={clsx('hidden max-h-[40px] min-h-[40px] min-w-[200px] max-w-[200px] lg:flex', {
+					'[&_.MuiButton-startIcon]:mr-0': !(selectedYear.length > 0),
+					'border-2 border-solid border-primary': open,
+				})}
 				startIcon={<Icon path={mdiCalendarMonthOutline} size={1} />}
 				onClick={handleClick}
 			>
-				{selectedYear.length > 0 && formatYears(selectedYear)}
+				<div className='truncate'>{selectedYear.length > 0 && formatYears(selectedYear)}</div>
 			</Button>
 
 			<Menu
@@ -118,6 +129,12 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 					vertical: -4,
 					horizontal: 'right',
 				}}
+				PaperProps={{
+					style: {
+						width: isDesktop ? 200 : '',
+						boxShadow: '0 0px 6px 0 rgb(0 0 0 / 0.2)',
+					},
+				}}
 			>
 				{yearData?.data?.map((item: GetLookupOutDto) => (
 					<MenuItem
@@ -129,7 +146,7 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 							color='primary'
 							checked={isYearSelected(item.code)} // Check the checkbox if the year is selected
 						/>
-						{item.code}
+						{item.name[language]}
 					</MenuItem>
 				))}
 			</Menu>

@@ -2,7 +2,7 @@ import React from 'react'
 import bb, { bar, ChartOptions, line } from 'billboard.js'
 import 'billboard.js/dist/billboard.css'
 import BillboardJS, { IChart } from '@billboard.js/react'
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, CircularProgress, Grid, Typography } from '@mui/material'
 import PlantStatisticTable from '../PlantStatistic/PlantStatisticTable'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchAnnualAnalysis } from './context'
@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next'
 import { ResponseLanguage } from '@/api/interface'
 import PlantStatisticBar from '../PlantStatistic/PlantStatisticBar'
 import PlantStatisticLine from '../PlantStatistic/PlantStatisticLine'
+import clsx from 'clsx'
 type lineColorType = {
 	[key: string]: string
 }
@@ -24,7 +25,7 @@ const PlantStatistic = () => {
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default'])
+	const { t, i18n } = useTranslation(['default', 'annual-analysis'])
 	const language = i18n.language as keyof ResponseLanguage
 
 	// bar chart
@@ -69,7 +70,7 @@ const PlantStatistic = () => {
 	React.useEffect(() => {
 		// console.log('plantBarData :: ', plantBarData)
 		if (plantBarData?.data && plantBarData?.legend) {
-			const tempBarColumns = [['x'], ['พื้นที่ไร่/แปลง']] as (string | number)[][] //
+			const tempBarColumns = [['x'], [t(areaUnit)]] as (string | number)[][] //
 			const tempBarColor = [] as string[]
 			for (let i = 0; i < plantBarData?.data.length; i++) {
 				tempBarColumns[0].push(plantBarData?.data[i]?.name[language])
@@ -129,37 +130,79 @@ const PlantStatistic = () => {
 			{/* text font Anuphan ไม่ส่งต่อให้ text ใน g element svg ใน BillboardJS*/}
 			<Grid container rowSpacing={1} columnSpacing={1.5} direction={isDesktop ? 'row' : 'column'}>
 				<Grid item xs={6}>
-					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
-						<Typography className='text-md font-semibold' component='div'>
-							พื้นที่ทั้งหมด (ไร่)
-						</Typography>
-						{barColorArr && (
+					<Box
+						className={clsx('h-[488px] rounded bg-white p-[24px] shadow', {
+							'flex items-center justify-center':
+								isBarDataLoading || isLineDataLoading || isTableDataLoading,
+						})}
+					>
+						{isBarDataLoading || isLineDataLoading || isTableDataLoading ? (
+							<div className='flex grow flex-col items-center justify-center bg-white lg:h-full'>
+								<CircularProgress size={80} color='primary' />
+							</div>
+						) : (
 							<>
-								<PlantStatisticBar plantBarColumns={plantBarColumns} plantBarColorArr={barColorArr} />
+								<Typography className='text-md font-semibold' component='div'>
+									{t('totalArea', { ns: 'annual-analysis' })} ({t(areaUnit)})
+								</Typography>
+								{barColorArr && (
+									<>
+										<PlantStatisticBar
+											plantBarColumns={plantBarColumns}
+											plantBarColorArr={barColorArr}
+											key={JSON.stringify(plantBarColumns)}
+										/>
+									</>
+								)}
 							</>
 						)}
 					</Box>
 				</Grid>
 				<Grid item xs={6}>
-					<Box className='h-[488px] rounded bg-white p-[24px] shadow'>
-						<Typography className='text-md font-semibold' component='div'>
-							เปรียบเทียบพื้นที่ทั้งหมดรายปี (ไร่)
-						</Typography>
-						{lineColorArr && (
+					<Box
+						className={clsx('h-[488px] rounded bg-white p-[24px] shadow', {
+							'flex items-center justify-center':
+								isBarDataLoading || isLineDataLoading || isTableDataLoading,
+						})}
+					>
+						{isBarDataLoading || isLineDataLoading || isTableDataLoading ? (
+							<div className='flex grow flex-col items-center justify-center bg-white lg:h-full'>
+								<CircularProgress size={80} color='primary' />
+							</div>
+						) : (
 							<>
-								<PlantStatisticLine
-									plantLineColumns={plantLineColumns}
-									plantLineColorArr={lineColorArr}
-									lineCategoriesArr={lineCategoriesArr}
-									key={JSON.stringify(lineColorArr)}
-								/>
+								<Typography className='text-md font-semibold' component='div'>
+									{t('compareTotalAreaYearly', { ns: 'annual-analysis' })} ({t(areaUnit)})
+								</Typography>
+								{lineColorArr && (
+									<>
+										<PlantStatisticLine
+											plantLineColumns={plantLineColumns}
+											plantLineColorArr={lineColorArr}
+											lineCategoriesArr={lineCategoriesArr}
+											key={JSON.stringify(lineColorArr)}
+										/>
+									</>
+								)}
 							</>
 						)}
 					</Box>
 				</Grid>
 			</Grid>
-			<Box className='mt-3'>
-				<PlantStatisticTable plantTableData={plantTableData?.data} />
+			<Box
+				className={clsx('mt-3 h-[612px] bg-white', {
+					'flex items-center justify-center': isBarDataLoading || isLineDataLoading || isTableDataLoading,
+				})}
+			>
+				{isBarDataLoading || isLineDataLoading || isTableDataLoading ? (
+					<div className='flex grow flex-col items-center justify-center bg-white lg:h-full'>
+						<CircularProgress size={80} color='primary' />
+					</div>
+				) : (
+					<>
+						<PlantStatisticTable plantTableData={plantTableData?.data} />
+					</>
+				)}
 			</Box>
 		</Box>
 	)
