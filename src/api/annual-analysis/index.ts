@@ -33,28 +33,7 @@ const annualAnalysis = {
 		}
 		return await api.get(`/summary/plant-statistic/table?${params}`, APIService.DisasterAPI)
 	},
-	getLinePlantStatistic: async (
-		payload: GetLinePlantDtoIn,
-	): Promise<
-		ResponseAnnualAnalysisLineDto<
-			DataPlantStatisticDtoOut[],
-			LegendPlantStatisticDtoOut,
-			ValuesPlantStatisticDtoOut[]
-		>
-	> => {
-		const params = new URLSearchParams()
-		for (const key in payload) {
-			if (Object.prototype.hasOwnProperty.call(payload, key)) {
-				const value = payload[key as keyof GetLinePlantDtoIn]
-				if (value) {
-					params.append(key, value.toString())
-				}
-			}
-		}
-		// console.log('params :: ', params.toString())
 
-		return await api.get(`/summary/plant-statistic/line?${params}`, APIService.DisasterAPI)
-	},
 	getBarPlantStatistic: async (
 		payload: GetBarPlantDtoIn,
 	): Promise<ResponseAnnualAnalysisBarDto<DataPlantStatisticDtoOut[], LegendPlantStatisticDtoOut>> => {
@@ -147,6 +126,29 @@ const annualAnalysis = {
 			}
 		}
 		return await api.get(`/summary/loss-statistic/bar?${params}`, APIService.DisasterAPI)
+	},
+
+	getLinePlantStatistic: async (
+		payload: GetLinePlantDtoIn,
+	): Promise<
+		ResponseAnnualAnalysisLineDto<
+			DataPlantStatisticDtoOut[],
+			LegendPlantStatisticDtoOut,
+			ValuesPlantStatisticDtoOut[]
+		>
+	> => {
+		const params = new URLSearchParams()
+		for (const key in payload) {
+			if (Object.prototype.hasOwnProperty.call(payload, key)) {
+				const value = payload[key as keyof GetLinePlantDtoIn]
+				if (value) {
+					params.append(key, value.toString())
+				}
+			}
+		}
+		// console.log('params :: ', params.toString())
+
+		return await api.get(`/summary/plant-statistic/line?${params}`, APIService.DisasterAPI)
 	},
 }
 
