@@ -2,11 +2,11 @@
 	"appName": "โครงการพัฒนาระบบเทคโนโลยี",
 	"subAppName": "เพื่องานประกันภัยข้าวนาปี",
 	"province": "จังหวัด",
-    "allProvinces": "จังหวัดทั้งหมด",
+	"allProvinces": "จังหวัดทั้งหมด",
 	"district": "อำเภอ",
-    "allDistricts": "อำเภอทั้งหมด",
+	"allDistricts": "อำเภอทั้งหมด",
 	"subDistrict": "ตำบล",
-    "allSubDistricts": "ตำบลทั้งหมด",
+	"allSubDistricts": "ตำบลทั้งหมด",
 	"village": "หมู่บ้าน",
 	"areaRai": "ไร่",
 	"areaPlot": "แปลง",
@@ -40,12 +40,12 @@
 	"favoriteAreas": "พื้นที่ในรายการโปรด",
 	"recentSearches": "ค้นหาล่าสุด",
 	"thailand": "ประเทศไทย",
-    "search": "ค้นหา",
-    "dataYear": "ปีของข้อมูล",
-    "noDisaster": "ไม่มีภัยพิบัติ",
-    "item": "รายการ",
-    "riceCultivationArea": "พื้นที่ปลูกข้าว",
-    "filter": "ตัวกรอง",
+	"search": "ค้นหา",
+	"dataYear": "ปีของข้อมูล",
+	"noDisaster": "ไม่มีภัยพิบัติ",
+	"item": "รายการ",
+	"riceCultivationArea": "พื้นที่ปลูกข้าว",
+	"filter": "ตัวกรอง",
 	"warning": {
 		"inputEmail": "กรุณากรอกอีเมล",
 		"inputPassword": "กรุณากรอกรหัสผ่าน",
@@ -63,7 +63,9 @@
 		"inputLastName": "กรุณากรอกนามสกุล",
 		"inputProvince": "กรุณาเลือกจังหวัด",
 		"inputDistrict": "กรุณาเลือกอำเภอ",
-        "inputDataYear": "กรุณาเลือกปีของข้อมูล"
+		"inputDataYear": "กรุณาเลือกปีของข้อมูล",
+		"inputOrgCode": "กรุณาเลือกหน่วยงาน",
+		"inputRole": "กรุณาเลือกบทบาท"
 	},
 	"success": {},
 	"error": {
@@ -89,6 +91,6 @@
 		"satellite": "ภูมิประเทศ",
 		"hybrid": "ผสม"
 	},
-    "dataSetYear": "ปีชุดข้อมูล",
-    "area": "พื้นที่"
+	"dataSetYear": "ปีชุดข้อมูล",
+	"area": "พื้นที่"
 }
