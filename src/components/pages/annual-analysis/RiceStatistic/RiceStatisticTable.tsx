@@ -22,7 +22,6 @@ import useAreaUnit from '@/store/area-unit'
 import useAreaType from '@/store/area-type'
 import useResponsive from '@/hook/responsive'
 import { dataAreas } from '@/api/annual-analysis/dto-out.dto'
-import { SummaryBarChartColor, TextColor } from '@/config/color'
 import { bar } from 'billboard.js'
 import { useSelectOption } from '../Main/context'
 import clsx from 'clsx'
@@ -607,7 +606,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 								})}
 							>
 								<Box
-									className={`flex h-[28px] flex-row items-center text-ellipsis rounded-xl bg-[#F8FAFD] pl-[8px] pr-[8px] text-base font-medium`}
+									className={`flex h-[28px] flex-row items-center text-ellipsis rounded-xl bg-gray-light2 pl-[8px] pr-[8px] text-base font-medium`}
 								>
 									<Box className={`mr-[6px] h-[14px] w-[14px] rounded-sm bg-[#9F9F9F]`}></Box>
 									<Typography noWrap className='text-base font-medium'>
@@ -615,9 +614,9 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 									</Typography>
 								</Box>
 								<Box
-									className={`flex h-[28px] flex-row items-center text-ellipsis rounded-xl bg-[#F8FAFD] pl-[8px] pr-[8px] text-base font-medium`}
+									className={`flex h-[28px] flex-row items-center text-ellipsis rounded-xl bg-gray-light2 pl-[8px] pr-[8px] text-base font-medium`}
 								>
-									<Box className={`mr-[6px] h-[14px] w-[14px] rounded-sm bg-[#B23B56]`}></Box>
+									<Box className={`mr-[6px] h-[14px] w-[14px] rounded-sm bg-lossType`}></Box>
 									<Typography noWrap className='text-base font-medium'>
 										{t('analysisSystemDamage', { ns: 'annual-analysis' })}
 									</Typography>
@@ -644,7 +643,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 													align={'right'}
 													padding={headCell.disablePadding ? 'none' : 'normal'}
 													sortDirection={orderBy === headCell.id ? order : false}
-													className={clsx('inherit', { 'bg-[#F8FAFD]': isSorted })}
+													className={clsx('inherit', { 'bg-gray-light2': isSorted })}
 												>
 													<TableSortLabel
 														active={orderBy === headCell.id}
@@ -695,7 +694,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 													className={clsx('', {
 														'sticky left-0 border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0] bg-white pr-[12px]':
 															cellIndex === 0,
-														'bg-[#F8FAFD]': isSorted,
+														'bg-gray-light2': isSorted,
 														'[&_.MuiTableCell]:pr-[12px]': !isDesktop,
 													})}
 												>
@@ -709,7 +708,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 																{cell.actAreas[areaUnit].toLocaleString()}
 															</span>
 															<br />
-															<span className={`text-[${TextColor.text2}]`}>
+															<span className={`text-lossType`}>
 																{cell.predictedRiceAreas[areaUnit].toLocaleString()}
 															</span>
 														</>

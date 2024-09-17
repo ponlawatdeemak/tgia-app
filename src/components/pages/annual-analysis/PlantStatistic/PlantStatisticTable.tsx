@@ -612,7 +612,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 												align={'right'}
 												padding={headCell.disablePadding ? 'none' : 'normal'}
 												sortDirection={orderBy === headCell.id ? order : false}
-												className={clsx('inherit', { 'bg-[#F8FAFD]': isSorted })}
+												className={clsx('inherit', { 'bg-gray-light2': isSorted })}
 											>
 												<TableSortLabel
 													active={orderBy === headCell.id}
@@ -666,7 +666,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 											<TableCell
 												align='right'
 												className={clsx('', {
-													'bg-[#F8FAFD]': orderBy === 'totalRegistrationArea',
+													'bg-gray-light2': orderBy === 'totalRegistrationArea',
 												})}
 											>
 												{row.totalRegistrationArea[areaUnit].toLocaleString()}
@@ -674,7 +674,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 											<TableCell
 												align='right'
 												className={clsx('', {
-													'bg-[#F8FAFD]': orderBy === 'totalRegistrationAreaBoundaries',
+													'bg-gray-light2': orderBy === 'totalRegistrationAreaBoundaries',
 												})}
 											>
 												{row.totalRegistrationAreaBoundaries[areaUnit].toLocaleString()}
@@ -682,7 +682,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 											<TableCell
 												align='right'
 												className={clsx('', {
-													'bg-[#F8FAFD]': orderBy === 'totalClaimArea',
+													'bg-gray-light2': orderBy === 'totalClaimArea',
 												})}
 											>
 												{row.totalClaimArea[areaUnit].toLocaleString()}
@@ -690,7 +690,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 											<TableCell
 												align='right'
 												className={clsx('', {
-													'bg-[#F8FAFD]': orderBy === 'totalClaimAreaBoundaries',
+													'bg-gray-light2': orderBy === 'totalClaimAreaBoundaries',
 												})}
 											>
 												{row.totalClaimAreaBoundaries[areaUnit].toLocaleString()}

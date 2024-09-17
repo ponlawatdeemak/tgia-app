@@ -309,7 +309,7 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 								})}
 							>
 								<Box
-									className={`flex h-[28px] flex-row items-center text-ellipsis rounded-xl bg-[#F8FAFD] pl-[8px] pr-[8px] text-base font-medium`}
+									className={`flex h-[28px] flex-row items-center text-ellipsis rounded-xl bg-gray-light2 pl-[8px] pr-[8px] text-base font-medium`}
 								>
 									<Box className={`mr-[6px] h-[14px] w-[14px] rounded-sm bg-[#9F9F9F]`}></Box>
 									<Typography noWrap className='text-base font-medium'>
@@ -317,9 +317,9 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 									</Typography>
 								</Box>
 								<Box
-									className={`flex h-[28px] flex-row items-center text-ellipsis rounded-xl bg-[#F8FAFD] pl-[8px] pr-[8px] text-base font-medium`}
+									className={`flex h-[28px] flex-row items-center text-ellipsis rounded-xl bg-gray-light2 pl-[8px] pr-[8px] text-base font-medium`}
 								>
-									<Box className={`mr-[6px] h-[14px] w-[14px] rounded-sm bg-[#B23B56]`}></Box>
+									<Box className={`mr-[6px] h-[14px] w-[14px] rounded-sm bg-lossType`}></Box>
 									<Typography noWrap className='text-base font-medium'>
 										{t('analysisSystemDamage', { ns: 'annual-analysis' })}
 									</Typography>
@@ -346,7 +346,7 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 													align={'right'}
 													padding={headCell.disablePadding ? 'none' : 'normal'}
 													sortDirection={orderBy === headCell.id ? order : false}
-													className={clsx('inherit', { 'bg-[#F8FAFD]': isSorted })}
+													className={clsx('inherit', { 'bg-gray-light2': isSorted })}
 												>
 													<TableSortLabel
 														active={orderBy === headCell.id}
@@ -402,7 +402,7 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 													className={clsx('', {
 														'sticky left-0 border-0 border-b-[1px] border-r-[1px] border-solid border-[#E0E0E0] bg-white pr-[12px]':
 															cellIndex === 0,
-														'bg-[#F8FAFD]': isSorted,
+														'bg-gray-light2': isSorted,
 													})}
 												>
 													{cellIndex === 0 ? (
@@ -415,7 +415,7 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 																{cell.disasterAreas[areaUnit].toLocaleString()}
 															</span>
 															<br />
-															<span className={`text-[${TextColor.text2}]`}>
+															<span className={`text-lossType`}>
 																{cell.predictedAreas[areaUnit].toLocaleString()}
 															</span>
 														</>
