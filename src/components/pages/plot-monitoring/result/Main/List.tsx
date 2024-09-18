@@ -37,7 +37,7 @@ const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, set
 				size='small'
 				exclusive
 				color='primary'
-				className='fixed right-3 z-10 flex gap-2 rounded bg-[#E5E5E5B2] p-2 max-lg:bottom-3 max-lg:left-3 lg:absolute lg:top-3 lg:rounded-lg lg:bg-gray-light3 lg:p-1 [&_*]:px-3 [&_*]:py-1.5 max-lg:[&_*]:rounded'
+				className='bg-gray-dark5 fixed right-3 z-10 flex gap-2 rounded p-2 max-lg:bottom-3 max-lg:left-3 lg:absolute lg:top-3 lg:rounded-lg lg:bg-gray-light3 lg:p-1 [&_*]:px-3 [&_*]:py-1.5 max-lg:[&_*]:rounded'
 				value={areaDetail}
 				onChange={handleAreaDetailChange}
 			>
