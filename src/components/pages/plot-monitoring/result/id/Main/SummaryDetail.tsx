@@ -60,7 +60,7 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({
 						<div className='mx-6 mb-2 mt-3 flex text-base font-semibold text-black max-lg:hidden'>
 							{['noData', 'noDamage'].includes(plantDetailData?.lossType || '')
 								? t('noDisaster')
-								: `${t('occurrence', { ns: 'plot-monitoring' })} ${plantDetailData?.count || ''} ${t(`${plantDetailData?.lossType}`)}`}
+								: `${t('occurrence', { ns: 'plot-monitoring' })} ${plantDetailData?.count || ''} ${t(`${plantDetailData?.lossType || ''}`)}`}
 						</div>
 						<Box className='mx-4 flex flex-col gap-1 max-lg:mt-3 max-lg:rounded max-lg:bg-[#F2F2F2] max-lg:p-2 lg:mx-6'>
 							<div className='flex w-full flex-row gap-1 text-sm text-black max-lg:hidden'>
