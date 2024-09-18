@@ -188,7 +188,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 									className='w-[20.5%] min-w-[100px] p-2.5 font-semibold text-secondary'
 									align='right'
 								>
-									{timeStatisticData?.dataTotal?.[lossTypePredicted][areaUnit].toLocaleString()}
+									{timeStatisticData?.dataTotal?.[lossTypePredicted][areaUnit]?.toLocaleString()}
 								</TableCell>
 								{isDesktop && (
 									<TableCell className='p-0 py-2 font-medium text-black' align='right'>
@@ -256,8 +256,10 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 																	{queryParams.lossType === LossType.Drought
 																		? row.droughtPredicted[
 																				areaUnit
-																			].toLocaleString()
-																		: row.floodPredicted[areaUnit].toLocaleString()}
+																			]?.toLocaleString()
+																		: row.floodPredicted[
+																				areaUnit
+																			]?.toLocaleString()}
 																</span>
 																<span className='text-sm font-normal text-black'>
 																	{t(areaUnit)}
@@ -273,7 +275,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 															</span>
 															<div className='flex flex-row items-baseline gap-1'>
 																<span className='text-base font-semibold text-secondary'>
-																	{row.totalPredicted[areaUnit].toLocaleString()}
+																	{row.totalPredicted[areaUnit]?.toLocaleString()}
 																</span>
 																<span className='text-sm font-normal text-black'>
 																	{t(areaUnit)}
@@ -286,7 +288,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 															</span>
 															<div className='flex flex-row items-baseline gap-1'>
 																<span className='text-base font-semibold text-secondary'>
-																	{row.droughtPredicted[areaUnit].toLocaleString()}
+																	{row.droughtPredicted[areaUnit]?.toLocaleString()}
 																</span>
 																<span className='text-sm font-normal text-black'>
 																	{t(areaUnit)}
@@ -299,7 +301,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 															</span>
 															<div className='flex flex-row items-baseline gap-1'>
 																<span className='text-base font-semibold text-secondary'>
-																	{row.floodPredicted[areaUnit].toLocaleString()}
+																	{row.floodPredicted[areaUnit]?.toLocaleString()}
 																</span>
 																<span className='text-sm font-normal text-black'>
 																	{t(areaUnit)}
@@ -339,7 +341,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 													className='p-2.5 text-base font-medium text-secondary'
 													align='right'
 												>
-													{row?.[lossTypePredicted][areaUnit].toLocaleString()}
+													{row?.[lossTypePredicted][areaUnit]?.toLocaleString()}
 												</TableCell>
 												<TableCell className='p-0 px-2.5' align='left'>
 													<div className='w-full'>
@@ -371,7 +373,7 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 																{row.monthYear[language]}
 															</Typography>
 															<Typography className='text-base font-medium text-secondary'>
-																{row?.[lossTypePredicted][areaUnit].toLocaleString()}
+																{row?.[lossTypePredicted][areaUnit]?.toLocaleString()}
 															</Typography>
 														</Box>
 														<div className='px-2.5'>
