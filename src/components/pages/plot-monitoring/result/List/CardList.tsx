@@ -33,6 +33,7 @@ import { useRouter } from 'next/navigation'
 import { OrderBy } from '@/enum/plot-monitoring.enum'
 import clsx from 'clsx'
 import FilterButtonMain from '../Filter'
+import useAreaType from '@/store/area-type'
 
 const LimitCardsPerPage = 10
 
@@ -43,6 +44,7 @@ interface CardListProps {
 const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 	const router = useRouter()
 	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
+	const { areaType } = useAreaType()
 	const [isOrderByOpen, setIsOrderByOpen] = useState<boolean>(false)
 	const [selectedToggle, setSelectedToggle] = useState<string>('')
 	const [isSelectedToggleOpen, setIsSelectedToggleOpen] = useState<boolean>(false)
@@ -53,6 +55,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 		const filter: GetSearchPlotDtoIn = {
 			activityId: queryParams.activityId || undefined,
 			year: queryParams.year,
+			registrationAreaType: areaType,
 			provinceCode: queryParams.provinceCode || undefined,
 			districtCode: queryParams.districtCode || undefined,
 			subDistrictCode: queryParams.subDistrictCode || undefined,
@@ -66,7 +69,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 			limit: queryParams.limit || LimitCardsPerPage,
 		}
 		return filter
-	}, [queryParams])
+	}, [queryParams, areaType])
 
 	const {
 		data: searchPlotData,

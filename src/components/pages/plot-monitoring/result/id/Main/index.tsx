@@ -9,14 +9,12 @@ import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import PlantDetail from '../Detail/PlantDetail'
 import LossDetail from '../Detail/LossDetail'
-import useAreaType from '@/store/area-type'
 import useResponsive from '@/hook/responsive'
 
 export const PlotMonitoringDetailMain = () => {
 	const { isDesktop } = useResponsive()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
-	const { areaType } = useAreaType()
 	const activityId = Number(pathname.split('/').pop())
 	const count = searchParams.get('count')
 
@@ -29,11 +27,10 @@ export const PlotMonitoringDetailMain = () => {
 	})
 
 	const { data: lossDetailData, isLoading: isLossDetailDataLoading } = useQuery({
-		queryKey: ['getPlotActivityLossDetail', activityId, areaType, count],
+		queryKey: ['getPlotActivityLossDetail', activityId, count],
 		queryFn: () =>
 			service.plotMonitoring.getPlotActivityLossDetail({
 				activityId,
-				registrationAreaType: areaType,
 				count: count ? parseInt(count) : 1,
 			}),
 	})
