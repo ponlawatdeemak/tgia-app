@@ -34,9 +34,9 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 	}, [])
 
 	return (
-		<div className='flex flex-col gap-4 rounded bg-white py-4 max-lg:px-4 lg:rounded-lg'>
-			<div className='flex justify-center gap-4'>
-				<Paper className='flex w-[204px] items-center justify-center bg-gray-light3 max-lg:h-[80px] max-lg:w-[80px]'>
+		<div className='flex w-full flex-col gap-4 rounded bg-white p-4 lg:rounded-lg'>
+			<div className='flex gap-4'>
+				<Paper className='flex aspect-square h-[80px] w-[80px] items-center justify-center bg-gray-light3 sm:h-auto sm:w-[130px] lg:w-[204px]'>
 					{!!detail.geometry.coordinates && (
 						<PolygonToImage
 							className='!h-[80px] !w-[80px] !border-none !bg-transparent [&_svg]:h-[60px] [&_svg]:w-[60px]'
@@ -46,7 +46,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 						/>
 					)}
 				</Paper>
-				<Box className='flex flex-col gap-1 lg:gap-2'>
+				<Box className='flex grow flex-col gap-1 lg:gap-2'>
 					<div className='flex items-center justify-between'>
 						<Typography className='text-base font-semibold text-black-dark lg:text-md'>
 							{detail.activityId}
@@ -113,14 +113,14 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 					<div className='flex gap-2 max-lg:hidden'>
 						<Box
 							className={classNames(
-								'flex w-40 items-center justify-between rounded-lg bg-gray-light3 px-2 py-1',
+								'flex w-[50%] items-center justify-between rounded-lg bg-gray-light3 px-2 py-1',
 								{
-									'!w-[332px]': !detail.lossPredicted,
+									'box-border !w-[calc(50%-4px)]': !detail.lossPredicted,
 								},
 							)}
 						>
-							<div className='flex items-center gap-1'>
-								<span className='text-base font-medium text-black'>
+							<div className='mr-2 flex items-center gap-1'>
+								<span className='text-left text-base font-medium text-black'>
 									{t('canGrowRice', { ns: 'plot-monitoring' })}
 								</span>
 								<span className='text-base font-semibold text-secondary'>
@@ -135,7 +135,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 							</div>
 						</Box>
 						{detail.lossPredicted && (
-							<Box className='flex w-[148px] items-center justify-between rounded-lg bg-gray-light3 px-2 py-1'>
+							<Box className='flex w-[50%] items-center justify-between rounded-lg bg-gray-light3 px-2 py-1'>
 								<div className='flex items-center gap-1'>
 									<span className='text-base font-medium text-black'>
 										{t(`${detail.lossPredicted.lossType}`)}
@@ -154,9 +154,16 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 				</Box>
 			</div>
 			<div className='flex gap-2 lg:hidden'>
-				<Box className='flex w-full items-center justify-between rounded border border-solid border-gray p-2'>
-					<div className='flex items-center gap-1'>
-						<span className='text-sm font-medium text-black'>
+				<Box
+					className={classNames(
+						'flex w-[50%] items-center justify-between rounded border border-solid border-gray p-2',
+						{
+							'box-border !w-[calc(50%-4px)]': !detail.lossPredicted,
+						},
+					)}
+				>
+					<div className='mr-2 flex items-center gap-1'>
+						<span className='text-left text-sm font-medium text-black'>
 							{t('canGrowRice', { ns: 'plot-monitoring' })}
 						</span>
 						<span className='text-sm font-semibold text-secondary'>
@@ -169,8 +176,8 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 					</div>
 				</Box>
 				{detail.lossPredicted && (
-					<Box className='flex w-full items-center justify-between rounded border border-solid border-gray p-2'>
-						<div className='flex items-center gap-1'>
+					<Box className='flex w-[50%] items-center justify-between rounded border border-solid border-gray p-2'>
+						<div className='mr-2 flex items-center gap-1'>
 							<span className='text-sm font-medium text-black'>
 								{t(`${detail.lossPredicted.lossType}`)}
 							</span>
