@@ -1,6 +1,7 @@
 export interface GetAreaSearchPlotDtoIn {
 	activityId?: number
 	year: number
+	registrationAreaType: number
 	provinceCode?: number
 	districtCode?: number
 	subDistrictCode?: number
@@ -24,13 +25,7 @@ export interface GetPositionSearchPlotDtoIn {
 	year?: number
 }
 
-export interface GetPlotActivityPlantDetailDtoIn {
+export interface GetPlotActivityDetailDtoIn {
 	activityId: number
-	count?: number
-}
-
-export interface GetPlotActivityLossDetailDtoIn {
-	activityId: number
-	registrationAreaType: number
 	count?: number
 }

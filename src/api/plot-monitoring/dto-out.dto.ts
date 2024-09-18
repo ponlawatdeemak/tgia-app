@@ -111,3 +111,13 @@ export interface GetPlotActivityLossDetailDtoOut {
 	updateLossDate: ResponseLanguage
 	predictedLossDate: ResponseLanguage
 }
+
+export interface GetPOISDtoOut {
+	poiId: string
+	userId: string
+	title: string
+	lat: number
+	lng: number
+	createdAt: string
+	updatedAt: string
+}
