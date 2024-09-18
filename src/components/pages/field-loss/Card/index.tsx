@@ -32,7 +32,7 @@ const FieldLossCard: React.FC<FieldLossCardProps> = ({ item, actArea }) => {
 					</div>
 				</div>
 				<div className='flex items-baseline gap-1'>
-					<span className='text-base font-semibold text-secondary'>{item[areaUnit].toLocaleString()}</span>
+					<span className='text-base font-semibold text-secondary'>{item[areaUnit]?.toLocaleString()}</span>
 					<span className='text-base font-normal text-black'>{t(areaUnit)}</span>
 				</div>
 			</Box>
@@ -42,7 +42,7 @@ const FieldLossCard: React.FC<FieldLossCardProps> = ({ item, actArea }) => {
 				</span>
 				<div className='flex items-baseline gap-1'>
 					<span className='text-base font-semibold text-black-light'>
-						{actArea?.[areaUnit].toLocaleString()}
+						{actArea?.[areaUnit]?.toLocaleString()}
 					</span>
 					<span className='text-base font-normal text-black'>{t(areaUnit)}</span>
 				</div>

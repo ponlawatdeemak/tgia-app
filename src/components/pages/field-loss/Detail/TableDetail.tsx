@@ -180,7 +180,7 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 									})}
 									align='right'
 								>
-									{areaStatisticData?.dataTotal?.totalPredicted[areaUnit].toLocaleString()}
+									{areaStatisticData?.dataTotal?.totalPredicted[areaUnit]?.toLocaleString()}
 								</TableCell>
 								<TableCell
 									className={clsx('w-[20.5%] min-w-[100px]', {
@@ -191,7 +191,7 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 									})}
 									align='right'
 								>
-									{areaStatisticData?.dataTotal?.droughtPredicted[areaUnit].toLocaleString()}
+									{areaStatisticData?.dataTotal?.droughtPredicted[areaUnit]?.toLocaleString()}
 								</TableCell>
 								<TableCell
 									className={clsx('w-[20.5%] min-w-[100px]', {
@@ -202,7 +202,7 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 									})}
 									align='right'
 								>
-									{areaStatisticData?.dataTotal?.floodPredicted[areaUnit].toLocaleString()}
+									{areaStatisticData?.dataTotal?.floodPredicted[areaUnit]?.toLocaleString()}
 								</TableCell>
 							</TableRow>
 							<TableRow className='[&_th]:border-gray [&_th]:px-2.5 [&_th]:py-2 [&_th]:text-sm [&_th]:font-semibold [&_th]:text-black'>
@@ -276,7 +276,7 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 													'totalPredicted',
 											})}
 										>
-											{row.totalPredicted[areaUnit].toLocaleString()}
+											{row.totalPredicted[areaUnit]?.toLocaleString()}
 										</TableCell>
 										<TableCell
 											align='right'
@@ -289,7 +289,7 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 													'droughtPredicted',
 											})}
 										>
-											{row.droughtPredicted[areaUnit].toLocaleString()}
+											{row.droughtPredicted[areaUnit]?.toLocaleString()}
 										</TableCell>
 										<TableCell
 											align='right'
@@ -302,7 +302,7 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 													'floodPredicted',
 											})}
 										>
-											{row.floodPredicted[areaUnit].toLocaleString()}
+											{row.floodPredicted[areaUnit]?.toLocaleString()}
 										</TableCell>
 									</TableRow>
 								)

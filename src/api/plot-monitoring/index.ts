@@ -1,7 +1,6 @@
 import {
 	GetAreaSearchPlotDtoIn,
-	GetPlotActivityLossDetailDtoIn,
-	GetPlotActivityPlantDetailDtoIn,
+	GetPlotActivityDetailDtoIn,
 	GetPositionSearchPlotDtoIn,
 	GetSearchPlotDtoIn,
 } from './dto-in.dto'
@@ -9,6 +8,7 @@ import {
 	GetAreaSearchPlotDtoOut,
 	GetPlotActivityLossDetailDtoOut,
 	GetPlotActivityPlantDetailDtoOut,
+	GetPOISDtoOut,
 	GetPositionSearchPlotDtoOut,
 	GetSearchPlotDtoOut,
 } from './dto-out.dto'
@@ -21,6 +21,8 @@ const plotMonitoring = {
 
 		if (payload.activityId !== undefined) params.append('activityId', payload.activityId.toString())
 		if (payload.year !== undefined) params.append('year', payload.year.toString())
+		if (payload.registrationAreaType !== undefined)
+			params.append('registrationAreaType', payload.registrationAreaType.toString())
 		if (payload.provinceCode !== undefined) params.append('provinceCode', payload.provinceCode.toString())
 		if (payload.districtCode !== undefined) params.append('districtCode', payload.districtCode.toString())
 		if (payload.subDistrictCode !== undefined) params.append('subDistrictCode', payload.subDistrictCode.toString())
@@ -41,6 +43,8 @@ const plotMonitoring = {
 
 		if (payload.activityId !== undefined) params.append('activityId', payload.activityId.toString())
 		if (payload.year !== undefined) params.append('year', payload.year.toString())
+		if (payload.registrationAreaType !== undefined)
+			params.append('registrationAreaType', payload.registrationAreaType.toString())
 		if (payload.provinceCode !== undefined) params.append('provinceCode', payload.provinceCode.toString())
 		if (payload.districtCode !== undefined) params.append('districtCode', payload.districtCode.toString())
 		if (payload.subDistrictCode !== undefined) params.append('subDistrictCode', payload.subDistrictCode.toString())
@@ -65,7 +69,7 @@ const plotMonitoring = {
 		return await api.get(`/plot/search/position?${params}`, APIService.DisasterAPI)
 	},
 	getPlotActivityPlantDetail: async (
-		payload: GetPlotActivityPlantDetailDtoIn,
+		payload: GetPlotActivityDetailDtoIn,
 	): Promise<ResponseDto<GetPlotActivityPlantDetailDtoOut>> => {
 		const params = new URLSearchParams()
 
@@ -74,16 +78,15 @@ const plotMonitoring = {
 		return await api.get(`/plot/${payload.activityId}/plant-detail?${params}`, APIService.DisasterAPI)
 	},
 	getPlotActivityLossDetail: async (
-		payload: GetPlotActivityLossDetailDtoIn,
+		payload: GetPlotActivityDetailDtoIn,
 	): Promise<ResponseDto<GetPlotActivityLossDetailDtoOut>> => {
 		const params = new URLSearchParams()
 
-		if (payload.registrationAreaType !== undefined)
-			params.append('registrationAreaType', payload.registrationAreaType.toString())
 		if (payload.count !== undefined) params.append('count', payload.count.toString())
 
 		return await api.get(`/plot/${payload.activityId}/loss-detail?${params}`, APIService.DisasterAPI)
 	},
+	getPOIS: async (): Promise<ResponseDto<GetPOISDtoOut[]>> => await api.get('/pois'),
 }
 
 export default plotMonitoring

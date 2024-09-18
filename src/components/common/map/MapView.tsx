@@ -1,14 +1,14 @@
 'use client'
-import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useState } from 'react'
+
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react'
 import classNames from 'classnames'
-import { Box, IconButton } from '@mui/material'
-import Icon from '@mdi/react'
+import { Box } from '@mui/material'
 import { BASEMAP } from '@deck.gl/carto'
 import { MapViewProps, MapViewState } from './interface/map'
 import MapGoogle, { MapGoogleRef } from './MapGoogle'
 import MapLibre, { MapLibreRef } from './MapLibre'
 import MapTools from './MapTools'
-import { mdiMapMarkerRadiusOutline } from '@mdi/js'
+import MapPin from './MapPin'
 
 const MAX_ZOOM = 10
 const MIN_ZOOM = 3
@@ -22,7 +22,7 @@ export interface MapViewRef {
 	setMapExtent: (bounds: number[][]) => void
 }
 
-function MapView({ className = '' }: MapViewProps, ref: React.Ref<MapViewRef>) {
+function MapView({ className = '', isShowMapPin = false }: MapViewProps, ref: React.Ref<MapViewRef>) {
 	const [viewState, setViewState] = useState<MapViewState>(INITIAL_VIEW_STATE)
 	const [basemap, setBasemap] = useState('carto-light')
 
@@ -64,20 +64,11 @@ function MapView({ className = '' }: MapViewProps, ref: React.Ref<MapViewRef>) {
 
 	return (
 		<div className={classNames('relative flex h-full flex-1 flex-col overflow-hidden', className)}>
-			<Box className='absolute bottom-[8.7rem] left-2 z-10'>
-				<IconButton
-					sx={{
-						border: 2,
-						borderColor: 'transparent',
-					}}
-					onClick={(event) => {
-						console.log('mdiMapMarkerRadiusOutline ')
-					}}
-					className={'box-shadow mb-2 bg-white'}
-				>
-					<Icon color={'#0C626D'} path={mdiMapMarkerRadiusOutline} size={1} />
-				</IconButton>
-			</Box>
+			{isShowMapPin && (
+				<Box className='absolute bottom-[8.7rem] left-2 z-10'>
+					<MapPin />
+				</Box>
+			)}
 			<Box className='absolute bottom-2 left-2 z-10'>
 				<MapTools
 					onBasemapChange={handleBasemapChange}

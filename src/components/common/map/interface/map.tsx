@@ -18,4 +18,5 @@ export interface MapViewState {
 
 export interface MapViewProps extends PropsWithChildren {
 	className?: string
+	isShowMapPin?: boolean
 }

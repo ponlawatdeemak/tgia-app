@@ -14,6 +14,7 @@ import { apiAccessToken } from '@/api/core'
 import { BoundaryTileColor, LineWidthColor, LossTypeTileColor } from '@/config/color'
 import InfoWindows from '../Map/InfoWindows'
 import { GetPositionSearchPlotDtoOut } from '@/api/plot-monitoring/dto-out.dto'
+import useAreaType from '@/store/area-type'
 
 type ProvincePropertiesType = {
 	layerName: string
@@ -65,6 +66,7 @@ interface MapListProps {
 
 const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 	const { queryParams } = useSearchPlotMonitoring()
+	const { areaType } = useAreaType()
 	const [clickInfo, setClickInfo] = useState<ClickInfo | null>(null)
 	const { layers, addLayer, setLayers } = useLayerStore()
 
@@ -72,6 +74,7 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 		const filter: GetAreaSearchPlotDtoIn = {
 			activityId: queryParams.activityId || undefined,
 			year: queryParams.year,
+			registrationAreaType: areaType,
 			provinceCode: queryParams.provinceCode || undefined,
 			districtCode: queryParams.districtCode || undefined,
 			subDistrictCode: queryParams.subDistrictCode || undefined,
@@ -83,7 +86,7 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 			detailType: queryParams.detailType || undefined,
 		}
 		return filter
-	}, [queryParams])
+	}, [queryParams, areaType])
 
 	const { data: areaSearchPlot, isLoading: isAreaSearchPlotLoading } = useQuery({
 		queryKey: ['getAreaSearchPlot', filterAreaSearchPlot],
@@ -421,7 +424,10 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 			})}
 		>
 			<InfoWindows clickInfo={clickInfo} setClickInfo={setClickInfo} />
-			<MapView className='max-lg:[&_div.MuiBox-root:first-child]:bottom-auto max-lg:[&_div.MuiBox-root:first-child]:left-4 max-lg:[&_div.MuiBox-root:first-child]:top-4 max-lg:[&_div.MuiBox-root:nth-child(2)]:hidden' />
+			<MapView
+				className='max-lg:[&_div.MuiBox-root:first-child]:bottom-auto max-lg:[&_div.MuiBox-root:first-child]:left-4 max-lg:[&_div.MuiBox-root:first-child]:top-4 max-lg:[&_div.MuiBox-root:nth-child(2)]:hidden'
+				isShowMapPin
+			/>
 		</div>
 	)
 }

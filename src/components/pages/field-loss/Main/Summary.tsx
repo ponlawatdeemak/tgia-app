@@ -138,7 +138,7 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 								</Typography>
 								<div className='flex items-baseline justify-end gap-1'>
 									<span className='text-xl font-semibold text-black-light'>
-										{summaryData?.data?.actAreaNoGeom[areaUnit].toLocaleString()}
+										{summaryData?.data?.actAreaNoGeom[areaUnit]?.toLocaleString()}
 									</span>
 									<span className='text-base text-black-dark'>{t(areaUnit)}</span>
 								</div>
@@ -157,7 +157,7 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 								<div className='flex flex-col items-end gap-1'>
 									<div className='flex items-baseline justify-end gap-1'>
 										<span className='text-xl font-semibold text-secondary'>
-											{summaryData?.data?.claimedArea[areaUnit].toLocaleString()}
+											{summaryData?.data?.claimedArea[areaUnit]?.toLocaleString()}
 										</span>
 										<span className='text-base text-black-dark'>{t(areaUnit)}</span>
 									</div>
@@ -233,7 +233,7 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 								</Typography>
 								<div className='flex items-baseline justify-end gap-1'>
 									<span className='text-xl font-semibold text-secondary'>
-										{summaryData?.data?.predictedArea[areaUnit].toLocaleString()}
+										{summaryData?.data?.predictedArea[areaUnit]?.toLocaleString()}
 									</span>
 									<span className='text-base text-black-dark'>{t(areaUnit)}</span>
 								</div>
