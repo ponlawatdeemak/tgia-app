@@ -38,11 +38,11 @@ const Providers: React.FC<ProvidersProps> = ({ children, lng }) => {
 		<SessionProvider>
 			<QueryClientProvider client={queryClient}>
 				<ThemeProvider theme={theme}>
-					{/* <I18nextProvider i18n={i18n}> */}
-					<Suspense>
-						<TokenProvider>{children}</TokenProvider>
-					</Suspense>
-					{/* </I18nextProvider> */}
+					<I18nextProvider i18n={i18n}>
+						<Suspense>
+							<TokenProvider>{children}</TokenProvider>
+						</Suspense>
+					</I18nextProvider>
 				</ThemeProvider>
 			</QueryClientProvider>
 		</SessionProvider>
