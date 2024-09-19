@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next'
 interface LanguageSwitcherProps {}
 
 const LanguageSwitcher: React.FC<LanguageSwitcherProps> = () => {
-	const pathname = usePathname()
 	const { i18n } = useTranslation()
 	const { i18n: i18nWithCookie } = useSwitchLanguage(i18n.language as Language, 'appbar')
 
@@ -18,11 +17,9 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = () => {
 		(_: React.MouseEvent<HTMLElement>, newLanguage: Language) => {
 			if (newLanguage !== null) {
 				i18nWithCookie.changeLanguage(newLanguage)
-				const oldLanguage = pathname?.split('/')?.[1]
-				window.history.pushState(null, '', window.location.href.replace(`/${oldLanguage}/`, `/${newLanguage}/`))
 			}
 		},
-		[i18nWithCookie, pathname],
+		[i18nWithCookie],
 	)
 
 	return (

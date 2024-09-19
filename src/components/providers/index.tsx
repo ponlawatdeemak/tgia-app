@@ -4,7 +4,7 @@ import theme from '@/styles/theme'
 import { ThemeProvider } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { SessionProvider } from 'next-auth/react'
-import { PropsWithChildren, Suspense } from 'react'
+import { PropsWithChildren, Suspense, useEffect, useMemo } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import TokenProvider from './TokenProvider'
 import { createInstance } from 'i18next'
@@ -29,10 +29,12 @@ const Providers: React.FC<ProvidersProps> = ({ children, lng }) => {
 		},
 	})
 
-	const i18n = createInstance()
-	const language: Language = lng === Language.EN ? Language.EN : fallbackLng
-	setDefaultOptions({ locale: language === Language.TH ? th : enUS })
-	initI18next(language, 'appbar', i18n)
+	const i18n = useMemo(() => createInstance(), [])
+	useEffect(() => {
+		const language: Language = lng === Language.EN ? Language.EN : fallbackLng
+		setDefaultOptions({ locale: language === Language.TH ? th : enUS })
+		initI18next(language, 'appbar', i18n)
+	}, [i18n, lng])
 
 	return (
 		<SessionProvider>
