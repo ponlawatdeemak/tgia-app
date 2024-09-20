@@ -28,6 +28,7 @@ import AlertConfirm from '../dialog/AlertConfirm'
 import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
 import { ErrorResponse } from '@/api/interface'
 import classNames from 'classnames'
+import MapPinDialog from '@/components/pages/plot-monitoring/result/Map/MapPin/MapPinDialog'
 
 interface MapPinProps {}
 
@@ -189,6 +190,10 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 
 		onExportGeoJSON(geoJSONData)
 	}, [pinCheckIds, poisData])
+
+	const handlePostSubmit = () => {
+		console.log('Submitted!!')
+	}
 
 	const handleDeleteSubmit = useCallback(async () => {
 		try {
@@ -379,6 +384,7 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 								<Button
 									className='pl-2 pr-2.5 text-sm font-medium [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
 									variant='contained'
+									onClick={() => setPostOpenDialog(true)}
 									disabled={isPOISDataLoading}
 									startIcon={
 										isPOISDataLoading ? (
@@ -482,6 +488,7 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 					</Box>
 				</Box>
 			</Popover>
+			<MapPinDialog open={postOpenDialog} onClose={() => setPostOpenDialog(false)} onConfirm={handlePostSubmit} />
 			<AlertConfirm
 				open={deleteOpenDialog}
 				title='ลบตำแหน่งการปักหมุด'
