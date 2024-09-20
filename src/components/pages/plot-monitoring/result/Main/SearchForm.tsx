@@ -15,7 +15,11 @@ import { mdiPencilOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import useSearchForm from '../../Main/context'
 
-const PlotMonitoringSearchForm = () => {
+interface PlotMonitoringSearchFormProps {
+	mapViewRef: any
+}
+
+const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ mapViewRef }) => {
 	const { isDesktop } = useResponsive()
 	const { setOpen } = useSearchForm()
 	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
@@ -57,7 +61,7 @@ const PlotMonitoringSearchForm = () => {
 	})
 
 	const handleSelectProvince = useCallback(
-		(_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {
+		async (_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {
 			if (AutocompleteCloseReason === 'selectOption') {
 				if (newSelectedValue) {
 					setQueryParams({
@@ -66,6 +70,18 @@ const PlotMonitoringSearchForm = () => {
 						districtCode: undefined,
 						subDistrictCode: undefined,
 					})
+					try {
+						if (newSelectedValue.code === null) return
+
+						const extentProvince = (
+							await service.fieldLoss.getExtentAdminPoly({ id: newSelectedValue.code })
+						).data
+						if (mapViewRef.current) {
+							mapViewRef.current.setMapExtent(extentProvince?.extent)
+						}
+					} catch (error) {
+						console.log('error zoom extent: ', error)
+					}
 				}
 			} else if (AutocompleteCloseReason === 'clear') {
 				setQueryParams({
@@ -80,10 +96,22 @@ const PlotMonitoringSearchForm = () => {
 	)
 
 	const handleSelectDistrict = useCallback(
-		(_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {
+		async (_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {
 			if (AutocompleteCloseReason === 'selectOption') {
 				if (newSelectedValue) {
 					setQueryParams({ ...queryParams, districtCode: newSelectedValue.code, subDistrictCode: undefined })
+					try {
+						if (newSelectedValue.code === null) return
+
+						const extentDistrict = (
+							await service.fieldLoss.getExtentAdminPoly({ id: newSelectedValue.code })
+						).data
+						if (mapViewRef.current) {
+							mapViewRef.current.setMapExtent(extentDistrict?.extent)
+						}
+					} catch (error) {
+						console.log('error zoom extent: ', error)
+					}
 				}
 			} else if (AutocompleteCloseReason === 'clear') {
 				setQueryParams({ ...queryParams, districtCode: undefined, subDistrictCode: undefined })
@@ -93,10 +121,22 @@ const PlotMonitoringSearchForm = () => {
 	)
 
 	const handleSelectSubDistrict = useCallback(
-		(_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {
+		async (_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {
 			if (AutocompleteCloseReason === 'selectOption') {
 				if (newSelectedValue) {
 					setQueryParams({ ...queryParams, subDistrictCode: newSelectedValue.code })
+					try {
+						if (newSelectedValue.code === null) return
+
+						const extentSubDistrict = (
+							await service.fieldLoss.getExtentAdminPoly({ id: newSelectedValue.code })
+						).data
+						if (mapViewRef.current) {
+							mapViewRef.current.setMapExtent(extentSubDistrict?.extent)
+						}
+					} catch (error) {
+						console.log('error zoom extent: ', error)
+					}
 				}
 			} else if (AutocompleteCloseReason === 'clear') {
 				setQueryParams({ ...queryParams, subDistrictCode: undefined })

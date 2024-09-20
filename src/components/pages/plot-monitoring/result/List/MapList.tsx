@@ -54,9 +54,10 @@ const DefaultLineWidth = 0
 
 interface MapListProps {
 	areaDetail: string
+	mapViewRef: any
 }
 
-const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
+const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 	const { queryParams } = useSearchPlotMonitoring()
 	const { open } = useMapPin()
 	const { areaType } = useAreaType()
@@ -308,6 +309,7 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 			<MapView
 				className='max-lg:[&_div.MuiBox-root:first-child]:bottom-auto max-lg:[&_div.MuiBox-root:first-child]:left-4 max-lg:[&_div.MuiBox-root:first-child]:top-4 max-lg:[&_div.MuiBox-root:nth-child(2)]:hidden'
 				isShowMapPin
+				ref={mapViewRef}
 			/>
 		</div>
 	)
