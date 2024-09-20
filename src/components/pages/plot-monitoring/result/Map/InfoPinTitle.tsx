@@ -42,7 +42,7 @@ const InfoPinTitle: React.FC<InfoPinTitleProps> = ({ clickPinInfo, setClickPinIn
 	return (
 		<Paper
 			className='absolute z-10 box-border flex items-center justify-center bg-white p-2 shadow-xl'
-			style={{ left: clickPinInfo.x + 10, top: clickPinInfo.y - 50 }}
+			style={{ left: clickPinInfo.x, top: clickPinInfo.y - 50, transform: 'translate(-50%, 0)' }}
 		>
 			<span className='text-sm font-medium text-black'>{clickPinInfo.area.title}</span>
 		</Paper>
