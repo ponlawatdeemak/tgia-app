@@ -1,20 +1,55 @@
 'use client'
 
-import React, { useCallback, useState } from 'react'
-import { Box, Button, Checkbox, IconButton, Popover, styled, Switch, SwitchProps, Typography } from '@mui/material'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+	Alert,
+	Box,
+	Button,
+	Checkbox,
+	CircularProgress,
+	IconButton,
+	Popover,
+	Snackbar,
+	styled,
+	Switch,
+	SwitchProps,
+	Typography,
+} from '@mui/material'
 import { mdiMapMarkerRadiusOutline, mdiTrashCanOutline } from '@mdi/js'
 import Icon from '@mdi/react'
-import { Add, CheckBoxOutlined, ContentCopyRounded, DeleteOutlined, FileDownloadOutlined } from '@mui/icons-material'
-import { useQuery } from '@tanstack/react-query'
+import { Add, CheckBoxOutlined, ContentCopyRounded, FileDownloadOutlined } from '@mui/icons-material'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import service from '@/api'
+import useMapPin from '@/components/pages/plot-monitoring/result/Map/context'
+import { onExportCSV } from '@/utils/export-csv'
+import { FeatureCollection, Geometry } from 'geojson'
+import { onExportGeoJSON } from '@/utils/export-geojson'
+import AlertConfirm from '../dialog/AlertConfirm'
+import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
+import { ErrorResponse } from '@/api/interface'
+import classNames from 'classnames'
 
 interface MapPinProps {}
 
 const MapPin: React.FC<MapPinProps> = ({}) => {
+	const queryClient = useQueryClient()
+	const { open, setOpen } = useMapPin()
+
+	const [busy, setBusy] = useState<boolean>(false)
+	const [alertInfo, setAlertInfo] = useState<AlertInfoType>({
+		open: false,
+		severity: 'success',
+		message: '',
+	})
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+	const [deleteOpenDialog, setDeleteOpenDialog] = useState<boolean>(false)
+	const [postOpenDialog, setPostOpenDialog] = useState<boolean>(false)
+
 	const [isPinOnMap, setIsPinOnMap] = useState(false)
 	const [isAllChecked, setIsAllChecked] = useState(false)
 	const [pinCheck, setPinCheck] = useState<{ [key: string]: boolean }>({})
+
+	useEffect(() => setOpen(false), [])
 
 	const { data: poisData, isLoading: isPOISDataLoading } = useQuery({
 		queryKey: ['getPOISMapPin'],
@@ -22,8 +57,56 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 		enabled: Boolean(anchorEl),
 	})
 
+	const {
+		data,
+		error,
+		mutateAsync: mutateDeleteMapPins,
+	} = useMutation({
+		mutationFn: async (mapPins: string[]) => {
+			const deletedMapPins = mapPins.map((id) => service.plotMonitoring.deletePOIS({ poiId: id }))
+			const responses = await Promise.all(deletedMapPins)
+			mapPins.forEach((mapPin) => delete pinCheck[mapPin])
+
+			return responses
+		},
+		onSuccess: (data, variables, context) => {
+			queryClient.invalidateQueries({ queryKey: ['getPOISMapPin'] })
+			setAlertInfo({ open: true, severity: 'success', message: 'ลบตำแหน่งการปักหมุดสำเร็จ' })
+		},
+		onError: (error: ErrorResponse, variables, context) => {
+			queryClient.invalidateQueries({ queryKey: ['getPOISMapPin'] })
+			setAlertInfo({
+				open: true,
+				severity: 'error',
+				message: error?.title ? error.title : 'เกิดข้อผิดพลาด กรุณาตรวจสอบข้อมูลอีกครั้ง',
+			})
+		},
+	})
+
+	useEffect(() => {
+		const pinCheckValues: boolean[] = []
+		for (let value in pinCheck) {
+			pinCheckValues.push(pinCheck[value])
+		}
+
+		if (pinCheckValues.length === 0) {
+			setIsAllChecked(false)
+		} else {
+			if (pinCheckValues.length !== poisData?.data?.length) {
+				setIsAllChecked(false)
+			} else {
+				if (pinCheckValues.includes(false)) {
+					setIsAllChecked(false)
+				} else {
+					setIsAllChecked(true)
+				}
+			}
+		}
+	}, [pinCheck, poisData])
+
 	const handlePinOnMapCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setIsPinOnMap(event.target.checked)
+		setOpen(event.target.checked)
 	}
 
 	const handleAllCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,6 +142,65 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 
 		return false
 	}, [])
+
+	const pinCheckIds = useMemo(() => {
+		const pinCheckIds: string[] = []
+		for (let id in pinCheck) {
+			if (pinCheck[id]) {
+				pinCheckIds.push(id)
+			}
+		}
+
+		return pinCheckIds
+	}, [pinCheck])
+
+	const downloadJSONAsCSV = useCallback(() => {
+		const jsonData = pinCheckIds?.map((item) => {
+			return poisData?.data?.find((data) => data.poiId === item)
+		})
+
+		onExportCSV(jsonData)
+	}, [pinCheckIds, poisData])
+
+	const downloadGeoJSON = useCallback(() => {
+		const geoJSONData: FeatureCollection<Geometry> = {
+			type: 'FeatureCollection',
+			features: pinCheckIds
+				?.map((item) => poisData?.data?.find((data) => data.poiId === item))
+				.map((obj) => {
+					return {
+						type: 'Feature',
+						geometry: {
+							type: 'Point',
+							coordinates: [obj?.lng as number, obj?.lat as number],
+						},
+						properties: {
+							poiId: obj?.poiId,
+							userId: obj?.userId,
+							title: obj?.title,
+							lat: obj?.lat,
+							lng: obj?.lng,
+							createdAt: obj?.createdAt,
+							updatedAt: obj?.updatedAt,
+						},
+					}
+				}),
+		}
+
+		onExportGeoJSON(geoJSONData)
+	}, [pinCheckIds, poisData])
+
+	const handleDeleteSubmit = useCallback(async () => {
+		try {
+			setBusy(true)
+			await mutateDeleteMapPins(pinCheckIds)
+		} catch (error: any) {
+			console.log('Error:', error.title)
+		} finally {
+			setBusy(false)
+			setDeleteOpenDialog(false)
+		}
+	}, [pinCheckIds])
 
 	const IOSSwitch = styled((props: SwitchProps) => (
 		<Switch focusVisibleClassName='.Mui-focusVisible' disableRipple {...props} />
@@ -153,6 +295,7 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 								checked={isPinOnMap}
 								onChange={handlePinOnMapCheck}
 								inputProps={{ 'aria-label': 'controlled' }}
+								disabled={busy || isPOISDataLoading}
 							/>
 						</Box>
 					</Box>
@@ -163,40 +306,72 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 								checked={isAllChecked}
 								onChange={handleAllCheck}
 								inputProps={{ 'aria-label': 'controlled' }}
+								disabled={!poisData?.data || poisData?.data.length === 0 || busy || isPOISDataLoading}
 							/>
 						</Box>
 						<span className='flex grow px-2.5 text-xs font-semibold text-black'>ชื่อตำแหน่ง</span>
 						<span className='box-border w-[220px] px-2.5 text-xs font-semibold text-black'>ตำแหน่ง</span>
 					</Box>
 					<Box className='box-border flex h-[267px] flex-col gap-2 overflow-auto p-3'>
-						{poisData?.data?.map((item) => {
-							return (
-								<Box key={item.poiId} className='flex items-center gap-2.5'>
-									<Box className='m-0 flex p-1.5 [&_.MuiButtonBase-root>svg]:h-[20px] [&_.MuiButtonBase-root>svg]:w-[20px] [&_.MuiButtonBase-root]:p-0'>
-										<Checkbox
-											checkedIcon={<CheckBoxOutlined />}
-											checked={pinCheck?.[item.poiId] || false}
-											onChange={handlePinCheck}
-											name={item.poiId}
-											inputProps={{ 'aria-label': 'controlled' }}
-										/>
-									</Box>
-									<Button
-										variant='outlined'
-										className='flex grow justify-start border border-solid border-gray px-2.5 py-1.5'
-									>
-										<span className='text-sm font-medium text-black'>{item.title}</span>
-									</Button>
-									<Button
-										variant='outlined'
-										endIcon={<ContentCopyRounded className='h-4 w-4 font-normal text-[#959595]' />}
-										className='box-border flex w-[210px] items-center justify-between border border-solid border-gray px-2.5 py-1.5'
-									>
-										<span className='text-sm font-medium text-black'>{`${item.lat}, ${item.lng}`}</span>
-									</Button>
-								</Box>
-							)
-						})}
+						{isPOISDataLoading ? (
+							<div className='flex h-full items-center justify-center'>
+								<CircularProgress size={60} color='primary' />
+							</div>
+						) : !poisData?.data || poisData?.data.length === 0 ? (
+							<Box className='flex h-full items-center justify-center'>
+								<span className='text-sm font-normal text-gray-dark2'>ไม่พบข้อมูล</span>
+							</Box>
+						) : (
+							<>
+								{poisData?.data?.map((item) => {
+									return (
+										<Box key={item.poiId} className='flex items-center gap-2.5'>
+											<Box className='m-0 flex p-1.5 [&_.MuiButtonBase-root>svg]:h-[20px] [&_.MuiButtonBase-root>svg]:w-[20px] [&_.MuiButtonBase-root]:p-0'>
+												<Checkbox
+													checkedIcon={<CheckBoxOutlined />}
+													checked={pinCheck?.[item.poiId] || false}
+													onChange={handlePinCheck}
+													name={item.poiId}
+													inputProps={{ 'aria-label': 'controlled' }}
+													disabled={busy}
+												/>
+											</Box>
+											<Button
+												variant='outlined'
+												className='flex grow justify-start border border-solid border-gray px-2.5 py-1.5'
+												disabled={busy}
+											>
+												<span
+													className={classNames('text-sm font-medium text-black', {
+														'!text-gray': busy,
+													})}
+												>
+													{item.title}
+												</span>
+											</Button>
+											<Button
+												variant='outlined'
+												disabled={busy}
+												endIcon={
+													<ContentCopyRounded
+														className={classNames('h-4 w-4 font-normal text-[#959595]', {
+															'!text-gray': busy,
+														})}
+													/>
+												}
+												className='box-border flex w-[210px] items-center justify-between border border-solid border-gray px-2.5 py-1.5'
+											>
+												<span
+													className={classNames('text-sm font-medium text-black', {
+														'!text-gray': busy,
+													})}
+												>{`${item.lat}, ${item.lng}`}</span>
+											</Button>
+										</Box>
+									)
+								})}
+							</>
+						)}
 					</Box>
 					<Box className='flex grow items-center justify-between border-0 border-t border-solid border-gray p-3'>
 						<Box className='flex items-center'>
@@ -204,17 +379,51 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 								<Button
 									className='pl-2 pr-2.5 text-sm font-medium [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
 									variant='contained'
-									startIcon={<Add className='m-0' />}
+									disabled={isPOISDataLoading}
+									startIcon={
+										isPOISDataLoading ? (
+											<CircularProgress
+												className='[&_.MuiCircularProgress-circle]:text-gray'
+												size={16}
+											/>
+										) : (
+											<Add className='m-0' />
+										)
+									}
 								>
 									เพิ่มตำแหน่ง
 								</Button>
 							)}
 							{(isAllChecked || isSomePinCheck(pinCheck)) && (
-								<Button className='flex items-center gap-1 border-gray pl-2 pr-2.5' variant='outlined'>
-									<Box className='h-5 w-5 p-0'>
-										<Icon path={mdiTrashCanOutline} className='h-5 w-5 text-black' />
-									</Box>
-									<span className='text-sm font-medium text-black'>ลบตำแหน่ง</span>
+								<Button
+									className={classNames('border-gray pl-2 pr-2.5', {
+										'[&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1': busy,
+										'flex items-center gap-1': !busy,
+									})}
+									variant='outlined'
+									onClick={() => setDeleteOpenDialog(true)}
+									disabled={busy}
+									startIcon={
+										busy ? (
+											<CircularProgress
+												className='[&_.MuiCircularProgress-circle]:text-gray'
+												size={16}
+											/>
+										) : null
+									}
+								>
+									{!busy && (
+										<Box className='h-5 w-5 p-0'>
+											<Icon path={mdiTrashCanOutline} className='h-5 w-5 text-black' />
+										</Box>
+									)}
+									<span
+										className={classNames('text-sm font-medium text-black', {
+											'!text-gray': busy,
+										})}
+									>
+										ลบตำแหน่ง
+									</span>
 								</Button>
 							)}
 						</Box>
@@ -223,22 +432,78 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 								<Button
 									className='border-gray pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
 									variant='outlined'
-									startIcon={<FileDownloadOutlined className='m-0 text-black' />}
+									disabled={busy}
+									startIcon={
+										busy ? (
+											<CircularProgress
+												className='[&_.MuiCircularProgress-circle]:text-gray'
+												size={16}
+											/>
+										) : (
+											<FileDownloadOutlined className='m-0 text-black' />
+										)
+									}
+									onClick={downloadJSONAsCSV}
 								>
-									<span className='text-sm font-medium text-black'>CSV</span>
+									<span
+										className={classNames('text-sm font-medium text-black', {
+											'!text-gray': busy,
+										})}
+									>
+										CSV
+									</span>
 								</Button>
 								<Button
 									className='border-gray pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
 									variant='outlined'
-									startIcon={<FileDownloadOutlined className='m-0 text-black' />}
+									disabled={busy}
+									startIcon={
+										busy ? (
+											<CircularProgress
+												className='[&_.MuiCircularProgress-circle]:text-gray'
+												size={16}
+											/>
+										) : (
+											<FileDownloadOutlined className='m-0 text-black' />
+										)
+									}
+									onClick={downloadGeoJSON}
 								>
-									<span className='text-sm font-medium text-black'>GeoJSON</span>
+									<span
+										className={classNames('text-sm font-medium text-black', {
+											'!text-gray': busy,
+										})}
+									>
+										GeoJSON
+									</span>
 								</Button>
 							</Box>
 						)}
 					</Box>
 				</Box>
 			</Popover>
+			<AlertConfirm
+				open={deleteOpenDialog}
+				title='ลบตำแหน่งการปักหมุด'
+				content='ต้องการยืนยันการลบตำแหน่งการปักหมุดนี้ใช่หรือไม่'
+				onClose={() => setDeleteOpenDialog(false)}
+				onConfirm={handleDeleteSubmit}
+			/>
+			<Snackbar
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+				open={alertInfo.open}
+				autoHideDuration={6000}
+				onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+				className='w-[300px]'
+			>
+				<Alert
+					onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+					severity={alertInfo.severity}
+					className='w-full'
+				>
+					{alertInfo.message}
+				</Alert>
+			</Snackbar>
 		</React.Fragment>
 	)
 }
