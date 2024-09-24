@@ -4,7 +4,7 @@ import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from '
 import classNames from 'classnames'
 import { Box } from '@mui/material'
 import { BASEMAP } from '@deck.gl/carto'
-import { MapViewProps, MapViewState } from './interface/map'
+import { LatLng, MapViewProps, MapViewState } from './interface/map'
 import MapGoogle, { MapGoogleRef } from './MapGoogle'
 import MapLibre, { MapLibreRef } from './MapLibre'
 import MapTools from './MapTools'
@@ -20,6 +20,7 @@ const INITIAL_VIEW_STATE: MapViewState = {
 
 export interface MapViewRef {
 	setMapExtent: (bounds: number[][]) => void
+	setMapCenter: (coords: LatLng) => void
 }
 
 function MapView({ className = '', isShowMapPin = false }: MapViewProps, ref: React.Ref<MapViewRef>) {
@@ -41,6 +42,13 @@ function MapView({ className = '', isShowMapPin = false }: MapViewProps, ref: Re
 				mapGoogleRef.current.setExtent(googleBounds)
 			} else if (mapLibreRef.current) {
 				mapLibreRef.current.setExtent(bounds)
+			}
+		},
+		setMapCenter: (coords: LatLng) => {
+			if (basemap === 'google' && mapGoogleRef.current) {
+				mapGoogleRef.current.setCenter(coords)
+			} else if (mapLibreRef.current) {
+				mapLibreRef.current.setCenter(coords)
 			}
 		},
 	}))

@@ -3,7 +3,7 @@ import React, { forwardRef, useImperativeHandle, useMemo, useEffect, useRef } fr
 import { APIProvider, Map, useMap } from '@vis.gl/react-google-maps'
 import { GoogleMapsOverlay } from '@deck.gl/google-maps'
 import useLayerStore from './store/map'
-import { MapInterface } from './interface/map'
+import { LatLng, MapInterface } from './interface/map'
 
 const DeckGLOverlay = () => {
 	const layers = useLayerStore((state) => state.layers)
@@ -24,6 +24,7 @@ interface MapGoogleProps extends MapInterface {}
 
 export interface MapGoogleRef {
 	setExtent: (bounds: google.maps.LatLngBoundsLiteral) => void
+	setCenter: (coords: LatLng) => void
 }
 
 function MapGoogle({ viewState, onViewStateChange }: MapGoogleProps, ref: React.Ref<MapGoogleRef>) {
@@ -34,6 +35,11 @@ function MapGoogle({ viewState, onViewStateChange }: MapGoogleProps, ref: React.
 		setExtent: (bounds: google.maps.LatLngBoundsLiteral) => {
 			if (mapRef.current) {
 				mapRef.current.fitBounds(bounds)
+			}
+		},
+		setCenter: (coords: LatLng) => {
+			if (mapRef.current) {
+				mapRef.current.setCenter({ lat: coords.latitude, lng: coords.longitude })
 			}
 		},
 	}))

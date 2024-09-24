@@ -49,5 +49,33 @@
     "riceLossArea": "พื้นที่ความเสียหาย",
     "riceLossPredictedArea": "พื้นที่เสียหายจากระบบวิเคราะห์",
     "orderBy": "การเรียงลำดับ",
-    "noSearchResultsFound": "ไม่พบผลลัพธ์การค้นหา"
+    "noSearchResultsFound": "ไม่พบผลลัพธ์การค้นหา",
+    "addPosition": "เพิ่มตำแหน่ง",
+    "deletePosition": "ลบตำแหน่ง",
+    "pinning": "การปักหมุด",
+    "showOnMap": "แสดงในแผนที่",
+    "positionName": "ชื่อตำแหน่ง",
+    "position": "ตำแหน่ง",
+    "noResultsFound": "ไม่พบข้อมูล",
+    "latitude": "ละติจูด",
+    "longitude": "ลองจิจูด",
+    "useCurrentLocation": "ใช้ตำแหน่งปัจจุบัน",
+    "warning": {
+        "inputPositionName": "กรุณากรอกชื่อตำแหน่ง",
+        "inputLatitude": "กรุณากรอกละติจูด",
+        "inputLongitude": "กรุณากรอกลองจิจูด",
+        "inputWrongValue": "กรอกค่าตำแหน่งผิดพลาด"
+	},
+    "success": {
+        "createMapPin": "บันทึกข้อมูลสำเร็จ",
+        "deleteMapPins": "ลบข้อมูลสำเร็จ"
+    },
+	"error": {
+		"createMapPin": "บันทึกข้อมูลไม่สำเร็จ",
+        "deleteMapPins": "ลบข้อมูลไม่สำเร็จ"
+	},
+	"alert": {
+		"confirmMapPinsDeleteTitle": "ลบตำแหน่งการปักหมุด",
+		"confirmMapPinsDeleteContent": "ต้องการยืนยันการลบตำแหน่งการปักหมุดนี้ใช่หรือไม่"
+	}
 }

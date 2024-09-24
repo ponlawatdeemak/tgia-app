@@ -3,32 +3,102 @@
 import {
 	Box,
 	Button,
+	CircularProgress,
 	Dialog,
 	DialogActions,
 	DialogContent,
-	DialogContentText,
 	DialogTitle,
 	IconButton,
 	Paper,
 	Typography,
 } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { mdiClose } from '@mdi/js'
 import Icon from '@mdi/react'
 import { useTranslation } from 'react-i18next'
 import FormInput from '@/components/common/input/FormInput'
-import MapView from '@/components/common/map/MapView'
+import MapView, { MapViewRef } from '@/components/common/map/MapView'
 import { LocationSearching } from '@mui/icons-material'
+import useSearchPlotMonitoring from '../../Main/context'
+import service from '@/api'
+import { useQuery } from '@tanstack/react-query'
+import { GetExtentAdminPolyDtoIn } from '@/api/field-loss/dto-in.dto'
+import { FormikProps } from 'formik'
+import useMapPin from '../context'
+import classNames from 'classnames'
 
 export interface MapPinDialogProps {
 	open: boolean
+	formik: FormikProps<any>
+	loading?: boolean
 	hideClose?: boolean
 	onClose: () => void
-	onConfirm: () => void
+	onConfirm: (event: React.FormEvent<HTMLFormElement>) => void
 }
 
-const MapPinDialog: React.FC<MapPinDialogProps> = ({ open = false, hideClose = false, onClose, onConfirm }) => {
-	const { t } = useTranslation(['default'])
+const MapPinDialog: React.FC<MapPinDialogProps> = ({
+	open = false,
+	formik,
+	loading = false,
+	hideClose = false,
+	onClose,
+	onConfirm,
+}) => {
+	const { queryParams } = useSearchPlotMonitoring()
+	const { t } = useTranslation(['plot-monitoring', 'default'])
+
+	const mapViewRef = useRef<MapViewRef>(null)
+
+	useEffect(() => {
+		if (formik.values.lng && formik.values.lat) {
+			if (mapViewRef.current) {
+				mapViewRef.current.setMapCenter({
+					latitude: parseFloat(formik.values.lat),
+					longitude: parseFloat(formik.values.lng),
+				})
+			}
+		}
+	}, [formik.values.lng, formik.values.lat])
+
+	// const filterExtentData = useMemo(() => {
+	// 	const filter: GetExtentAdminPolyDtoIn = {
+	// 		id: queryParams?.subDistrictCode
+	// 			? queryParams.subDistrictCode
+	// 			: queryParams?.districtCode
+	// 				? queryParams.districtCode
+	// 				: queryParams?.provinceCode
+	// 					? queryParams.provinceCode
+	// 					: undefined,
+	// 	}
+	// 	return filter
+	// }, [queryParams])
+
+	// const { data: extentData, isLoading: isExtentDataLoading } = useQuery({
+	// 	queryKey: ['getExtentAdminPolyMapPin', filterExtentData],
+	// 	queryFn: () => service.fieldLoss.getExtentAdminPoly(filterExtentData),
+	// 	enabled: open,
+	// })
+
+	// useEffect(() => {
+	// 	console.log('mapViewRef', mapViewRef)
+	// 	if (mapViewRef.current) {
+	// 		console.log('extentData', extentData)
+	// 		mapViewRef.current.setMapExtent(extentData?.data?.extent as any)
+	// 	}
+	// }, [extentData])
+
+	const handleGetCurrentLocation = () => {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition((position) => {
+				const longitude = position.coords.longitude
+				const latitude = position.coords.latitude
+				formik.setFieldValue('lng', longitude.toFixed(5))
+				formik.setFieldValue('lat', latitude.toFixed(5))
+			})
+		} else {
+			console.log('Geolocation is not supported by this browser.')
+		}
+	}
 
 	return (
 		<Dialog
@@ -36,54 +106,142 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({ open = false, hideClose = f
 			onClose={onClose}
 			PaperProps={{
 				className: 'm-0 p-6 min-w-[90%] min-h-[90%]',
-				component: 'form',
-				onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-					event.preventDefault()
-					console.log('Submitted!!')
-					onClose()
-				},
 			}}
 		>
 			<DialogTitle className='flex items-center justify-between p-0'>
-				<Typography className='text-lg font-semibold text-black-dark'>เพิ่มตำแหน่ง</Typography>
+				<Typography className='text-lg font-semibold text-black-dark'>{t('addPosition')}</Typography>
 				{!hideClose && (
 					<IconButton aria-label='close' onClick={onClose}>
 						<Icon path={mdiClose} size={'24px'} />
 					</IconButton>
 				)}
 			</DialogTitle>
-			<DialogContent className='flex flex-grow flex-col gap-3 overflow-auto px-0 py-3'>
-				<Box className='flex items-center gap-2'>
-					<FormInput name='ชื่อตำแหน่ง' label='ชื่อตำแหน่ง' />
-					<FormInput name='ละติจูด' label='ละติจูด' />
-					<FormInput name='ลองจิจูด' label='ลองจิจูด' />
-				</Box>
-				<Paper className='relative grid flex-grow overflow-hidden'>
-					<Box className='relative h-full w-full'>
-						<MapView
-							isShowMapPin
-							//ref={mapViewRef}
+			<form noValidate className='contents' onSubmit={onConfirm}>
+				<DialogContent className='flex flex-grow flex-col gap-3 overflow-auto px-0 py-3'>
+					<Box className='flex items-start gap-2 [&_*>input]:p-0 [&_*>input]:text-sm [&_*>input]:font-normal [&_*>input]:text-black [&_*>label]:mb-1 [&_*>label]:text-xs [&_*>label]:font-medium [&_*>label]:text-black [&_.MuiInputBase-root]:rounded-lg [&_.MuiInputBase-root]:px-2.5 [&_.MuiInputBase-root]:py-1.5'>
+						<FormInput
+							className='w-[200px]'
+							name='name'
+							label={t('positionName')}
+							formik={formik}
+							placeholder='ตำแหน่ง'
+							value={''}
+							inputProps={{
+								maxLength: 50,
+							}}
+							disabled={loading}
+							required
+						/>
+						<FormInput
+							className='w-[200px]'
+							type='number'
+							name='lat'
+							label={t('latitude')}
+							formik={formik}
+							placeholder='0.000000'
+							value={''}
+							//InputProps={{ inputProps: { min: 0, max: 10 } }}
+							onChange={(event) => {
+								const value = event.target.value
+								const regex = /^\d*\.?\d{0,6}$/
+								if (regex.test(value) || value === '') {
+									if (value.length < 10) {
+										formik.handleChange(event)
+									}
+								}
+							}}
+							disabled={loading}
+							required
+						/>
+						<FormInput
+							className='w-[200px]'
+							type='number'
+							name='lng'
+							label={t('longitude')}
+							formik={formik}
+							placeholder='0.000000'
+							value={''}
+							onChange={(event) => {
+								const value = event.target.value
+								const regex = /^\d*\.?\d{0,6}$/
+								if (regex.test(value) || value === '') {
+									if (value.length < 10) {
+										formik.handleChange(event)
+									}
+								}
+							}}
+							disabled={loading}
+							required
 						/>
 					</Box>
-				</Paper>
-			</DialogContent>
-			<DialogActions className='flex items-center justify-between p-0'>
-				<Button
-					className='border-gray pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
-					variant='outlined'
-					startIcon={<LocationSearching className='m-0 text-black' />}
-				>
-					<span className='text-sm font-medium text-black'>GeoJSON</span>
-				</Button>
-				<Box className='flex items-center gap-2'>
-					<Button onClick={onClose} variant='outlined' className='border-gray px-3 py-1.5'>
-						<span className='text-sm font-medium text-black'>{t('cancel')}</span>
+					<Paper className='relative grid flex-grow overflow-hidden'>
+						<Box className='relative h-full w-full'>
+							<MapView ref={mapViewRef} />
+						</Box>
+					</Paper>
+				</DialogContent>
+				<DialogActions className='flex items-center justify-between p-0'>
+					<Button
+						className='border-gray pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
+						variant='outlined'
+						onClick={handleGetCurrentLocation}
+						disabled={loading}
+						startIcon={
+							loading ? (
+								<CircularProgress className='[&_.MuiCircularProgress-circle]:text-gray' size={16} />
+							) : (
+								<LocationSearching className='m-0 text-black' />
+							)
+						}
+					>
+						<span
+							className={classNames('text-sm font-medium text-black', {
+								'!text-gray': loading,
+							})}
+						>
+							{t('useCurrentLocation')}
+						</span>
 					</Button>
-					<Button type='submit' variant='contained' className='px-3 py-1.5'>
-						<span className='text-sm font-medium text-white'>{t('confirm')}</span>
-					</Button>
-				</Box>
-			</DialogActions>
+					<Box className='flex items-center gap-2'>
+						<Button
+							onClick={onClose}
+							variant='outlined'
+							className={classNames('border-gray px-3 py-1.5', {
+								'pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1': loading,
+							})}
+							disabled={loading}
+							startIcon={
+								loading && (
+									<CircularProgress className='[&_.MuiCircularProgress-circle]:text-gray' size={16} />
+								)
+							}
+						>
+							<span
+								className={classNames('text-sm font-medium text-black', {
+									'!text-gray': loading,
+								})}
+							>
+								{t('cancel', { ns: 'default' })}
+							</span>
+						</Button>
+						<Button
+							type='submit'
+							variant='contained'
+							className={classNames('px-3 py-1.5', {
+								'pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1': loading,
+							})}
+							disabled={loading}
+							startIcon={
+								loading && (
+									<CircularProgress className='[&_.MuiCircularProgress-circle]:text-gray' size={16} />
+								)
+							}
+						>
+							<span className='text-sm font-medium text-white'>{t('confirm', { ns: 'default' })}</span>
+						</Button>
+					</Box>
+				</DialogActions>
+			</form>
 		</Dialog>
 	)
 }

@@ -25,12 +25,12 @@ const FormInput: React.FC<FormInputProps> = ({
 				{label}
 			</FormLabel>
 			<OutlinedInput
+				onChange={formik?.handleChange}
 				{...props}
 				id={`${name}-input`}
 				name={name}
 				size='small'
 				value={formik?.values[name] || value}
-				onChange={formik?.handleChange}
 				error={formik?.touched[name] && Boolean(formik?.errors[name])}
 			/>
 			{typeof errorMessage === 'string' && <FormHelperText error>{errorMessage}</FormHelperText>}

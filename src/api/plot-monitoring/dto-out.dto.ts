@@ -122,6 +122,8 @@ export interface GetPOISDtoOut {
 	updatedAt: string
 }
 
+export interface PostPOISDtoOut extends GetPOISDtoOut {}
+
 export interface DeletePOISDtoOut {
 	id: string
 }

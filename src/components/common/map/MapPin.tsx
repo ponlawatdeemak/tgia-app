@@ -29,12 +29,29 @@ import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
 import { ErrorResponse } from '@/api/interface'
 import classNames from 'classnames'
 import MapPinDialog from '@/components/pages/plot-monitoring/result/Map/MapPin/MapPinDialog'
+import * as yup from 'yup'
+import { useTranslation } from 'react-i18next'
+import { useFormik } from 'formik'
+import { PostPOISDtoIn } from '@/api/plot-monitoring/dto-in.dto'
+
+interface FormValues {
+	name: string
+	lat: number | null
+	lng: number | null
+}
+
+const defaultFormValues: FormValues = {
+	name: '',
+	lat: null,
+	lng: null,
+}
 
 interface MapPinProps {}
 
 const MapPin: React.FC<MapPinProps> = ({}) => {
 	const queryClient = useQueryClient()
 	const { open, setOpen } = useMapPin()
+	const { t } = useTranslation(['plot-monitoring', 'default'])
 
 	const [busy, setBusy] = useState<boolean>(false)
 	const [alertInfo, setAlertInfo] = useState<AlertInfoType>({
@@ -50,6 +67,20 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 	const [isAllChecked, setIsAllChecked] = useState(false)
 	const [pinCheck, setPinCheck] = useState<{ [key: string]: boolean }>({})
 
+	const validationSchema = yup.object({
+		name: yup.string().required(t('warning.inputPositionName', { ns: 'plot-monitoring' })),
+		lat: yup
+			.number()
+			.required(t('warning.inputLatitude', { ns: 'plot-monitoring' }))
+			.min(5.37, t('warning.inputWrongValue', { ns: 'plot-monitoring' }))
+			.max(20.27, t('warning.inputWrongValue', { ns: 'plot-monitoring' })),
+		lng: yup
+			.number()
+			.required(t('warning.inputLongitude', { ns: 'plot-monitoring' }))
+			.min(97.21, t('warning.inputWrongValue', { ns: 'plot-monitoring' }))
+			.max(105.37, t('warning.inputWrongValue', { ns: 'plot-monitoring' })),
+	})
+
 	useEffect(() => setOpen(false), [])
 
 	const { data: poisData, isLoading: isPOISDataLoading } = useQuery({
@@ -59,8 +90,18 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 	})
 
 	const {
-		data,
-		error,
+		data: postedMapPinData,
+		error: postedMapPinError,
+		mutateAsync: mutatePostMapPin,
+	} = useMutation({
+		mutationFn: async (payload: PostPOISDtoIn) => {
+			await service.plotMonitoring.postPOIS(payload)
+		},
+	})
+
+	const {
+		data: deletedMapPinData,
+		error: deletedMapPinError,
 		mutateAsync: mutateDeleteMapPins,
 	} = useMutation({
 		mutationFn: async (mapPins: string[]) => {
@@ -72,14 +113,14 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 		},
 		onSuccess: (data, variables, context) => {
 			queryClient.invalidateQueries({ queryKey: ['getPOISMapPin'] })
-			setAlertInfo({ open: true, severity: 'success', message: 'ลบตำแหน่งการปักหมุดสำเร็จ' })
+			setAlertInfo({ open: true, severity: 'success', message: t('success.deleteMapPins') })
 		},
 		onError: (error: ErrorResponse, variables, context) => {
 			queryClient.invalidateQueries({ queryKey: ['getPOISMapPin'] })
 			setAlertInfo({
 				open: true,
 				severity: 'error',
-				message: error?.title ? error.title : 'เกิดข้อผิดพลาด กรุณาตรวจสอบข้อมูลอีกครั้ง',
+				message: error?.title ? error.title : t('error.deleteMapPins'),
 			})
 		},
 	})
@@ -191,9 +232,39 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 		onExportGeoJSON(geoJSONData)
 	}, [pinCheckIds, poisData])
 
-	const handlePostSubmit = () => {
-		console.log('Submitted!!')
+	const handlePostSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault()
+		formik.submitForm()
 	}
+
+	const onSubmit = useCallback(async (values: FormValues) => {
+		try {
+			setBusy(true)
+			const mapPinData: PostPOISDtoIn = {
+				title: values.name,
+				lat: values.lat as number,
+				lng: values.lng as number,
+			}
+
+			await mutatePostMapPin(mapPinData)
+			setPostOpenDialog(false)
+			formik.resetForm()
+			queryClient.invalidateQueries({ queryKey: ['getPOISMapPin'] })
+			setAlertInfo({ open: true, severity: 'success', message: t('success.createMapPin') })
+		} catch (error) {
+			console.log('Create map position failed')
+			setAlertInfo({ open: true, severity: 'error', message: t('error.createMapPin') })
+		} finally {
+			setBusy(false)
+		}
+	}, [])
+
+	const formik = useFormik<FormValues>({
+		//enableReinitialize: true,
+		initialValues: defaultFormValues,
+		validationSchema: validationSchema,
+		onSubmit,
+	})
 
 	const handleDeleteSubmit = useCallback(async () => {
 		try {
@@ -293,9 +364,9 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 			>
 				<Box className='flex h-[400px] w-[480px] flex-col bg-white drop-shadow-md'>
 					<Box className='flex items-center justify-between p-3'>
-						<Typography className='text-sm font-semibold text-black-dark'>การปักหมุด</Typography>
+						<Typography className='text-sm font-semibold text-black-dark'>{t('pinning')}</Typography>
 						<Box className='flex items-center gap-2'>
-							<span className='text-xs font-medium text-black-dark'>แสดงในแผนที่</span>
+							<span className='text-xs font-medium text-black-dark'>{t('showOnMap')}</span>
 							<IOSSwitch
 								checked={isPinOnMap}
 								onChange={handlePinOnMapCheck}
@@ -314,8 +385,10 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 								disabled={!poisData?.data || poisData?.data.length === 0 || busy || isPOISDataLoading}
 							/>
 						</Box>
-						<span className='flex grow px-2.5 text-xs font-semibold text-black'>ชื่อตำแหน่ง</span>
-						<span className='box-border w-[220px] px-2.5 text-xs font-semibold text-black'>ตำแหน่ง</span>
+						<span className='flex grow px-2.5 text-xs font-semibold text-black'>{t('positionName')}</span>
+						<span className='box-border w-[220px] px-2.5 text-xs font-semibold text-black'>
+							{t('position')}
+						</span>
 					</Box>
 					<Box className='box-border flex h-[267px] flex-col gap-2 overflow-auto p-3'>
 						{isPOISDataLoading ? (
@@ -324,7 +397,7 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 							</div>
 						) : !poisData?.data || poisData?.data.length === 0 ? (
 							<Box className='flex h-full items-center justify-center'>
-								<span className='text-sm font-normal text-gray-dark2'>ไม่พบข้อมูล</span>
+								<span className='text-sm font-normal text-gray-dark2'>{t('noResultsFound')}</span>
 							</Box>
 						) : (
 							<>
@@ -397,7 +470,7 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 										)
 									}
 								>
-									เพิ่มตำแหน่ง
+									{t('addPosition')}
 								</Button>
 							)}
 							{(isAllChecked || isSomePinCheck(pinCheck)) && (
@@ -428,7 +501,7 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 											'!text-gray': busy,
 										})}
 									>
-										ลบตำแหน่ง
+										{t('deletePosition')}
 									</span>
 								</Button>
 							)}
@@ -488,11 +561,20 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 					</Box>
 				</Box>
 			</Popover>
-			<MapPinDialog open={postOpenDialog} onClose={() => setPostOpenDialog(false)} onConfirm={handlePostSubmit} />
+			<MapPinDialog
+				open={postOpenDialog}
+				formik={formik}
+				loading={busy}
+				onClose={() => {
+					setPostOpenDialog(false)
+					formik.resetForm()
+				}}
+				onConfirm={handlePostSubmit}
+			/>
 			<AlertConfirm
 				open={deleteOpenDialog}
-				title='ลบตำแหน่งการปักหมุด'
-				content='ต้องการยืนยันการลบตำแหน่งการปักหมุดนี้ใช่หรือไม่'
+				title={t('alert.confirmMapPinsDeleteTitle')}
+				content={t('alert.confirmMapPinsDeleteContent')}
 				onClose={() => setDeleteOpenDialog(false)}
 				onConfirm={handleDeleteSubmit}
 			/>

@@ -4,7 +4,7 @@ import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react
 import { Map, useControl } from 'react-map-gl/maplibre'
 import { MapboxOverlay } from '@deck.gl/mapbox'
 import useLayerStore from './store/map'
-import { MapInterface } from './interface/map'
+import { LatLng, MapInterface } from './interface/map'
 
 const DeckGLOverlay = () => {
 	const layers = useLayerStore((state) => state.layers)
@@ -25,6 +25,7 @@ interface MapLibreProps extends MapInterface {
 
 export interface MapLibreRef {
 	setExtent: (bounds: number[][]) => void
+	setCenter: (coords: LatLng) => void
 }
 
 function MapLibre(
@@ -38,6 +39,11 @@ function MapLibre(
 		setExtent: (bounds: number[][]) => {
 			if (mapRef.current) {
 				mapRef.current.fitBounds(bounds)
+			}
+		},
+		setCenter: (coords: LatLng) => {
+			if (mapRef.current) {
+				mapRef.current.setCenter({ lat: coords.latitude, lng: coords.longitude, zoom: 10 })
 			}
 		},
 	}))
