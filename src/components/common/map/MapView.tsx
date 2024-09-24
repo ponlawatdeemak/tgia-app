@@ -50,6 +50,7 @@ function MapView({ className = '', isShowMapPin = false }: MapViewProps, ref: Re
 			} else if (mapLibreRef.current) {
 				mapLibreRef.current.setCenter(coords)
 			}
+			setViewState({ ...viewState, zoom: 15 })
 		},
 	}))
 
