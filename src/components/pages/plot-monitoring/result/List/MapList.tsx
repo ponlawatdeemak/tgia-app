@@ -18,6 +18,7 @@ import { IconLayer } from '@deck.gl/layers'
 import useAreaType from '@/store/area-type'
 import useMapPin from '../Map/context'
 import InfoPinTitle from '../Map/InfoPinTitle'
+import { getPin } from '@/utils/pin'
 
 type BoundaryLayerType = {
 	layerName: string
@@ -264,11 +265,26 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 				// getIcon: (d: PoisIconType) => {
 				// 	return 'marker'
 				// },
+				getIcon: () => {
+					return {
+						url: getPin('#01AA86'),
+						anchorY: 69,
+						width: 58,
+						height: 69,
+						mask: false,
+					}
+				},
 				getPosition: (d: PoisIconType) => {
 					return d.coordinates
 				},
-				getSize: 20,
-				iconAtlas: '/map/pin/location_on.png',
+				getSize: 40,
+
+				// sizeScale: 1,
+				// getPosition: (d) => d.coordinates,
+				// getSize: 40,
+
+				// iconAtlas: '/map/pin/location_on.png',
+				// iconAtlas: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png',
 				// iconMapping: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json',
 				pickable: true,
 				onClick: (info, event) => {
