@@ -26,6 +26,9 @@ import { GetExtentAdminPolyDtoIn } from '@/api/field-loss/dto-in.dto'
 import { FormikProps } from 'formik'
 import useMapPin from '../context'
 import classNames from 'classnames'
+import useLayerStore from '@/components/common/map/store/map'
+import { IconLayer } from '@deck.gl/layers'
+import { getPin } from '@/utils/pin'
 
 export interface MapPinDialogProps {
 	open: boolean
@@ -46,7 +49,7 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 }) => {
 	const { queryParams } = useSearchPlotMonitoring()
 	const { t } = useTranslation(['plot-monitoring', 'default'])
-
+	const { getLayers, addLayer, removeLayer } = useLayerStore()
 	const mapViewRef = useRef<MapViewRef>(null)
 
 	useEffect(() => {
@@ -57,8 +60,31 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 					longitude: parseFloat(formik.values.lng),
 				})
 			}
+
+			const coordinates: [number, number] = [Number(formik?.values?.lng), Number(formik.values.lat)]
+			removeLayer('selected-pin')
+			const iconLayer = new IconLayer({
+				id: 'selected-pin',
+				// beforeId: "road-exit-shield",
+				data: [{ coordinates }],
+				visible: true,
+				getIcon: () => {
+					return {
+						url: getPin('#F03E3E'),
+						anchorY: 69,
+						width: 58,
+						height: 69,
+						mask: false,
+					}
+				},
+				sizeScale: 1,
+				getPosition: (d) => d.coordinates,
+				getSize: 40,
+			})
+
+			addLayer(iconLayer)
 		}
-	}, [formik.values.lng, formik.values.lat])
+	}, [formik.values.lng, formik.values.lat, removeLayer, getLayers, addLayer])
 
 	// const filterExtentData = useMemo(() => {
 	// 	const filter: GetExtentAdminPolyDtoIn = {
