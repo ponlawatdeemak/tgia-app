@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { AppPath, authPathPrefix } from './config/app'
 import acceptLanguage from 'accept-language'
 import { appLanguages, cookieName, fallbackLng } from './i18n/settings'
+import { cookies } from 'next/headers'
 
 acceptLanguage.languages(appLanguages)
 
@@ -11,10 +12,6 @@ export default withAuth(
 	// Note: Currently allow every routes to enter this middleware
 	function middleware(req) {
 		const { nextUrl } = req
-		const lang = appLanguages.find((l) => nextUrl.pathname.startsWith(`/${l}`))
-		if (!lang) {
-			return redirectWithLanguagePath(req)
-		}
 
 		const token = req.nextauth.token
 		const isLoggedIn = !!token
@@ -35,11 +32,6 @@ export default withAuth(
 				new URL(`${AppPath.Login}/?callbackUrl=${encodeURI(callback)}`, nextUrl),
 			)
 		}
-
-		if (nextUrl.pathname === `/${lang}`) {
-			return responseWithLanguageCookie(req, new URL(AppPath.FieldLoss, nextUrl))
-		}
-
 		return responseWithLanguageCookie(req)
 	},
 	{
@@ -49,48 +41,28 @@ export default withAuth(
 	},
 )
 
-const redirectWithLanguagePath = (req: NextRequestWithAuth) => {
-	let lng
-	if (req.cookies.has(cookieName)) lng = acceptLanguage.get(req.cookies.get(cookieName)?.value)
-	if (!lng) lng = fallbackLng
-
-	// Redirect if lng in path is not supported
-	if (
-		!appLanguages.some((loc) => req.nextUrl.pathname.startsWith(`/${loc}`)) &&
-		!req.nextUrl.pathname.startsWith('/_next')
-	) {
-		const urlSearchParams = new URLSearchParams(req.nextUrl.search)
-		const paramList = Object.entries(Object.fromEntries(urlSearchParams.entries()))
-		const query = []
-
-		for (const [key, value] of paramList) {
-			query.push(`${key}=${value}`)
-		}
-
-		return NextResponse.redirect(new URL(`/${lng}${req.nextUrl.pathname}?${query.join('&')}`, req.url))
-	}
-
-	return NextResponse.next()
-}
-
 const responseWithLanguageCookie = (req: NextRequestWithAuth, redirectUrl?: URL) => {
-	if (req.headers.has('referer')) {
-		const refererUrl = new URL(req.headers.get('referer') as string)
-		const lngInReferer = appLanguages.find((l) => refererUrl.pathname.startsWith(`/${l}`))
+	// if (req.headers.has('referer')) {
+	// 	// const refererUrl = new URL(req.headers.get('referer') as string)
+	// 	//const lngInReferer =  cookie.get('i18next');
+	// 	// const cookie = cookies()
+	// 	// const lngInReferer = appLanguages.find((l) => l == cookie.get('i18next')?.value)
 
-		if (lngInReferer) {
-			let response
-			if (redirectUrl) {
-				response = NextResponse.redirect(redirectUrl)
-			} else {
-				response = NextResponse.next()
-			}
-			response.cookies.set(cookieName, lngInReferer)
-			return response
-		}
-	}
+	// 	// if (lngInReferer) {
+	// 	// 	let response
+	// 	// 	if (redirectUrl) {
+	// 	// 		response = NextResponse.redirect(redirectUrl)
+	// 	// 	} else {
+	// 	// 		response = NextResponse.next()
+	// 	// 	}
+	// 	// 	response.cookies.set(cookieName, lngInReferer)
+	// 	// 	return response
+	// 	// }
+	// }
 	if (redirectUrl) {
-		return NextResponse.redirect(redirectUrl)
+		return NextResponse.redirect(redirectUrl, {
+			status: 301,
+		})
 	}
 	return NextResponse.next()
 }

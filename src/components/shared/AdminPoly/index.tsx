@@ -25,7 +25,7 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 	isShowActivityId = false,
 	isShowFileType = false,
 }) => {
-	const { t, i18n } = useTranslation(['default', 'plot-monitoring'])
+	const { t, i18n } = useTranslation(['default', 'plot-monitoring', 'report'])
 	const language = i18n.language as keyof ResponseLanguage
 
 	const { data: provinceLookupData, isLoading: isProvinceDataLoading } = useQuery({
@@ -278,7 +278,7 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 									className: 'h-6 m-0 p-0 [&_svg]:w-6 [&_svg]:h-6',
 								},
 								clearIndicator: {
-									className: 'w-6 h-6 m-0 p-0.5 [&_svg]:w-5 [&_svg]:h-5',
+									className: 'hidden w-6 h-6 m-0 p-0.5 [&_svg]:w-5 [&_svg]:h-5',
 								},
 							}}
 							renderOption={(props, option, { inputValue }) => {
@@ -287,16 +287,16 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 									<li key={key} {...optionProps}>
 										<div className='flex w-full items-center gap-2 p-2'>
 											<Box className='flex h-4 min-w-4 items-center justify-center'>
-												{option.name[language] === inputValue && (
+												{option.label === inputValue && (
 													<Check className='h-4 w-4 font-normal text-black' />
 												)}
 											</Box>
 											<span
 												className={classNames('text-base font-normal text-black', {
-													'!font-medium': option.name[language] === inputValue,
+													'!font-medium': option.label === inputValue,
 												})}
 											>
-												{option.name[language]}
+												{option.label}
 											</span>
 										</div>
 									</li>
@@ -309,7 +309,7 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 							]}
 							getOptionLabel={(option) => option.label}
 							name='format'
-							label='ประเภทไฟล์'
+							label={t('fileType', { ns: 'report' })}
 							formik={formik}
 							required
 						/>

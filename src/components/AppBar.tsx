@@ -225,7 +225,7 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 							</Avatar>
 						)}
 
-						<span className='text-base font-medium text-black underline decoration-2 underline-offset-2'>
+						<span className='max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium text-black underline decoration-2 underline-offset-2'>
 							{`${user?.firstName || ''} ${user?.lastName.charAt(0).padEnd(2, '.') || ''}`}
 						</span>
 					</Button>
@@ -446,14 +446,14 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 									<Icon path={mdiAccountOutline} size={'90px'} className='text-primary' />
 								</Avatar>
 							)}
-							<span className='text-base font-normal text-black underline decoration-1 underline-offset-2'>
+							<span className='max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap text-base font-normal text-black underline decoration-1 underline-offset-2'>
 								{`${user?.firstName || ''} ${user?.lastName.charAt(0).padEnd(2, '.') || ''}`}
 							</span>
 						</Button>
 						<div className='flex gap-3'>
 							<div>
 								<Button
-									className='flex gap-1 py-1.5 pl-2 pr-2.5 text-base font-medium text-black focus:border-[1px] focus:border-solid focus:border-primary [&_>*]:m-0'
+									className='flex min-w-[90px] gap-1 py-1.5 pl-2 pr-2.5 text-base font-medium text-black focus:border-[1px] focus:border-solid focus:border-primary [&_>*]:m-0'
 									aria-controls='basic-menu2'
 									onClick={() => setToggle(!toggle)}
 									startIcon={<Icon path={mdiTune} size={1} />}
