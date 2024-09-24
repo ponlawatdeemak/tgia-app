@@ -261,15 +261,15 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 				getColor: (d: PoisIconType) => {
 					return [240, 62, 62, 255]
 				},
-				getIcon: (d: PoisIconType) => {
-					return 'marker'
-				},
+				// getIcon: (d: PoisIconType) => {
+				// 	return 'marker'
+				// },
 				getPosition: (d: PoisIconType) => {
 					return d.coordinates
 				},
 				getSize: 20,
-				iconAtlas: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png',
-				iconMapping: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json',
+				iconAtlas: '/map/pin/location_on.png',
+				// iconMapping: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json',
 				pickable: true,
 				onClick: (info, event) => {
 					if (info.object) {
@@ -307,7 +307,7 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 			<InfoWindows clickLayerInfo={clickLayerInfo} setClickLayerInfo={setClickLayerInfo} />
 			<InfoPinTitle clickPinInfo={clickPinInfo} setClickPinInfo={setClickPinInfo} />
 			<MapView
-				className='max-lg:[&_div.MuiBox-root:first-child]:bottom-auto max-lg:[&_div.MuiBox-root:first-child]:left-4 max-lg:[&_div.MuiBox-root:first-child]:top-4 max-lg:[&_div.MuiBox-root:nth-child(2)]:hidden'
+				className='max-lg:[&_div.MuiBox-root:first-child]:bottom-auto max-lg:[&_div.MuiBox-root:first-child]:left-4 max-lg:[&_div.MuiBox-root:first-child]:top-[68px] max-lg:[&_div.MuiBox-root:nth-child(2)]:bottom-auto max-lg:[&_div.MuiBox-root:nth-child(2)]:left-4 max-lg:[&_div.MuiBox-root:nth-child(2)]:top-4 max-lg:[&_div.MuiBox-root>div.MuiBox-root]:hidden'
 				isShowMapPin
 				ref={mapViewRef}
 			/>
