@@ -78,6 +78,8 @@ type HoverInfo = {
 	layerName: string
 }
 
+const API_URL_TILE = process.env.API_URL_TILE
+
 const SelectedLineWidth = 2
 const DefaultLineWidth = 0
 
@@ -196,7 +198,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 							},
 						},
 					},
-					data: 'https://tileserver.cropinsurance-dev.thaicom.io/province/tiles.json',
+					data: `${API_URL_TILE}/province/tiles.json`,
 					filled: true,
 					lineWidthUnits: 'pixels',
 					//visible: layer.layerName === 'country',
@@ -318,7 +320,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 							},
 						},
 					},
-					data: 'https://tileserver.cropinsurance-dev.thaicom.io/province/tiles.json',
+					data: `${API_URL_TILE}/province/tiles.json`,
 					filled: true,
 					lineWidthUnits: 'pixels',
 					//visible: layer.layerName === 'country',
@@ -347,7 +349,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 							},
 						},
 					},
-					data: 'https://tileserver.cropinsurance-dev.thaicom.io/district/tiles.json',
+					data: `${API_URL_TILE}/district/tiles.json`,
 					filled: true,
 					//visible: layer.layerName === 'province',
 					lineWidthUnits: 'pixels',
@@ -491,7 +493,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 							},
 						},
 					},
-					data: 'https://tileserver.cropinsurance-dev.thaicom.io/district/tiles.json',
+					data: `${API_URL_TILE}/district/tiles.json`,
 					filled: true,
 					//visible: layer.layerName === 'province',
 					lineWidthUnits: 'pixels',
@@ -519,7 +521,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 							},
 						},
 					},
-					data: 'https://tileserver.cropinsurance-dev.thaicom.io/subdistrict/tiles.json',
+					data: `${API_URL_TILE}/subdistrict/tiles.json`,
 					filled: true,
 					lineWidthUnits: 'pixels',
 					//visible: layer.layerName === 'district',
@@ -663,7 +665,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 							},
 						},
 					},
-					data: 'https://tileserver.cropinsurance-dev.thaicom.io/subdistrict/tiles.json',
+					data: `${API_URL_TILE}/subdistrict/tiles.json`,
 					filled: true,
 					//visible: layer.layerName === 'subdistrict',
 					lineWidthUnits: 'pixels',
