@@ -12,7 +12,7 @@ import {
 	Paper,
 	Typography,
 } from '@mui/material'
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { mdiClose } from '@mdi/js'
 import Icon from '@mdi/react'
 import { useTranslation } from 'react-i18next'
@@ -33,7 +33,7 @@ export interface MapPinDialogProps {
 	loading?: boolean
 	hideClose?: boolean
 	onClose: () => void
-	onConfirm: (event: React.FormEvent<HTMLFormElement>) => void
+	onConfirm: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 const MapPinDialog: React.FC<MapPinDialogProps> = ({
@@ -48,17 +48,6 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 	const { t } = useTranslation(['plot-monitoring', 'default'])
 
 	const mapViewRef = useRef<MapViewRef>(null)
-
-	useEffect(() => {
-		if (formik.values.lng && formik.values.lat) {
-			if (mapViewRef.current) {
-				mapViewRef.current.setMapCenter({
-					latitude: parseFloat(formik.values.lat),
-					longitude: parseFloat(formik.values.lng),
-				})
-			}
-		}
-	}, [formik.values.lng, formik.values.lat])
 
 	// const filterExtentData = useMemo(() => {
 	// 	const filter: GetExtentAdminPolyDtoIn = {
@@ -87,18 +76,54 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 	// 	}
 	// }, [extentData])
 
-	const handleGetCurrentLocation = () => {
+	const handleGetCurrentLocation = useCallback(() => {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition((position) => {
 				const longitude = position.coords.longitude
 				const latitude = position.coords.latitude
-				formik.setFieldValue('lng', longitude.toFixed(5))
-				formik.setFieldValue('lat', latitude.toFixed(5))
+				formik.setFieldValue('lng', longitude.toFixed(6))
+				formik.setFieldValue('lat', latitude.toFixed(6))
+				if (mapViewRef.current) {
+					mapViewRef.current.setMapCenter({
+						latitude,
+						longitude,
+					})
+				}
 			})
 		} else {
 			console.log('Geolocation is not supported by this browser.')
 		}
-	}
+	}, [formik])
+
+	const handleLocationEnter = useCallback(
+		(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+			if (event.key === 'Enter') {
+				if (formik.values.lng && formik.values.lat) {
+					if (mapViewRef.current) {
+						mapViewRef.current.setMapCenter({
+							latitude: parseFloat(formik.values.lat),
+							longitude: parseFloat(formik.values.lng),
+						})
+					}
+				}
+			}
+		},
+		[formik.values.lat, formik.values.lng],
+	)
+
+	const handleLocationBlur = useCallback(
+		(_event: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement, Element>) => {
+			if (formik.values.lng && formik.values.lat) {
+				if (mapViewRef.current) {
+					mapViewRef.current.setMapCenter({
+						latitude: parseFloat(formik.values.lat),
+						longitude: parseFloat(formik.values.lng),
+					})
+				}
+			}
+		},
+		[formik.values.lat, formik.values.lng],
+	)
 
 	return (
 		<Dialog
@@ -116,7 +141,7 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 					</IconButton>
 				)}
 			</DialogTitle>
-			<form noValidate className='contents' onSubmit={onConfirm}>
+			<form noValidate className='contents'>
 				<DialogContent className='flex flex-grow flex-col gap-3 overflow-auto px-0 py-3'>
 					<Box className='flex flex-col items-start gap-2 sm:flex-row [&_*>input]:p-0 [&_*>input]:text-sm [&_*>input]:font-normal [&_*>input]:text-black [&_*>label]:mb-1 [&_*>label]:text-xs [&_*>label]:font-medium [&_*>label]:text-black [&_.MuiInputBase-root]:rounded-lg [&_.MuiInputBase-root]:px-2.5 [&_.MuiInputBase-root]:py-1.5'>
 						<FormInput
@@ -144,11 +169,13 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 								const value = event.target.value
 								const regex = /^\d*\.?\d{0,6}$/
 								if (regex.test(value) || value === '') {
-									if (value.length < 10) {
+									if (value.length < 12) {
 										formik.handleChange(event)
 									}
 								}
 							}}
+							onKeyDown={handleLocationEnter}
+							onBlur={handleLocationBlur}
 							disabled={loading}
 							required
 						/>
@@ -164,11 +191,13 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 								const value = event.target.value
 								const regex = /^\d*\.?\d{0,6}$/
 								if (regex.test(value) || value === '') {
-									if (value.length < 10) {
+									if (value.length < 12) {
 										formik.handleChange(event)
 									}
 								}
 							}}
+							onKeyDown={handleLocationEnter}
+							onBlur={handleLocationBlur}
 							disabled={loading}
 							required
 						/>
@@ -224,7 +253,7 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 							</span>
 						</Button>
 						<Button
-							type='submit'
+							onClick={onConfirm}
 							variant='contained'
 							className={classNames('px-3 py-1.5', {
 								'pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1': loading,

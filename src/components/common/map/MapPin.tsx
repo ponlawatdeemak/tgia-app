@@ -234,7 +234,7 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 		onExportGeoJSON(geoJSONData)
 	}, [pinCheckIds, poisData])
 
-	const handlePostSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const handlePostSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault()
 		formik.submitForm()
 	}
