@@ -9,6 +9,7 @@ export interface MapInterface {
 	layers?: LayersList
 	viewState?: MapViewState
 	onViewStateChange?: (viewState: MapViewState) => void
+	onMapClick?: (latLng: LatLng) => void
 }
 export interface MapViewState {
 	longitude: number
@@ -19,6 +20,7 @@ export interface MapViewState {
 export interface MapViewProps extends PropsWithChildren {
 	className?: string
 	isShowMapPin?: boolean
+	onMapClick?: (latLng: LatLng) => void
 }
 
 export interface LatLng {

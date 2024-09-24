@@ -23,7 +23,7 @@ export interface MapViewRef {
 	setMapCenter: (coords: LatLng) => void
 }
 
-function MapView({ className = '', isShowMapPin = false }: MapViewProps, ref: React.Ref<MapViewRef>) {
+function MapView({ className = '', isShowMapPin = false, onMapClick }: MapViewProps, ref: React.Ref<MapViewRef>) {
 	const [viewState, setViewState] = useState<MapViewState>(INITIAL_VIEW_STATE)
 	const [basemap, setBasemap] = useState('carto-light')
 
@@ -50,7 +50,7 @@ function MapView({ className = '', isShowMapPin = false }: MapViewProps, ref: Re
 			} else if (mapLibreRef.current) {
 				mapLibreRef.current.setCenter(coords)
 			}
-			setViewState({ ...viewState, zoom: 15 })
+			setViewState({ ...viewState, zoom: 13 })
 		},
 	}))
 
@@ -88,12 +88,22 @@ function MapView({ className = '', isShowMapPin = false }: MapViewProps, ref: Re
 			{basemap !== 'google' ? (
 				<MapLibre
 					ref={mapLibreRef}
+					onMapClick={(latLng: LatLng) => {
+						onMapClick?.(latLng)
+					}}
 					viewState={viewState as any}
 					mapStyle={basemap === 'carto-light' ? BASEMAP.VOYAGER : BASEMAP.DARK_MATTER}
 					onViewStateChange={onViewStateChange}
 				/>
 			) : (
-				<MapGoogle ref={mapGoogleRef} viewState={viewState} onViewStateChange={onViewStateChange} />
+				<MapGoogle
+					onMapClick={(latLng: LatLng) => {
+						onMapClick?.(latLng)
+					}}
+					ref={mapGoogleRef}
+					viewState={viewState}
+					onViewStateChange={onViewStateChange}
+				/>
 			)}
 		</div>
 	)

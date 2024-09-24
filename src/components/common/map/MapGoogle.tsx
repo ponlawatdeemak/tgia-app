@@ -27,7 +27,7 @@ export interface MapGoogleRef {
 	setCenter: (coords: LatLng) => void
 }
 
-function MapGoogle({ viewState, onViewStateChange }: MapGoogleProps, ref: React.Ref<MapGoogleRef>) {
+function MapGoogle({ viewState, onViewStateChange, onMapClick }: MapGoogleProps, ref: React.Ref<MapGoogleRef>) {
 	const mapRef = useRef<google.maps.Map | null>(null)
 	const overlay = useLayerStore((state) => state.overlay)
 
@@ -68,6 +68,13 @@ function MapGoogle({ viewState, onViewStateChange }: MapGoogleProps, ref: React.
 						latitude: evt.detail.center.lat,
 						longitude: evt.detail.center.lng,
 						zoom: evt.detail.zoom,
+					})
+				}}
+				onClick={(e) => {
+					const info = e?.detail?.latLng
+					onMapClick?.({
+						latitude: info?.lat || 0,
+						longitude: info?.lng || 0,
 					})
 				}}
 			>

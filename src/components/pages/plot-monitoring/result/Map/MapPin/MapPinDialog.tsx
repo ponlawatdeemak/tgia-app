@@ -175,7 +175,13 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 					</Box>
 					<Paper className='relative grid flex-grow overflow-hidden'>
 						<Box className='relative h-full w-full'>
-							<MapView ref={mapViewRef} />
+							<MapView
+								ref={mapViewRef}
+								onMapClick={(latLng) => {
+									formik.setFieldValue('lng', latLng?.longitude?.toFixed(5) || null)
+									formik.setFieldValue('lat', latLng?.latitude?.toFixed(5) || null)
+								}}
+							/>
 						</Box>
 					</Paper>
 				</DialogContent>

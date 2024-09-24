@@ -1,7 +1,7 @@
 'use client'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react'
-import { Map, useControl } from 'react-map-gl/maplibre'
+import { Map, MapLayerMouseEvent, useControl } from 'react-map-gl/maplibre'
 import { MapboxOverlay } from '@deck.gl/mapbox'
 import useLayerStore from './store/map'
 import { LatLng, MapInterface } from './interface/map'
@@ -29,7 +29,7 @@ export interface MapLibreRef {
 }
 
 function MapLibre(
-	{ layers, mapStyle, viewState, onViewStateChange, ...props }: MapLibreProps,
+	{ layers, mapStyle, viewState, onViewStateChange, onMapClick, ...props }: MapLibreProps,
 	ref: React.Ref<MapLibreRef>,
 ) {
 	const mapRef = useRef<any>(null)
@@ -63,6 +63,7 @@ function MapLibre(
 			zoom={viewState?.zoom}
 			onMove={(e) => onViewStateChange?.(e.viewState)}
 			ref={mapRef}
+			onClick={(e) => onMapClick?.({ latitude: e?.lngLat?.lat, longitude: e?.lngLat?.lng })}
 		>
 			<DeckGLOverlay />
 		</Map>
