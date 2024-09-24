@@ -105,7 +105,7 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 			open={open}
 			onClose={onClose}
 			PaperProps={{
-				className: 'm-0 p-6 min-w-[90%] min-h-[90%]',
+				className: 'm-0 p-6 min-w-[90%] min-h-[85%]',
 			}}
 		>
 			<DialogTitle className='flex items-center justify-between p-0'>
@@ -118,13 +118,13 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 			</DialogTitle>
 			<form noValidate className='contents' onSubmit={onConfirm}>
 				<DialogContent className='flex flex-grow flex-col gap-3 overflow-auto px-0 py-3'>
-					<Box className='flex items-start gap-2 [&_*>input]:p-0 [&_*>input]:text-sm [&_*>input]:font-normal [&_*>input]:text-black [&_*>label]:mb-1 [&_*>label]:text-xs [&_*>label]:font-medium [&_*>label]:text-black [&_.MuiInputBase-root]:rounded-lg [&_.MuiInputBase-root]:px-2.5 [&_.MuiInputBase-root]:py-1.5'>
+					<Box className='flex flex-col items-start gap-2 sm:flex-row [&_*>input]:p-0 [&_*>input]:text-sm [&_*>input]:font-normal [&_*>input]:text-black [&_*>label]:mb-1 [&_*>label]:text-xs [&_*>label]:font-medium [&_*>label]:text-black [&_.MuiInputBase-root]:rounded-lg [&_.MuiInputBase-root]:px-2.5 [&_.MuiInputBase-root]:py-1.5'>
 						<FormInput
-							className='w-[200px]'
+							className='w-full sm:w-[200px]'
 							name='name'
 							label={t('positionName')}
 							formik={formik}
-							placeholder='ตำแหน่ง'
+							placeholder={t('position')}
 							value={''}
 							inputProps={{
 								maxLength: 50,
@@ -133,14 +133,13 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 							required
 						/>
 						<FormInput
-							className='w-[200px]'
+							className='w-full sm:w-[200px]'
 							type='number'
 							name='lat'
 							label={t('latitude')}
 							formik={formik}
 							placeholder='0.000000'
 							value={''}
-							//InputProps={{ inputProps: { min: 0, max: 10 } }}
 							onChange={(event) => {
 								const value = event.target.value
 								const regex = /^\d*\.?\d{0,6}$/
@@ -154,7 +153,7 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 							required
 						/>
 						<FormInput
-							className='w-[200px]'
+							className='w-full sm:w-[200px]'
 							type='number'
 							name='lng'
 							label={t('longitude')}

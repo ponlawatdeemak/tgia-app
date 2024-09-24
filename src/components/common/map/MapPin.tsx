@@ -33,6 +33,7 @@ import * as yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import { PostPOISDtoIn } from '@/api/plot-monitoring/dto-in.dto'
+import useResponsive from '@/hook/responsive'
 
 interface FormValues {
 	name: string
@@ -49,6 +50,7 @@ const defaultFormValues: FormValues = {
 interface MapPinProps {}
 
 const MapPin: React.FC<MapPinProps> = ({}) => {
+	const { isDesktop } = useResponsive()
 	const queryClient = useQueryClient()
 	const { open, setOpen } = useMapPin()
 	const { t } = useTranslation(['plot-monitoring', 'default'])
@@ -270,6 +272,7 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 		try {
 			setBusy(true)
 			await mutateDeleteMapPins(pinCheckIds)
+			queryClient.invalidateQueries({ queryKey: ['getPOISMapPin'] })
 		} catch (error: any) {
 			console.log('Error:', error.title)
 		} finally {
@@ -356,13 +359,13 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 				onClose={() => setAnchorEl(null)}
 				slotProps={{
 					paper: {
-						className: 'border border-solid border-gray',
+						className: 'border border-solid border-gray overflow-x-auto',
 					},
 				}}
 				anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-				transformOrigin={{ vertical: 218, horizontal: -56 }}
+				transformOrigin={{ vertical: isDesktop ? 118 : -50, horizontal: isDesktop ? -56 : 0 }}
 			>
-				<Box className='flex h-[400px] w-[480px] flex-col bg-white drop-shadow-md'>
+				<Box className='flex h-[300px] w-[480px] flex-col bg-white drop-shadow-md'>
 					<Box className='flex items-center justify-between p-3'>
 						<Typography className='text-sm font-semibold text-black-dark'>{t('pinning')}</Typography>
 						<Box className='flex items-center gap-2'>
