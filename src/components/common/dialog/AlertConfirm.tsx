@@ -45,8 +45,8 @@ const AlertConfirm: React.FC<AlertConfirmProps> = ({
 	const { t } = useTranslation(['default'])
 
 	return (
-		<Dialog open={open} onClose={onClose} className='[&_.MuiDialog-paper]:w-[560px]'>
-			<DialogTitle className='flex items-center justify-between p-[8px] pl-[24px]'>
+		<Dialog open={open} onClose={onClose} className='[&_.MuiDialog-paper]:m-4 [&_.MuiDialog-paper]:w-[560px]'>
+			<DialogTitle className='flex items-center justify-between p-[8px] pl-[24px] max-sm:pl-4'>
 				<Typography className='text-md font-semibold'>{title}</Typography>
 				{!hideClose && (
 					<IconButton aria-label='close' onClick={onClose}>
@@ -54,12 +54,12 @@ const AlertConfirm: React.FC<AlertConfirmProps> = ({
 					</IconButton>
 				)}
 			</DialogTitle>
-			<DialogContent className='flex flex-col gap-[24px] py-[16px]'>
+			<DialogContent className='flex flex-col gap-[24px] py-[16px] max-sm:px-4'>
 				<DialogContentText className='text-base text-black'>{content}</DialogContentText>
 				{subContent && <DialogContentText>{subContent}</DialogContentText>}
 			</DialogContent>
 			{mode === 'DialogConfirm' ? (
-				<DialogActions className='border-[0px] border-t-[1px] border-solid border-transparent border-t-gray p-[24px] pt-[15px]'>
+				<DialogActions className='border-[0px] border-t-[1px] border-solid border-transparent border-t-gray p-[24px] pt-[15px] max-sm:pb-4'>
 					<Button
 						onClick={onClose}
 						variant='outlined'
@@ -78,7 +78,7 @@ const AlertConfirm: React.FC<AlertConfirmProps> = ({
 					</Button>
 				</DialogActions>
 			) : (
-				<DialogActions className='border-[0px] border-t-[1px] border-solid border-transparent border-t-gray p-[24px] pt-[15px]'>
+				<DialogActions className='border-[0px] border-t-[1px] border-solid border-transparent border-t-gray p-[24px] pt-[15px] max-sm:pb-4'>
 					<Button
 						onClick={onConfirm}
 						variant='contained'
