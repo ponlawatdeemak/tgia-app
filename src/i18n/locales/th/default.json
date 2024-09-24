@@ -88,8 +88,8 @@
 	"map": {
 		"mapType": "ประเภทแผนที่",
 		"street": "เส้นถนน",
-		"satellite": "ภูมิประเทศ",
-		"hybrid": "ผสม"
+		"satellite": "มืด",
+		"hybrid": "ภูมิประเทศ"
 	},
 	"dataSetYear": "ปีชุดข้อมูล",
 	"area": "พื้นที่"

@@ -87,8 +87,8 @@
 	"map": {
 		"mapType": "Map Type",
 		"street": "Street",
-		"satellite": "Satellite",
-		"hybrid": "Satellite Hybrid"
+		"satellite": "Dark",
+		"hybrid": "Satellite"
 	},
 	"dataSetYear": "Data Set Year",
 	"area": "Area"

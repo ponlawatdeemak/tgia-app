@@ -7,17 +7,17 @@ import { useTranslation } from 'react-i18next'
 const basemapList = [
 	{
 		value: 'carto-light',
-		image: '/map/basemap_bright.png',
+		image: '/map/basemap_street.png',
 		label: 'map.street',
 	},
 	{
 		value: 'carto-dark',
-		image: '/map/basemap_satellite.png',
+		image: '/map/basemap_dark.png',
 		label: 'map.satellite',
 	},
 	{
 		value: 'google',
-		image: '/map/basemap_satellite_hybrid.png',
+		image: '/map/basemap_hybrid.png',
 		label: 'map.hybrid',
 	},
 ]
