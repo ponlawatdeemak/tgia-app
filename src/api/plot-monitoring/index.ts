@@ -31,7 +31,7 @@ const plotMonitoring = {
 		if (payload.lossType !== undefined) params.append('lossType', payload.lossType.toString())
 		if (payload.insuredType !== undefined) params.append('insuredType', payload.insuredType.toString())
 		if (payload.publicStatus !== undefined) params.append('publicStatus', payload.publicStatus.toString())
-		if (payload.riskType !== undefined) payload.riskType.forEach((item) => params.append('riskType', item))
+		if (payload.riskType !== undefined) params.append('riskType', JSON.stringify(payload.riskType))
 		if (payload.riceType !== undefined) params.append('riceType', payload.riceType.toString())
 		if (payload.detailType !== undefined) params.append('detailType', payload.detailType.toString())
 		if (payload.orderBy) params.append('orderBy', payload.orderBy)
@@ -53,7 +53,7 @@ const plotMonitoring = {
 		if (payload.lossType !== undefined) params.append('lossType', payload.lossType.toString())
 		if (payload.insuredType !== undefined) params.append('insuredType', payload.insuredType.toString())
 		if (payload.publicStatus !== undefined) params.append('publicStatus', payload.publicStatus.toString())
-		if (payload.riskType !== undefined) payload.riskType.forEach((item) => params.append('riskType', item))
+		if (payload.riskType !== undefined) params.append('riskType', JSON.stringify(payload.riskType))
 		if (payload.riceType !== undefined) params.append('riceType', payload.riceType.toString())
 		if (payload.detailType !== undefined) params.append('detailType', payload.detailType.toString())
 
