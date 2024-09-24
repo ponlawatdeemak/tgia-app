@@ -11,9 +11,10 @@ import { useTranslation } from 'react-i18next'
 interface PlotMonitoringListProps {
 	isFullList: boolean
 	setIsFullList: React.Dispatch<React.SetStateAction<boolean>>
+	mapViewRef: any
 }
 
-const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, setIsFullList }) => {
+const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, setIsFullList, mapViewRef }) => {
 	const { t } = useTranslation(['default', 'plot-monitoring'])
 	const [areaDetail, setAreaDetail] = useState('cards')
 
@@ -61,7 +62,7 @@ const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, set
 				</ToggleButton>
 			</ToggleButtonGroup>
 			<CardList areaDetail={areaDetail} />
-			<MapList areaDetail={areaDetail} />
+			<MapList areaDetail={areaDetail} mapViewRef={mapViewRef} />
 		</Paper>
 	)
 }
