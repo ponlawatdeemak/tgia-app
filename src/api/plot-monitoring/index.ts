@@ -4,6 +4,7 @@ import {
 	GetPlotActivityDetailDtoIn,
 	GetPositionSearchPlotDtoIn,
 	GetSearchPlotDtoIn,
+	PostPOISDtoIn,
 } from './dto-in.dto'
 import {
 	DeletePOISDtoOut,
@@ -13,6 +14,7 @@ import {
 	GetPOISDtoOut,
 	GetPositionSearchPlotDtoOut,
 	GetSearchPlotDtoOut,
+	PostPOISDtoOut,
 } from './dto-out.dto'
 import { APIService, ResponseDto } from '@/api/interface'
 import { api } from '../core'
@@ -89,6 +91,7 @@ const plotMonitoring = {
 		return await api.get(`/plot/${payload.activityId}/loss-detail?${params}`, APIService.DisasterAPI)
 	},
 	getPOIS: async (): Promise<ResponseDto<GetPOISDtoOut[]>> => await api.get('/pois'),
+	postPOIS: async (payload: PostPOISDtoIn): Promise<ResponseDto<PostPOISDtoOut>> => await api.post('/pois', payload),
 	deletePOIS: async (payload: DeletePOISDtoIn): Promise<ResponseDto<DeletePOISDtoOut>> =>
 		await api.delete(`/pois/${payload.poiId}`),
 }

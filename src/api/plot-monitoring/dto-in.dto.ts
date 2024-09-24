@@ -30,6 +30,12 @@ export interface GetPlotActivityDetailDtoIn {
 	count?: number
 }
 
+export interface PostPOISDtoIn {
+	title: string
+	lat: number
+	lng: number
+}
+
 export interface DeletePOISDtoIn {
 	poiId: string
 }
