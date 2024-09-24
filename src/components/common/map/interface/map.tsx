@@ -20,3 +20,8 @@ export interface MapViewProps extends PropsWithChildren {
 	className?: string
 	isShowMapPin?: boolean
 }
+
+export interface LatLng {
+	latitude: number
+	longitude: number
+}
