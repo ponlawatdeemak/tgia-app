@@ -29,3 +29,7 @@ export interface GetPlotActivityDetailDtoIn {
 	activityId: number
 	count?: number
 }
+
+export interface DeletePOISDtoIn {
+	poiId: string
+}

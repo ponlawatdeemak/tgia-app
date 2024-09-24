@@ -14,60 +14,55 @@ import { apiAccessToken } from '@/api/core'
 import { BoundaryTileColor, LineWidthColor, LossTypeTileColor } from '@/config/color'
 import InfoWindows from '../Map/InfoWindows'
 import { GetPositionSearchPlotDtoOut } from '@/api/plot-monitoring/dto-out.dto'
+import { IconLayer } from '@deck.gl/layers'
 import useAreaType from '@/store/area-type'
-
-type ProvincePropertiesType = {
-	layerName: string
-	provinceCode: number
-	provinceNameEn: string
-	provinceNameTh: string
-}
-
-type DistrictPropertiesType = {
-	layerName: string
-	districtCode: number
-	districtNameEn: string
-	districtNameTh: string
-	provinceCode: number
-	provinceNameEn: string
-	provinceNameTh: string
-}
-
-type SubDistrictPropertiesType = {
-	layerName: string
-	subDistrictCode: number
-	subDistrictNameEn: string
-	subDistrictNameTh: string
-	districtCode: number
-	districtNameEn: string
-	districtNameTh: string
-	provinceCode: number
-	provinceNameEn: string
-	provinceNameTh: string
-}
+import useMapPin from '../Map/context'
+import InfoPinTitle from '../Map/InfoPinTitle'
 
 type BoundaryLayerType = {
 	layerName: string
 	activity_id: number
 }
 
-type ClickInfo = {
+type PoisIconType = {
+	coordinates: [longitude: number, latitude: number]
+	createdAt: string
+	lat: number
+	lng: number
+	poiId: string
+	title: string
+	updatedAt: string
+	userId: string
+}
+
+type ClickLayerInfo = {
 	x: number
 	y: number
 	area: GetPositionSearchPlotDtoOut
 }
+
+type ClickPinInfo = {
+	x: number
+	y: number
+	area: PoisIconType
+}
+
+const API_URL_TILE = process.env.API_URL_TILE
 
 const SelectedLineWidth = 2
 const DefaultLineWidth = 0
 
 interface MapListProps {
 	areaDetail: string
+	mapViewRef: any
 }
 
-const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
+const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 	const { queryParams } = useSearchPlotMonitoring()
+	const { open } = useMapPin()
 	const { areaType } = useAreaType()
-	const [clickInfo, setClickInfo] = useState<ClickInfo | null>(null)
+	const [clickLayerInfo, setClickLayerInfo] = useState<ClickLayerInfo | null>(null)
+	const [clickPinInfo, setClickPinInfo] = useState<ClickPinInfo | null>(null)
 	const { layers, addLayer, setLayers } = useLayerStore()
 
 	const filterAreaSearchPlot = useMemo(() => {
@@ -92,20 +87,33 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 		queryKey: ['getAreaSearchPlot', filterAreaSearchPlot],
 		queryFn: async () => {
 			const data = await service.plotMonitoring.getAreaSearchPlot(filterAreaSearchPlot)
-			setClickInfo(null)
+			setClickLayerInfo(null)
 			return data
 		},
 	})
 
-	const areaSearchPlotId = useMemo(() => {
+	const { data: poisData, isLoading: isPOISDataLoading } = useQuery({
+		queryKey: ['getPOISMapPin'],
+		queryFn: () => service.plotMonitoring.getPOIS(),
+	})
+
+	const poisDataWithCoordinates = useMemo(() => {
+		return poisData?.data?.map((data) => ({ ...data, coordinates: [data.lng, data.lat] }))
+	}, [poisData])
+
+	const areaSearchPlotIds = useMemo(() => {
 		return areaSearchPlot?.data?.map((item) => item.activityId) || []
 	}, [areaSearchPlot])
 
-	// const areaSearchPlotId = useMemo(() => {
+	// const areaSearchPlotIds = useMemo(() => {
 	// 	return [204092124, 204148174, 204513425, 204457339, 204091737] || []
 	// }, [areaSearchPlot])
 
-	const handlePositionClick = useCallback(
+	const poisDataIds = useMemo(() => {
+		return poisData?.data?.map((item) => item.poiId) || []
+	}, [poisData])
+
+	const handleLayerPositionClick = useCallback(
 		async (x: number, y: number, coordinate: number[], year: number) => {
 			try {
 				const response = await service.plotMonitoring.getPositionSearchPlot({
@@ -116,7 +124,7 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 				if (!response.data) {
 					throw new Error('Access Position failed!!')
 				}
-				setClickInfo({ x, y, area: response.data })
+				setClickLayerInfo({ x, y, area: response.data })
 			} catch (error) {
 				console.log('error: ', error)
 			}
@@ -125,296 +133,169 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 	)
 
 	useEffect(() => {
-		if (!queryParams.provinceCode) {
-			setLayers([
-				new MVTLayer({
-					id: 'country',
-					name: 'country',
-					loadOptions: {
-						fetch: {
-							headers: {
-								'content-type': 'application/json',
-								Authorization: `Bearer ${apiAccessToken}`,
-							},
+		setLayers([
+			new MVTLayer({
+				id: !queryParams.provinceCode
+					? 'country'
+					: !queryParams.districtCode
+						? 'province'
+						: !queryParams.subDistrictCode
+							? 'district'
+							: 'subDistrict',
+				name: !queryParams.provinceCode
+					? 'country'
+					: !queryParams.districtCode
+						? 'province'
+						: !queryParams.subDistrictCode
+							? 'district'
+							: 'subDistrict',
+				loadOptions: {
+					fetch: {
+						headers: {
+							'content-type': 'application/json',
+							Authorization: `Bearer ${apiAccessToken}`,
 						},
 					},
-					data: 'https://tileserver.cropinsurance-dev.thaicom.io/province/tiles.json',
-					filled: true,
-					lineWidthUnits: 'pixels',
-					getFillColor(d: Feature<Geometry, ProvincePropertiesType>) {
-						return BoundaryTileColor.default
-					},
-					getLineColor(d: Feature<Geometry, ProvincePropertiesType>) {
-						return LineWidthColor.default
-					},
-					getLineWidth(d: Feature<Geometry, ProvincePropertiesType>) {
+				},
+				data: !queryParams.provinceCode
+					? `${API_URL_TILE}/province/tiles.json`
+					: !queryParams.districtCode
+						? `${API_URL_TILE}/province/tiles.json`
+						: !queryParams.subDistrictCode
+							? `${API_URL_TILE}/district/tiles.json`
+							: `${API_URL_TILE}/subdistrict/tiles.json`,
+				filled: true,
+				lineWidthUnits: 'pixels',
+				getFillColor(d: any) {
+					return BoundaryTileColor.default
+				},
+				getLineColor(d: any) {
+					return LineWidthColor.default
+				},
+				getLineWidth(d: any) {
+					if (!queryParams.provinceCode) {
 						return DefaultLineWidth
-					},
-					pickable: true,
-				}),
-			])
-		} else if (queryParams.provinceCode && !queryParams.districtCode) {
-			setLayers([
-				new MVTLayer({
-					id: 'province',
-					name: 'province',
-					loadOptions: {
-						fetch: {
-							headers: {
-								'content-type': 'application/json',
-								Authorization: `Bearer ${apiAccessToken}`,
-							},
-						},
-					},
-					data: 'https://tileserver.cropinsurance-dev.thaicom.io/province/tiles.json',
-					filled: true,
-					lineWidthUnits: 'pixels',
-					getFillColor(d: Feature<Geometry, ProvincePropertiesType>) {
-						return BoundaryTileColor.default
-					},
-					getLineColor(d: Feature<Geometry, ProvincePropertiesType>) {
-						return LineWidthColor.default
-					},
-					getLineWidth(d: Feature<Geometry, ProvincePropertiesType>) {
-						if (queryParams.provinceCode === d.properties.provinceCode) {
-							return SelectedLineWidth
-						}
-						return DefaultLineWidth
-					},
-					pickable: true,
-					updateTriggers: {
-						getFillColor: queryParams.provinceCode,
-						getLineColor: queryParams.provinceCode,
-						getLineWidth: queryParams.provinceCode,
-					},
-				}),
-				new MVTLayer({
-					id: `boundary_$${queryParams.year}`,
-					name: `boundary_$${queryParams.year}`,
-					loadOptions: {
-						fetch: {
-							headers: {
-								'content-type': 'application/json',
-								Authorization: `Bearer ${apiAccessToken}`,
-							},
-						},
-					},
-					data: `https://tileserver.cropinsurance-dev.thaicom.io/boundary_${queryParams.year}/tiles.json`,
-					filled: true,
-					getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
-						if (areaSearchPlotId.includes(d.properties.activity_id)) {
-							return LossTypeTileColor.rnr
-						}
-						return LossTypeTileColor.default
-					},
-					getLineColor(d: Feature<Geometry, BoundaryLayerType>) {
-						return LineWidthColor.default
-					},
-					getLineWidth(d: Feature<Geometry, BoundaryLayerType>) {
-						if (areaSearchPlotId.includes(d.properties.activity_id)) {
-							return SelectedLineWidth
-						}
-						return DefaultLineWidth
-					},
-					pickable: true,
-					updateTriggers: {
-						getFillColor: queryParams.provinceCode,
-						getLineColor: queryParams.provinceCode,
-						getLineWidth: queryParams.provinceCode,
-					},
-					onClick: (info, event) => {
-						if (info.object) {
-							if (areaSearchPlotId.includes(info.object.properties.activity_id)) {
-								if (info.coordinate) {
-									handlePositionClick(info.x, info.y, info.coordinate, queryParams.year)
+					} else {
+						if (!queryParams.districtCode) {
+							if (queryParams.provinceCode === d.properties.provinceCode) {
+								return SelectedLineWidth
+							}
+							return DefaultLineWidth
+						} else {
+							if (!queryParams.subDistrictCode) {
+								if (queryParams.districtCode === d.properties.districtCode) {
+									return SelectedLineWidth
 								}
+								return DefaultLineWidth
 							} else {
-								setClickInfo(null)
+								if (queryParams.subDistrictCode === d.properties.subDistrictCode) {
+									return SelectedLineWidth
+								}
+								return DefaultLineWidth
+							}
+						}
+					}
+				},
+				pickable: true,
+				updateTriggers: {
+					getFillColor: queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
+					getLineColor: queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
+					getLineWidth: queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
+				},
+			}),
+		])
+		addLayer(
+			new MVTLayer({
+				id: `boundary_$${queryParams.year}`,
+				name: `boundary_$${queryParams.year}`,
+				loadOptions: {
+					fetch: {
+						headers: {
+							'content-type': 'application/json',
+							Authorization: `Bearer ${apiAccessToken}`,
+						},
+					},
+				},
+				data: `${API_URL_TILE}/boundary_${queryParams.year}/tiles.json`,
+				filled: true,
+				getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
+					if (areaSearchPlotIds.includes(d.properties.activity_id)) {
+						return LossTypeTileColor.rnr
+					}
+					return LossTypeTileColor.default
+				},
+				getLineColor(d: Feature<Geometry, BoundaryLayerType>) {
+					return LineWidthColor.default
+				},
+				getLineWidth(d: Feature<Geometry, BoundaryLayerType>) {
+					if (areaSearchPlotIds.includes(d.properties.activity_id)) {
+						return SelectedLineWidth
+					}
+					return DefaultLineWidth
+				},
+				pickable: true,
+				updateTriggers: {
+					getFillColor: queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
+					getLineColor: queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
+					getLineWidth: queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
+				},
+				onClick: (info, event) => {
+					if (info.object) {
+						if (areaSearchPlotIds.includes(info.object.properties.activity_id)) {
+							if (info.coordinate) {
+								handleLayerPositionClick(info.x, info.y, info.coordinate, queryParams.year)
 							}
 						} else {
-							setClickInfo(null)
+							setClickLayerInfo(null)
 						}
-					},
-				}),
-			])
-		} else if (queryParams.provinceCode && queryParams.districtCode && !queryParams.subDistrictCode) {
-			setLayers([
-				new MVTLayer({
-					id: 'district',
-					name: 'district',
-					loadOptions: {
-						fetch: {
-							headers: {
-								'content-type': 'application/json',
-								Authorization: `Bearer ${apiAccessToken}`,
-							},
-						},
-					},
-					data: 'https://tileserver.cropinsurance-dev.thaicom.io/district/tiles.json',
-					filled: true,
-					lineWidthUnits: 'pixels',
-					getFillColor(d: Feature<Geometry, DistrictPropertiesType>) {
-						return BoundaryTileColor.default
-					},
-					getLineColor(d: Feature<Geometry, DistrictPropertiesType>) {
-						return LineWidthColor.default
-					},
-					getLineWidth(d: Feature<Geometry, DistrictPropertiesType>) {
-						if (queryParams.districtCode === d.properties.districtCode) {
-							return SelectedLineWidth
-						}
-						return DefaultLineWidth
-					},
-					pickable: true,
-					updateTriggers: {
-						getFillColor: queryParams.districtCode,
-						getLineColor: queryParams.districtCode,
-						getLineWidth: queryParams.districtCode,
-					},
-				}),
-				new MVTLayer({
-					id: `boundary_$${queryParams.year}`,
-					name: `boundary_$${queryParams.year}`,
-					loadOptions: {
-						fetch: {
-							headers: {
-								'content-type': 'application/json',
-								Authorization: `Bearer ${apiAccessToken}`,
-							},
-						},
-					},
-					data: `https://tileserver.cropinsurance-dev.thaicom.io/boundary_${queryParams.year}/tiles.json`,
-					filled: true,
-					getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
-						if (areaSearchPlotId.includes(d.properties.activity_id)) {
-							return LossTypeTileColor.rnr
-						}
-						return LossTypeTileColor.default
-					},
-					getLineColor(d: Feature<Geometry, BoundaryLayerType>) {
-						return LineWidthColor.default
-					},
-					getLineWidth(d: Feature<Geometry, BoundaryLayerType>) {
-						if (areaSearchPlotId.includes(d.properties.activity_id)) {
-							return SelectedLineWidth
-						}
-						return DefaultLineWidth
-					},
-					pickable: true,
-					updateTriggers: {
-						getFillColor: queryParams.districtCode,
-						getLineColor: queryParams.districtCode,
-						getLineWidth: queryParams.districtCode,
-					},
-					onClick: (info, event) => {
-						if (info.object) {
-							if (areaSearchPlotId.includes(info.object.properties.activity_id)) {
-								if (info.coordinate) {
-									handlePositionClick(info.x, info.y, info.coordinate, queryParams.year)
-								}
-							} else {
-								setClickInfo(null)
-							}
+					} else {
+						setClickLayerInfo(null)
+					}
+				},
+			}),
+		)
+		addLayer(
+			new IconLayer<PoisIconType>({
+				id: 'IconLayer',
+				data: open ? poisDataWithCoordinates : [],
+				getColor: (d: PoisIconType) => {
+					return [240, 62, 62, 255]
+				},
+				getIcon: (d: PoisIconType) => {
+					return 'marker'
+				},
+				getPosition: (d: PoisIconType) => {
+					return d.coordinates
+				},
+				getSize: 20,
+				iconAtlas: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png',
+				iconMapping: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json',
+				pickable: true,
+				onClick: (info, event) => {
+					if (info.object) {
+						if (poisDataIds.includes(info.object.poiId)) {
+							setClickPinInfo({ x: info.x, y: info.y, area: info.object })
 						} else {
-							setClickInfo(null)
+							setClickPinInfo(null)
 						}
-					},
-				}),
-			])
-		} else if (queryParams.provinceCode && queryParams.districtCode && queryParams.subDistrictCode) {
-			setLayers([
-				new MVTLayer({
-					id: 'subDistrict',
-					name: 'subDistrict',
-					loadOptions: {
-						fetch: {
-							headers: {
-								'content-type': 'application/json',
-								Authorization: `Bearer ${apiAccessToken}`,
-							},
-						},
-					},
-					data: 'https://tileserver.cropinsurance-dev.thaicom.io/subdistrict/tiles.json',
-					filled: true,
-					lineWidthUnits: 'pixels',
-					getFillColor(d: Feature<Geometry, SubDistrictPropertiesType>) {
-						return BoundaryTileColor.default
-					},
-					getLineColor(d: Feature<Geometry, SubDistrictPropertiesType>) {
-						return LineWidthColor.default
-					},
-					getLineWidth(d: Feature<Geometry, SubDistrictPropertiesType>) {
-						if (queryParams.subDistrictCode === d.properties.subDistrictCode) {
-							return SelectedLineWidth
-						}
-						return DefaultLineWidth
-					},
-					pickable: true,
-					updateTriggers: {
-						getFillColor: queryParams.subDistrictCode,
-						getLineColor: queryParams.subDistrictCode,
-						getLineWidth: queryParams.subDistrictCode,
-					},
-				}),
-				new MVTLayer({
-					id: `boundary_$${queryParams.year}`,
-					name: `boundary_$${queryParams.year}`,
-					loadOptions: {
-						fetch: {
-							headers: {
-								'content-type': 'application/json',
-								Authorization: `Bearer ${apiAccessToken}`,
-							},
-						},
-					},
-					data: `https://tileserver.cropinsurance-dev.thaicom.io/boundary_${queryParams.year}/tiles.json`,
-					filled: true,
-					getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
-						if (areaSearchPlotId.includes(d.properties.activity_id)) {
-							return LossTypeTileColor.rnr
-						}
-						return LossTypeTileColor.default
-					},
-					getLineColor(d: Feature<Geometry, BoundaryLayerType>) {
-						return LineWidthColor.default
-					},
-					getLineWidth(d: Feature<Geometry, BoundaryLayerType>) {
-						if (areaSearchPlotId.includes(d.properties.activity_id)) {
-							return SelectedLineWidth
-						}
-						return DefaultLineWidth
-					},
-					pickable: true,
-					updateTriggers: {
-						getFillColor: queryParams.subDistrictCode,
-						getLineColor: queryParams.subDistrictCode,
-						getLineWidth: queryParams.subDistrictCode,
-					},
-					onClick: (info, event) => {
-						if (info.object) {
-							if (areaSearchPlotId.includes(info.object.properties.activity_id)) {
-								if (info.coordinate) {
-									handlePositionClick(info.x, info.y, info.coordinate, queryParams.year)
-								}
-							} else {
-								setClickInfo(null)
-							}
-						} else {
-							setClickInfo(null)
-						}
-					},
-				}),
-			])
-		}
+					} else {
+						setClickPinInfo(null)
+					}
+				},
+			}),
+		)
 	}, [
 		setLayers,
-		areaSearchPlot,
-		areaSearchPlotId,
-		handlePositionClick,
+		addLayer,
+		areaSearchPlotIds,
+		poisDataIds,
+		handleLayerPositionClick,
 		queryParams.provinceCode,
 		queryParams.districtCode,
 		queryParams.subDistrictCode,
 		queryParams.year,
+		poisDataWithCoordinates,
+		open,
 	])
 
 	return (
@@ -423,10 +304,12 @@ const MapList: React.FC<MapListProps> = ({ areaDetail }) => {
 				hidden: areaDetail !== 'map',
 			})}
 		>
-			<InfoWindows clickInfo={clickInfo} setClickInfo={setClickInfo} />
+			<InfoWindows clickLayerInfo={clickLayerInfo} setClickLayerInfo={setClickLayerInfo} />
+			<InfoPinTitle clickPinInfo={clickPinInfo} setClickPinInfo={setClickPinInfo} />
 			<MapView
 				className='max-lg:[&_div.MuiBox-root:first-child]:bottom-auto max-lg:[&_div.MuiBox-root:first-child]:left-4 max-lg:[&_div.MuiBox-root:first-child]:top-4 max-lg:[&_div.MuiBox-root:nth-child(2)]:hidden'
 				isShowMapPin
+				ref={mapViewRef}
 			/>
 		</div>
 	)
