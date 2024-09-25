@@ -48,6 +48,9 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 		enabled: !!formik?.values?.districtCode,
 	})
 
+	console.log('subDistrictLookupData ::', subDistrictLookupData)
+	console.log('districtLookupData ::', districtLookupData)
+
 	const { data: yearLookupData, isLoading: isYearDataLoading } = useQuery({
 		queryKey: ['getYear'],
 		queryFn: () => service.lookup.get('years'),
@@ -228,7 +231,7 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 								<FormLabel id={`year-label`} className='mb-2 [&_.MuiFormLabel-asterisk]:text-error'>
 									{t('dataYear')}
 								</FormLabel>
-								<YearPicker formik={formik} />
+								<YearPicker formik={formik} isFullOnMobile />
 								{typeof errorMessageYear === 'string' && (
 									<FormHelperText error>{errorMessageYear}</FormHelperText>
 								)}
