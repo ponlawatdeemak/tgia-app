@@ -40,10 +40,25 @@ const ReportMain = () => {
 	const onSubmit = useCallback(
 		(values: SearchFormType) => {
 			if (userData?.data?.orgCode) {
-				const { year, ...props } = values
+				const { year, subDistrictCode, ...props } = values
 				const years = values.year.join(',')
-				const params = { ...props, orgCode: userData?.data?.orgCode, language: i18n.language, years: years }
-				service.report.download(params).then((res) => window.open(res?.data?.urls[0]))
+				const params = {
+					...props,
+					subdistrictCode: subDistrictCode,
+					orgCode: userData?.data?.orgCode,
+					language: i18n.language,
+					years: years,
+				}
+				console.log(params)
+				if (values.format === 'csv') {
+					service.report.download(params).then((res) => {
+						res?.data?.urls.map((item) => {
+							window.open(item)
+						})
+					})
+				} else {
+					console.log('pdf')
+				}
 			}
 		},
 		[userData],

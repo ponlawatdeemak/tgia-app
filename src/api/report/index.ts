@@ -13,7 +13,7 @@ const report = {
         if(payload.years) params.append('years',payload.years)
         if(payload.orgCode) params.append('orgCode',payload.orgCode)
 
-		return await api.get(`/report/${payload.format}?${params}`, APIService.DisasterAPI)
+		return await api.get(`/report/csv?${params}`, APIService.DisasterAPI)
 }}
 
 export default report
