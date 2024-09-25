@@ -626,8 +626,9 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 					</Typography>
 				</Toolbar>
 				<Box className='flex h-[548px] flex-col gap-[16px] pl-[24px] pr-[24px]'>
-					<TableContainer className='flex flex-col overflow-hidden overflow-x-auto' component={'div'}>
+					<TableContainer className='flex flex-col overflow-x-auto overflow-y-auto' component={'div'}>
 						<Table
+							stickyHeader
 							aria-labelledby='tableTitle'
 							size={dense ? 'small' : 'medium'}
 							className='border-separate'
