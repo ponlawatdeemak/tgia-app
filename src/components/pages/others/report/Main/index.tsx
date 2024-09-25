@@ -3,7 +3,7 @@
 import AdminPoly from '@/components/shared/AdminPoly'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import * as yup from 'yup'
 import { Button, Paper, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
@@ -70,6 +70,20 @@ const ReportMain = () => {
 		validationSchema: validationSchema,
 		onSubmit,
 	})
+
+	useEffect(() => {
+		if (
+			!formik.values.districtCode ||
+			formik.values.districtCode.toString() !== formik.values.subDistrictCode?.toString().substring(0, 4)
+		) {
+			formik.setFieldValue('subDistrictCode', null)
+		} else if (
+			!formik.values.provinceCode ||
+			formik.values.provinceCode.toString() !== formik.values.districtCode?.toString().substring(0, 2)
+		) {
+			formik.setFieldValue('districtCode', null)
+		}
+	}, [formik.values.provinceCode, formik.values.districtCode])
 
 	return (
 		<div className='flex justify-center max-lg:p-4 lg:h-full lg:items-center'>
