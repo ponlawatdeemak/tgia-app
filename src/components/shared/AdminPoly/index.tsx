@@ -2,7 +2,7 @@
 
 import React from 'react'
 import AutocompleteInput from '@/components/common/input/AutocompleteInput'
-import { Box, Divider, InputAdornment } from '@mui/material'
+import { Box, Divider, FormControl, FormHelperText, FormLabel, InputAdornment } from '@mui/material'
 import { FormikProps } from 'formik'
 import service from '@/api'
 import { useQuery } from '@tanstack/react-query'
@@ -11,12 +11,14 @@ import FormInput from '@/components/common/input/FormInput'
 import { CalendarMonthOutlined, Check, ExpandMore } from '@mui/icons-material'
 import { ResponseLanguage } from '@/api/interface'
 import classNames from 'classnames'
+import YearPicker from '@/components/pages/annual-analysis/YearPicker'
 
 export interface AdminPolyProps {
 	formik?: FormikProps<any>
 	loading?: boolean
 	isShowActivityId?: boolean
 	isShowFileType?: boolean
+	isYearMultiple?: boolean
 }
 
 const AdminPoly: React.FC<AdminPolyProps> = ({
@@ -24,6 +26,7 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 	loading = false,
 	isShowActivityId = false,
 	isShowFileType = false,
+	isYearMultiple = false,
 }) => {
 	const { t, i18n } = useTranslation(['default', 'plot-monitoring', 'report'])
 	const language = i18n.language as keyof ResponseLanguage
@@ -49,6 +52,8 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 		queryKey: ['getYear'],
 		queryFn: () => service.lookup.get('years'),
 	})
+
+	const errorMessageYear = formik?.touched['year'] && formik?.errors['year']
 
 	return (
 		<div className='flex flex-col gap-4 [&_*>label]:text-sm [&_*>label]:font-medium [&_*>label]:text-black'>
@@ -214,58 +219,77 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 							placeholder={t('referenceCode', { ns: 'plot-monitoring' })}
 						/>
 					)}
-					<AutocompleteInput
-						className='w-full lg:w-60 [&_.MuiAutocomplete-endAdornment]:right-2.5 [&_.MuiAutocomplete-endAdornment]:flex [&_.MuiAutocomplete-endAdornment]:!h-full [&_.MuiAutocomplete-endAdornment]:items-center [&_.MuiAutocomplete-endAdornment]:gap-0.5 [&_.MuiAutocomplete-hasClearIcon>.MuiInputBase-root]:pr-[68px] [&_.MuiAutocomplete-hasClearIcon>div>div>button]:text-black [&_.MuiInputBase-root]:rounded-lg [&_.MuiInputBase-root]:py-2 [&_.MuiInputBase-root]:pl-3 [&_.MuiInputBase-root]:pr-[42px]'
-						slotProps={{
-							popper: {
-								className: '!top-1.5 [&_ul>li]:p-0 aria-selected:[&_ul>li]:!bg-gray-light2',
-							},
-							popupIndicator: {
-								className: 'h-6 m-0 p-0 [&_svg]:w-6 [&_svg]:h-6',
-							},
-							clearIndicator: {
-								className: 'hidden w-6 h-6 m-0 p-0.5 [&_svg]:w-5 [&_svg]:h-5',
-							},
-						}}
-						startAdornment={
-							<InputAdornment position='start' className='mr-1 h-6 w-6'>
-								<CalendarMonthOutlined className='h-6 w-6 text-black' />
-							</InputAdornment>
-						}
-						renderOption={(props, option, { inputValue }) => {
-							const { key, ...optionProps } = props
-							return (
-								<li key={key} {...optionProps}>
-									<div className='flex w-full items-center gap-2 p-2'>
-										<Box className='flex h-4 min-w-4 items-center justify-center'>
-											{option.name[language] === inputValue && (
-												<Check className='h-4 w-4 font-normal text-black' />
-											)}
-										</Box>
-										<span
-											className={classNames('text-base font-normal text-black', {
-												'!font-medium': option.name[language] === inputValue,
-											})}
-										>
-											{option.name[language]}
-										</span>
-									</div>
-								</li>
-							)
-						}}
-						popupIcon={<ExpandMore />}
-						options={
-							yearLookupData?.data?.map((item) => ({
-								...item,
-								value: item.code,
-							})) || []
-						}
-						getOptionLabel={(option) => option.name?.[i18n.language]}
-						name='year'
-						label={t('dataYear')}
-						formik={formik}
-						required
-					/>
+					{isYearMultiple ? (
+						<>
+							<FormControl
+								className='w-full lg:w-60 [&_.MuiAutocomplete-endAdornment]:right-2.5 [&_.MuiAutocomplete-endAdornment]:flex [&_.MuiAutocomplete-endAdornment]:!h-full [&_.MuiAutocomplete-endAdornment]:items-center [&_.MuiAutocomplete-endAdornment]:gap-0.5 [&_.MuiAutocomplete-hasClearIcon>.MuiInputBase-root]:pr-[68px] [&_.MuiAutocomplete-hasClearIcon>div>div>button]:text-black [&_.MuiInputBase-root]:rounded-lg [&_.MuiInputBase-root]:py-2 [&_.MuiInputBase-root]:pl-3 [&_.MuiInputBase-root]:pr-[42px]'
+								required
+							>
+								<FormLabel id={`year-label`} className='mb-2 [&_.MuiFormLabel-asterisk]:text-error'>
+									{t('dataYear')}
+								</FormLabel>
+								<YearPicker formik={formik} />
+								{typeof errorMessageYear === 'string' && (
+									<FormHelperText error>{errorMessageYear}</FormHelperText>
+								)}
+							</FormControl>
+						</>
+					) : (
+						<AutocompleteInput
+							className='w-full lg:w-60 [&_.MuiAutocomplete-endAdornment]:right-2.5 [&_.MuiAutocomplete-endAdornment]:flex [&_.MuiAutocomplete-endAdornment]:!h-full [&_.MuiAutocomplete-endAdornment]:items-center [&_.MuiAutocomplete-endAdornment]:gap-0.5 [&_.MuiAutocomplete-hasClearIcon>.MuiInputBase-root]:pr-[68px] [&_.MuiAutocomplete-hasClearIcon>div>div>button]:text-black [&_.MuiInputBase-root]:rounded-lg [&_.MuiInputBase-root]:py-2 [&_.MuiInputBase-root]:pl-3 [&_.MuiInputBase-root]:pr-[42px]'
+							slotProps={{
+								popper: {
+									className: '!top-1.5 [&_ul>li]:p-0 aria-selected:[&_ul>li]:!bg-gray-light2',
+								},
+								popupIndicator: {
+									className: 'h-6 m-0 p-0 [&_svg]:w-6 [&_svg]:h-6',
+								},
+								clearIndicator: {
+									className: 'hidden w-6 h-6 m-0 p-0.5 [&_svg]:w-5 [&_svg]:h-5',
+								},
+							}}
+							startAdornment={
+								<InputAdornment position='start' className='mr-1 h-6 w-6'>
+									<CalendarMonthOutlined className='h-6 w-6 text-black' />
+								</InputAdornment>
+							}
+							renderOption={(props, option, { inputValue }) => {
+								const { key, ...optionProps } = props
+								return (
+									<li key={key} {...optionProps}>
+										<div className='flex w-full items-center gap-2 p-2'>
+											<Box className='flex h-4 min-w-4 items-center justify-center'>
+												{option.name[language] === inputValue && (
+													<Check className='h-4 w-4 font-normal text-black' />
+												)}
+											</Box>
+											<span
+												className={classNames('text-base font-normal text-black', {
+													'!font-medium': option.name[language] === inputValue,
+												})}
+											>
+												{option.name[language]}
+											</span>
+										</div>
+									</li>
+								)
+							}}
+							popupIcon={<ExpandMore />}
+							options={
+								yearLookupData?.data?.map((item) => ({
+									...item,
+									value: item.code,
+								})) || []
+							}
+							getOptionLabel={(option) => {
+								return option.name?.[i18n.language]
+							}}
+							name='year'
+							label={t('dataYear')}
+							formik={formik}
+							required
+						/>
+					)}
 
 					{isShowFileType && (
 						<AutocompleteInput

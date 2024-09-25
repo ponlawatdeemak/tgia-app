@@ -15,10 +15,13 @@ import { useYearPicker } from './context'
 import useAreaType from '@/store/area-type'
 import clsx from 'clsx'
 import { ResponseLanguage } from '@/api/interface'
+import { FormikProps } from 'formik'
 
-interface YearPickerProps {}
+interface YearPickerProps {
+	formik?: FormikProps<any>
+}
 
-const YearPicker: React.FC<YearPickerProps> = () => {
+const YearPicker: React.FC<YearPickerProps> = ({ formik }) => {
 	const { open, setOpen } = useYearPicker()
 	const { areaType } = useAreaType()
 	const { queryParams, setQueryParams } = useSearchAnnualAnalysis()
@@ -68,6 +71,8 @@ const YearPicker: React.FC<YearPickerProps> = () => {
 				? prevSelectedYear.filter((y) => y !== year)
 				: [...prevSelectedYear, year]
 
+			console.log('updatedSelectedYear', updatedSelectedYear)
+			formik?.setFieldValue('year', updatedSelectedYear)
 			return updatedSelectedYear.sort((a, b) => a - b)
 		})
 	}

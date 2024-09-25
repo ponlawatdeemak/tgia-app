@@ -7,6 +7,7 @@ import { api } from './core'
 import { APIService } from './interface'
 import calendar from './calendar'
 import plotMonitoring from './plot-monitoring'
+import report from './report'
 
 const service = {
 	auth,
@@ -17,6 +18,7 @@ const service = {
 	plotMonitoring,
 	calendar,
 	example: { getVersion: async (): Promise<any> => await api.get('/version', APIService.DisasterAPI) },
+    report
 }
 
 export default service
