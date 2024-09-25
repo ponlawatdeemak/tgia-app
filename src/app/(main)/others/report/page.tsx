@@ -1,4 +1,4 @@
-import ReportMain from '@/components/pages/others/report'
+import ReportMain from '@/components/pages/others/report/Main'
 import React from 'react'
 
 const ReportPage = () => {
