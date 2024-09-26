@@ -10,6 +10,7 @@ import { GetPositionSearchPlotDtoOut } from '@/api/plot-monitoring/dto-out.dto'
 import { useRouter } from 'next/navigation'
 import { AppPath } from '@/config/app'
 import classNames from 'classnames'
+import { formatText } from '@/utils/text'
 
 type ClickLayerInfo = {
 	x: number
@@ -65,11 +66,11 @@ const InfoWindows: React.FC<InfoWindowsProps> = ({ clickLayerInfo, setClickLayer
 					<span className='text-sm font-medium text-black'>
 						{t('canGrowRice', { ns: 'plot-monitoring' })}
 					</span>
-					<span className='text-base font-semibold text-secondary'>{`${clickLayerInfo.area.predictedRiceArea.percent}%`}</span>
+					<span className='text-base font-semibold text-secondary'>{`${formatText(clickLayerInfo?.area?.predictedRiceArea?.percent)}%`}</span>
 				</Box>
 				<Box className='flex items-center gap-1'>
 					<span className='text-base font-semibold text-secondary'>
-						{clickLayerInfo.area.predictedRiceArea?.[areaUnit]}
+						{formatText(clickLayerInfo?.area?.predictedRiceArea?.[areaUnit])}
 					</span>
 					<span className='text-sm font-normal text-black'>{t(areaUnit)}</span>
 				</Box>
@@ -79,7 +80,7 @@ const InfoWindows: React.FC<InfoWindowsProps> = ({ clickLayerInfo, setClickLayer
 					return (
 						<Box key={index} className='flex justify-between'>
 							<Box className='flex items-center gap-1'>
-								<span className='text-sm font-medium text-black'>{`${t('occurrence', { ns: 'plot-monitoring' })} ${result.count} ${t(`${result.lossPredicted.lossType}`)}`}</span>
+								<span className='text-sm font-medium text-black'>{`${t('occurrence', { ns: 'plot-monitoring' })} ${result?.count} ${t(`${result?.lossPredicted?.lossType}`)}`}</span>
 								<span className='text-base font-semibold text-secondary'>
 									{result.lossPredicted.percent ? `${result.lossPredicted.percent}%` : ''}
 								</span>
