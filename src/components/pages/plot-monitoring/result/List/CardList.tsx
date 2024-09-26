@@ -348,10 +348,31 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 									details?.data?.map((detail, index) => {
 										if (details.data?.length === index + 1) {
 											return (
-												<Button
-													className='rounded p-0 hover:bg-transparent lg:rounded-lg'
+												<div
+													className='border-0 border-solid border-gray lg:border-b'
 													ref={ref}
 													key={detail.order}
+												>
+													<Button
+														className='w-full rounded p-0 hover:bg-transparent lg:rounded-lg'
+														onClick={() =>
+															router.push(
+																`${AppPath.PlotMonitoringResult}/${detail.activityId}?count=${detail.count}`,
+															)
+														}
+													>
+														<CardDetail detail={detail} />
+													</Button>
+												</div>
+											)
+										}
+										return (
+											<div
+												className='border-0 border-solid border-gray lg:border-b'
+												key={detail.order}
+											>
+												<Button
+													className='w-full rounded p-0 hover:bg-transparent lg:rounded-lg'
 													onClick={() =>
 														router.push(
 															`${AppPath.PlotMonitoringResult}/${detail.activityId}?count=${detail.count}`,
@@ -360,20 +381,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 												>
 													<CardDetail detail={detail} />
 												</Button>
-											)
-										}
-										return (
-											<Button
-												className='rounded p-0 hover:bg-transparent lg:rounded-lg'
-												key={detail.order}
-												onClick={() =>
-													router.push(
-														`${AppPath.PlotMonitoringResult}/${detail.activityId}?count=${detail.count}`,
-													)
-												}
-											>
-												<CardDetail detail={detail} />
-											</Button>
+											</div>
 										)
 									}),
 								)}
