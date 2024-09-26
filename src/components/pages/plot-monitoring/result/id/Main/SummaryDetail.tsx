@@ -58,7 +58,8 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({
 
 						<Divider />
 						<div className='mx-6 mt-3 flex text-base font-semibold text-black lg:mb-2'>
-							{['noData', 'noDamage'].includes(plantDetailData?.lossType || '')
+							{!plantDetailData?.lossType ||
+							['noData', 'noDamage'].includes(plantDetailData?.lossType || '')
 								? t('noDisaster')
 								: `${t('occurrence', { ns: 'plot-monitoring' })} ${plantDetailData?.count || ''} ${t(`${plantDetailData?.lossType || ''}`)}`}
 						</div>
