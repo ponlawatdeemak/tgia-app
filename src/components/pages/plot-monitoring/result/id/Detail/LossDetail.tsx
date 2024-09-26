@@ -34,7 +34,7 @@ const LossDetail: React.FC<LossDetailProps> = ({ lossDetailData }) => {
 								</div>
 								<div className='flex items-baseline gap-1'>
 									<span className='text-base font-semibold text-black-light'>
-										{lossDetailData?.disasterArea.areaRai}
+										{lossDetailData?.disasterArea?.areaRai}
 									</span>
 									<span className='text-base font-normal text-black'>{t('areaRai')}</span>
 								</div>
@@ -45,7 +45,7 @@ const LossDetail: React.FC<LossDetailProps> = ({ lossDetailData }) => {
 								</span>
 								<div className='flex items-baseline gap-1'>
 									<span className='text-base font-semibold text-black-light'>
-										{lossDetailData?.actArea.areaRai}
+										{lossDetailData?.actArea?.areaRai}
 									</span>
 									<span className='text-base font-normal text-black'>{t('areaRai')}</span>
 								</div>
@@ -57,12 +57,12 @@ const LossDetail: React.FC<LossDetailProps> = ({ lossDetailData }) => {
 								{t('damageReportDateAccordingToGSO.02', { ns: 'plot-monitoring' })}
 							</span>
 							<span className='text-left text-sm font-semibold text-black-light'>
-								{lossDetailData?.updateDisasterDate[language]}
+								{lossDetailData?.updateDisasterDate?.[language]}
 							</span>
 						</div>
 					</Box>
 					<div className='flex w-full flex-row text-sm font-medium text-gray-dark2'>
-						<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} ${lossDetailData?.updateDisasterDate[language] || ''}`}</div>
+						<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} ${lossDetailData?.updateDisasterDate?.[language] || ''}`}</div>
 					</div>
 				</Box>
 
@@ -76,8 +76,8 @@ const LossDetail: React.FC<LossDetailProps> = ({ lossDetailData }) => {
 						<div className='flex flex-col gap-2 p-2'>
 							<Box className='flex items-center justify-between'>
 								<div className='flex items-center gap-1'>
-									{!['noData', 'noDamage'].includes(lossDetailData?.lossPredicted.lossType || '') ? (
-										lossDetailData?.lossPredicted.lossType === 'drought' ? (
+									{!['noData', 'noDamage'].includes(lossDetailData?.lossPredicted?.lossType || '') ? (
+										lossDetailData?.lossPredicted?.lossType === 'drought' ? (
 											<WbSunnyOutlined className='h-5 w-5 font-light text-lossTypeIcon-drought' />
 										) : (
 											<WaterOutlined className='h-5 w-5 font-light text-lossTypeIcon-flood' />
@@ -87,22 +87,24 @@ const LossDetail: React.FC<LossDetailProps> = ({ lossDetailData }) => {
 									)}
 									<div className='flex items-baseline gap-1'>
 										<span className='text-base text-black'>
-											{lossDetailData?.lossPredicted.lossType
-												? ['noData', 'noDamage'].includes(lossDetailData.lossPredicted.lossType)
+											{lossDetailData?.lossPredicted?.lossType
+												? ['noData', 'noDamage'].includes(
+														lossDetailData.lossPredicted?.lossType,
+													)
 													? t('noDisaster')
 													: t(`${lossDetailData.lossPredicted?.lossType}`)
 												: ''}
 										</span>
 										<span className='text-base font-semibold text-secondary'>
-											{lossDetailData?.lossPredicted.percent
-												? `${lossDetailData.lossPredicted.percent}%`
+											{lossDetailData?.lossPredicted?.percent
+												? `${lossDetailData?.lossPredicted?.percent}%`
 												: ''}
 										</span>
 									</div>
 								</div>
 								<div className='flex items-baseline gap-1'>
 									<span className='text-base font-semibold text-secondary'>
-										{lossDetailData?.lossPredicted.areaRai}
+										{lossDetailData?.lossPredicted?.areaRai}
 									</span>
 									<span className='text-base font-normal text-black'>{t('areaRai')}</span>
 								</div>
@@ -113,7 +115,7 @@ const LossDetail: React.FC<LossDetailProps> = ({ lossDetailData }) => {
 								</span>
 								<div className='flex items-baseline gap-1'>
 									<span className='text-base font-semibold text-black-light'>
-										{lossDetailData?.predictedRiceArea.areaRai}
+										{lossDetailData?.predictedRiceArea?.areaRai}
 									</span>
 									<span className='text-base font-normal text-black'>{t('areaRai')}</span>
 								</div>
@@ -125,12 +127,12 @@ const LossDetail: React.FC<LossDetailProps> = ({ lossDetailData }) => {
 								{t('damagedAreaDateFromAnalysis', { ns: 'plot-monitoring' })}
 							</span>
 							<span className='text-left text-sm font-semibold text-black-light'>
-								{`${lossDetailData?.startObsDate[language] || ''} - ${lossDetailData?.endObsDate[language] || ''}`}
+								{`${lossDetailData?.startObsDate?.[language] || ''} - ${lossDetailData?.endObsDate?.[language] || ''}`}
 							</span>
 						</div>
 					</Box>
 					<div className='flex w-full flex-row text-sm font-medium text-gray-dark2'>
-						<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} ${lossDetailData?.predictedLossDate[language] || ''}`}</div>
+						<div className='flex shrink-0'>{`${t('lastUpdated', { ns: 'plot-monitoring' })} ${lossDetailData?.predictedLossDate?.[language] || ''}`}</div>
 					</div>
 				</Box>
 			</div>
