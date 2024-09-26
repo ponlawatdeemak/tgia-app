@@ -103,7 +103,7 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 	}, [poisData])
 
 	const areaSearchPlotIds = useMemo(() => {
-		return areaSearchPlot?.data?.map((item) => item.activityId) || []
+		return areaSearchPlot?.data?.map((item) => Number(item.activityId)) || []
 	}, [areaSearchPlot])
 
 	// const areaSearchPlotIds = useMemo(() => {
@@ -114,24 +114,21 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 		return poisData?.data?.map((item) => item.poiId) || []
 	}, [poisData])
 
-	const handleLayerPositionClick = useCallback(
-		async (x: number, y: number, coordinate: number[], year: number) => {
-			try {
-				const response = await service.plotMonitoring.getPositionSearchPlot({
-					lat: coordinate[1],
-					lon: coordinate[0],
-					year: queryParams.year,
-				})
-				if (!response.data) {
-					throw new Error('Access Position failed!!')
-				}
-				setClickLayerInfo({ x, y, area: response.data })
-			} catch (error) {
-				console.log('error: ', error)
+	const handleLayerPositionClick = useCallback(async (x: number, y: number, coordinate: number[], year: number) => {
+		try {
+			const response = await service.plotMonitoring.getPositionSearchPlot({
+				lat: coordinate[1],
+				lon: coordinate[0],
+				year,
+			})
+			if (!response.data) {
+				throw new Error('Access Position failed!!')
 			}
-		},
-		[queryParams.year],
-	)
+			setClickLayerInfo({ x, y, area: response.data })
+		} catch (error) {
+			console.log('error: ', error)
+		}
+	}, [])
 
 	useEffect(() => {
 		setLayers([
@@ -205,56 +202,61 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 				},
 			}),
 		])
-		addLayer(
-			new MVTLayer({
-				id: `boundary_$${queryParams.year}`,
-				name: `boundary_$${queryParams.year}`,
-				loadOptions: {
-					fetch: {
-						headers: {
-							'content-type': 'application/json',
-							Authorization: `Bearer ${apiAccessToken}`,
+		if (areaSearchPlot) {
+			addLayer(
+				new MVTLayer({
+					id: `boundary_$${queryParams.year}`,
+					name: `boundary_$${queryParams.year}`,
+					loadOptions: {
+						fetch: {
+							headers: {
+								'content-type': 'application/json',
+								Authorization: `Bearer ${apiAccessToken}`,
+							},
 						},
 					},
-				},
-				data: `${API_URL_TILE}/boundary_${queryParams.year}/tiles.json`,
-				filled: true,
-				getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
-					if (areaSearchPlotIds.includes(d.properties.activity_id)) {
-						return LossTypeTileColor.rnr
-					}
-					return LossTypeTileColor.default
-				},
-				getLineColor(d: Feature<Geometry, BoundaryLayerType>) {
-					return LineWidthColor.default
-				},
-				getLineWidth(d: Feature<Geometry, BoundaryLayerType>) {
-					if (areaSearchPlotIds.includes(d.properties.activity_id)) {
-						return SelectedLineWidth
-					}
-					return DefaultLineWidth
-				},
-				pickable: true,
-				updateTriggers: {
-					getFillColor: queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
-					getLineColor: queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
-					getLineWidth: queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
-				},
-				onClick: (info, event) => {
-					if (info.object) {
-						if (areaSearchPlotIds.includes(info.object.properties.activity_id)) {
-							if (info.coordinate) {
-								handleLayerPositionClick(info.x, info.y, info.coordinate, queryParams.year)
+					data: `${API_URL_TILE}/boundary_${queryParams.year}/tiles.json`,
+					filled: true,
+					getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
+						if (areaSearchPlotIds.includes(Number(d.properties.activity_id))) {
+							return LossTypeTileColor.rnr
+						}
+						return BoundaryTileColor.default
+					},
+					getLineColor(d: Feature<Geometry, BoundaryLayerType>) {
+						return LineWidthColor.default
+					},
+					getLineWidth(d: Feature<Geometry, BoundaryLayerType>) {
+						if (areaSearchPlotIds.includes(d.properties.activity_id)) {
+							return SelectedLineWidth
+						}
+						return DefaultLineWidth
+					},
+					pickable: true,
+					updateTriggers: {
+						getFillColor:
+							queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
+						getLineColor:
+							queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
+						getLineWidth:
+							queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
+					},
+					onClick: (info, event) => {
+						if (info.object) {
+							if (areaSearchPlotIds.includes(Number(info.object.properties.activity_id))) {
+								if (info.coordinate) {
+									handleLayerPositionClick(info.x, info.y, info.coordinate, queryParams.year)
+								}
+							} else {
+								setClickLayerInfo(null)
 							}
 						} else {
 							setClickLayerInfo(null)
 						}
-					} else {
-						setClickLayerInfo(null)
-					}
-				},
-			}),
-		)
+					},
+				}),
+			)
+		}
 		addLayer(
 			new IconLayer<PoisIconType>({
 				id: 'IconLayer',
