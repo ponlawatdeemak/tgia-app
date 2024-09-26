@@ -20,9 +20,10 @@ import { FormikProps } from 'formik'
 interface YearPickerProps {
 	formik?: FormikProps<any>
 	isFullOnMobile?: boolean
+	disabled?: boolean
 }
 
-const YearPicker: React.FC<YearPickerProps> = ({ formik, isFullOnMobile = false }) => {
+const YearPicker: React.FC<YearPickerProps> = ({ formik, isFullOnMobile = false, disabled = false }) => {
 	const { open, setOpen } = useYearPicker()
 	const { areaType } = useAreaType()
 	const { queryParams, setQueryParams } = useSearchAnnualAnalysis()
@@ -102,25 +103,32 @@ const YearPicker: React.FC<YearPickerProps> = ({ formik, isFullOnMobile = false 
 			{isFullOnMobile ? (
 				<IconButton
 					color='secondary'
+					disabled={disabled}
 					className={clsx('btn-shadow flex max-h-[40px] min-h-[40px] min-w-[40px] justify-start lg:hidden', {
 						'box-border border-2 border-solid border-primary': open,
 					})}
 					onClick={handleClick}
 				>
-					<Icon path={mdiCalendarMonthOutline} size={1} />
-					<div className={clsx('truncate pl-2 text-[18px]', { 'pb-[2px]': !(selectedYear.length > 0) })}>
+					<Icon path={mdiCalendarMonthOutline} size={1} className={disabled ? 'opacity-45' : ''} />
+					<div
+						className={clsx('truncate pl-2 text-[18px]', {
+							'pb-[2px]': !(selectedYear.length > 0),
+							'opacity-45': disabled,
+						})}
+					>
 						{selectedYear.length > 0 ? formatYears(selectedYear) : `${t('dataYear')}`}
 					</div>
 				</IconButton>
 			) : (
 				<IconButton
 					color='secondary'
+					disabled={disabled}
 					className={clsx('btn-shadow max-h-[40px] min-h-[40px] min-w-[40px] max-w-[40px] lg:hidden', {
 						'box-border border-2 border-solid border-primary': open,
 					})}
 					onClick={handleClick}
 				>
-					<Icon path={mdiCalendarMonthOutline} size={1} />
+					<Icon path={mdiCalendarMonthOutline} size={1} className={disabled ? 'opacity-45' : ''} />
 				</IconButton>
 			)}
 
@@ -128,15 +136,16 @@ const YearPicker: React.FC<YearPickerProps> = ({ formik, isFullOnMobile = false 
 			<Button
 				variant='contained'
 				color='secondary'
+				disabled={disabled}
 				className={clsx('hidden max-h-[40px] min-h-[40px] min-w-[200px] lg:flex lg:justify-start', {
 					'[&_.MuiButton-startIcon]:mr-0': !(selectedYear.length > 0),
 					'border-2 border-solid border-primary': open,
 					'max-w-[200px]': !isFullOnMobile,
 				})}
-				startIcon={<Icon path={mdiCalendarMonthOutline} size={1} />}
+				startIcon={<Icon path={mdiCalendarMonthOutline} size={1} className={disabled ? 'opacity-45' : ''} />}
 				onClick={handleClick}
 			>
-				<div className={clsx('truncate', { 'pl-2': !(selectedYear.length > 0) })}>
+				<div className={clsx('truncate', { 'pl-2': !(selectedYear.length > 0), 'opacity-45': disabled })}>
 					{selectedYear.length > 0 ? formatYears(selectedYear) : `${t('dataYear')}`}
 				</div>
 			</Button>

@@ -227,11 +227,12 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 							<FormControl
 								className='w-full lg:w-60 [&_.MuiAutocomplete-endAdornment]:right-2.5 [&_.MuiAutocomplete-endAdornment]:flex [&_.MuiAutocomplete-endAdornment]:!h-full [&_.MuiAutocomplete-endAdornment]:items-center [&_.MuiAutocomplete-endAdornment]:gap-0.5 [&_.MuiAutocomplete-hasClearIcon>.MuiInputBase-root]:pr-[68px] [&_.MuiAutocomplete-hasClearIcon>div>div>button]:text-black [&_.MuiInputBase-root]:rounded-lg [&_.MuiInputBase-root]:py-2 [&_.MuiInputBase-root]:pl-3 [&_.MuiInputBase-root]:pr-[42px]'
 								required
+								disabled={loading}
 							>
 								<FormLabel id={`year-label`} className='mb-2 [&_.MuiFormLabel-asterisk]:text-error'>
 									{t('dataYear')}
 								</FormLabel>
-								<YearPicker formik={formik} isFullOnMobile />
+								<YearPicker formik={formik} isFullOnMobile disabled={loading} />
 								{typeof errorMessageYear === 'string' && (
 									<FormHelperText error>{errorMessageYear}</FormHelperText>
 								)}
@@ -291,6 +292,7 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 							label={t('dataYear')}
 							formik={formik}
 							required
+							disabled={loading}
 						/>
 					)}
 
@@ -339,6 +341,7 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 							label={t('fileType', { ns: 'report' })}
 							formik={formik}
 							required
+							disabled={loading}
 						/>
 					)}
 				</div>
