@@ -229,10 +229,15 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 				<Box className='flex items-center justify-between border-0 border-solid border-gray max-lg:border-t lg:border-b'>
 					<div className='flex items-center'>
 						<Typography className='p-2.5 text-base font-semibold text-black max-lg:py-0 max-lg:pt-3'>
-							{t('all')}
+							{searchPlotData?.pages[0]?.data?.length && searchPlotData?.pages[0]?.data?.length > 0
+								? t('all')
+								: ''}
 						</Typography>
 						<span className='p-2.5 text-base font-semibold text-black-light max-lg:py-0 max-lg:pt-3'>
-							{searchPlotData?.pages[0]?.total}
+							{(searchPlotData?.pages[0]?.data?.length && searchPlotData?.pages[0]?.data?.length > 0) ||
+							(searchPlotData?.pages[0]?.total && searchPlotData?.pages[0]?.total > 0)
+								? searchPlotData?.pages[0]?.total
+								: ''}
 						</span>
 					</div>
 					<FormControl
@@ -343,10 +348,31 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 									details?.data?.map((detail, index) => {
 										if (details.data?.length === index + 1) {
 											return (
-												<Button
-													className='rounded p-0 hover:bg-transparent lg:rounded-lg'
+												<div
+													className='border-0 border-solid border-gray lg:border-b'
 													ref={ref}
 													key={detail.order}
+												>
+													<Button
+														className='w-full rounded p-0 hover:bg-transparent lg:rounded-lg'
+														onClick={() =>
+															router.push(
+																`${AppPath.PlotMonitoringResult}/${detail.activityId}?count=${detail.count}`,
+															)
+														}
+													>
+														<CardDetail detail={detail} />
+													</Button>
+												</div>
+											)
+										}
+										return (
+											<div
+												className='border-0 border-solid border-gray lg:border-b'
+												key={detail.order}
+											>
+												<Button
+													className='w-full rounded p-0 hover:bg-transparent lg:rounded-lg'
 													onClick={() =>
 														router.push(
 															`${AppPath.PlotMonitoringResult}/${detail.activityId}?count=${detail.count}`,
@@ -355,20 +381,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 												>
 													<CardDetail detail={detail} />
 												</Button>
-											)
-										}
-										return (
-											<Button
-												className='rounded p-0 hover:bg-transparent lg:rounded-lg'
-												key={detail.order}
-												onClick={() =>
-													router.push(
-														`${AppPath.PlotMonitoringResult}/${detail.activityId}?count=${detail.count}`,
-													)
-												}
-											>
-												<CardDetail detail={detail} />
-											</Button>
+											</div>
 										)
 									}),
 								)}

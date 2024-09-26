@@ -35,6 +35,14 @@ const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList 
 		[inputActivityId, queryParams, setQueryParams],
 	)
 
+	const handleBlurActivityId = useCallback(
+		(event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
+			event.preventDefault()
+			setQueryParams({ ...queryParams, activityId: parseInt(inputActivityId) })
+		},
+		[inputActivityId, queryParams, setQueryParams],
+	)
+
 	return (
 		<div
 			className={classNames(
@@ -58,6 +66,7 @@ const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList 
 							id='activityId'
 							value={inputActivityId}
 							onChange={handleChangeActivityIdInput}
+							onBlur={handleBlurActivityId}
 							inputRef={activityIdRef}
 							placeholder={t('referenceCode', { ns: 'plot-monitoring' })}
 						/>
