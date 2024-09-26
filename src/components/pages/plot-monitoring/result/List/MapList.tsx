@@ -333,8 +333,8 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 			}),
 		)
 	}, [
-		// setLayers,
-		// addLayer,
+		setLayers,
+		addLayer,
 		areaSearchPlotIds,
 		poisDataIds,
 		handleLayerPositionClick,
@@ -344,21 +344,22 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 		queryParams.year,
 		poisDataWithCoordinates,
 		open,
+		areaSearchPlot,
 	])
 
 	return (
 		<div
-			className={classNames('relative h-full w-full', {
+			className={classNames('relative flex h-full w-full flex-grow flex-col', {
 				hidden: areaDetail !== 'map',
 			})}
 		>
 			<InfoWindows clickLayerInfo={clickLayerInfo} setClickLayerInfo={setClickLayerInfo} />
 			<InfoPinTitle clickPinInfo={clickPinInfo} setClickPinInfo={setClickPinInfo} />
 			<MapView
-			// className='max-lg:[&_div.MuiBox-root:first-child]:bottom-auto max-lg:[&_div.MuiBox-root:first-child]:left-4 max-lg:[&_div.MuiBox-root:first-child]:top-[68px] max-lg:[&_div.MuiBox-root:nth-child(2)]:bottom-auto max-lg:[&_div.MuiBox-root:nth-child(2)]:left-4 max-lg:[&_div.MuiBox-root:nth-child(2)]:top-4 max-lg:[&_div.MuiBox-root>div.MuiBox-root]:hidden'
-			// isShowMapPin
-			// TO DO
-			// ref={mapViewRef}
+				// className='max-lg:[&_div.MuiBox-root:first-child]:bottom-auto max-lg:[&_div.MuiBox-root:first-child]:left-4 max-lg:[&_div.MuiBox-root:first-child]:top-[68px] max-lg:[&_div.MuiBox-root:nth-child(2)]:bottom-auto max-lg:[&_div.MuiBox-root:nth-child(2)]:left-4 max-lg:[&_div.MuiBox-root:nth-child(2)]:top-4 max-lg:[&_div.MuiBox-root>div.MuiBox-root]:hidden'
+				isShowMapPin
+				// TO DO
+				// ref={mapViewRef}
 			/>
 		</div>
 	)

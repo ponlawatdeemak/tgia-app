@@ -129,18 +129,16 @@ const SearchForm: React.FC<SearchFormProps> = ({ mapViewRef }) => {
 				if (adminPolyCode === null) return
 
 				const extentProvince = (await service.fieldLoss.getExtentAdminPoly({ id: adminPolyCode })).data
-				// if (mapViewRef.current) {
-				// 	mapViewRef.current.setMapExtent(extentProvince?.extent)
-				// }
-				// TO DO
-				// setExtent(extentProvince?.extent)
+				if (extentProvince?.extent) {
+					setExtent(extentProvince?.extent)
+				}
 			} catch (error) {
 				console.log('error zoom extent: ', error)
 			}
 		}
 
 		displaySearchOption()
-	}, [queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode])
+	}, [queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode, setExtent])
 
 	const handleSelectOption = (_event: ChangeEvent<{}>, newSelectedValue: OptionType | null) => {
 		//setSeletedOption(newSelectedValue)

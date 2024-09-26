@@ -16,6 +16,7 @@ import Icon from '@mdi/react'
 import useSearchForm from '../../Main/context'
 import { useRouter } from 'next/navigation'
 import { AppPath } from '@/config/app'
+import { useMap } from '@/components/common/map/context/map'
 
 interface PlotMonitoringSearchFormProps {
 	mapViewRef?: any
@@ -27,6 +28,7 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 	const { setOpen } = useSearchForm()
 	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
 	const { t, i18n } = useTranslation(['default', 'plot-monitoring'])
+	const { setExtent, setMapInfoWindow } = useMap()
 	const language = i18n.language as keyof ResponseLanguage
 
 	const { data: provinceLookupData, isLoading: isProvinceDataLoading } = useQuery({
@@ -84,17 +86,16 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 				if (adminPolyCode === null) return
 
 				const extentMapData = (await service.fieldLoss.getExtentAdminPoly({ id: adminPolyCode })).data
-				// TO DO
-				// if (mapViewRef.current) {
-				// 	mapViewRef.current.setMapExtent(extentMapData?.extent)
-				// }
+				if (extentMapData?.extent) {
+					setExtent(extentMapData?.extent)
+				}
 			} catch (error) {
 				console.log('error zoom extent: ', error)
 			}
 		}
 
 		displayMapExtent()
-	}, [queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode])
+	}, [queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode, setExtent])
 
 	const handleSelectProvince = useCallback(
 		(_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {

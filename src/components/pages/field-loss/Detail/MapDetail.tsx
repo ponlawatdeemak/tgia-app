@@ -918,7 +918,9 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 			<Tooltip hoverInfo={hoverInfo} setHoverInfo={setHoverInfo} />
 			{/* // TO DO */}
 			{/* ref={mapViewRef} */}
-			<MapView />
+			<div className={classNames('relative flex h-full w-full flex-grow flex-col')}>
+				<MapView />
+			</div>
 		</div>
 	)
 }

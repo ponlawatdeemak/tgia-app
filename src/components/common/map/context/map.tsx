@@ -58,7 +58,7 @@ export const MapProvider = ({ children }: { children: ReactNode }) => {
 				googleMapInstance.setCenter({ lat: coords.latitude, lng: coords.longitude })
 			}
 		},
-		[googleMapInstance, mapLibreInstance, getLayer, removeLayer],
+		[googleMapInstance, mapLibreInstance],
 	)
 
 	return (

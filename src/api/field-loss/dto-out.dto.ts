@@ -8,7 +8,7 @@ export interface GetSearchAdminPolyDtoOut {
 export interface GetExtentAdminPolyDtoOut {
 	id: string
 	name: ResponseLanguage
-	extent: number[]
+	extent: [number, number, number, number]
 }
 
 interface ClaimedArea extends ResponseArea {

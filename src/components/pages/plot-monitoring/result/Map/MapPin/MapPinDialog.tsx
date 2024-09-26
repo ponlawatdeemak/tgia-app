@@ -24,11 +24,11 @@ import service from '@/api'
 import { useQuery } from '@tanstack/react-query'
 import { GetExtentAdminPolyDtoIn } from '@/api/field-loss/dto-in.dto'
 import { FormikProps } from 'formik'
-import useMapPin from '../context'
 import classNames from 'classnames'
 import useLayerStore from '@/components/common/map/store/map'
 import { IconLayer } from '@deck.gl/layers'
 import { getPin } from '@/utils/pin'
+import { useMap } from '@/components/common/map/context/map'
 
 export interface MapPinDialogProps {
 	open: boolean
@@ -50,6 +50,8 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 	const { queryParams } = useSearchPlotMonitoring()
 	const { t } = useTranslation(['plot-monitoring', 'default'])
 	const { getLayers, addLayer, removeLayer } = useLayerStore()
+
+	// const { setExtent, setMapInfoWindow } = useMap()
 	// const mapViewRef = useRef<MapViewRef>(null)
 
 	useEffect(() => {
