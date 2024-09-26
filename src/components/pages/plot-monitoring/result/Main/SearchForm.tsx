@@ -14,12 +14,15 @@ import useResponsive from '@/hook/responsive'
 import { mdiPencilOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import useSearchForm from '../../Main/context'
+import { useRouter } from 'next/navigation'
+import { AppPath } from '@/config/app'
 
 interface PlotMonitoringSearchFormProps {
 	mapViewRef: any
 }
 
 const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ mapViewRef }) => {
+	const router = useRouter()
 	const { isDesktop } = useResponsive()
 	const { setOpen } = useSearchForm()
 	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
@@ -82,6 +85,7 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 					} catch (error) {
 						console.log('error zoom extent: ', error)
 					}
+					router.push(`${AppPath.PlotMonitoringResult}?provinceCode=${newSelectedValue.code}`)
 				}
 			} else if (AutocompleteCloseReason === 'clear') {
 				setQueryParams({
@@ -176,7 +180,7 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 									className: 'h-6 m-0 p-0 [&_svg]:w-6 [&_svg]:h-6',
 								},
 								clearIndicator: {
-									className: 'w-6 h-6 m-0 p-0.5 [&_svg]:w-5 [&_svg]:h-5',
+									className: 'hidden w-6 h-6 m-0 p-0.5 [&_svg]:w-5 [&_svg]:h-5',
 								},
 							}}
 							renderOption={(props, option, { inputValue }) => {

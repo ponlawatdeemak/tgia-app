@@ -97,6 +97,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 			const nextPage = lastPage?.data?.length ? allPages.length : undefined
 			return nextPage
 		},
+		enabled: !!queryParams.provinceCode,
 	})
 
 	useEffect(() => {

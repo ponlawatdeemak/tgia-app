@@ -106,6 +106,7 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 						formik={formik}
 						disabled={isProvinceDataLoading || loading}
 						placeholder={t('allProvinces')}
+						required={isShowActivityId}
 					/>
 					<AutocompleteInput
 						className='w-full lg:w-60 [&_.MuiAutocomplete-endAdornment]:right-2.5 [&_.MuiAutocomplete-endAdornment]:flex [&_.MuiAutocomplete-endAdornment]:!h-full [&_.MuiAutocomplete-endAdornment]:items-center [&_.MuiAutocomplete-endAdornment]:gap-0.5 [&_.MuiAutocomplete-hasClearIcon>.MuiInputBase-root]:pr-[68px] [&_.MuiAutocomplete-hasClearIcon>div>div>button]:text-black [&_.MuiInputBase-root]:rounded-lg [&_.MuiInputBase-root]:py-2 [&_.MuiInputBase-root]:pl-3 [&_.MuiInputBase-root]:pr-[42px]'

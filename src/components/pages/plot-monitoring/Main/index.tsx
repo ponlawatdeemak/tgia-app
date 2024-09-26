@@ -34,6 +34,7 @@ export const PlotMonitoringSearchMain = () => {
 	}
 
 	const validationSchema = yup.object({
+		provinceCode: yup.number().required(t('warning.inputProvince')),
 		year: yup.number().required(t('warning.inputDataYear')),
 	})
 
@@ -49,7 +50,7 @@ export const PlotMonitoringSearchMain = () => {
 					year: values.year,
 				})
 				setOpen(false)
-				router.push(AppPath.PlotMonitoringResult)
+				router.push(`${AppPath.PlotMonitoringResult}?provinceCode=${values.provinceCode}`)
 			} catch (error) {
 				console.log('error: ', error)
 			}

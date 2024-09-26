@@ -4,16 +4,25 @@ import PlotMonitoringSearchForm from './SearchForm'
 import PlotMonitoringFilter from './Filter'
 import PlotMonitoringList from './List'
 import { Paper } from '@mui/material'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import useResponsive from '@/hook/responsive'
 import useSearchForm from '../../Main/context'
 import { PlotMonitoringSearchMain } from '../../Main'
 import { MapViewRef } from '@/components/common/map/MapView'
+import { useSearchParams } from 'next/navigation'
+import useSearchPlotMonitoring from './context'
 
 export const PlotMonitoringResultMain = () => {
 	const { isDesktop } = useResponsive()
+	const searchParams = useSearchParams()
+	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
 	const { open } = useSearchForm()
 	const [isFullList, setIsFullList] = useState<boolean>(false)
+	const provinceCode = searchParams.get('provinceCode')
+
+	useEffect(() => {
+		setQueryParams({ ...queryParams, provinceCode: provinceCode ? parseInt(provinceCode) : undefined })
+	}, [])
 
 	const mapViewRef = useRef<MapViewRef>(null)
 

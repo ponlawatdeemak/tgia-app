@@ -91,6 +91,7 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 			setClickLayerInfo(null)
 			return data
 		},
+		enabled: !!queryParams.provinceCode,
 	})
 
 	const { data: poisData, isLoading: isPOISDataLoading } = useQuery({
