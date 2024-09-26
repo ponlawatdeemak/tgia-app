@@ -107,10 +107,6 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 		return areaSearchPlot?.data?.map((item) => Number(item.activityId)) || []
 	}, [areaSearchPlot])
 
-	// const areaSearchPlotIds = useMemo(() => {
-	// 	return [204092124, 204148174, 204513425, 204457339, 204091737] || []
-	// }, [areaSearchPlot])
-
 	const poisDataIds = useMemo(() => {
 		return poisData?.data?.map((item) => item.poiId) || []
 	}, [poisData])
@@ -197,9 +193,27 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 				},
 				pickable: true,
 				updateTriggers: {
-					getFillColor: queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
-					getLineColor: queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
-					getLineWidth: queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
+					getFillColor: !queryParams.provinceCode
+						? queryParams.provinceCode
+						: !queryParams.districtCode
+							? queryParams.provinceCode
+							: !queryParams.subDistrictCode
+								? queryParams.districtCode
+								: queryParams.subDistrictCode,
+					getLineColor: !queryParams.provinceCode
+						? queryParams.provinceCode
+						: !queryParams.districtCode
+							? queryParams.provinceCode
+							: !queryParams.subDistrictCode
+								? queryParams.districtCode
+								: queryParams.subDistrictCode,
+					getLineWidth: !queryParams.provinceCode
+						? queryParams.provinceCode
+						: !queryParams.districtCode
+							? queryParams.provinceCode
+							: !queryParams.subDistrictCode
+								? queryParams.districtCode
+								: queryParams.subDistrictCode,
 				},
 			}),
 		])
@@ -235,12 +249,27 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 					},
 					pickable: true,
 					updateTriggers: {
-						getFillColor:
-							queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
-						getLineColor:
-							queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
-						getLineWidth:
-							queryParams.provinceCode || queryParams.districtCode || queryParams.subDistrictCode,
+						getFillColor: !queryParams.provinceCode
+							? queryParams.provinceCode
+							: !queryParams.districtCode
+								? queryParams.provinceCode
+								: !queryParams.subDistrictCode
+									? queryParams.districtCode
+									: queryParams.subDistrictCode,
+						getLineColor: !queryParams.provinceCode
+							? queryParams.provinceCode
+							: !queryParams.districtCode
+								? queryParams.provinceCode
+								: !queryParams.subDistrictCode
+									? queryParams.districtCode
+									: queryParams.subDistrictCode,
+						getLineWidth: !queryParams.provinceCode
+							? queryParams.provinceCode
+							: !queryParams.districtCode
+								? queryParams.provinceCode
+								: !queryParams.subDistrictCode
+									? queryParams.districtCode
+									: queryParams.subDistrictCode,
 					},
 					onClick: (info, event) => {
 						if (info.object) {
