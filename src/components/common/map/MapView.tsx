@@ -5,7 +5,7 @@ import MapGoogle from './MapGoogle'
 import MapLibre from './MapLibre'
 import MapTools from './MapTools'
 import { useMap } from './context/map'
-import { Button, Paper } from '@mui/material'
+import { Button, Paper, Box } from '@mui/material'
 import { PropsWithChildren, useEffect } from 'react'
 import useLayerStore from './store/map'
 import MapPin from './layer/MapPin'
@@ -101,14 +101,17 @@ export default function MapView({ className = '', isShowMapPin = false, initialL
 
 	return (
 		<div className={classNames('relative flex flex-1 overflow-hidden', className)}>
-			<MapTools
-				layerList={initialLayer}
-				onZoomIn={() => setViewState({ ...viewState, zoom: viewState.zoom + 1 })}
-				onZoomOut={() => setViewState({ ...viewState, zoom: viewState.zoom - 1 })}
-				onBasemapChanged={onBasemapChanged}
-				onGetLocation={onGetLocation}
-				currentBaseMap={basemap}
-			/>
+			<Box className='absolute bottom-2 left-2 z-10'>
+				<MapTools
+					layerList={initialLayer}
+					onZoomIn={() => setViewState({ ...viewState, zoom: viewState.zoom + 1 })}
+					onZoomOut={() => setViewState({ ...viewState, zoom: viewState.zoom - 1 })}
+					onBasemapChanged={onBasemapChanged}
+					onGetLocation={onGetLocation}
+					currentBaseMap={basemap}
+				/>
+			</Box>
+
 			{mapType === MapType.Libre ? (
 				<MapLibre
 					viewState={viewState}
