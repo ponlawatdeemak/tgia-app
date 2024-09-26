@@ -1,5 +1,6 @@
 import { ResponseLanguage } from '@/api/interface'
 import { GetPlotActivityLossDetailDtoOut } from '@/api/plot-monitoring/dto-out.dto'
+import { formatText } from '@/utils/text'
 import { WaterOutlined, WbSunnyOutlined } from '@mui/icons-material'
 import { Box, Divider } from '@mui/material'
 import React from 'react'
@@ -76,7 +77,9 @@ const LossDetail: React.FC<LossDetailProps> = ({ lossDetailData }) => {
 						<div className='flex flex-col gap-2 p-2'>
 							<Box className='flex items-center justify-between'>
 								<div className='flex items-center gap-1'>
-									{!['noData', 'noDamage'].includes(lossDetailData?.lossPredicted?.lossType || '') ? (
+									{!['noData', 'noDamage'].includes(
+										formatText(lossDetailData?.lossPredicted?.lossType),
+									) ? (
 										lossDetailData?.lossPredicted?.lossType === 'drought' ? (
 											<WbSunnyOutlined className='h-5 w-5 font-light text-lossTypeIcon-drought' />
 										) : (
@@ -104,7 +107,7 @@ const LossDetail: React.FC<LossDetailProps> = ({ lossDetailData }) => {
 								</div>
 								<div className='flex items-baseline gap-1'>
 									<span className='text-base font-semibold text-secondary'>
-										{lossDetailData?.lossPredicted?.areaRai}
+										{formatText(lossDetailData?.lossPredicted?.areaRai)}
 									</span>
 									<span className='text-base font-normal text-black'>{t('areaRai')}</span>
 								</div>

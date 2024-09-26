@@ -1,7 +1,7 @@
-import { AreaTypeKey } from '@/enum' 
+import { AreaTypeKey } from '@/enum'
 import { AreaUnitKey } from '@/enum'
 
-export function areaTypeString(key: AreaTypeKey) { 
+export function areaTypeString(key: AreaTypeKey) {
 	if (key === AreaTypeKey.Registration) {
 		return 'menu.areaTypeUnit.registration'
 	} else {
