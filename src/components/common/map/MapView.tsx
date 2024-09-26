@@ -8,12 +8,13 @@ import { useMap } from './context/map'
 import { Button, Paper, Box } from '@mui/material'
 import { PropsWithChildren, useEffect } from 'react'
 import useLayerStore from './store/map'
-import MapPin from './layer/MapPin'
+import MapPinMark from './layer/MapPinMark'
 import { layerIdConfig } from '@/config/app'
 import { BASEMAP } from '@deck.gl/carto'
 import { IconLayer } from '@deck.gl/layers'
 import { MVTLayer } from '@deck.gl/geo-layers'
 import { Layer } from '@deck.gl/core'
+import MapPin from './MapPin'
 
 const CURRENT_LOCATION_ZOOM = 14
 const DEFAULT = {
@@ -101,6 +102,11 @@ export default function MapView({ className = '', isShowMapPin = false, initialL
 
 	return (
 		<div className={classNames('relative flex flex-1 overflow-hidden', className)}>
+			{isShowMapPin && (
+				<Box className='absolute bottom-[8.7rem] left-2 z-10'>
+					<MapPin />
+				</Box>
+			)}
 			<Box className='absolute bottom-2 left-2 z-10'>
 				<MapTools
 					layerList={initialLayer}
@@ -126,8 +132,8 @@ export default function MapView({ className = '', isShowMapPin = false, initialL
 					{mapInfoWindow.children}
 				</InfoWindow>
 			)}
-			{currentLocation && mapType === MapType.Libre && <MapPin coords={currentLocation} />}
-			{currentLocation && mapType === MapType.Google && <MapPin coords={currentLocation} />}
+			{currentLocation && mapType === MapType.Libre && <MapPinMark coords={currentLocation} />}
+			{currentLocation && mapType === MapType.Google && <MapPinMark coords={currentLocation} />}
 		</div>
 	)
 }

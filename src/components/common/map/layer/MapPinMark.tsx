@@ -5,11 +5,11 @@ import { Layer } from '@deck.gl/core'
 import { layerIdConfig } from '@/config/app'
 import { LatLng } from '../interface/map'
 
-interface MapPinProps {
+interface MapPinMarkProps {
 	coords: LatLng
 }
 
-export default function MapPin({ coords }: MapPinProps) {
+export default function MapPinMark({ coords }: MapPinMarkProps) {
 	const { getLayer, addLayer, removeLayer } = useLayerStore()
 
 	const getIconLayer = useCallback((coords: LatLng) => {
