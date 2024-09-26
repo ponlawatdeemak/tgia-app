@@ -3,11 +3,12 @@
 import AdminPoly from '@/components/shared/AdminPoly'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
-import { Button, Paper, Typography } from '@mui/material'
+import { Alert, Button, CircularProgress, Paper, Snackbar, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
+import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
 
 interface SearchFormType {
 	provinceCode?: number
@@ -27,6 +28,12 @@ const defaultFormValues: SearchFormType = {
 
 const ReportMain = () => {
 	const { t, i18n } = useTranslation(['default', 'report'])
+	const [alertInfo, setAlertInfo] = useState<AlertInfoType>({
+		open: false,
+		severity: 'success',
+		message: '',
+	})
+	const [csvLoading, setCsvLoading] = useState(false)
 
 	const { data: userData, isLoading: isUserDataLoading } = useQuery({
 		queryKey: ['getProfile'],
@@ -51,17 +58,31 @@ const ReportMain = () => {
 				}
 				console.log(params)
 				if (values.format === 'csv') {
-					service.report.download(params).then((res) => {
-						res?.data?.urls.map((item) => {
-							window.open(item)
+					setCsvLoading(true)
+					service.report
+						.download(params)
+						.then((res) => {
+							res?.data?.urls.map((item) => {
+								window.open(item)
+							})
 						})
-					})
+						.catch((error) => {
+							console.log(error)
+							setAlertInfo({
+								open: true,
+								severity: 'error',
+								message: error?.title ? error.title : t('error.somethingWrong'),
+							})
+						})
+						.finally(() => {
+							setCsvLoading(false)
+						})
 				} else {
 					console.log('pdf')
 				}
 			}
 		},
-		[userData],
+		[userData, i18n.language],
 	)
 
 	const formik = useFormik<SearchFormType>({
@@ -92,12 +113,37 @@ const ReportMain = () => {
 					{t('downloadReportTitle', { ns: 'report' })}
 				</Typography>
 				<form noValidate onSubmit={formik.handleSubmit} className='flex flex-col gap-4'>
-					<AdminPoly formik={formik} isShowFileType isYearMultiple />
-					<Button className='py-2 max-lg:rounded' fullWidth variant='contained' type='submit'>
-						<span className='font-semibold'>{t('download', { ns: 'report' })}</span>
+					<AdminPoly formik={formik} isShowFileType isYearMultiple loading={csvLoading} />
+					<Button
+						className='py-2 max-lg:rounded'
+						fullWidth
+						variant='contained'
+						type='submit'
+						disabled={csvLoading}
+					>
+						{csvLoading ? (
+							<CircularProgress size='20px' className='py-[4px]' />
+						) : (
+							<span className='font-semibold'>{t('download', { ns: 'report' })}</span>
+						)}
 					</Button>
 				</form>
 			</Paper>
+			<Snackbar
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+				open={alertInfo.open}
+				autoHideDuration={6000}
+				onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+				className='w-content'
+			>
+				<Alert
+					onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+					severity={alertInfo.severity}
+					className='w-full'
+				>
+					{alertInfo.message}
+				</Alert>
+			</Snackbar>
 		</div>
 	)
 }
