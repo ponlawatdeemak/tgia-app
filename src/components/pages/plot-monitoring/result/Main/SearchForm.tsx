@@ -1,7 +1,7 @@
 'use client'
 
 import { Autocomplete, Box, Button, FormControl, Input, InputAdornment, Paper } from '@mui/material'
-import React, { ChangeEvent, useCallback, useMemo } from 'react'
+import React, { ChangeEvent, useCallback, useEffect, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import { useTranslation } from 'react-i18next'
@@ -63,8 +63,40 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 		queryFn: () => service.lookup.get('years'),
 	})
 
+	useEffect(() => {
+		const displayMapExtent = async () => {
+			let adminPolyCode = null
+			switch (true) {
+				case !!queryParams.subDistrictCode:
+					adminPolyCode = queryParams.subDistrictCode
+					break
+				case !!queryParams.districtCode:
+					adminPolyCode = queryParams.districtCode
+					break
+				case !!queryParams.provinceCode:
+					adminPolyCode = queryParams.provinceCode
+					break
+				default:
+					adminPolyCode = null
+			}
+
+			try {
+				if (adminPolyCode === null) return
+
+				const extentMapData = (await service.fieldLoss.getExtentAdminPoly({ id: adminPolyCode })).data
+				if (mapViewRef.current) {
+					mapViewRef.current.setMapExtent(extentMapData?.extent)
+				}
+			} catch (error) {
+				console.log('error zoom extent: ', error)
+			}
+		}
+
+		displayMapExtent()
+	}, [queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode])
+
 	const handleSelectProvince = useCallback(
-		async (_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {
+		(_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {
 			if (AutocompleteCloseReason === 'selectOption') {
 				if (newSelectedValue) {
 					setQueryParams({
@@ -73,49 +105,18 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 						districtCode: undefined,
 						subDistrictCode: undefined,
 					})
-					try {
-						if (newSelectedValue.code === null) return
-
-						const extentProvince = (
-							await service.fieldLoss.getExtentAdminPoly({ id: newSelectedValue.code })
-						).data
-						if (mapViewRef.current) {
-							mapViewRef.current.setMapExtent(extentProvince?.extent)
-						}
-					} catch (error) {
-						console.log('error zoom extent: ', error)
-					}
 					router.push(`${AppPath.PlotMonitoringResult}?provinceCode=${newSelectedValue.code}`)
 				}
-			} else if (AutocompleteCloseReason === 'clear') {
-				setQueryParams({
-					...queryParams,
-					provinceCode: undefined,
-					districtCode: undefined,
-					subDistrictCode: undefined,
-				})
 			}
 		},
 		[queryParams, setQueryParams],
 	)
 
 	const handleSelectDistrict = useCallback(
-		async (_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {
+		(_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {
 			if (AutocompleteCloseReason === 'selectOption') {
 				if (newSelectedValue) {
 					setQueryParams({ ...queryParams, districtCode: newSelectedValue.code, subDistrictCode: undefined })
-					try {
-						if (newSelectedValue.code === null) return
-
-						const extentDistrict = (
-							await service.fieldLoss.getExtentAdminPoly({ id: newSelectedValue.code })
-						).data
-						if (mapViewRef.current) {
-							mapViewRef.current.setMapExtent(extentDistrict?.extent)
-						}
-					} catch (error) {
-						console.log('error zoom extent: ', error)
-					}
 				}
 			} else if (AutocompleteCloseReason === 'clear') {
 				setQueryParams({ ...queryParams, districtCode: undefined, subDistrictCode: undefined })
@@ -125,22 +126,10 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 	)
 
 	const handleSelectSubDistrict = useCallback(
-		async (_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {
+		(_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {
 			if (AutocompleteCloseReason === 'selectOption') {
 				if (newSelectedValue) {
 					setQueryParams({ ...queryParams, subDistrictCode: newSelectedValue.code })
-					try {
-						if (newSelectedValue.code === null) return
-
-						const extentSubDistrict = (
-							await service.fieldLoss.getExtentAdminPoly({ id: newSelectedValue.code })
-						).data
-						if (mapViewRef.current) {
-							mapViewRef.current.setMapExtent(extentSubDistrict?.extent)
-						}
-					} catch (error) {
-						console.log('error zoom extent: ', error)
-					}
 				}
 			} else if (AutocompleteCloseReason === 'clear') {
 				setQueryParams({ ...queryParams, subDistrictCode: undefined })
