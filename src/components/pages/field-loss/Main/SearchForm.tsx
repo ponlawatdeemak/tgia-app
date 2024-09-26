@@ -14,6 +14,8 @@ import { ResponseLanguage } from '@/api/interface'
 import FavoriteSearchForm from '@/components/shared/FavoriteSearchForm'
 import { useTranslation } from 'react-i18next'
 
+import { useMap } from '@/components/common/map/context/map'
+
 interface OptionType {
 	name: ResponseLanguage
 	id: string
@@ -31,7 +33,7 @@ const DistrictCodeLength = 4
 const SubDistrictCodeLength = 6
 
 interface SearchFormProps {
-	mapViewRef: any
+	mapViewRef?: any
 }
 
 const SearchForm: React.FC<SearchFormProps> = ({ mapViewRef }) => {
@@ -44,6 +46,8 @@ const SearchForm: React.FC<SearchFormProps> = ({ mapViewRef }) => {
 	const { i18n } = useTranslation()
 	const userId = session?.user.id ?? null
 	const language = i18n.language as keyof ResponseLanguage
+
+	const { setExtent } = useMap()
 
 	const { data: searchData, isLoading: isSearchDataLoading } = useQuery({
 		queryKey: ['getSearchAdminPoly', inputValue],
@@ -125,9 +129,11 @@ const SearchForm: React.FC<SearchFormProps> = ({ mapViewRef }) => {
 				if (adminPolyCode === null) return
 
 				const extentProvince = (await service.fieldLoss.getExtentAdminPoly({ id: adminPolyCode })).data
-				if (mapViewRef.current) {
-					mapViewRef.current.setMapExtent(extentProvince?.extent)
-				}
+				// if (mapViewRef.current) {
+				// 	mapViewRef.current.setMapExtent(extentProvince?.extent)
+				// }
+				// TO DO
+				// setExtent(extentProvince?.extent)
 			} catch (error) {
 				console.log('error zoom extent: ', error)
 			}

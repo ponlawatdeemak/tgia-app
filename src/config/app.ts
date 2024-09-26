@@ -94,3 +94,14 @@ export const appMenuConfig: {
 		children: othersMenuConfig,
 	},
 ]
+
+export const layerIdConfig = {
+	toolCurrentLocation: 'tool-current-layer',
+	toolMeasurement: 'tool-measurement-layer',
+}
+
+const tileUrl = process.env.API_URL_TILE
+export const tileLayer = {
+	boundaryYear: (year: string | number) => `${tileUrl}/rnr_${year}/tiles.json`,
+	province: `${tileUrl}/province/tiles.json`,
+}

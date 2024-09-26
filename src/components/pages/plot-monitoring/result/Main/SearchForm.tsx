@@ -18,7 +18,7 @@ import { useRouter } from 'next/navigation'
 import { AppPath } from '@/config/app'
 
 interface PlotMonitoringSearchFormProps {
-	mapViewRef: any
+	mapViewRef?: any
 }
 
 const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ mapViewRef }) => {
@@ -84,9 +84,10 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 				if (adminPolyCode === null) return
 
 				const extentMapData = (await service.fieldLoss.getExtentAdminPoly({ id: adminPolyCode })).data
-				if (mapViewRef.current) {
-					mapViewRef.current.setMapExtent(extentMapData?.extent)
-				}
+				// TO DO
+				// if (mapViewRef.current) {
+				// 	mapViewRef.current.setMapExtent(extentMapData?.extent)
+				// }
 			} catch (error) {
 				console.log('error zoom extent: ', error)
 			}

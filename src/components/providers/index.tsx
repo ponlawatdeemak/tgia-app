@@ -13,6 +13,7 @@ import { Language } from '@/enum'
 import { fallbackLng } from '@/i18n/settings'
 import { enUS, th } from 'date-fns/locale'
 import { setDefaultOptions } from 'date-fns'
+import { MapProvider } from '@/components/common/map/context/map'
 
 interface ProvidersProps extends PropsWithChildren {
 	lng: string
@@ -41,9 +42,11 @@ const Providers: React.FC<ProvidersProps> = ({ children, lng }) => {
 			<QueryClientProvider client={queryClient}>
 				<ThemeProvider theme={theme}>
 					<I18nextProvider i18n={i18n}>
-						<Suspense>
-							<TokenProvider>{children}</TokenProvider>
-						</Suspense>
+						<MapProvider>
+							<Suspense>
+								<TokenProvider>{children}</TokenProvider>
+							</Suspense>
+						</MapProvider>
 					</I18nextProvider>
 				</ThemeProvider>
 			</QueryClientProvider>

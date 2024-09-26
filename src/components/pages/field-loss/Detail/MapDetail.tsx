@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react'
-import MapView, { MapViewRef } from '@/components/common/map/MapView'
+// import MapView, { MapViewRef } from '@/components/common/map/MapView'
+
+import MapView from '@/components/common/map/MapView'
 import { Box, Breadcrumbs, Link, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
@@ -914,7 +916,9 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 				/>
 			</Box>
 			<Tooltip hoverInfo={hoverInfo} setHoverInfo={setHoverInfo} />
-			<MapView ref={mapViewRef} />
+			{/* // TO DO */}
+			{/* ref={mapViewRef} */}
+			<MapView />
 		</div>
 	)
 }

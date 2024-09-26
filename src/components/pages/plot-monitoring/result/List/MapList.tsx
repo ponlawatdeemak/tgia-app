@@ -57,7 +57,7 @@ interface MapListProps {
 	areaDetail: string
 	mapViewRef: any
 }
-
+// TO DO
 const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 	const { queryParams } = useSearchPlotMonitoring()
 	const { open } = useMapPin()
@@ -333,8 +333,8 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 			}),
 		)
 	}, [
-		setLayers,
-		addLayer,
+		// setLayers,
+		// addLayer,
 		areaSearchPlotIds,
 		poisDataIds,
 		handleLayerPositionClick,
@@ -355,9 +355,10 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 			<InfoWindows clickLayerInfo={clickLayerInfo} setClickLayerInfo={setClickLayerInfo} />
 			<InfoPinTitle clickPinInfo={clickPinInfo} setClickPinInfo={setClickPinInfo} />
 			<MapView
-				className='max-lg:[&_div.MuiBox-root:first-child]:bottom-auto max-lg:[&_div.MuiBox-root:first-child]:left-4 max-lg:[&_div.MuiBox-root:first-child]:top-[68px] max-lg:[&_div.MuiBox-root:nth-child(2)]:bottom-auto max-lg:[&_div.MuiBox-root:nth-child(2)]:left-4 max-lg:[&_div.MuiBox-root:nth-child(2)]:top-4 max-lg:[&_div.MuiBox-root>div.MuiBox-root]:hidden'
-				isShowMapPin
-				ref={mapViewRef}
+			// className='max-lg:[&_div.MuiBox-root:first-child]:bottom-auto max-lg:[&_div.MuiBox-root:first-child]:left-4 max-lg:[&_div.MuiBox-root:first-child]:top-[68px] max-lg:[&_div.MuiBox-root:nth-child(2)]:bottom-auto max-lg:[&_div.MuiBox-root:nth-child(2)]:left-4 max-lg:[&_div.MuiBox-root:nth-child(2)]:top-4 max-lg:[&_div.MuiBox-root>div.MuiBox-root]:hidden'
+			// isShowMapPin
+			// TO DO
+			// ref={mapViewRef}
 			/>
 		</div>
 	)

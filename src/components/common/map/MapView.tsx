@@ -1,112 +1,144 @@
-'use client'
-
-import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import classNames from 'classnames'
-import { Box } from '@mui/material'
-import { BASEMAP } from '@deck.gl/carto'
-import { LatLng, MapViewProps, MapViewState } from './interface/map'
-import MapGoogle, { MapGoogleRef } from './MapGoogle'
-import MapLibre, { MapLibreRef } from './MapLibre'
+import { BasemapType, MapType, MapInfoWindow, MapLayer, LatLng, MapViewState } from './interface/map'
+import MapGoogle from './MapGoogle'
+import MapLibre from './MapLibre'
 import MapTools from './MapTools'
-import MapPin from './MapPin'
+import { useMap } from './context/map'
+import { Button, Paper } from '@mui/material'
+import { PropsWithChildren, useEffect } from 'react'
+import useLayerStore from './store/map'
+import MapPin from './layer/MapPin'
+import { layerIdConfig } from '@/config/app'
+import { BASEMAP } from '@deck.gl/carto'
+import { IconLayer } from '@deck.gl/layers'
+import { MVTLayer } from '@deck.gl/geo-layers'
+import { Layer } from '@deck.gl/core'
 
-const MAX_ZOOM = 10
-const MIN_ZOOM = 3
-const INITIAL_VIEW_STATE: MapViewState = {
-	longitude: 100,
-	latitude: 13,
-	zoom: 5,
+const CURRENT_LOCATION_ZOOM = 14
+const DEFAULT = {
+	viewState: {
+		longitude: 100,
+		latitude: 13,
+		zoom: 5,
+	},
+	mapType: MapType.Libre,
+	basemap: BasemapType.CartoLight,
 }
 
-export interface MapViewRef {
-	setMapExtent: (bounds: number[][]) => void
-	setMapCenter: (coords: LatLng) => void
+export interface MapViewProps extends PropsWithChildren {
+	className?: string
+	initialLayer?: MapLayer[]
+	isShowMapPin?: boolean
 }
 
-function MapView({ className = '', isShowMapPin = false, onMapClick }: MapViewProps, ref: React.Ref<MapViewRef>) {
-	const [viewState, setViewState] = useState<MapViewState>(INITIAL_VIEW_STATE)
-	const [basemap, setBasemap] = useState('carto-light')
+// TO DO
+export default function MapView({ className = '', isShowMapPin = false, initialLayer }: MapViewProps) {
+	const { mapInfoWindow, setCenter, setMapInfoWindow } = useMap()
+	const { getLayer, getLayers, setLayers } = useLayerStore()
+	const [mapType, setMapType] = useState<MapType>(DEFAULT.mapType)
+	const [viewState, setViewState] = useState<MapViewState>(DEFAULT.viewState)
+	const [basemap, setBasemap] = useState(DEFAULT.basemap)
+	const [currentLocation, setCurrentLocation] = useState<LatLng | null>(null)
 
-	const mapLibreRef = useRef<MapLibreRef | null>(null)
-	const mapGoogleRef = useRef<MapGoogleRef | null>(null)
+	useEffect(() => {
+		return () => {
+			setMapInfoWindow(null)
+		}
+	}, [setMapInfoWindow])
 
-	useImperativeHandle(ref, () => ({
-		setMapExtent: (bounds: number[][]) => {
-			if (basemap === 'google' && mapGoogleRef.current) {
-				const googleBounds: google.maps.LatLngBoundsLiteral = {
-					north: bounds[1][1],
-					south: bounds[0][1],
-					east: bounds[1][0],
-					west: bounds[0][0],
+	useEffect(() => {
+		if (initialLayer && initialLayer.length) {
+			const layers = initialLayer.map((item) => item.layer)
+			setLayers(layers)
+		}
+	}, [setLayers])
+
+	useEffect(() => {
+		const recreateLayers = () => {
+			const layers = getLayers()
+			const newLayers = layers.map((layer) => {
+				if (layer instanceof IconLayer) {
+					return new IconLayer({ ...layer.props })
 				}
-				mapGoogleRef.current.setExtent(googleBounds)
-			} else if (mapLibreRef.current) {
-				mapLibreRef.current.setExtent(bounds)
-			}
-		},
-		setMapCenter: (coords: LatLng) => {
-			if (basemap === 'google' && mapGoogleRef.current) {
-				mapGoogleRef.current.setCenter(coords)
-			} else if (mapLibreRef.current) {
-				mapLibreRef.current.setCenter(coords)
-			}
-			setViewState({ ...viewState, zoom: 13 })
-		},
-	}))
+				if (layer instanceof MVTLayer) {
+					return new MVTLayer({ ...layer.props })
+				}
+				return layer
+			})
+			setLayers(newLayers as Layer[])
+		}
+		recreateLayers()
+	}, [mapType, setLayers, getLayers])
 
-	const onViewStateChange = useCallback((v: any) => {
-		setViewState(v)
+	const onViewStateChange = useCallback((viewState: MapViewState) => {
+		setViewState(viewState)
 	}, [])
 
-	const handleBasemapChange = useCallback((newBasemap: string) => {
-		setBasemap((prev) => newBasemap || prev)
+	const onBasemapChanged = useCallback((basemap: BasemapType) => {
+		setBasemap(basemap)
+		if (basemap === BasemapType.Google) {
+			setMapType(MapType.Google)
+		} else {
+			setMapType(MapType.Libre)
+		}
 	}, [])
 
-	const handleZoom = useCallback(
-		(level: number) => {
-			if (level <= MAX_ZOOM && level >= MIN_ZOOM) {
-				setViewState({ ...viewState, zoom: level })
+	const onGetLocation = useCallback(
+		(coords: GeolocationCoordinates) => {
+			const layer = getLayer(layerIdConfig.toolCurrentLocation)
+			if (layer) {
+				setCurrentLocation(null)
+			} else {
+				const { latitude, longitude } = coords
+				setCurrentLocation({ latitude, longitude })
+				setCenter({ latitude, longitude })
+				setViewState({ longitude, latitude, zoom: CURRENT_LOCATION_ZOOM })
 			}
 		},
-		[viewState],
+		[getLayer, setCurrentLocation, setCenter],
 	)
 
 	return (
-		<div className={classNames('relative flex h-full flex-1 flex-col overflow-hidden', className)}>
-			{isShowMapPin && (
-				<Box className='absolute bottom-[8.7rem] left-2 z-10'>
-					<MapPin />
-				</Box>
-			)}
-			<Box className='absolute bottom-2 left-2 z-10'>
-				<MapTools
-					onBasemapChange={handleBasemapChange}
-					onZoomIn={() => handleZoom(viewState.zoom + 1)}
-					onZoomOut={() => handleZoom(viewState.zoom - 1)}
-				></MapTools>
-			</Box>
-			{basemap !== 'google' ? (
+		<div className={classNames('relative flex flex-1 overflow-hidden', className)}>
+			<MapTools
+				layerList={initialLayer}
+				onZoomIn={() => setViewState({ ...viewState, zoom: viewState.zoom + 1 })}
+				onZoomOut={() => setViewState({ ...viewState, zoom: viewState.zoom - 1 })}
+				onBasemapChanged={onBasemapChanged}
+				onGetLocation={onGetLocation}
+				currentBaseMap={basemap}
+			/>
+			{mapType === MapType.Libre ? (
 				<MapLibre
-					ref={mapLibreRef}
-					onMapClick={(latLng: LatLng) => {
-						onMapClick?.(latLng)
-					}}
-					viewState={viewState as any}
-					mapStyle={basemap === 'carto-light' ? BASEMAP.VOYAGER : BASEMAP.DARK_MATTER}
+					viewState={viewState}
+					mapStyle={basemap === BasemapType.CartoLight ? BASEMAP.VOYAGER : BASEMAP.DARK_MATTER}
 					onViewStateChange={onViewStateChange}
 				/>
 			) : (
-				<MapGoogle
-					onMapClick={(latLng: LatLng) => {
-						onMapClick?.(latLng)
-					}}
-					ref={mapGoogleRef}
-					viewState={viewState}
-					onViewStateChange={onViewStateChange}
-				/>
+				<MapGoogle viewState={viewState} onViewStateChange={onViewStateChange} />
 			)}
+			{mapInfoWindow && (
+				<InfoWindow positon={mapInfoWindow.positon} onClose={() => setMapInfoWindow(null)}>
+					{mapInfoWindow.children}
+				</InfoWindow>
+			)}
+			{currentLocation && mapType === MapType.Libre && <MapPin coords={currentLocation} />}
+			{currentLocation && mapType === MapType.Google && <MapPin coords={currentLocation} />}
 		</div>
 	)
 }
 
-export default forwardRef(MapView)
+export interface InfoWindowProps extends MapInfoWindow, PropsWithChildren {
+	onClose?: () => void
+}
+
+const InfoWindow: React.FC<InfoWindowProps> = ({ positon, children, onClose }) => {
+	if (!positon) return null
+	return (
+		<Paper className='absolute z-10 bg-white p-2' style={{ left: positon.x, top: positon.y }}>
+			{children}
+			<Button onClick={onClose}>close</Button>
+		</Paper>
+	)
+}

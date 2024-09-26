@@ -13,11 +13,12 @@ export type LayerStore = {
 	getLayers: () => LayersList
 	removeLayer: (layerId: string) => void
 }
+
 export const useLayerStore = create<LayerStore>()((set, get) => ({
 	overlay: undefined,
 	setOverlay: (overlay) => set((state) => ({ ...state, overlay })),
-	addLayer: (layer) => set((state) => ({ ...state, layers: [...state.layers, layer] })),
 	layers: [],
+	addLayer: (layer) => set((state) => ({ ...state, layers: [...state.layers, layer] })),
 	setLayers: (layers) =>
 		set((state) => {
 			return { ...state, layers }

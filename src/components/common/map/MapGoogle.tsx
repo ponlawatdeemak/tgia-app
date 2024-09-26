@@ -1,54 +1,49 @@
-'use client'
-import React, { forwardRef, useImperativeHandle, useMemo, useEffect, useRef } from 'react'
-import { APIProvider, Map, useMap } from '@vis.gl/react-google-maps'
+import React, { useMemo, useEffect } from 'react'
+import { APIProvider, Map, useMap as useMapGoogle } from '@vis.gl/react-google-maps'
 import { GoogleMapsOverlay } from '@deck.gl/google-maps'
 import useLayerStore from './store/map'
-import { LatLng, MapInterface } from './interface/map'
+import { useMap } from './context/map'
+import { MapInterface } from './interface/map'
+
+interface MapGoogleProps extends MapInterface {}
 
 const DeckGLOverlay = () => {
 	const layers = useLayerStore((state) => state.layers)
 	const setOverlay = useLayerStore((state) => state.setOverlay)
-	const map = useMap()
+	const map = useMapGoogle()
 	const overlay = useMemo(() => new GoogleMapsOverlay({}), [])
 	useEffect(() => {
-		overlay.setProps({ layers })
+		if (overlay instanceof GoogleMapsOverlay) {
+			overlay.setProps({ layers })
+		}
 	}, [layers, overlay])
 	useEffect(() => {
-		overlay.setMap(map)
-		setOverlay(overlay)
+		if (overlay instanceof GoogleMapsOverlay) {
+			overlay.setMap(map)
+			setOverlay(overlay)
+		}
+		return () => {
+			overlay.finalize()
+		}
 	}, [map, overlay, setOverlay])
 	return null
 }
 
-interface MapGoogleProps extends MapInterface {}
-
-export interface MapGoogleRef {
-	setExtent: (bounds: google.maps.LatLngBoundsLiteral) => void
-	setCenter: (coords: LatLng) => void
-}
-
-function MapGoogle({ viewState, onViewStateChange, onMapClick }: MapGoogleProps, ref: React.Ref<MapGoogleRef>) {
-	const mapRef = useRef<google.maps.Map | null>(null)
+export default function MapGoogle({ viewState, onViewStateChange }: MapGoogleProps) {
 	const overlay = useLayerStore((state) => state.overlay)
-
-	useImperativeHandle(ref, () => ({
-		setExtent: (bounds: google.maps.LatLngBoundsLiteral) => {
-			if (mapRef.current) {
-				mapRef.current.fitBounds(bounds)
-			}
-		},
-		setCenter: (coords: LatLng) => {
-			if (mapRef.current) {
-				mapRef.current.setCenter({ lat: coords.latitude, lng: coords.longitude })
-			}
-		},
-	}))
+	const { setGoogleMapInstance } = useMap()
 
 	useEffect(() => {
 		return () => {
 			overlay?.setProps({ layers: [] })
 		}
 	}, [overlay])
+
+	useEffect(() => {
+		return () => {
+			setGoogleMapInstance(null)
+		}
+	}, [setGoogleMapInstance])
 
 	return (
 		<APIProvider apiKey={process.env.GOOGLE_MAPS_API_KEY}>
@@ -63,18 +58,11 @@ function MapGoogle({ viewState, onViewStateChange, onMapClick }: MapGoogleProps,
 				streetViewControl={false}
 				mapTypeId='hybrid'
 				onBoundsChanged={(evt) => {
-					mapRef.current = evt.map
+					setGoogleMapInstance(evt.map)
 					onViewStateChange?.({
 						latitude: evt.detail.center.lat,
 						longitude: evt.detail.center.lng,
 						zoom: evt.detail.zoom,
-					})
-				}}
-				onClick={(e) => {
-					const info = e?.detail?.latLng
-					onMapClick?.({
-						latitude: info?.lat || 0,
-						longitude: info?.lng || 0,
 					})
 				}}
 			>
@@ -83,5 +71,3 @@ function MapGoogle({ viewState, onViewStateChange, onMapClick }: MapGoogleProps,
 		</APIProvider>
 	)
 }
-
-export default forwardRef(MapGoogle)

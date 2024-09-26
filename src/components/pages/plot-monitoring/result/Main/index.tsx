@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react'
 import useResponsive from '@/hook/responsive'
 import useSearchForm from '../../Main/context'
 import { PlotMonitoringSearchMain } from '../../Main'
-import { MapViewRef } from '@/components/common/map/MapView'
+// import { MapViewRef } from '@/components/common/map/MapView'
 import { useSearchParams } from 'next/navigation'
 import useSearchPlotMonitoring from './context'
 
@@ -24,7 +24,8 @@ export const PlotMonitoringResultMain = () => {
 		setQueryParams({ ...queryParams, provinceCode: provinceCode ? parseInt(provinceCode) : undefined })
 	}, [])
 
-	const mapViewRef = useRef<MapViewRef>(null)
+	// TO DO
+	// const mapViewRef = useRef<MapViewRef>(null)
 
 	return (
 		<>
@@ -32,14 +33,18 @@ export const PlotMonitoringResultMain = () => {
 				<PlotMonitoringSearchMain />
 			) : (
 				<div className='flex flex-grow flex-col gap-4 overflow-auto'>
-					<PlotMonitoringSearchForm mapViewRef={mapViewRef} />
+					<PlotMonitoringSearchForm
+					// TO DO
+					// mapViewRef={mapViewRef}
+					/>
 					<Paper className='flex h-full overflow-hidden rounded-none lg:mx-4 lg:mb-4 lg:h-[calc(100vh-154px)] lg:rounded-lg'>
 						<div className='box-border flex w-full overflow-auto max-lg:flex-col'>
 							<PlotMonitoringFilter isFullList={isFullList} />
 							<PlotMonitoringList
 								isFullList={isFullList}
 								setIsFullList={setIsFullList}
-								mapViewRef={mapViewRef}
+								// TO DO
+								// mapViewRef={mapViewRef}
 							/>
 						</div>
 					</Paper>

@@ -10,7 +10,8 @@ import MapDetail from '../Detail/MapDetail'
 import { useTranslation } from 'react-i18next'
 
 interface FieldLossDetailProps {
-	mapViewRef: any
+	// TO DO
+	mapViewRef?: any
 }
 
 // const mapViewRef = useRef<MapViewRef>(null)

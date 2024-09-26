@@ -17,7 +17,7 @@ import { mdiClose } from '@mdi/js'
 import Icon from '@mdi/react'
 import { useTranslation } from 'react-i18next'
 import FormInput from '@/components/common/input/FormInput'
-import MapView, { MapViewRef } from '@/components/common/map/MapView'
+import MapView from '@/components/common/map/MapView'
 import { LocationSearching } from '@mui/icons-material'
 import useSearchPlotMonitoring from '../../Main/context'
 import service from '@/api'
@@ -50,7 +50,7 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 	const { queryParams } = useSearchPlotMonitoring()
 	const { t } = useTranslation(['plot-monitoring', 'default'])
 	const { getLayers, addLayer, removeLayer } = useLayerStore()
-	const mapViewRef = useRef<MapViewRef>(null)
+	// const mapViewRef = useRef<MapViewRef>(null)
 
 	useEffect(() => {
 		if (formik.values.lng && formik.values.lat) {
@@ -120,12 +120,13 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 				const latitude = position.coords.latitude
 				formik.setFieldValue('lng', longitude.toFixed(6))
 				formik.setFieldValue('lat', latitude.toFixed(6))
-				if (mapViewRef.current) {
-					mapViewRef.current.setMapCenter({
-						latitude,
-						longitude,
-					})
-				}
+				// TO DO
+				// if (mapViewRef.current) {
+				// 	mapViewRef.current.setMapCenter({
+				// 		latitude,
+				// 		longitude,
+				// 	})
+				// }
 			})
 		} else {
 			console.log('Geolocation is not supported by this browser.')
@@ -136,12 +137,13 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 		(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 			if (event.key === 'Enter') {
 				if (formik.values.lng && formik.values.lat) {
-					if (mapViewRef.current) {
-						mapViewRef.current.setMapCenter({
-							latitude: parseFloat(formik.values.lat),
-							longitude: parseFloat(formik.values.lng),
-						})
-					}
+					// TO DO
+					// if (mapViewRef.current) {
+					// 	mapViewRef.current.setMapCenter({
+					// 		latitude: parseFloat(formik.values.lat),
+					// 		longitude: parseFloat(formik.values.lng),
+					// 	})
+					// }
 				}
 			}
 		},
@@ -151,12 +153,13 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 	const handleLocationBlur = useCallback(
 		(_event: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement, Element>) => {
 			if (formik.values.lng && formik.values.lat) {
-				if (mapViewRef.current) {
-					mapViewRef.current.setMapCenter({
-						latitude: parseFloat(formik.values.lat),
-						longitude: parseFloat(formik.values.lng),
-					})
-				}
+				// TO DO
+				// if (mapViewRef.current) {
+				// 	mapViewRef.current.setMapCenter({
+				// 		latitude: parseFloat(formik.values.lat),
+				// 		longitude: parseFloat(formik.values.lng),
+				// 	})
+				// }
 			}
 		},
 		[formik.values.lat, formik.values.lng],
@@ -242,11 +245,12 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 					<Paper className='relative grid flex-grow overflow-hidden'>
 						<Box className='relative h-full w-full'>
 							<MapView
-								ref={mapViewRef}
-								onMapClick={(latLng) => {
-									formik.setFieldValue('lng', latLng?.longitude?.toFixed(5) || null)
-									formik.setFieldValue('lat', latLng?.latitude?.toFixed(5) || null)
-								}}
+							// TO DO
+							// ref={mapViewRef}
+							// onMapClick={(latLng) => {
+							// 	formik.setFieldValue('lng', latLng?.longitude?.toFixed(5) || null)
+							// 	formik.setFieldValue('lat', latLng?.latitude?.toFixed(5) || null)
+							// }}
 							/>
 						</Box>
 					</Paper>
