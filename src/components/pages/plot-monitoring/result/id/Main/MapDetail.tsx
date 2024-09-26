@@ -17,6 +17,8 @@ type DetailLayerType = BoundaryLayerType & {
 	project_year: number
 }
 
+const API_URL_TILE = process.env.API_URL_TILE
+
 const SelectedLineWidth = 2
 const DefaultLineWidth = 0
 
@@ -44,10 +46,10 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 							},
 						},
 					},
-					data: `https://tileserver.cropinsurance-dev.thaicom.io/boundary_${queryParams.year}/tiles.json`,
+					data: `${API_URL_TILE}/boundary_${queryParams.year}/tiles.json`,
 					filled: true,
 					getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
-						if (d.properties.activity_id === activityId) {
+						if (Number(d.properties.activity_id) === Number(activityId)) {
 							return BoundaryTileColor.gray
 						}
 						return BoundaryTileColor.default
@@ -56,7 +58,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, BoundaryLayerType>) {
-						if (d.properties.activity_id === activityId) {
+						if (Number(d.properties.activity_id) === Number(activityId)) {
 							return SelectedLineWidth
 						}
 						return DefaultLineWidth
@@ -79,10 +81,10 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 							},
 						},
 					},
-					data: `https://tileserver.cropinsurance-dev.thaicom.io/rnr_${queryParams.year}/tiles.json`,
+					data: `${API_URL_TILE}/rnr_${queryParams.year}/tiles.json`,
 					filled: true,
 					getFillColor(d: Feature<Geometry, DetailLayerType>) {
-						if (d.properties.activity_id === activityId) {
+						if (Number(d.properties.activity_id) === Number(activityId)) {
 							return LossTypeTileColor.rnr
 						}
 						return BoundaryTileColor.default
@@ -91,7 +93,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, DetailLayerType>) {
-						if (d.properties.activity_id === activityId) {
+						if (Number(d.properties.activity_id) === Number(activityId)) {
 							return SelectedLineWidth
 						}
 						return DefaultLineWidth
@@ -117,10 +119,10 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 							},
 						},
 					},
-					data: `https://tileserver.cropinsurance-dev.thaicom.io/boundary_${queryParams.year}/tiles.json`,
+					data: `${API_URL_TILE}/boundary_${queryParams.year}/tiles.json`,
 					filled: true,
 					getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
-						if (d.properties.activity_id === activityId) {
+						if (Number(d.properties.activity_id) === Number(activityId)) {
 							return BoundaryTileColor.gray
 						}
 						return BoundaryTileColor.default
@@ -129,42 +131,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, BoundaryLayerType>) {
-						if (d.properties.activity_id === activityId) {
-							return SelectedLineWidth
-						}
-						return DefaultLineWidth
-					},
-					pickable: true,
-					updateTriggers: {
-						getFillColor: plotDetail,
-						getLineColor: plotDetail,
-						getLineWidth: plotDetail,
-					},
-				}),
-				new MVTLayer({
-					id: `${lossType}_$${queryParams.year}`,
-					name: `${lossType}_$${queryParams.year}`,
-					loadOptions: {
-						fetch: {
-							headers: {
-								'content-type': 'application/json',
-								Authorization: `Bearer ${apiAccessToken}`,
-							},
-						},
-					},
-					data: `https://tileserver.cropinsurance-dev.thaicom.io/${lossType}_${queryParams.year}/tiles.json`,
-					filled: true,
-					getFillColor(d: Feature<Geometry, DetailLayerType>) {
-						if (d.properties.activity_id === activityId) {
-							return LossTypeTileColor[`${lossType}`]
-						}
-						return BoundaryTileColor.default
-					},
-					getLineColor(d: Feature<Geometry, DetailLayerType>) {
-						return LineWidthColor.default
-					},
-					getLineWidth(d: Feature<Geometry, DetailLayerType>) {
-						if (d.properties.activity_id === activityId) {
+						if (Number(d.properties.activity_id) === Number(activityId)) {
 							return SelectedLineWidth
 						}
 						return DefaultLineWidth
@@ -177,6 +144,45 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 					},
 				}),
 			])
+			if (lossType && !['noData', 'noDamage'].includes(lossType || '')) {
+				addLayer(
+					new MVTLayer({
+						id: `${lossType}_$${queryParams.year}`,
+						name: `${lossType}_$${queryParams.year}`,
+						loadOptions: {
+							fetch: {
+								headers: {
+									'content-type': 'application/json',
+									Authorization: `Bearer ${apiAccessToken}`,
+								},
+							},
+						},
+						data: `${API_URL_TILE}/${lossType}_${queryParams.year}/tiles.json`,
+						filled: true,
+						getFillColor(d: Feature<Geometry, DetailLayerType>) {
+							if (Number(d.properties.activity_id) === Number(activityId)) {
+								return LossTypeTileColor[`${lossType}`]
+							}
+							return BoundaryTileColor.default
+						},
+						getLineColor(d: Feature<Geometry, DetailLayerType>) {
+							return LineWidthColor.default
+						},
+						getLineWidth(d: Feature<Geometry, DetailLayerType>) {
+							if (Number(d.properties.activity_id) === Number(activityId)) {
+								return SelectedLineWidth
+							}
+							return DefaultLineWidth
+						},
+						pickable: true,
+						updateTriggers: {
+							getFillColor: plotDetail,
+							getLineColor: plotDetail,
+							getLineWidth: plotDetail,
+						},
+					}),
+				)
+			}
 		}
 	}, [setLayers, activityId, plotDetail, lossType, queryParams.year])
 
