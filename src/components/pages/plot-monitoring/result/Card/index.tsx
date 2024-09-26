@@ -37,7 +37,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 		<div className='flex w-full flex-col gap-4 rounded bg-white p-4 lg:rounded-lg'>
 			<div className='flex gap-4'>
 				<Paper className='flex aspect-square h-[80px] w-[80px] items-center justify-center bg-gray-light3 sm:h-auto sm:w-[130px] lg:w-[204px]'>
-					{!!detail.geometry.coordinates && (
+					{!!detail.geometry?.coordinates && (
 						<PolygonToImage
 							className='!h-[80px] !w-[80px] !border-none !bg-transparent [&_svg]:h-[60px] [&_svg]:w-[60px]'
 							polygon={detail.geometry}
