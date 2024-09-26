@@ -229,10 +229,15 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 				<Box className='flex items-center justify-between border-0 border-solid border-gray max-lg:border-t lg:border-b'>
 					<div className='flex items-center'>
 						<Typography className='p-2.5 text-base font-semibold text-black max-lg:py-0 max-lg:pt-3'>
-							{t('all')}
+							{searchPlotData?.pages[0]?.data?.length && searchPlotData?.pages[0]?.data?.length > 0
+								? t('all')
+								: ''}
 						</Typography>
 						<span className='p-2.5 text-base font-semibold text-black-light max-lg:py-0 max-lg:pt-3'>
-							{searchPlotData?.pages[0]?.total}
+							{(searchPlotData?.pages[0]?.data?.length && searchPlotData?.pages[0]?.data?.length > 0) ||
+							(searchPlotData?.pages[0]?.total && searchPlotData?.pages[0]?.total > 0)
+								? searchPlotData?.pages[0]?.total
+								: ''}
 						</span>
 					</div>
 					<FormControl
