@@ -163,7 +163,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 			</Typography>
 			<form
 				onSubmit={formik.handleSubmit}
-				className='flex h-full flex-col justify-between max-lg:justify-start max-lg:gap-[32px]'
+				className='flex flex-col justify-between max-lg:justify-start max-lg:gap-[32px] lg:h-full'
 			>
 				<Box className='flex w-full gap-[16px] max-lg:flex-col lg:gap-[12px]'>
 					<ProfileForm
