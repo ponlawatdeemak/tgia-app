@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation'
 import { AppPath } from '@/config/app'
 import classNames from 'classnames'
 import { formatText } from '@/utils/text'
+import { LossTypeStr } from '@/enum'
 
 type ClickLayerInfo = {
 	x: number
@@ -61,7 +62,11 @@ const InfoWindows: React.FC<InfoWindowsProps> = ({ clickLayerInfo, setClickLayer
 						{formatText(clickLayerInfo?.area?.activityId)}
 					</Typography>
 				</Box>
-				{(!clickLayerInfo?.area?.results || clickLayerInfo?.area?.results?.length === 0) && (
+				{(!clickLayerInfo?.area?.results ||
+					clickLayerInfo?.area?.results?.length === 0 ||
+					(clickLayerInfo?.area?.results?.length === 1 &&
+						(clickLayerInfo?.area?.results?.[0]?.lossPredicted?.lossType === LossTypeStr.NoDamage ||
+							clickLayerInfo?.area?.results?.[0]?.lossPredicted?.lossType === LossTypeStr.NoData))) && (
 					<IconButton
 						onClick={() => handleClickInfoWindows(clickLayerInfo?.area?.activityId)}
 						className='ml-2 h-6 w-6 rounded-lg border border-solid border-gray p-1'
@@ -88,8 +93,17 @@ const InfoWindows: React.FC<InfoWindowsProps> = ({ clickLayerInfo, setClickLayer
 					<span className='text-sm font-normal text-black'>{t(areaUnit)}</span>
 				</Box>
 			</Box>
+
 			{clickLayerInfo?.area?.results &&
 				clickLayerInfo?.area?.results?.map((result, index) => {
+					if (
+						clickLayerInfo?.area?.results?.length === 1 &&
+						(clickLayerInfo?.area?.results?.[0]?.lossPredicted?.lossType === LossTypeStr.NoDamage ||
+							clickLayerInfo?.area?.results?.[0]?.lossPredicted?.lossType === LossTypeStr.NoData)
+					) {
+						return
+					}
+
 					return (
 						<Box key={index} className='flex justify-between'>
 							<Box className='flex items-center gap-1'>

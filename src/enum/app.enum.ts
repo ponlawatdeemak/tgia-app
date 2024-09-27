@@ -29,6 +29,13 @@ export enum LossType {
 	Drought = 2,
 }
 
+export enum LossTypeStr {
+	NoData = 'noData',
+	NoDamage = 'noDamage',
+	Flood = 'flood',
+	Drought = 'drought',
+}
+
 export enum InsuredType {
 	NoInsurance = 0,
 	BasicInsurance = 1,
