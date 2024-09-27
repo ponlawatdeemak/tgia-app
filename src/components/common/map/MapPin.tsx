@@ -364,21 +364,26 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 		}
 	}, [latLng])
 
-	const handleGetCurrentLocation = useCallback(() => {
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition((position) => {
-				const longitude = Number(position.coords.longitude.toFixed(6))
-				const latitude = Number(position.coords.latitude.toFixed(6))
-
-				setLatLng({
-					latitude,
-					longitude,
-				})
+	const handleGetCurrentLocation = useCallback(async () => {
+		try {
+			setBusy(true)
+			const position: GeolocationPosition = await new Promise<GeolocationPosition>((resolve, reject) => {
+				navigator.geolocation.getCurrentPosition(resolve, reject)
 			})
-		} else {
-			console.log('Geolocation is not supported by this browser.')
+
+			const longitude = Number(position.coords.longitude.toFixed(6))
+			const latitude = Number(position.coords.latitude.toFixed(6))
+
+			setLatLng({
+				latitude,
+				longitude,
+			})
+		} catch (error) {
+			console.error('Error getting location:', error)
+		} finally {
+			setBusy(false)
 		}
-	}, [formik])
+	}, [])
 
 	const handleLocationEnter = useCallback(
 		(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
