@@ -279,6 +279,7 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 
 	const handleDeleteSubmit = useCallback(async () => {
 		try {
+			setDeleteOpenDialog(false)
 			setBusy(true)
 			await mutateDeleteMapPins(pinCheckIds)
 			queryClient.invalidateQueries({ queryKey: ['getPOISMapPin'] })
