@@ -37,7 +37,7 @@ export interface MapViewProps extends PropsWithChildren {
 
 // TO DO
 export default function MapView({ className = '', isShowMapPin = false, initialLayer, onMapClick }: MapViewProps) {
-	const { mapInfoWindow, mapLibreInstance, setCenter, setMapInfoWindow } = useMap()
+	const { mapInfoWindow, mapLibreInstance, setCenter, setMapInfoWindow, setLatLng } = useMap()
 	const { getLayer, getLayers, setLayers } = useLayerStore()
 	const [mapType, setMapType] = useState<MapType>(DEFAULT.mapType)
 	const [viewState, setViewState] = useState<MapViewState>(DEFAULT.viewState)
@@ -174,7 +174,10 @@ export default function MapView({ className = '', isShowMapPin = false, initialL
 		<div className={classNames('relative flex h-full flex-1 overflow-hidden', className)}>
 			{isShowMapPin && (
 				<Box className='absolute bottom-[8.7rem] left-2 z-10'>
-					<MapPin />
+					<MapPin
+					// 	console.log('isAddPin ', isAddPin)
+					// }}
+					/>
 				</Box>
 			)}
 			<Box className='absolute bottom-2 left-2 z-10'>
@@ -194,6 +197,7 @@ export default function MapView({ className = '', isShowMapPin = false, initialL
 					mapStyle={basemap === BasemapType.CartoLight ? BASEMAP.VOYAGER : BASEMAP.DARK_MATTER}
 					onViewStateChange={onViewStateChange}
 					onMapClick={(latLng: LatLng) => {
+						setLatLng?.(latLng)
 						onMapClick?.(latLng)
 					}}
 				/>
@@ -202,6 +206,7 @@ export default function MapView({ className = '', isShowMapPin = false, initialL
 					viewState={viewState}
 					onViewStateChange={onViewStateChange}
 					onMapClick={(latLng: LatLng) => {
+						setLatLng?.(latLng)
 						onMapClick?.(latLng)
 					}}
 				/>

@@ -19,6 +19,7 @@ import useAreaType from '@/store/area-type'
 import useMapPin from '../Map/context'
 import InfoPinTitle from '../Map/InfoPinTitle'
 import { getPin } from '@/utils/pin'
+import { useMap } from '@/components/common/map/context/map'
 
 type BoundaryLayerType = {
 	layerName: string
@@ -310,23 +311,25 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 					return d.coordinates
 				},
 				getSize: 40,
-
-				// sizeScale: 1,
-				// getPosition: (d) => d.coordinates,
-				// getSize: 40,
-
-				// iconAtlas: '/map/pin/location_on.png',
-				// iconAtlas: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png',
-				// iconMapping: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json',
 				pickable: true,
 				onClick: (info, event) => {
 					if (info.object) {
 						if (poisDataIds.includes(info.object.poiId)) {
 							setClickPinInfo({ x: info.x, y: info.y, area: info.object })
+
+							// setMapInfoWindow({
+							// 	positon: {
+							// 		x: info.x,
+							// 		y: info.y,
+							// 	},
+							// 	children: <div> etest </div>,
+							// })
 						} else {
 							setClickPinInfo(null)
+							//setMapInfoWindow(null)
 						}
 					} else {
+						// setMapInfoWindow(null)
 						setClickPinInfo(null)
 					}
 				},
@@ -358,8 +361,6 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 			<MapView
 				className='max-lg:[&_div.MuiBox-root:first-child]:bottom-auto max-lg:[&_div.MuiBox-root:first-child]:left-4 max-lg:[&_div.MuiBox-root:first-child]:top-[68px] max-lg:[&_div.MuiBox-root:nth-child(2)]:bottom-auto max-lg:[&_div.MuiBox-root:nth-child(2)]:left-4 max-lg:[&_div.MuiBox-root:nth-child(2)]:top-4 max-lg:[&_div.MuiBox-root>div.MuiBox-root]:hidden'
 				isShowMapPin
-				// TO DO
-				// ref={mapViewRef}
 			/>
 		</div>
 	)

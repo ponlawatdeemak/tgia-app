@@ -95,7 +95,7 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 		}
 
 		displayMapExtent()
-	}, [queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode, setExtent])
+	}, [queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode])
 
 	const handleSelectProvince = useCallback(
 		(_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {

@@ -22,7 +22,7 @@ import { LocationSearching } from '@mui/icons-material'
 import useSearchPlotMonitoring from '../../Main/context'
 import service from '@/api'
 import { useQuery } from '@tanstack/react-query'
-import { GetExtentAdminPolyDtoIn } from '@/api/field-loss/dto-in.dto'
+// import { GetExtentAdminPolyDtoIn } from '@/api/field-loss/dto-in.dto'
 import { FormikProps } from 'formik'
 import classNames from 'classnames'
 import useLayerStore from '@/components/common/map/store/map'
@@ -247,12 +247,12 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 					<Paper className='relative grid flex-grow overflow-hidden'>
 						<Box className='relative h-full w-full'>
 							<MapView
-							// TO DO
-							// ref={mapViewRef}
-							// onMapClick={(latLng) => {
-							// 	formik.setFieldValue('lng', latLng?.longitude?.toFixed(5) || null)
-							// 	formik.setFieldValue('lat', latLng?.latitude?.toFixed(5) || null)
-							// }}
+								// TO DO
+								// ref={mapViewRef}
+								onMapClick={(latLng) => {
+									formik.setFieldValue('lng', latLng?.longitude?.toFixed(5) || null)
+									formik.setFieldValue('lat', latLng?.latitude?.toFixed(5) || null)
+								}}
 							/>
 						</Box>
 					</Paper>

@@ -138,7 +138,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ mapViewRef }) => {
 		}
 
 		displaySearchOption()
-	}, [queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode, setExtent])
+	}, [queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode])
 
 	const handleSelectOption = (_event: ChangeEvent<{}>, newSelectedValue: OptionType | null) => {
 		//setSeletedOption(newSelectedValue)
