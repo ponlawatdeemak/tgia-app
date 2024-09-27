@@ -34,6 +34,11 @@ import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import { PostPOISDtoIn } from '@/api/plot-monitoring/dto-in.dto'
 import useResponsive from '@/hook/responsive'
+import { useMap } from './context/map'
+import { FormikProps } from 'formik'
+import FormInput from '@/components/common/input/FormInput'
+
+import { LocationSearching } from '@mui/icons-material'
 
 interface FormValues {
 	name: string
@@ -47,12 +52,15 @@ const defaultFormValues: FormValues = {
 	lng: null,
 }
 
-interface MapPinProps {}
+interface MapPinProps {
+	onAddPin?: (isAddPin: boolean) => void
+}
 
-const MapPin: React.FC<MapPinProps> = ({}) => {
+const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 	const { isDesktop } = useResponsive()
 	const queryClient = useQueryClient()
 	const { open, setOpen } = useMapPin()
+	const { latLng, setLatLng, setCenterAndZoom } = useMap()
 	const { t } = useTranslation(['plot-monitoring', 'default'])
 
 	const [busy, setBusy] = useState<boolean>(false)
@@ -67,6 +75,9 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 
 	const [isPinOnMap, setIsPinOnMap] = useState(false)
 	const [isAllChecked, setIsAllChecked] = useState(false)
+
+	const [isAddPin, setIsAddPin] = useState(false)
+
 	const [pinCheck, setPinCheck] = useState<{ [key: string]: boolean }>({})
 
 	const validationSchema = yup.object({
@@ -250,6 +261,7 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 
 			await mutatePostMapPin(mapPinData)
 			setPostOpenDialog(false)
+			setIsAddPin(false)
 			formik.resetForm()
 			queryClient.invalidateQueries({ queryKey: ['getPOISMapPin'] })
 			setAlertInfo({ open: true, severity: 'success', message: t('success.createMapPin') })
@@ -341,6 +353,59 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 		},
 	}))
 
+	useEffect(() => {
+		if (!latLng?.latitude && !latLng?.longitude) return
+
+		if (isAddPin) {
+			formik.setFieldValue('lng', Number(latLng.longitude.toFixed(6)))
+			formik.setFieldValue('lat', Number(latLng.latitude.toFixed(6)))
+
+			setCenterAndZoom(latLng)
+		}
+	}, [latLng])
+
+	const handleGetCurrentLocation = useCallback(() => {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition((position) => {
+				const longitude = Number(position.coords.longitude.toFixed(6))
+				const latitude = Number(position.coords.latitude.toFixed(6))
+
+				setLatLng({
+					latitude,
+					longitude,
+				})
+			})
+		} else {
+			console.log('Geolocation is not supported by this browser.')
+		}
+	}, [formik])
+
+	const handleLocationEnter = useCallback(
+		(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+			if (event.key === 'Enter') {
+				if (formik.values.lng && formik.values.lat) {
+					setLatLng({
+						latitude: formik.values.lat,
+						longitude: formik.values.lng,
+					})
+				}
+			}
+		},
+		[formik.values.lat, formik.values.lng],
+	)
+
+	const handleLocationBlur = useCallback(
+		(_event: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement, Element>) => {
+			if (formik.values.lng && formik.values.lat) {
+				setLatLng({
+					latitude: formik.values.lat,
+					longitude: formik.values.lng,
+				})
+			}
+		},
+		[formik.values.lat, formik.values.lng],
+	)
+
 	return (
 		<React.Fragment>
 			<IconButton
@@ -378,89 +443,168 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 							/>
 						</Box>
 					</Box>
-					<Box className='flex items-center border-0 border-y border-solid border-gray px-3'>
-						<Box className='m-0 flex px-1.5 py-[5px] [&_.MuiButtonBase-root>svg]:h-[20px] [&_.MuiButtonBase-root>svg]:w-[20px] [&_.MuiButtonBase-root]:p-0'>
-							<Checkbox
-								checkedIcon={<CheckBoxOutlined />}
-								checked={isAllChecked}
-								onChange={handleAllCheck}
-								inputProps={{ 'aria-label': 'controlled' }}
-								disabled={!poisData?.data || poisData?.data.length === 0 || busy || isPOISDataLoading}
+					{isAddPin ? (
+						<Box className='flex items-center border-0 border-y border-solid border-gray px-3'>
+							<div>Add</div>
+
+							<FormInput
+								className='w-full sm:w-[200px]'
+								name='name'
+								label={t('positionName')}
+								formik={formik}
+								placeholder={t('position')}
+								value={''}
+								inputProps={{
+									maxLength: 50,
+								}}
+								disabled={busy}
+								required
+							/>
+							<FormInput
+								className='w-full sm:w-[200px]'
+								type='number'
+								name='lat'
+								label={t('latitude')}
+								formik={formik}
+								placeholder='0.000000'
+								value={''}
+								onChange={(event) => {
+									const value = event.target.value
+									const regex = /^\d*\.?\d{0,6}$/
+									if (regex.test(value) || value === '') {
+										if (value.length < 12) {
+											formik.handleChange(event)
+										}
+									}
+								}}
+								onKeyDown={handleLocationEnter}
+								onBlur={handleLocationBlur}
+								disabled={busy}
+								required
+							/>
+							<FormInput
+								className='w-full sm:w-[200px]'
+								type='number'
+								name='lng'
+								label={t('longitude')}
+								formik={formik}
+								placeholder='0.000000'
+								value={''}
+								onChange={(event) => {
+									const value = event.target.value
+									const regex = /^\d*\.?\d{0,6}$/
+									if (regex.test(value) || value === '') {
+										if (value.length < 12) {
+											formik.handleChange(event)
+										}
+									}
+								}}
+								onKeyDown={handleLocationEnter}
+								onBlur={handleLocationBlur}
+								disabled={busy}
+								required
 							/>
 						</Box>
-						<span className='flex grow px-2.5 text-xs font-semibold text-black'>{t('positionName')}</span>
-						<span className='box-border w-[220px] px-2.5 text-xs font-semibold text-black'>
-							{t('position')}
-						</span>
-					</Box>
-					<Box className='box-border flex h-[267px] flex-col gap-2 overflow-auto p-3'>
-						{isPOISDataLoading ? (
-							<div className='flex h-full items-center justify-center'>
-								<CircularProgress size={60} color='primary' />
-							</div>
-						) : !poisData?.data || poisData?.data.length === 0 ? (
-							<Box className='flex h-full items-center justify-center'>
-								<span className='text-sm font-normal text-gray-dark2'>{t('noResultsFound')}</span>
+					) : (
+						<>
+							<Box className='flex items-center border-0 border-y border-solid border-gray px-3'>
+								<Box className='m-0 flex px-1.5 py-[5px] [&_.MuiButtonBase-root>svg]:h-[20px] [&_.MuiButtonBase-root>svg]:w-[20px] [&_.MuiButtonBase-root]:p-0'>
+									<Checkbox
+										checkedIcon={<CheckBoxOutlined />}
+										checked={isAllChecked}
+										onChange={handleAllCheck}
+										inputProps={{ 'aria-label': 'controlled' }}
+										disabled={
+											!poisData?.data || poisData?.data.length === 0 || busy || isPOISDataLoading
+										}
+									/>
+								</Box>
+								<span className='flex grow px-2.5 text-xs font-semibold text-black'>
+									{t('positionName')}
+								</span>
+								<span className='box-border w-[220px] px-2.5 text-xs font-semibold text-black'>
+									{t('position')}
+								</span>
 							</Box>
-						) : (
-							<>
-								{poisData?.data?.map((item) => {
-									return (
-										<Box key={item.poiId} className='flex items-center gap-2.5'>
-											<Box className='m-0 flex p-1.5 [&_.MuiButtonBase-root>svg]:h-[20px] [&_.MuiButtonBase-root>svg]:w-[20px] [&_.MuiButtonBase-root]:p-0'>
-												<Checkbox
-													checkedIcon={<CheckBoxOutlined />}
-													checked={pinCheck?.[item.poiId] || false}
-													onChange={handlePinCheck}
-													name={item.poiId}
-													inputProps={{ 'aria-label': 'controlled' }}
-													disabled={busy}
-												/>
-											</Box>
-											<Button
-												variant='outlined'
-												className='flex grow justify-start border border-solid border-gray px-2.5 py-1.5'
-												disabled={busy}
-											>
-												<span
-													className={classNames('text-sm font-medium text-black', {
-														'!text-gray': busy,
-													})}
-												>
-													{item.title}
-												</span>
-											</Button>
-											<Button
-												variant='outlined'
-												disabled={busy}
-												endIcon={
-													<ContentCopyRounded
-														className={classNames('h-4 w-4 font-normal text-[#959595]', {
-															'!text-gray': busy,
-														})}
-													/>
-												}
-												className='box-border flex w-[210px] items-center justify-between border border-solid border-gray px-2.5 py-1.5'
-											>
-												<span
-													className={classNames('text-sm font-medium text-black', {
-														'!text-gray': busy,
-													})}
-												>{`${item.lat}, ${item.lng}`}</span>
-											</Button>
-										</Box>
-									)
-								})}
-							</>
-						)}
-					</Box>
+							<Box className='box-border flex h-[267px] flex-col gap-2 overflow-auto p-3'>
+								{isPOISDataLoading ? (
+									<div className='flex h-full items-center justify-center'>
+										<CircularProgress size={60} color='primary' />
+									</div>
+								) : !poisData?.data || poisData?.data.length === 0 ? (
+									<Box className='flex h-full items-center justify-center'>
+										<span className='text-sm font-normal text-gray-dark2'>
+											{t('noResultsFound')}
+										</span>
+									</Box>
+								) : (
+									<>
+										{poisData?.data?.map((item) => {
+											return (
+												<Box key={item.poiId} className='flex items-center gap-2.5'>
+													<Box className='m-0 flex p-1.5 [&_.MuiButtonBase-root>svg]:h-[20px] [&_.MuiButtonBase-root>svg]:w-[20px] [&_.MuiButtonBase-root]:p-0'>
+														<Checkbox
+															checkedIcon={<CheckBoxOutlined />}
+															checked={pinCheck?.[item.poiId] || false}
+															onChange={handlePinCheck}
+															name={item.poiId}
+															inputProps={{ 'aria-label': 'controlled' }}
+															disabled={busy}
+														/>
+													</Box>
+													<Button
+														variant='outlined'
+														className='flex grow justify-start border border-solid border-gray px-2.5 py-1.5'
+														disabled={busy}
+													>
+														<span
+															className={classNames('text-sm font-medium text-black', {
+																'!text-gray': busy,
+															})}
+														>
+															{item.title}
+														</span>
+													</Button>
+													<Button
+														variant='outlined'
+														disabled={busy}
+														endIcon={
+															<ContentCopyRounded
+																className={classNames(
+																	'h-4 w-4 font-normal text-[#959595]',
+																	{
+																		'!text-gray': busy,
+																	},
+																)}
+															/>
+														}
+														className='box-border flex w-[210px] items-center justify-between border border-solid border-gray px-2.5 py-1.5'
+													>
+														<span
+															className={classNames('text-sm font-medium text-black', {
+																'!text-gray': busy,
+															})}
+														>{`${item.lat}, ${item.lng}`}</span>
+													</Button>
+												</Box>
+											)
+										})}
+									</>
+								)}
+							</Box>
+						</>
+					)}
+
 					<Box className='flex grow items-center justify-between border-0 border-t border-solid border-gray p-3'>
 						<Box className='flex items-center'>
-							{!isAllChecked && !isSomePinCheck(pinCheck) && (
+							{!isAllChecked && !isSomePinCheck(pinCheck) && !isAddPin && (
 								<Button
 									className='pl-2 pr-2.5 text-sm font-medium [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
 									variant='contained'
-									onClick={() => setPostOpenDialog(true)}
+									// onClick={() => setPostOpenDialog(true)}
+									onClick={() => {
+										setIsAddPin(true)
+									}}
 									disabled={isPOISDataLoading}
 									startIcon={
 										isPOISDataLoading ? (
@@ -476,6 +620,89 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 									{t('addPosition')}
 								</Button>
 							)}
+
+							{isAddPin && (
+								<>
+									<Button
+										className='border-gray pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
+										variant='outlined'
+										onClick={handleGetCurrentLocation}
+										disabled={busy}
+										startIcon={
+											busy ? (
+												<CircularProgress
+													className='[&_.MuiCircularProgress-circle]:text-gray'
+													size={16}
+												/>
+											) : (
+												<LocationSearching className='m-0 text-black' />
+											)
+										}
+									>
+										<span
+											className={classNames('text-sm font-medium text-black', {
+												'!text-gray': busy,
+											})}
+										>
+											{t('useCurrentLocation')}
+										</span>
+									</Button>
+
+									<Box className='flex items-center gap-2'>
+										<Button
+											onClick={() => {
+												//setPostOpenDialog(false)
+												setIsAddPin(false)
+												formik.resetForm()
+											}}
+											variant='outlined'
+											className={classNames('border-gray px-3 py-1.5', {
+												'pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1':
+													busy,
+											})}
+											disabled={busy}
+											startIcon={
+												busy && (
+													<CircularProgress
+														className='[&_.MuiCircularProgress-circle]:text-gray'
+														size={16}
+													/>
+												)
+											}
+										>
+											<span
+												className={classNames('text-sm font-medium text-black', {
+													'!text-gray': busy,
+												})}
+											>
+												{t('cancel', { ns: 'default' })}
+											</span>
+										</Button>
+										<Button
+											onClick={handlePostSubmit}
+											variant='contained'
+											className={classNames('px-3 py-1.5', {
+												'pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1':
+													busy,
+											})}
+											disabled={busy}
+											startIcon={
+												busy && (
+													<CircularProgress
+														className='[&_.MuiCircularProgress-circle]:text-gray'
+														size={16}
+													/>
+												)
+											}
+										>
+											<span className='text-sm font-medium text-white'>
+												{t('confirm', { ns: 'default' })}
+											</span>
+										</Button>
+									</Box>
+								</>
+							)}
+
 							{(isAllChecked || isSomePinCheck(pinCheck)) && (
 								<Button
 									className={classNames('border-gray pl-2 pr-2.5', {
@@ -564,7 +791,7 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 					</Box>
 				</Box>
 			</Popover>
-			<MapPinDialog
+			{/* <MapPinDialog
 				open={postOpenDialog}
 				formik={formik}
 				loading={busy}
@@ -573,7 +800,7 @@ const MapPin: React.FC<MapPinProps> = ({}) => {
 					formik.resetForm()
 				}}
 				onConfirm={handlePostSubmit}
-			/>
+			/> */}
 			<AlertConfirm
 				open={deleteOpenDialog}
 				title={t('alert.confirmMapPinsDeleteTitle')}
