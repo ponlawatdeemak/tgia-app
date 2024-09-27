@@ -28,8 +28,21 @@ const InfoWindows: React.FC<InfoWindowsProps> = ({ clickLayerInfo, setClickLayer
 	const { areaUnit } = useAreaUnit()
 	const { t } = useTranslation(['default', 'plot-monitoring'])
 
-	if (!clickLayerInfo || !clickLayerInfo?.area) {
+	if (!clickLayerInfo) {
 		return null
+	}
+
+	if (!clickLayerInfo?.area || !clickLayerInfo?.area?.activityId) {
+		return (
+			<Paper
+				className='absolute z-10 w-32 bg-white p-2 shadow-xl'
+				style={{ left: clickLayerInfo.x, top: clickLayerInfo.y }}
+			>
+				<span className='block w-full text-center text-sm font-medium text-black'>
+					{t('noResultsFound', { ns: 'plot-monitoring' })}
+				</span>
+			</Paper>
+		)
 	}
 
 	const handleClickInfoWindows = (activityId: number, count: number = 1) => {
