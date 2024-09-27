@@ -58,14 +58,14 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 								: t('noDisaster')}
 						</span>
 						<span className='text-xs font-medium text-black lg:hidden'>
-							{formatText(detail?.year?.[language])}
+							{formatText(Number(detail?.year?.[language]))}
 						</span>
 					</div>
 					<div className='flex flex-col gap-1'>
 						<Box className='flex gap-1 max-lg:hidden'>
 							<span className='flex shrink-0 text-sm font-normal text-black'>{`${t('dataSetYear')} :`}</span>
 							<span className='flex flex-wrap text-left text-sm font-semibold text-black'>
-								{formatText(detail?.year?.[language])}
+								{formatText(Number(detail?.year?.[language]))}
 							</span>
 						</Box>
 						<Box className='flex gap-1'>
