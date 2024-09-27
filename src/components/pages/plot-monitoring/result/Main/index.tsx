@@ -30,7 +30,7 @@ export const PlotMonitoringResultMain = () => {
 	return (
 		<>
 			{open && !isDesktop ? (
-				<PlotMonitoringSearchMain />
+				<PlotMonitoringSearchMain isEditAdminPoly />
 			) : (
 				<div className='flex flex-grow flex-col gap-4 overflow-auto'>
 					<PlotMonitoringSearchForm

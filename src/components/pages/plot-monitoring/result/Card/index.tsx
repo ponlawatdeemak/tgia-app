@@ -8,6 +8,7 @@ import { ResponseLanguage } from '@/api/interface'
 import classNames from 'classnames'
 import PolygonToImage from '@/components/common/polyimg/PolygonToImage'
 import { LossTypeColor } from '@/config/color'
+import { formatText } from '@/utils/text'
 
 interface CardDetailProps {
 	detail: GetSearchPlotDtoOut
@@ -39,7 +40,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 				<Paper className='flex aspect-square h-[80px] w-[80px] items-center justify-center bg-gray-light3 sm:h-auto sm:w-[130px] lg:w-[204px]'>
 					{!!detail.geometry?.coordinates && (
 						<PolygonToImage
-							className='!h-[80px] !w-[80px] !border-none !bg-transparent [&_svg]:h-[60px] [&_svg]:w-[60px]'
+							className='!h-[80px] !w-[80px] !border-none !bg-transparent max-lg:[&_div>h2]:text-base max-sm:[&_div>h2]:text-sm [&_svg]:h-[60px] [&_svg]:w-[60px]'
 							polygon={detail.geometry}
 							fill={getColor(detail.lossPredicted?.lossType)}
 							stroke={getColor(detail.lossPredicted?.lossType)}
@@ -49,32 +50,34 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 				<Box className='flex grow flex-col gap-1 lg:gap-2'>
 					<div className='flex items-center justify-between'>
 						<Typography className='text-base font-semibold text-black-dark lg:text-md'>
-							{detail.activityId}
+							{formatText(detail?.activityId)}
 						</Typography>
 						<span className='text-sm font-semibold text-black max-lg:hidden'>
 							{detail?.lossPredicted
-								? `${t('occurrence', { ns: 'plot-monitoring' })} ${detail.count} ${t(`${detail.lossPredicted.lossType}`)}`
+								? `${t('occurrence', { ns: 'plot-monitoring' })} ${formatText(detail?.count)} ${t(`${formatText(detail?.lossPredicted?.lossType)}`)}`
 								: t('noDisaster')}
 						</span>
-						<span className='text-xs font-medium text-black lg:hidden'>{detail.year[language]}</span>
+						<span className='text-xs font-medium text-black lg:hidden'>
+							{formatText(Number(detail?.year?.[language]))}
+						</span>
 					</div>
 					<div className='flex flex-col gap-1'>
 						<Box className='flex gap-1 max-lg:hidden'>
 							<span className='flex shrink-0 text-sm font-normal text-black'>{`${t('dataSetYear')} :`}</span>
 							<span className='flex flex-wrap text-left text-sm font-semibold text-black'>
-								{detail.year[language]}
+								{formatText(Number(detail?.year?.[language]))}
 							</span>
 						</Box>
 						<Box className='flex gap-1'>
 							<span className='flex shrink-0 text-xs font-normal text-black lg:text-sm'>{`${t('location', { ns: 'plot-monitoring' })}:`}</span>
 							<span className='flex flex-wrap text-left text-xs font-semibold text-black lg:text-sm'>
-								{detail.address[language]}
+								{formatText(detail?.address?.[language])}
 							</span>
 						</Box>
 						<Box className='flex gap-1'>
 							<span className='flex shrink-0 text-xs font-normal text-black lg:text-sm'>{`${t('complianceStatus', { ns: 'plot-monitoring' })}:`}</span>
 							<span className='flex flex-wrap text-left text-xs font-semibold text-black lg:text-sm'>
-								{detail.publicStatus[language]}
+								{formatText(detail?.publicStatus?.[language])}
 							</span>
 						</Box>
 						<Box className='flex gap-1'>
@@ -82,7 +85,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 								{t('riceVarietyType', { ns: 'plot-monitoring' })}
 							</span>
 							<span className='flex flex-wrap text-left text-xs font-semibold text-black lg:text-sm'>
-								{detail.riceType[language]}
+								{formatText(detail?.riceType?.[language])}
 							</span>
 						</Box>
 						<Box className='flex gap-1'>
@@ -90,7 +93,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 								{t('riceVarieties', { ns: 'plot-monitoring' })}
 							</span>
 							<span className='flex flex-wrap text-left text-xs font-semibold text-black lg:text-sm'>
-								{detail.detailType[language]}
+								{formatText(detail?.detailType?.[language])}
 							</span>
 						</Box>
 						<Box className='flex gap-1'>
@@ -98,7 +101,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 								{t('insurance', { ns: 'plot-monitoring' })}
 							</span>
 							<span className='flex flex-wrap text-left text-xs font-semibold text-black lg:text-sm'>
-								{detail.insuredType[language]}
+								{formatText(detail?.insuredType?.[language])}
 							</span>
 						</Box>
 						<Box className='flex gap-1'>
@@ -106,7 +109,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 								{t('riskAreas', { ns: 'plot-monitoring' })}
 							</span>
 							<span className='flex flex-wrap text-left text-xs font-semibold text-black lg:text-sm'>
-								{detail.riskType[language]}
+								{formatText(detail?.riskType?.[language])}
 							</span>
 						</Box>
 					</div>
@@ -120,33 +123,45 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 							)}
 						>
 							<div className='mr-2 flex items-center gap-1'>
-								<span className='text-left text-base font-medium text-black'>
+								<span className='text-left text-sm font-medium text-black xl:text-base'>
 									{t('canGrowRice', { ns: 'plot-monitoring' })}
 								</span>
-								<span className='text-base font-semibold text-secondary'>
-									{`${detail.predictedRiceArea.percent}%`}
+								<span className='text-sm font-semibold text-secondary xl:text-base'>
+									{`${formatText(detail?.predictedRiceArea?.percent % 1 !== 0 ? (parseFloat(detail?.predictedRiceArea?.percent?.toFixed(2)) % 1 !== 0 ? detail?.predictedRiceArea?.percent?.toFixed(2) : parseInt(detail?.predictedRiceArea?.percent?.toFixed(2))) : detail?.predictedRiceArea?.percent)}%`}
 								</span>
 							</div>
 							<div className='flex items-center gap-1'>
-								<span className='text-base font-semibold text-secondary'>
-									{detail.predictedRiceArea.areaRai}
+								<span className='text-sm font-semibold text-secondary xl:text-base'>
+									{formatText(
+										detail?.predictedRiceArea?.areaRai % 1 !== 0
+											? parseFloat(detail?.predictedRiceArea?.areaRai?.toFixed(2)) % 1 !== 0
+												? detail?.predictedRiceArea?.areaRai?.toFixed(2)
+												: parseInt(detail?.predictedRiceArea?.areaRai?.toFixed(2))
+											: detail?.predictedRiceArea?.areaRai,
+									)}
 								</span>
-								<span className='text-base font-normal text-black'>{t('areaRai')}</span>
+								<span className='text-sm font-normal text-black xl:text-base'>{t('areaRai')}</span>
 							</div>
 						</Box>
-						{detail.lossPredicted && (
+						{detail?.lossPredicted && (
 							<Box className='flex w-[50%] items-center justify-between rounded-lg bg-gray-light3 px-2 py-1'>
 								<div className='flex items-center gap-1'>
-									<span className='text-base font-medium text-black'>
-										{t(`${detail.lossPredicted.lossType}`)}
+									<span className='text-sm font-medium text-black xl:text-base'>
+										{t(`${formatText(detail.lossPredicted?.lossType)}`)}
 									</span>
-									<span className='text-base font-semibold text-secondary'>{`${detail.lossPredicted.percent}%`}</span>
+									<span className='text-sm font-semibold text-secondary xl:text-base'>{`${formatText(detail?.lossPredicted?.percent % 1 !== 0 ? (parseFloat(detail?.lossPredicted?.percent?.toFixed(2)) % 1 !== 0 ? detail?.lossPredicted?.percent?.toFixed(2) : parseInt(detail?.lossPredicted?.percent?.toFixed(2))) : detail?.lossPredicted?.percent)}%`}</span>
 								</div>
 								<div className='flex items-center gap-1'>
-									<span className='text-base font-semibold text-secondary'>
-										{detail.lossPredicted.areaRai}
+									<span className='text-sm font-semibold text-secondary xl:text-base'>
+										{formatText(
+											detail?.lossPredicted?.areaRai % 1 !== 0
+												? parseFloat(detail?.lossPredicted?.areaRai?.toFixed(2)) % 1 !== 0
+													? detail?.lossPredicted?.areaRai?.toFixed(2)
+													: parseInt(detail?.lossPredicted?.areaRai?.toFixed(2))
+												: detail?.lossPredicted?.areaRai,
+										)}
 									</span>
-									<span className='text-base font-normal text-black'>{t('areaRai')}</span>
+									<span className='text-sm font-normal text-black xl:text-base'>{t('areaRai')}</span>
 								</div>
 							</Box>
 						)}
@@ -163,29 +178,45 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 					)}
 				>
 					<div className='mr-2 flex items-center gap-1'>
-						<span className='text-left text-sm font-medium text-black'>
+						<span className='text-left text-xs font-medium text-black sm:text-sm'>
 							{t('canGrowRice', { ns: 'plot-monitoring' })}
 						</span>
-						<span className='text-sm font-semibold text-secondary'>
-							{`${detail.predictedRiceArea.percent}%`}
+						<span className='text-xs font-semibold text-secondary sm:text-sm'>
+							{`${formatText(detail?.predictedRiceArea?.percent % 1 !== 0 ? (parseFloat(detail?.predictedRiceArea?.percent?.toFixed(2)) % 1 !== 0 ? detail?.predictedRiceArea?.percent?.toFixed(2) : parseInt(detail?.predictedRiceArea?.percent?.toFixed(2))) : detail?.predictedRiceArea?.percent)}%`}
 						</span>
 					</div>
 					<div className='flex items-center gap-1'>
-						<span className='text-sm font-semibold text-secondary'>{detail.predictedRiceArea.areaRai}</span>
-						<span className='text-sm font-normal text-black'>{t('areaRai')}</span>
+						<span className='text-xs font-semibold text-secondary sm:text-sm'>
+							{formatText(
+								detail?.predictedRiceArea?.areaRai % 1 !== 0
+									? parseFloat(detail?.predictedRiceArea?.areaRai?.toFixed(2)) % 1 !== 0
+										? detail?.predictedRiceArea?.areaRai?.toFixed(2)
+										: parseInt(detail?.predictedRiceArea?.areaRai?.toFixed(2))
+									: detail?.predictedRiceArea?.areaRai,
+							)}
+						</span>
+						<span className='text-xs font-normal text-black sm:text-sm'>{t('areaRai')}</span>
 					</div>
 				</Box>
-				{detail.lossPredicted && (
+				{detail?.lossPredicted && (
 					<Box className='flex w-[50%] items-center justify-between rounded border border-solid border-gray p-2'>
 						<div className='mr-2 flex items-center gap-1'>
-							<span className='text-sm font-medium text-black'>
-								{t(`${detail.lossPredicted.lossType}`)}
+							<span className='text-xs font-medium text-black sm:text-sm'>
+								{t(`${formatText(detail.lossPredicted?.lossType)}`)}
 							</span>
-							<span className='text-sm font-semibold text-secondary'>{`${detail.lossPredicted.percent}%`}</span>
+							<span className='text-xs font-semibold text-secondary sm:text-sm'>{`${formatText(detail?.lossPredicted?.percent % 1 !== 0 ? (parseFloat(detail?.lossPredicted?.percent?.toFixed(2)) % 1 !== 0 ? detail?.lossPredicted?.percent?.toFixed(2) : parseInt(detail?.lossPredicted?.percent?.toFixed(2))) : detail?.lossPredicted?.percent)}%`}</span>
 						</div>
 						<div className='flex items-center gap-1'>
-							<span className='text-sm font-semibold text-secondary'>{detail.lossPredicted.areaRai}</span>
-							<span className='text-sm font-normal text-black'>{t('areaRai')}</span>
+							<span className='text-xs font-semibold text-secondary sm:text-sm'>
+								{formatText(
+									detail?.lossPredicted?.areaRai % 1 !== 0
+										? parseFloat(detail?.lossPredicted?.areaRai?.toFixed(2)) % 1 !== 0
+											? detail?.lossPredicted?.areaRai?.toFixed(2)
+											: parseInt(detail?.lossPredicted?.areaRai?.toFixed(2))
+										: detail?.lossPredicted?.areaRai,
+								)}
+							</span>
+							<span className='text-xs font-normal text-black sm:text-sm'>{t('areaRai')}</span>
 						</div>
 					</Box>
 				)}

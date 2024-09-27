@@ -1,22 +1,28 @@
 'use client'
 
 import { Box, FormControl, OutlinedInput, Typography } from '@mui/material'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useSearchPlotMonitoring from './context'
 import classNames from 'classnames'
 import FilterButtonMain from '../Filter'
+import useResponsive from '@/hook/responsive'
 
 interface PlotMonitoringFilterProps {
 	isFullList: boolean
 }
 
 const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList }) => {
+	const { isDesktop } = useResponsive()
 	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
 	const { t } = useTranslation(['default', 'plot-monitoring'])
 
-	const [inputActivityId, setInputActivityId] = useState<string>(queryParams.activityId?.toString() || '')
+	const [inputActivityId, setInputActivityId] = useState('')
 	const activityIdRef = useRef<HTMLInputElement>(null)
+
+	useEffect(() => {
+		setInputActivityId(queryParams?.activityId ? queryParams.activityId.toString() : '')
+	}, [isDesktop])
 
 	const handleChangeActivityIdInput = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
 		const inputValue = event.target.value
@@ -27,7 +33,7 @@ const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList 
 	const handleSubmitActivityId = useCallback(
 		(event: React.FormEvent<HTMLFormElement>) => {
 			event.preventDefault()
-			setQueryParams({ ...queryParams, activityId: parseInt(inputActivityId) })
+			setQueryParams({ ...queryParams, activityId: inputActivityId ? parseInt(inputActivityId) : undefined })
 			if (activityIdRef.current) {
 				activityIdRef.current.blur()
 			}
@@ -38,7 +44,7 @@ const PlotMonitoringFilter: React.FC<PlotMonitoringFilterProps> = ({ isFullList 
 	const handleBlurActivityId = useCallback(
 		(event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
 			event.preventDefault()
-			setQueryParams({ ...queryParams, activityId: parseInt(inputActivityId) })
+			setQueryParams({ ...queryParams, activityId: inputActivityId ? parseInt(inputActivityId) : undefined })
 		},
 		[inputActivityId, queryParams, setQueryParams],
 	)
