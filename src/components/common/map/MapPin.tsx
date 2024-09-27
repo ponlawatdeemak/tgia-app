@@ -66,6 +66,7 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 	const { addLayer, removeLayer } = useLayerStore()
 	const { t } = useTranslation(['plot-monitoring', 'default'])
 	const [busy, setBusy] = useState<boolean>(false)
+	const [currentBusy, setCurrentBusy] = useState<boolean>(false)
 	const [alertInfo, setAlertInfo] = useState<AlertInfoType>({
 		open: false,
 		severity: 'success',
@@ -394,7 +395,7 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 
 	const handleGetCurrentLocation = useCallback(async () => {
 		try {
-			setBusy(true)
+			setCurrentBusy(true)
 			const position: GeolocationPosition = await new Promise<GeolocationPosition>((resolve, reject) => {
 				navigator.geolocation.getCurrentPosition(resolve, reject)
 			})
@@ -409,6 +410,7 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 		} catch (error) {
 			console.error('Error getting location:', error)
 		} finally {
+			setCurrentBusy(false)
 			setBusy(false)
 		}
 	}, [])
@@ -750,9 +752,9 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 									className='border-gray pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
 									variant='outlined'
 									onClick={handleGetCurrentLocation}
-									disabled={busy}
+									disabled={busy || currentBusy}
 									startIcon={
-										busy ? (
+										busy || currentBusy ? (
 											<CircularProgress
 												className='[&_.MuiCircularProgress-circle]:text-gray'
 												size={16}
@@ -764,7 +766,7 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 								>
 									<span
 										className={classNames('text-sm font-medium text-black', {
-											'!text-gray': busy,
+											'!text-gray': busy || currentBusy,
 										})}
 									>
 										{t('useCurrentLocation')}
@@ -775,6 +777,7 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 									<Button
 										onClick={() => {
 											setIsAddPin(false)
+											setCurrentBusy(false)
 											formik.resetForm()
 										}}
 										variant='outlined'
