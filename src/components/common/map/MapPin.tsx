@@ -8,7 +8,7 @@ import {
 	Checkbox,
 	CircularProgress,
 	IconButton,
-	Popover,
+	Popper,
 	Snackbar,
 	styled,
 	Switch,
@@ -71,7 +71,6 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 	})
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 	const [deleteOpenDialog, setDeleteOpenDialog] = useState<boolean>(false)
-	const [postOpenDialog, setPostOpenDialog] = useState<boolean>(false)
 
 	const [isPinOnMap, setIsPinOnMap] = useState(false)
 	const [isAllChecked, setIsAllChecked] = useState(false)
@@ -260,7 +259,6 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 			}
 
 			await mutatePostMapPin(mapPinData)
-			setPostOpenDialog(false)
 			setIsAddPin(false)
 			formik.resetForm()
 			queryClient.invalidateQueries({ queryKey: ['getPOISMapPin'] })
@@ -274,7 +272,6 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 	}, [])
 
 	const formik = useFormik<FormValues>({
-		//enableReinitialize: true,
 		initialValues: defaultFormValues,
 		validationSchema: validationSchema,
 		onSubmit,
@@ -290,6 +287,7 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 		} finally {
 			setBusy(false)
 			setDeleteOpenDialog(false)
+			queryClient.invalidateQueries({ queryKey: ['getPOISMapPin'] })
 		}
 	}, [pinCheckIds])
 
@@ -418,24 +416,19 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 					border: 2,
 					borderColor: Boolean(anchorEl) ? '#0C626D' : 'transparent',
 				}}
-				onClick={(event) => setAnchorEl(event.currentTarget)}
+				onClick={(event) => setAnchorEl(anchorEl ? null : event.currentTarget)}
 				className={'box-shadow mb-2 bg-white'}
 			>
 				<Icon color={Boolean(anchorEl) ? '#0C626D' : ''} path={mdiMapMarkerRadiusOutline} size={1} />
 			</IconButton>
-			<Popover
+			<Popper
+				id={Boolean(anchorEl) ? 'map-pin-popper' : undefined}
 				open={Boolean(anchorEl)}
 				anchorEl={anchorEl}
-				onClose={() => setAnchorEl(null)}
-				slotProps={{
-					paper: {
-						className: 'border border-solid border-gray overflow-x-auto',
-					},
-				}}
-				anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-				transformOrigin={{ vertical: isDesktop ? 118 : -50, horizontal: isDesktop ? -56 : 0 }}
+				className='!top-2 z-10 h-[300px] w-[calc(100vw-32px)] overflow-x-auto rounded border border-solid border-gray drop-shadow-md max-lg:max-w-[480px] lg:!left-2 lg:!top-3 lg:w-[480px] lg:rounded-lg'
+				placement={isDesktop ? 'right' : 'bottom-start'}
 			>
-				<Box className='flex h-[300px] w-[480px] flex-col bg-white drop-shadow-md'>
+				<Box className='flex w-[480px] flex-col bg-white'>
 					<Box className='flex items-center justify-between p-3'>
 						<Typography className='text-sm font-semibold text-black-dark'>{t('pinning')}</Typography>
 						<Box className='flex items-center gap-2'>
@@ -449,66 +442,74 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 						</Box>
 					</Box>
 					{isAddPin ? (
-						<Box className='flex items-center border-0 border-y border-solid border-gray px-3'>
-							<div>Add</div>
-
-							<FormInput
-								className='w-full sm:w-[200px]'
-								name='name'
-								label={t('positionName')}
-								formik={formik}
-								placeholder={t('position')}
-								value={''}
-								inputProps={{
-									maxLength: 50,
-								}}
-								disabled={busy}
-								required
-							/>
-							<FormInput
-								className='w-full sm:w-[200px]'
-								type='number'
-								name='lat'
-								label={t('latitude')}
-								formik={formik}
-								placeholder='0.000000'
-								value={''}
-								onChange={(event) => {
-									const value = event.target.value
-									const regex = /^\d*\.?\d{0,6}$/
-									if (regex.test(value) || value === '') {
-										if (value.length < 12) {
-											formik.handleChange(event)
-										}
-									}
-								}}
-								onKeyDown={handleLocationEnter}
-								onBlur={handleLocationBlur}
-								disabled={busy}
-								required
-							/>
-							<FormInput
-								className='w-full sm:w-[200px]'
-								type='number'
-								name='lng'
-								label={t('longitude')}
-								formik={formik}
-								placeholder='0.000000'
-								value={''}
-								onChange={(event) => {
-									const value = event.target.value
-									const regex = /^\d*\.?\d{0,6}$/
-									if (regex.test(value) || value === '') {
-										if (value.length < 12) {
-											formik.handleChange(event)
-										}
-									}
-								}}
-								onKeyDown={handleLocationEnter}
-								onBlur={handleLocationBlur}
-								disabled={busy}
-								required
-							/>
+						<Box className='box-border flex h-[199px] flex-col gap-4 overflow-auto border-0 border-t border-solid border-gray px-3 py-4'>
+							<Typography className='text-sm font-semibold text-black-dark'>
+								{t('addPosition')}
+							</Typography>
+							<Box className='flex flex-col gap-3 [&_*>input]:p-0 [&_*>input]:text-sm [&_*>input]:font-normal [&_*>input]:text-black [&_*>label]:mb-1 [&_*>label]:text-xs [&_*>label]:font-medium [&_*>label]:text-black [&_.MuiFormHelperText-root]:text-xs [&_.MuiInputBase-root]:rounded-lg [&_.MuiInputBase-root]:px-2.5 [&_.MuiInputBase-root]:py-1.5'>
+								<FormInput
+									className='w-full'
+									name='name'
+									label={t('positionName')}
+									formik={formik}
+									placeholder={t('position')}
+									value={''}
+									title={''}
+									inputProps={{
+										maxLength: 50,
+									}}
+									disabled={busy}
+									required
+								/>
+								<Box className='flex items-start gap-2'>
+									<FormInput
+										className='w-full'
+										type='number'
+										name='lat'
+										label={t('latitude')}
+										formik={formik}
+										placeholder='0.000000'
+										value={''}
+										title={''}
+										onChange={(event) => {
+											const value = event.target.value
+											const regex = /^\d*\.?\d{0,6}$/
+											if (regex.test(value) || value === '') {
+												if (value.length < 12) {
+													formik.handleChange(event)
+												}
+											}
+										}}
+										onKeyDown={handleLocationEnter}
+										onBlur={handleLocationBlur}
+										disabled={busy}
+										required
+									/>
+									<FormInput
+										className='w-full'
+										type='number'
+										name='lng'
+										label={t('longitude')}
+										formik={formik}
+										placeholder='0.000000'
+										value={''}
+										title={''}
+										onChange={(event) => {
+											const value = event.target.value
+											const regex = /^\d*\.?\d{0,6}$/
+											if (regex.test(value) || value === '') {
+												if (value.length < 12) {
+													formik.handleChange(event)
+												}
+											}
+										}}
+										onKeyDown={handleLocationEnter}
+										onBlur={handleLocationBlur}
+										disabled={busy}
+										required
+									/>
+								</Box>
+							</Box>
 						</Box>
 					) : (
 						<>
@@ -531,7 +532,7 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 									{t('position')}
 								</span>
 							</Box>
-							<Box className='box-border flex h-[267px] flex-col gap-2 overflow-auto p-3'>
+							<Box className='box-border flex h-[167px] flex-col gap-2 overflow-auto p-3'>
 								{isPOISDataLoading ? (
 									<div className='flex h-full items-center justify-center'>
 										<CircularProgress size={60} color='primary' />
@@ -601,46 +602,163 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 					)}
 
 					<Box className='flex grow items-center justify-between border-0 border-t border-solid border-gray p-3'>
-						<Box className='flex items-center'>
-							{!isAllChecked && !isSomePinCheck(pinCheck) && !isAddPin && (
+						{!isAddPin && (
+							<>
+								<Box className='flex items-center'>
+									{!isAllChecked && !isSomePinCheck(pinCheck) && !isAddPin && (
+										<Button
+											className='pl-2 pr-2.5 text-sm font-medium [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
+											variant='contained'
+											onClick={() => {
+												setIsAddPin(true)
+											}}
+											disabled={isPOISDataLoading}
+											startIcon={
+												isPOISDataLoading ? (
+													<CircularProgress
+														className='[&_.MuiCircularProgress-circle]:text-gray'
+														size={16}
+													/>
+												) : (
+													<Add className='m-0' />
+												)
+											}
+										>
+											{t('addPosition')}
+										</Button>
+									)}
+									{(isAllChecked || isSomePinCheck(pinCheck)) && (
+										<Button
+											className={classNames('border-gray pl-2 pr-2.5', {
+												'[&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1': busy,
+												'flex items-center gap-1': !busy,
+											})}
+											variant='outlined'
+											onClick={() => setDeleteOpenDialog(true)}
+											disabled={busy}
+											startIcon={
+												busy ? (
+													<CircularProgress
+														className='[&_.MuiCircularProgress-circle]:text-gray'
+														size={16}
+													/>
+												) : null
+											}
+										>
+											{!busy && (
+												<Box className='h-5 w-5 p-0'>
+													<Icon path={mdiTrashCanOutline} className='h-5 w-5 text-black' />
+												</Box>
+											)}
+											<span
+												className={classNames('text-sm font-medium text-black', {
+													'!text-gray': busy,
+												})}
+											>
+												{t('deletePosition')}
+											</span>
+										</Button>
+									)}
+								</Box>
+								{(isAllChecked || isSomePinCheck(pinCheck)) && (
+									<Box className='flex items-center gap-1.5'>
+										<Button
+											className='border-gray pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
+											variant='outlined'
+											disabled={busy}
+											startIcon={
+												busy ? (
+													<CircularProgress
+														className='[&_.MuiCircularProgress-circle]:text-gray'
+														size={16}
+													/>
+												) : (
+													<FileDownloadOutlined className='m-0 text-black' />
+												)
+											}
+											onClick={downloadJSONAsCSV}
+										>
+											<span
+												className={classNames('text-sm font-medium text-black', {
+													'!text-gray': busy,
+												})}
+											>
+												CSV
+											</span>
+										</Button>
+										<Button
+											className='border-gray pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
+											variant='outlined'
+											disabled={busy}
+											startIcon={
+												busy ? (
+													<CircularProgress
+														className='[&_.MuiCircularProgress-circle]:text-gray'
+														size={16}
+													/>
+												) : (
+													<FileDownloadOutlined className='m-0 text-black' />
+												)
+											}
+											onClick={downloadGeoJSON}
+										>
+											<span
+												className={classNames('text-sm font-medium text-black', {
+													'!text-gray': busy,
+												})}
+											>
+												GeoJSON
+											</span>
+										</Button>
+									</Box>
+								)}
+							</>
+						)}
+						{isAddPin && (
+							<>
 								<Button
-									className='pl-2 pr-2.5 text-sm font-medium [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
-									variant='contained'
-									// onClick={() => setPostOpenDialog(true)}
-									onClick={() => {
-										setIsAddPin(true)
-									}}
-									disabled={isPOISDataLoading}
+									className='border-gray pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
+									variant='outlined'
+									onClick={handleGetCurrentLocation}
+									disabled={busy}
 									startIcon={
-										isPOISDataLoading ? (
+										busy ? (
 											<CircularProgress
 												className='[&_.MuiCircularProgress-circle]:text-gray'
 												size={16}
 											/>
 										) : (
-											<Add className='m-0' />
+											<LocationSearching className='m-0 text-black' />
 										)
 									}
 								>
-									{t('addPosition')}
+									<span
+										className={classNames('text-sm font-medium text-black', {
+											'!text-gray': busy,
+										})}
+									>
+										{t('useCurrentLocation')}
+									</span>
 								</Button>
-							)}
 
-							{isAddPin && (
-								<>
+								<Box className='flex items-center gap-2'>
 									<Button
-										className='border-gray pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
+										onClick={() => {
+											setIsAddPin(false)
+											formik.resetForm()
+										}}
 										variant='outlined'
-										onClick={handleGetCurrentLocation}
+										className={classNames('border-gray px-3 py-1.5', {
+											'pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1':
+												busy,
+										})}
 										disabled={busy}
 										startIcon={
-											busy ? (
+											busy && (
 												<CircularProgress
 													className='[&_.MuiCircularProgress-circle]:text-gray'
 													size={16}
 												/>
-											) : (
-												<LocationSearching className='m-0 text-black' />
 											)
 										}
 									>
@@ -649,153 +767,36 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 												'!text-gray': busy,
 											})}
 										>
-											{t('useCurrentLocation')}
+											{t('cancel', { ns: 'default' })}
 										</span>
 									</Button>
-
-									<Box className='flex items-center gap-2'>
-										<Button
-											onClick={() => {
-												//setPostOpenDialog(false)
-												setIsAddPin(false)
-												formik.resetForm()
-											}}
-											variant='outlined'
-											className={classNames('border-gray px-3 py-1.5', {
-												'pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1':
-													busy,
-											})}
-											disabled={busy}
-											startIcon={
-												busy && (
-													<CircularProgress
-														className='[&_.MuiCircularProgress-circle]:text-gray'
-														size={16}
-													/>
-												)
-											}
-										>
-											<span
-												className={classNames('text-sm font-medium text-black', {
-													'!text-gray': busy,
-												})}
-											>
-												{t('cancel', { ns: 'default' })}
-											</span>
-										</Button>
-										<Button
-											onClick={handlePostSubmit}
-											variant='contained'
-											className={classNames('px-3 py-1.5', {
-												'pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1':
-													busy,
-											})}
-											disabled={busy}
-											startIcon={
-												busy && (
-													<CircularProgress
-														className='[&_.MuiCircularProgress-circle]:text-gray'
-														size={16}
-													/>
-												)
-											}
-										>
-											<span className='text-sm font-medium text-white'>
-												{t('confirm', { ns: 'default' })}
-											</span>
-										</Button>
-									</Box>
-								</>
-							)}
-
-							{(isAllChecked || isSomePinCheck(pinCheck)) && (
-								<Button
-									className={classNames('border-gray pl-2 pr-2.5', {
-										'[&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1': busy,
-										'flex items-center gap-1': !busy,
-									})}
-									variant='outlined'
-									onClick={() => setDeleteOpenDialog(true)}
-									disabled={busy}
-									startIcon={
-										busy ? (
-											<CircularProgress
-												className='[&_.MuiCircularProgress-circle]:text-gray'
-												size={16}
-											/>
-										) : null
-									}
-								>
-									{!busy && (
-										<Box className='h-5 w-5 p-0'>
-											<Icon path={mdiTrashCanOutline} className='h-5 w-5 text-black' />
-										</Box>
-									)}
-									<span
-										className={classNames('text-sm font-medium text-black', {
-											'!text-gray': busy,
+									<Button
+										onClick={handlePostSubmit}
+										variant='contained'
+										className={classNames('px-3 py-1.5', {
+											'pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1':
+												busy,
 										})}
+										disabled={busy}
+										startIcon={
+											busy && (
+												<CircularProgress
+													className='[&_.MuiCircularProgress-circle]:text-gray'
+													size={16}
+												/>
+											)
+										}
 									>
-										{t('deletePosition')}
-									</span>
-								</Button>
-							)}
-						</Box>
-						{(isAllChecked || isSomePinCheck(pinCheck)) && (
-							<Box className='flex items-center gap-1.5'>
-								<Button
-									className='border-gray pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
-									variant='outlined'
-									disabled={busy}
-									startIcon={
-										busy ? (
-											<CircularProgress
-												className='[&_.MuiCircularProgress-circle]:text-gray'
-												size={16}
-											/>
-										) : (
-											<FileDownloadOutlined className='m-0 text-black' />
-										)
-									}
-									onClick={downloadJSONAsCSV}
-								>
-									<span
-										className={classNames('text-sm font-medium text-black', {
-											'!text-gray': busy,
-										})}
-									>
-										CSV
-									</span>
-								</Button>
-								<Button
-									className='border-gray pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
-									variant='outlined'
-									disabled={busy}
-									startIcon={
-										busy ? (
-											<CircularProgress
-												className='[&_.MuiCircularProgress-circle]:text-gray'
-												size={16}
-											/>
-										) : (
-											<FileDownloadOutlined className='m-0 text-black' />
-										)
-									}
-									onClick={downloadGeoJSON}
-								>
-									<span
-										className={classNames('text-sm font-medium text-black', {
-											'!text-gray': busy,
-										})}
-									>
-										GeoJSON
-									</span>
-								</Button>
-							</Box>
+										<span className='text-sm font-medium text-white'>
+											{t('confirm', { ns: 'default' })}
+										</span>
+									</Button>
+								</Box>
+							</>
 						)}
 					</Box>
 				</Box>
-			</Popover>
+			</Popper>
 			{/* <MapPinDialog
 				open={postOpenDialog}
 				formik={formik}
