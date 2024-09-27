@@ -37,8 +37,10 @@ import useResponsive from '@/hook/responsive'
 import { useMap } from './context/map'
 import { FormikProps } from 'formik'
 import FormInput from '@/components/common/input/FormInput'
-
 import { LocationSearching } from '@mui/icons-material'
+import { getPin } from '@/utils/pin'
+import { IconLayer } from '@deck.gl/layers'
+import useLayerStore from '@/components/common/map/store/map'
 
 interface FormValues {
 	name: string
@@ -61,8 +63,8 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 	const queryClient = useQueryClient()
 	const { open, setOpen } = useMapPin()
 	const { latLng, setLatLng, setCenterAndZoom } = useMap()
+	const { addLayer, removeLayer } = useLayerStore()
 	const { t } = useTranslation(['plot-monitoring', 'default'])
-
 	const [busy, setBusy] = useState<boolean>(false)
 	const [alertInfo, setAlertInfo] = useState<AlertInfoType>({
 		open: false,
@@ -71,13 +73,11 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 	})
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 	const [deleteOpenDialog, setDeleteOpenDialog] = useState<boolean>(false)
-
 	const [isPinOnMap, setIsPinOnMap] = useState(false)
 	const [isAllChecked, setIsAllChecked] = useState(false)
-
 	const [isAddPin, setIsAddPin] = useState(false)
-
 	const [pinCheck, setPinCheck] = useState<{ [key: string]: boolean }>({})
+	const selectPinId = 'selected-pin'
 
 	const validationSchema = yup.object({
 		name: yup.string().required(t('warning.inputPositionName', { ns: 'plot-monitoring' })),
@@ -355,12 +355,41 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 		if (!latLng?.latitude && !latLng?.longitude) return
 
 		if (isAddPin) {
-			formik.setFieldValue('lng', Number(latLng.longitude.toFixed(6)))
-			formik.setFieldValue('lat', Number(latLng.latitude.toFixed(6)))
+			const lat = Number(latLng.latitude.toFixed(6))
+			const lng = Number(latLng.longitude.toFixed(6))
+			formik.setFieldValue('lng', lng)
+			formik.setFieldValue('lat', lat)
+
+			const coordinates: [number, number] = [lng, lat]
+			removeLayer(selectPinId)
+			const iconLayer = new IconLayer({
+				id: selectPinId,
+				// beforeId: "road-exit-shield",
+				data: [{ coordinates }],
+				visible: true,
+				getIcon: () => {
+					return {
+						url: getPin('#F03E3E'),
+						anchorY: 69,
+						width: 58,
+						height: 69,
+						mask: false,
+					}
+				},
+				sizeScale: 1,
+				getPosition: (d) => d.coordinates,
+				getSize: 40,
+			})
+
+			addLayer(iconLayer)
 
 			setCenterAndZoom(latLng)
 		}
 	}, [latLng])
+
+	useEffect(() => {
+		if (!isAddPin) removeLayer(selectPinId)
+	}, [isAddPin])
 
 	const handleGetCurrentLocation = useCallback(async () => {
 		try {
