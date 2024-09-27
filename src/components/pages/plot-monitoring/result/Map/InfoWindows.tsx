@@ -28,7 +28,7 @@ const InfoWindows: React.FC<InfoWindowsProps> = ({ clickLayerInfo, setClickLayer
 	const { areaUnit } = useAreaUnit()
 	const { t } = useTranslation(['default', 'plot-monitoring'])
 
-	if (!clickLayerInfo || !clickLayerInfo.area) {
+	if (!clickLayerInfo || !clickLayerInfo?.area) {
 		return null
 	}
 
@@ -45,12 +45,12 @@ const InfoWindows: React.FC<InfoWindowsProps> = ({ clickLayerInfo, setClickLayer
 			<Box className='flex items-center justify-between'>
 				<Box className='flex flex-col'>
 					<Typography className='text-base font-semibold text-black'>
-						{clickLayerInfo.area.activityId}
+						{formatText(clickLayerInfo?.area?.activityId)}
 					</Typography>
 				</Box>
-				{(!clickLayerInfo.area.results || clickLayerInfo.area.results.length === 0) && (
+				{(!clickLayerInfo?.area?.results || clickLayerInfo?.area?.results?.length === 0) && (
 					<IconButton
-						onClick={() => handleClickInfoWindows(clickLayerInfo.area.activityId)}
+						onClick={() => handleClickInfoWindows(clickLayerInfo?.area?.activityId)}
 						className='ml-2 h-6 w-6 rounded-lg border border-solid border-gray p-1'
 					>
 						<Icon path={mdiArrowRight} className='h-4 w-4 font-normal text-black' />
@@ -59,7 +59,7 @@ const InfoWindows: React.FC<InfoWindowsProps> = ({ clickLayerInfo, setClickLayer
 			</Box>
 			<Box
 				className={classNames('flex justify-between', {
-					'pr-7': !!clickLayerInfo.area.results,
+					'pr-7': !!clickLayerInfo?.area?.results,
 				})}
 			>
 				<Box className='flex items-center gap-1'>
@@ -75,23 +75,25 @@ const InfoWindows: React.FC<InfoWindowsProps> = ({ clickLayerInfo, setClickLayer
 					<span className='text-sm font-normal text-black'>{t(areaUnit)}</span>
 				</Box>
 			</Box>
-			{clickLayerInfo.area.results &&
-				clickLayerInfo.area.results.map((result, index) => {
+			{clickLayerInfo?.area?.results &&
+				clickLayerInfo?.area?.results?.map((result, index) => {
 					return (
 						<Box key={index} className='flex justify-between'>
 							<Box className='flex items-center gap-1'>
-								<span className='text-sm font-medium text-black'>{`${t('occurrence', { ns: 'plot-monitoring' })} ${result?.count} ${t(`${result?.lossPredicted?.lossType}`)}`}</span>
+								<span className='text-sm font-medium text-black'>{`${t('occurrence', { ns: 'plot-monitoring' })} ${formatText(result?.count)} ${t(`${formatText(result?.lossPredicted?.lossType)}`)}`}</span>
 								<span className='text-base font-semibold text-secondary'>
-									{result.lossPredicted.percent ? `${result.lossPredicted.percent}%` : ''}
+									{`${formatText(result?.lossPredicted?.percent)}%`}
 								</span>
 							</Box>
 							<Box className='flex items-center gap-1'>
 								<span className='text-base font-semibold text-secondary'>
-									{result.lossPredicted?.[areaUnit]}
+									{formatText(result?.lossPredicted?.[areaUnit])}
 								</span>
 								<span className='text-sm font-normal text-black'>{t(areaUnit)}</span>
 								<IconButton
-									onClick={() => handleClickInfoWindows(clickLayerInfo.area.activityId, result.count)}
+									onClick={() =>
+										handleClickInfoWindows(clickLayerInfo?.area?.activityId, result?.count)
+									}
 									className='h-6 w-6 rounded-lg border border-solid border-gray p-1'
 								>
 									<Icon path={mdiArrowRight} className='h-4 w-4 font-normal text-black' />

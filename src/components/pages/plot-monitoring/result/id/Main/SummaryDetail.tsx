@@ -10,6 +10,7 @@ import { AppPath } from '@/config/app'
 import { GetPlotActivityLossDetailDtoOut, GetPlotActivityPlantDetailDtoOut } from '@/api/plot-monitoring/dto-out.dto'
 import classNames from 'classnames'
 import useResponsive from '@/hook/responsive'
+import { formatText } from '@/utils/text'
 
 interface SummaryDetailProps {
 	activityId: number
@@ -52,7 +53,7 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({
 								<ArrowBackIcon fontSize='small' className='h-5 w-5 text-black' />
 							</Button>
 							<div className='flex text-md font-semibold text-black'>
-								{`${t('referenceCode', { ns: 'plot-monitoring' })} : ${activityId}`}
+								{`${t('referenceCode', { ns: 'plot-monitoring' })} : ${formatText(activityId)}`}
 							</div>
 						</div>
 
@@ -61,61 +62,65 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({
 							{!plantDetailData?.lossType ||
 							['noData', 'noDamage'].includes(plantDetailData?.lossType || '')
 								? t('noDisaster')
-								: `${t('occurrence', { ns: 'plot-monitoring' })} ${plantDetailData?.count || ''} ${t(`${plantDetailData?.lossType || ''}`)}`}
+								: `${t('occurrence', { ns: 'plot-monitoring' })} ${formatText(plantDetailData?.count)} ${t(`${formatText(plantDetailData?.lossType)}`)}`}
 						</div>
 						<Box className='mx-4 flex flex-col gap-1 max-lg:mt-2 max-lg:rounded max-lg:bg-[#F2F2F2] max-lg:p-2 lg:mx-6'>
 							<div className='flex w-full flex-row gap-1 text-sm text-black max-lg:hidden'>
 								<div className='flex shrink-0'>{t('dataSetYear', { ns: 'plot-monitoring' })}</div>:
-								<div className='flex flex-wrap font-semibold'>{plantDetailData?.year[language]}</div>
+								<div className='flex flex-wrap font-semibold'>
+									{formatText(plantDetailData?.year?.[language])}
+								</div>
 							</div>
 							<div className='flex w-full flex-row gap-1 text-sm text-black'>
 								<div className='flex shrink-0'>{`${t('location', { ns: 'plot-monitoring' })}`}</div>:
-								<div className='flex flex-wrap font-semibold'>{plantDetailData?.address[language]}</div>
+								<div className='flex flex-wrap font-semibold'>
+									{formatText(plantDetailData?.address?.[language])}
+								</div>
 							</div>
 							<div className='flex w-full flex-row gap-1 text-sm text-black max-lg:hidden'>
 								<div className='flex shrink-0'>{`${t('area')}`}</div>:
 								<div className='flex flex-wrap font-semibold'>
-									{`${plantDetailData?.actArea.areaRai || ''} ${t('areaRai', { ns: 'plot-monitoring' })} ${plantDetailData?.actArea.areaNgan || ''} ${t('areaNgan', { ns: 'plot-monitoring' })} ${plantDetailData?.actArea.areaWa || ''} ${t('squareWa', { ns: 'plot-monitoring' })}`}
+									{`${formatText(plantDetailData?.actArea?.areaRai)} ${t('areaRai', { ns: 'plot-monitoring' })} ${formatText(plantDetailData?.actArea?.areaNgan)} ${t('areaNgan', { ns: 'plot-monitoring' })} ${formatText(plantDetailData?.actArea?.areaWa)} ${t('squareWa', { ns: 'plot-monitoring' })}`}
 								</div>
 							</div>
 							<div className='flex w-full flex-row gap-1 text-sm text-black'>
 								<div className='flex shrink-0'>{`${t('complianceStatus', { ns: 'plot-monitoring' })}`}</div>
 								:
 								<div className='flex flex-wrap font-semibold'>
-									{plantDetailData?.publicStatus[language]}
+									{formatText(plantDetailData?.publicStatus?.[language])}
 								</div>
 							</div>
 							<div className='flex w-full flex-row gap-1 text-sm text-black lg:hidden'>
 								<div className='flex shrink-0'>{`${t('riceVarietyType', { ns: 'plot-monitoring' })}`}</div>
 								:
 								<div className='flex flex-wrap font-semibold'>
-									{plantDetailData?.riceType[language]}
+									{formatText(plantDetailData?.riceType?.[language])}
 								</div>
 							</div>
 
 							<div className='flex w-full flex-row gap-1 text-sm text-black lg:hidden'>
 								<div className='flex shrink-0'>{`${t('cropType', { ns: 'plot-monitoring' })}`}</div>:
 								<div className='flex flex-wrap font-semibold'>
-									{plantDetailData?.detailType[language]}
+									{formatText(plantDetailData?.detailType?.[language])}
 								</div>
 							</div>
 							<div className='flex w-full flex-row gap-1 text-sm text-black max-lg:hidden'>
 								<div className='flex shrink-0'>{`${t('insuranceStatus', { ns: 'plot-monitoring' })}`}</div>
 								:
 								<div className='flex flex-wrap font-semibold'>
-									{plantDetailData?.insuredStatus[language]}
+									{formatText(plantDetailData?.insuredStatus?.[language])}
 								</div>
 							</div>
 							<div className='flex w-full flex-row gap-1 text-sm text-black'>
 								<div className='flex shrink-0'>{`${t('insurance', { ns: 'plot-monitoring' })}`}</div>:
 								<div className='flex flex-wrap font-semibold'>
-									{plantDetailData?.insuredType[language]}
+									{formatText(plantDetailData?.insuredType?.[language])}
 								</div>
 							</div>
 							<div className='flex w-full flex-row gap-1 text-sm text-black'>
 								<div className='flex shrink-0'>{`${t('riskAreas', { ns: 'plot-monitoring' })}`}</div>:
 								<div className='flex flex-wrap font-semibold'>
-									{plantDetailData?.riskType[language]}
+									{formatText(plantDetailData?.riskType?.[language])}
 								</div>
 							</div>
 						</Box>
