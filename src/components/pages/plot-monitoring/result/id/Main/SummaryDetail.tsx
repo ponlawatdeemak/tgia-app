@@ -1,16 +1,16 @@
 import { Box, Tab, Tabs, Divider, Button, CircularProgress } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import PlantDetail from '../Detail/PlantDetail'
 import LossDetail from '../Detail/LossDetail'
 import { useTranslation } from 'react-i18next'
 import { ResponseLanguage } from '@/api/interface'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useRouter } from 'next/navigation'
-import { AppPath } from '@/config/app'
 import { GetPlotActivityLossDetailDtoOut, GetPlotActivityPlantDetailDtoOut } from '@/api/plot-monitoring/dto-out.dto'
 import classNames from 'classnames'
 import useResponsive from '@/hook/responsive'
 import { formatText } from '@/utils/text'
+import { useMap } from '@/components/common/map/context/map'
 
 interface SummaryDetailProps {
 	activityId: number
@@ -35,6 +35,15 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({
 	const router = useRouter()
 	const { t, i18n } = useTranslation(['default', 'plot-monitoring'])
 	const language = i18n.language as keyof ResponseLanguage
+	const { setExtent } = useMap()
+
+	useEffect(() => {
+		if (!plantDetailData) return
+
+		if (plantDetailData?.extent) {
+			setExtent?.(plantDetailData.extent)
+		}
+	}, [plantDetailData])
 
 	return (
 		<div className='lg:bg-bg-white box-border flex flex-col gap-0 bg-white lg:w-[30%] lg:min-w-[360px] lg:max-w-[580px] lg:gap-4 lg:overflow-auto'>

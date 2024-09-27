@@ -79,6 +79,7 @@ export interface GetPlotActivityPlantDetailDtoOut {
 	predictedNonRiceArea: ResponsePredeicted
 	updateDoaeDate: ResponseLanguage
 	predictedRiceAreaDate: ResponseLanguage
+	extent: [number, number, number, number]
 }
 
 interface ResponselossPredicted {
