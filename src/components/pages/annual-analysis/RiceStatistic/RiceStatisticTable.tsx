@@ -486,8 +486,8 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 				const aTotalAct = a.find((item: any) => item.id === 'totalActArea')
 				const bTotalAct = b.find((item: any) => item.id === 'totalActArea')
 
-				const aArea = aTotalAct?.actAreas[areaUnit]
-				const bArea = bTotalAct?.actAreas[areaUnit]
+				const aArea = aTotalAct?.actAreas?.[areaUnit]
+				const bArea = bTotalAct?.actAreas?.[areaUnit]
 				return bArea - aArea
 			})
 
@@ -500,7 +500,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 
 				const currOrderItem = tmpArr[i].find((item: any) => item.id !== 'totalActArea')
 
-				if (currAct.actAreas.areaRai === prevAct.actAreas.areaRai) {
+				if (currAct?.actAreas?.areaRai === prevAct?.actAreas?.areaRai) {
 					currOrderItem.order = currRank
 				} else {
 					currRank = i + 1
@@ -529,8 +529,8 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 				const aTotalAct = a.find((item: any) => item.id === filterOrder?.sort)
 				const bTotalAct = b.find((item: any) => item.id === filterOrder?.sort)
 
-				const aArea = aTotalAct?.actAreas[areaUnit]
-				const bArea = bTotalAct?.actAreas[areaUnit]
+				const aArea = aTotalAct?.actAreas?.[areaUnit]
+				const bArea = bTotalAct?.actAreas?.[areaUnit]
 				return filterOrder.sortType === SortType.ASC ? aArea - bArea : bArea - aArea
 			})
 
@@ -546,8 +546,8 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 				const currOrderItem = data[i].find((item: any) => item.id !== filterOrder?.sort)
 				if (
 					filterOrder.sortType === SortType.ASC
-						? currAct.actAreas[areaUnit] > prevAct.actAreas[areaUnit]
-						: currAct.actAreas[areaUnit] < prevAct.actAreas[areaUnit]
+						? currAct?.actAreas?.[areaUnit] > prevAct?.actAreas?.[areaUnit]
+						: currAct?.actAreas?.[areaUnit] < prevAct?.actAreas?.[areaUnit]
 				) {
 					rowNum++
 				}
