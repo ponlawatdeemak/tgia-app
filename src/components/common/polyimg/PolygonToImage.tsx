@@ -1,6 +1,7 @@
 'use client'
+import { toPolygon } from '@/utils/geometry'
 import classNames from 'classnames'
-import { FeatureCollection, Polygon } from 'geojson'
+import { FeatureCollection, MultiPolygon, Polygon } from 'geojson'
 import { GeoJSON2SVG, Options } from 'geojson2svg'
 import { useEffect, useRef } from 'react'
 

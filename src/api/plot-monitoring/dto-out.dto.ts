@@ -1,4 +1,4 @@
-import { Polygon } from 'geojson'
+import { MultiPolygon, Polygon } from 'geojson'
 import { ResponseArea, ResponseLanguage } from '../interface'
 import { LossType } from '@/enum'
 
@@ -24,7 +24,7 @@ export interface GetSearchPlotDtoOut {
 	detailType: ResponseLanguage
 	insuredType: ResponseLanguage
 	riskType: ResponseLanguage
-	geometry: Polygon
+	geometry: Polygon | MultiPolygon
 }
 
 export interface GetAreaSearchPlotDtoOut {

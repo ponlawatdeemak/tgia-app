@@ -9,6 +9,7 @@ import classNames from 'classnames'
 import PolygonToImage from '@/components/common/polyimg/PolygonToImage'
 import { LossTypeColor } from '@/config/color'
 import { formatText } from '@/utils/text'
+import { Polygon } from 'geojson'
 
 interface CardDetailProps {
 	detail: GetSearchPlotDtoOut
@@ -38,13 +39,18 @@ const CardDetail: React.FC<CardDetailProps> = ({ detail }) => {
 		<div className='flex w-full flex-col gap-4 rounded bg-white p-4 lg:rounded-lg'>
 			<div className='flex gap-4'>
 				<Paper className='flex aspect-square h-[80px] w-[80px] items-center justify-center bg-gray-light3 sm:h-auto sm:w-[130px] lg:w-[204px]'>
-					{!!detail.geometry?.coordinates && (
+					{!!detail.geometry?.coordinates ? (
 						<PolygonToImage
 							className='!h-[80px] !w-[80px] !border-none !bg-transparent max-lg:[&_div>h2]:text-base max-sm:[&_div>h2]:text-sm [&_svg]:h-[60px] [&_svg]:w-[60px]'
-							polygon={detail.geometry}
+							polygon={detail.geometry as Polygon}
 							fill={getColor(detail.lossPredicted?.lossType)}
 							stroke={getColor(detail.lossPredicted?.lossType)}
 						/>
+					) : (
+						<div className='text-center'>
+							<h2>No Plot </h2>
+							<h2>Boundary</h2>
+						</div>
 					)}
 				</Paper>
 				<Box className='flex grow flex-col gap-1 lg:gap-2'>

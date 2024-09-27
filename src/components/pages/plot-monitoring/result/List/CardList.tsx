@@ -34,6 +34,7 @@ import { OrderBy } from '@/enum/plot-monitoring.enum'
 import clsx from 'clsx'
 import FilterButtonMain from '../Filter'
 import useAreaType from '@/store/area-type'
+import { toPolygon } from '@/utils/geometry'
 
 const LimitCardsPerPage = 10
 
@@ -343,6 +344,12 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 							<div className='flex flex-col gap-2 py-3 lg:gap-3 lg:py-2'>
 								{searchPlotData?.pages.map((details) =>
 									details?.data?.map((detail, index) => {
+										const geom = detail.geometry
+
+										if (geom && geom.type == 'MultiPolygon') {
+											detail.geometry = toPolygon(detail.geometry)
+										}
+
 										if (details.data?.length === index + 1) {
 											return (
 												<div
