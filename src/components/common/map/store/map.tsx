@@ -12,6 +12,7 @@ export type LayerStore = {
 	getLayer: (layerId: string) => Layer | undefined
 	getLayers: () => LayersList
 	removeLayer: (layerId: string) => void
+	removeAllLayer: () => void
 }
 
 export const useLayerStore = create<LayerStore>()((set, get) => ({
@@ -34,6 +35,11 @@ export const useLayerStore = create<LayerStore>()((set, get) => ({
 		set((state) => ({
 			...state,
 			layers: state.layers.filter((layer) => !(layer instanceof Layer && layer.id === layerId)),
+		})),
+	removeAllLayer: () =>
+		set((state) => ({
+			...state,
+			layers: [],
 		})),
 }))
 

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import classNames from 'classnames'
 import { BasemapType, MapType, MapInfoWindow, MapLayer, LatLng, MapViewState } from './interface/map'
 import MapGoogle from './MapGoogle'
@@ -15,6 +15,7 @@ import { IconLayer } from '@deck.gl/layers'
 import { MVTLayer } from '@deck.gl/geo-layers'
 import { Layer } from '@deck.gl/core'
 import MapPin from './MapPin'
+import maplibregl from 'maplibre-gl'
 
 const CURRENT_LOCATION_ZOOM = 14
 const DEFAULT = {
@@ -31,22 +32,19 @@ export interface MapViewProps extends PropsWithChildren {
 	className?: string
 	initialLayer?: MapLayer[]
 	isShowMapPin?: boolean
+	onMapClick?: (latLng: LatLng) => void
 }
 
 // TO DO
-export default function MapView({ className = '', isShowMapPin = false, initialLayer }: MapViewProps) {
-	const { mapInfoWindow, setCenter, setMapInfoWindow } = useMap()
+export default function MapView({ className = '', isShowMapPin = false, initialLayer, onMapClick }: MapViewProps) {
+	const { mapInfoWindow, mapLibreInstance, setCenter, setMapInfoWindow } = useMap()
 	const { getLayer, getLayers, setLayers } = useLayerStore()
 	const [mapType, setMapType] = useState<MapType>(DEFAULT.mapType)
 	const [viewState, setViewState] = useState<MapViewState>(DEFAULT.viewState)
 	const [basemap, setBasemap] = useState(DEFAULT.basemap)
 	const [currentLocation, setCurrentLocation] = useState<LatLng | null>(null)
 
-	useEffect(() => {
-		return () => {
-			setMapInfoWindow(null)
-		}
-	}, [setMapInfoWindow])
+	const popupNode = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
 		if (initialLayer && initialLayer.length) {
@@ -100,8 +98,80 @@ export default function MapView({ className = '', isShowMapPin = false, initialL
 		[getLayer, setCurrentLocation, setCenter],
 	)
 
+	useEffect(() => {
+		return () => {
+			setMapInfoWindow(null)
+		}
+	}, [setMapInfoWindow])
+
+	// const popup = useMemo(() => {
+	// 	new maplibregl.Popup({
+	// 		maxWidth: '300px',
+	// 		closeOnClick: false,
+	// 		closeOnMove: false,
+	// 	})
+	// }, [])
+
+	const popup = useMemo(
+		() =>
+			new maplibregl.Popup({
+				maxWidth: '300px',
+				closeOnClick: false,
+				closeOnMove: false,
+			}),
+		[],
+	)
+
+	// useEffect(() => {
+	// 	return () => {
+	// 		console.log('popup ', mapLibreInstance)
+
+	// 		if (!mapLibreInstance) return
+
+	// 		console.log('popup22 ')
+
+	// 		const popup = new maplibregl.Popup({ closeOnClick: false })
+	// 			.setLngLat([-96, 37.8])
+	// 			.setHTML('<h1>Hello World!</h1>')
+	// 			.addTo(mapLibreInstance)
+
+	// 		// if (!mapInfoWindow?.children) {
+	// 		// 	if (!popupNode.current || !mapInfoWindow?.positon || !mapLibreInstance) return
+
+	// 		// 	const position = mapInfoWindow.positon
+
+	// 		// 	const x = new maplibregl.Popup({
+	// 		// 		maxWidth: '300px',
+	// 		// 		closeOnClick: false,
+	// 		// 		closeOnMove: false,
+	// 		// 	})
+
+	// 		// 	x.setLngLat
+
+	// 		// 	popup.setLngLat([position.x, position.y]).setDOMContent(popupNode.current).addTo(mapLibreInstance)
+	// 		// }
+	// 	}
+	// }, [popup, mapInfoWindow, mapLibreInstance])
+
+	// const onMapClick = useCallback<NonNullable<PermitMapProps["onClick"]>>(
+	//     (
+	//       objects: { object: FeatureDto<ListReqBldgPermitOutDto> }[] | any | null,
+	//       info
+	//     ) => {
+	//       onClick?.(objects, info);
+	//       if (!objects || !objects[0] || !map || !popupNode.current) return;
+	//       const { object } = objects[0];
+
+	//       const [lng, lat] = info.coordinate || [];
+
+	//       setFeature(object);
+	//       popup?.setLngLat([lng, lat]).setDOMContent(popupNode.current).addTo(map);
+	//     },
+	//     [popup, map, onClick]
+	//   );
+
 	return (
-		<div className={classNames('relative flex flex-1 overflow-hidden', className)}>
+		<div className={classNames('relative flex h-full flex-1 overflow-hidden', className)}>
 			{isShowMapPin && (
 				<Box className='absolute bottom-[8.7rem] left-2 z-10'>
 					<MapPin />
@@ -123,15 +193,28 @@ export default function MapView({ className = '', isShowMapPin = false, initialL
 					viewState={viewState}
 					mapStyle={basemap === BasemapType.CartoLight ? BASEMAP.VOYAGER : BASEMAP.DARK_MATTER}
 					onViewStateChange={onViewStateChange}
+					onMapClick={(latLng: LatLng) => {
+						onMapClick?.(latLng)
+					}}
 				/>
 			) : (
-				<MapGoogle viewState={viewState} onViewStateChange={onViewStateChange} />
+				<MapGoogle
+					viewState={viewState}
+					onViewStateChange={onViewStateChange}
+					onMapClick={(latLng: LatLng) => {
+						onMapClick?.(latLng)
+					}}
+				/>
 			)}
-			{mapInfoWindow && (
-				<InfoWindow positon={mapInfoWindow.positon} onClose={() => setMapInfoWindow(null)}>
+			{/* {mapInfoWindow && (
+				<div ref={popupNode} className={`m-4 max-h-80 flex-col ${!mapInfoWindow.children ? 'hidden' : 'flex'}`}>
 					{mapInfoWindow.children}
-				</InfoWindow>
-			)}
+				</div>
+
+				// <InfoWindow positon={mapInfoWindow.positon} onClose={() => setMapInfoWindow(null)}>
+				// 	{mapInfoWindow.children}
+				// </InfoWindow>
+			)} */}
 			{currentLocation && mapType === MapType.Libre && <MapPinMark coords={currentLocation} />}
 			{currentLocation && mapType === MapType.Google && <MapPinMark coords={currentLocation} />}
 		</div>

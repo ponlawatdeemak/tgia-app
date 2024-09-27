@@ -30,7 +30,7 @@ const DeckGLOverlay = () => {
 	return null
 }
 
-export default function MapLibre({ viewState, mapStyle, onViewStateChange }: MapLibreProps) {
+export default function MapLibre({ viewState, mapStyle, onViewStateChange, onMapClick }: MapLibreProps) {
 	const overlay = useLayerStore((state) => state.overlay)
 	const { setMapLibreInstance } = useMap()
 
@@ -54,6 +54,7 @@ export default function MapLibre({ viewState, mapStyle, onViewStateChange }: Map
 			zoom={viewState?.zoom}
 			onMove={(e) => onViewStateChange?.(e.viewState)}
 			ref={(ref) => setMapLibreInstance(ref?.getMap() || null)}
+			onClick={(e) => onMapClick?.({ latitude: e?.lngLat?.lat, longitude: e?.lngLat?.lng })}
 		>
 			<DeckGLOverlay />
 		</Map>

@@ -2,6 +2,7 @@ import { Layer } from '@deck.gl/core'
 export interface MapInterface {
 	viewState?: MapViewState
 	onViewStateChange?: (viewState: MapViewState) => void
+	onMapClick?: (latLng: LatLng) => void
 }
 
 export interface MapViewState {

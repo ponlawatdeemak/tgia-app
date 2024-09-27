@@ -29,7 +29,7 @@ const DeckGLOverlay = () => {
 	return null
 }
 
-export default function MapGoogle({ viewState, onViewStateChange }: MapGoogleProps) {
+export default function MapGoogle({ viewState, onViewStateChange, onMapClick }: MapGoogleProps) {
 	const overlay = useLayerStore((state) => state.overlay)
 	const { setGoogleMapInstance } = useMap()
 
@@ -63,6 +63,13 @@ export default function MapGoogle({ viewState, onViewStateChange }: MapGooglePro
 						latitude: evt.detail.center.lat,
 						longitude: evt.detail.center.lng,
 						zoom: evt.detail.zoom,
+					})
+				}}
+				onClick={(e) => {
+					const info = e?.detail?.latLng
+					onMapClick?.({
+						latitude: info?.lat || 0,
+						longitude: info?.lng || 0,
 					})
 				}}
 			>
