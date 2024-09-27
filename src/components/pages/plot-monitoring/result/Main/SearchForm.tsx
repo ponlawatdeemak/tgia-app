@@ -1,7 +1,7 @@
 'use client'
 
-import { Autocomplete, Box, Button, FormControl, Input, InputAdornment, Paper } from '@mui/material'
-import React, { ChangeEvent, useCallback, useEffect, useMemo } from 'react'
+import { Autocomplete, Box, Button, FormControl, Input, InputAdornment, OutlinedInput, Paper } from '@mui/material'
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import { useTranslation } from 'react-i18next'
@@ -11,7 +11,7 @@ import { GetLookupOutDto } from '@/api/lookup/dto-out.dto'
 import { CalendarMonthOutlined, Check, ExpandMore } from '@mui/icons-material'
 import classNames from 'classnames'
 import useResponsive from '@/hook/responsive'
-import { mdiPencilOutline } from '@mdi/js'
+import { mdiPencilOutline, mdiFileSearchOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import useSearchForm from '../../Main/context'
 import { useRouter } from 'next/navigation'
@@ -28,6 +28,13 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
 	const { t, i18n } = useTranslation(['default', 'plot-monitoring'])
 	const language = i18n.language as keyof ResponseLanguage
+
+	const [inputActivityId, setInputActivityId] = useState('')
+	const activityIdRef = useRef<HTMLInputElement>(null)
+
+	useEffect(() => {
+		setInputActivityId(queryParams?.activityId ? queryParams.activityId.toString() : '')
+	}, [isDesktop])
 
 	const { data: provinceLookupData, isLoading: isProvinceDataLoading } = useQuery({
 		queryKey: ['getPlotMonitoringProvince'],
@@ -145,6 +152,31 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 			}
 		},
 		[queryParams, setQueryParams],
+	)
+
+	const handleChangeActivityIdInput = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+		const inputValue = event.target.value
+		const numericValue = inputValue.replace(/[^0-9]/g, '')
+		setInputActivityId(numericValue)
+	}, [])
+
+	const handleSubmitActivityId = useCallback(
+		(event: React.FormEvent<HTMLFormElement>) => {
+			event.preventDefault()
+			setQueryParams({ ...queryParams, activityId: inputActivityId ? parseInt(inputActivityId) : undefined })
+			if (activityIdRef.current) {
+				activityIdRef.current.blur()
+			}
+		},
+		[inputActivityId, queryParams, setQueryParams],
+	)
+
+	const handleBlurActivityId = useCallback(
+		(event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
+			event.preventDefault()
+			setQueryParams({ ...queryParams, activityId: inputActivityId ? parseInt(inputActivityId) : undefined })
+		},
+		[inputActivityId, queryParams, setQueryParams],
 	)
 
 	return (
@@ -414,15 +446,120 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 					</FormControl>
 				</>
 			) : (
-				<Button
-					className='flex h-10 w-full items-center justify-start gap-2 rounded bg-white px-3 py-2 shadow-lg'
-					onClick={() => setOpen(true)}
-				>
-					<Icon path={mdiPencilOutline} className='h-6 w-6 font-light text-black' />
-					<span className='text-base font-semibold text-black'>
-						{`${selectedSubDistrict ? `${language === 'th' ? `${t('subDistrict')}` : ''}${selectedSubDistrict.name[language]} ` : ''}${selectedDistrict ? `${language === 'th' ? `${t('district')}` : ''}${selectedDistrict.name[language]} ` : ''}${selectedProvince ? selectedProvince.name[language] : ''}`}
-					</span>
-				</Button>
+				<Box className='flex w-full flex-col gap-3'>
+					<Button
+						className='flex h-10 w-full items-center justify-start gap-2 rounded bg-white px-3 py-2 shadow-lg'
+						onClick={() => setOpen(true)}
+					>
+						<Icon path={mdiPencilOutline} className='h-6 w-6 font-light text-black' />
+						<span className='text-base font-semibold text-black'>
+							{`${selectedSubDistrict ? `${language === 'th' ? `${t('subDistrict')}` : ''}${selectedSubDistrict.name[language]} ` : ''}${selectedDistrict ? `${language === 'th' ? `${t('district')}` : ''}${selectedDistrict.name[language]} ` : ''}${selectedProvince ? selectedProvince.name[language] : ''}`}
+						</span>
+					</Button>
+					<Box className='flex items-center gap-1.5'>
+						<form
+							noValidate
+							className='w-full shadow-lg'
+							onSubmit={handleSubmitActivityId}
+							autoComplete='off'
+						>
+							<FormControl
+								className='[&_.Mui-focused>fieldset]:border-primary'
+								fullWidth
+								variant='outlined'
+							>
+								<OutlinedInput
+									className={classNames(
+										'h-10 bg-white pl-3 text-base font-normal text-[#7A7A7A] [&_fieldset]:rounded [&_fieldset]:border-transparent [&_input]:box-border [&_input]:h-10 [&_input]:p-2 [&_input]:pr-3',
+										{
+											'!font-medium !text-black': !!inputActivityId,
+										},
+									)}
+									startAdornment={
+										<InputAdornment position='start' className='m-0 h-6 w-6'>
+											<Icon path={mdiFileSearchOutline} size={1} className='text-black' />
+										</InputAdornment>
+									}
+									id='activityId'
+									value={inputActivityId}
+									onChange={handleChangeActivityIdInput}
+									onBlur={handleBlurActivityId}
+									inputRef={activityIdRef}
+									placeholder={t('referenceCode', { ns: 'plot-monitoring' })}
+								/>
+							</FormControl>
+						</form>
+						<FormControl
+							fullWidth
+							variant='standard'
+							className='shadow-lg [&_.MuiAutocomplete-hasClearIcon>.MuiInputBase-root]:pr-[68px] [&_.MuiAutocomplete-hasClearIcon>div>div>button]:text-black [&_.MuiInputBase-root.Mui-focused]:border-primary'
+						>
+							<Autocomplete
+								className='[&_.MuiAutocomplete-endAdornment]:right-2.5 [&_.MuiAutocomplete-endAdornment]:flex [&_.MuiAutocomplete-endAdornment]:!h-full [&_.MuiAutocomplete-endAdornment]:items-center [&_.MuiAutocomplete-endAdornment]:gap-0.5'
+								slotProps={{
+									popper: {
+										className: '!top-1.5 [&_ul>li]:p-0 aria-selected:[&_ul>li]:!bg-gray-light2',
+									},
+									paper: {
+										className: 'border border-solid border-gray',
+									},
+									popupIndicator: {
+										className: 'h-6 m-0 p-0 [&_svg]:w-6 [&_svg]:h-6',
+									},
+									clearIndicator: {
+										className: 'hidden w-6 h-6 m-0 p-0.5 [&_svg]:w-5 [&_svg]:h-5',
+									},
+								}}
+								renderOption={(props, option, { inputValue }) => {
+									const { key, ...optionProps } = props
+									return (
+										<li key={key} {...optionProps}>
+											<div className='flex w-full items-center gap-2 p-2'>
+												<Box className='flex h-4 min-w-4 items-center justify-center'>
+													{option.name[language] === inputValue && (
+														<Check className='h-4 w-4 font-normal text-black' />
+													)}
+												</Box>
+												<span
+													className={classNames('text-base font-normal text-black', {
+														'!font-medium': option.name[language] === inputValue,
+													})}
+												>
+													{option.name[language]}
+												</span>
+											</div>
+										</li>
+									)
+								}}
+								popupIcon={<ExpandMore />}
+								options={yearLookupData?.data || []}
+								getOptionLabel={(option) => option.name[language]}
+								isOptionEqualToValue={(option, value) => option.code === value.code}
+								value={yearLookupData?.data?.find((year) => year.code === queryParams.year) || null}
+								onChange={handleSelectYear}
+								renderInput={(params) => {
+									const { InputLabelProps, InputProps, ...otherParams } = params
+									return (
+										<Input
+											{...otherParams}
+											{...params.InputProps}
+											className='h-10 rounded border-2 border-solid border-transparent bg-white py-2 pl-3 pr-[42px] [&_.MuiInputBase-input]:p-0 [&_input]:text-base [&_input]:font-medium [&_input]:text-black'
+											startAdornment={
+												<InputAdornment position='start' className='mr-1 h-6 w-6'>
+													<CalendarMonthOutlined className='h-6 w-6 text-black' />
+												</InputAdornment>
+											}
+											disableUnderline={true}
+											id='year'
+											placeholder={t('dataYear')}
+										/>
+									)
+								}}
+								disabled={isYearDataLoading}
+							/>
+						</FormControl>
+					</Box>
+				</Box>
 			)}
 		</Paper>
 	)

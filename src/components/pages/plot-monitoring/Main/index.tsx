@@ -4,7 +4,7 @@ import AdminPoly from '@/components/shared/AdminPoly'
 import { useRouter } from 'next/navigation'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import * as yup from 'yup'
 import { Button, Paper, Typography } from '@mui/material'
 import { AppPath } from '@/config/app'
@@ -19,7 +19,11 @@ interface SearchFormType {
 	year: number
 }
 
-export const PlotMonitoringSearchMain = () => {
+interface PlotMonitoringSearchMain {
+	isEditAdminPoly?: boolean
+}
+
+export const PlotMonitoringSearchMain: React.FC<PlotMonitoringSearchMain> = ({ isEditAdminPoly = false }) => {
 	const { setOpen } = useSearchForm()
 	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
 	const router = useRouter()
@@ -86,7 +90,7 @@ export const PlotMonitoringSearchMain = () => {
 					{t('searchPlotInfo', { ns: 'plot-monitoring' })}
 				</Typography>
 				<form noValidate onSubmit={formik.handleSubmit} className='flex flex-col gap-4'>
-					<AdminPoly formik={formik} isShowActivityId />
+					<AdminPoly formik={formik} isShowActivityId isEditAdminPoly={isEditAdminPoly} />
 					<Button className='py-2 max-lg:rounded' fullWidth variant='contained' type='submit'>
 						<span className='font-semibold'>{t('search')}</span>
 					</Button>
