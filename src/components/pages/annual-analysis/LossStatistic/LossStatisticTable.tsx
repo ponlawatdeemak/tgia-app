@@ -392,7 +392,7 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 													component={cellIndex === 0 ? 'th' : 'td'}
 													scope={cellIndex === 0 ? 'row' : undefined}
 													padding='none'
-													rowSpan={2}
+													// rowSpan={2}
 													align={cellIndex === 0 ? 'left' : 'right'}
 													// sx={{
 													// 	borderRight:
