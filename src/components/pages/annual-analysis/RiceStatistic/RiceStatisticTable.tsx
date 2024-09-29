@@ -390,49 +390,7 @@ const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }
 		if (riceTableData) {
 			// init state of table || when language change or areaUnit change
 			const tmpArr: any[] = []
-			/* 
-                for each row riceTableData should be processed such as follows
-                example with 1 row
-                [
-                    {
-                        id: data.id,
-                        name: data.name // or possibly data years the first one will be name
-                        order: 0
-                    },
-                    {
-                        id: "totalActArea",
-                        name: "totalActArea"
-                        totalActArea : {
-                            areaRai : number,
-                            areaPlot : number
-                        }
-                        totalPredictedRiceArea : {
-                            areaRai : number,
-                            areaPlot : number
-                        }
-                    },
-                    {
-                        id : columns : {
-                                en : '2020',
-                                th : '2563'
-                            },
-                        name: {
-                            columns : {
-                                en : '2020',
-                                th : '2563'
-                            }
-                        }
-                        act : {
-                            areaRai : number
-                            areaPlot : number
-                        }
-                        predicted : {
-                            areaRai: number
-                            areaPlot : number
-                        }
-                    } . . .
-                ]
-            */
+
 			// init table rows data
 			riceTableData.forEach((data) => {
 				const tmpRow: any[] = []
