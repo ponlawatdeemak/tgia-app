@@ -328,7 +328,7 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 						</Box>
 					</Typography>
 				</Toolbar>
-				<Box className='flex h-[548px] flex-col gap-[16px] pl-[24px] pr-[24px]'>
+				<Box className='flex flex-col gap-[16px] pl-[24px] pr-[24px]'>
 					<TableContainer className='flex flex-col overflow-hidden overflow-x-auto' component={'div'}>
 						<Table
 							aria-labelledby='tableTitle'

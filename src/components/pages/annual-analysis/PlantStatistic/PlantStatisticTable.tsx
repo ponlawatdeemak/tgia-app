@@ -595,7 +595,7 @@ const PlantStatisticTable: React.FC<PlantStatisticTableProps> = ({ plantTableDat
 						</Typography>
 					</Box>
 				</Toolbar>
-				<Box className='flex h-[548px] flex-col gap-[16px] pl-[24px] pr-[24px]'>
+				<Box className='flex flex-col gap-[16px] pl-[24px] pr-[24px]'>
 					<TableContainer className='flex flex-col overflow-x-auto overflow-y-auto' component={'div'}>
 						<Table
 							stickyHeader
