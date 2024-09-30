@@ -3,12 +3,15 @@
 import AdminPoly from '@/components/shared/AdminPoly'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import * as yup from 'yup'
 import { Alert, Button, CircularProgress, Paper, Snackbar, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
+import pdfMake from 'pdfmake/build/pdfmake'
+import pdfFonts from './vfs_fonts'
+import { TDocumentDefinitions } from 'pdfmake/interfaces'
 
 interface SearchFormType {
 	provinceCode?: number
@@ -34,14 +37,21 @@ const ReportMain = () => {
 		message: '',
 	})
 	const [csvLoading, setCsvLoading] = useState(false)
+	const [selectedYear, setSelectedYear] = useState([])
 
 	const { data: userData, isLoading: isUserDataLoading } = useQuery({
 		queryKey: ['getProfile'],
 		queryFn: async () => await service.um.getProfile(),
 	})
 
-	const validationSchema = yup.object({
-		year: yup.array().min(1, t('warning.inputDataYear')),
+	const { data: yearLookupData, isLoading: isYearDataLoading } = useQuery({
+		queryKey: ['getYear'],
+		queryFn: () => service.lookup.get('years'),
+	})
+
+	const { data: provinceLookupData, isLoading: isProvinceDataLoading } = useQuery({
+		queryKey: ['getProvince'],
+		queryFn: () => service.lookup.get('provinces'),
 	})
 
 	const onSubmit = useCallback(
@@ -56,7 +66,6 @@ const ReportMain = () => {
 					language: i18n.language,
 					years: years,
 				}
-				console.log(params)
 				if (values.format === 'csv') {
 					setCsvLoading(true)
 					service.report
@@ -78,12 +87,16 @@ const ReportMain = () => {
 							setCsvLoading(false)
 						})
 				} else {
-					console.log('pdf')
+					printPdf(values)
 				}
 			}
 		},
 		[userData, i18n.language],
 	)
+
+	const validationSchema = yup.object({
+		year: yup.array().min(1, t('warning.inputDataYear')),
+	})
 
 	const formik = useFormik<SearchFormType>({
 		enableReinitialize: true,
@@ -91,6 +104,60 @@ const ReportMain = () => {
 		validationSchema: validationSchema,
 		onSubmit,
 	})
+
+	const printPdf = useCallback(
+		(values: SearchFormType) => {
+			pdfMake.vfs = pdfFonts.vfs
+			pdfMake.fonts = {
+				Anuphan: {
+					normal: 'Anuphan-Regular.ttf',
+					bold: 'Anuphan-Bold.ttf',
+				},
+			}
+
+			const docDefinition: TDocumentDefinitions = {
+				content: [
+					{
+						stack: [
+							{ text: 'รายงานพื้นที่เสียหายจากภัยพิบัติ', bold: true, style: 'header' },
+							{
+								text: !values.provinceCode
+									? 'ทุกจังหวัด'
+									: provinceLookupData?.data?.find((item) => item.code === values.provinceCode)?.name
+											.th ?? '-',
+								margin: [0, 0, 0, 1],
+							},
+							{
+								text: `ปี ` + values.year.join(','),
+							},
+						],
+						alignment: 'center',
+					},
+				],
+				defaultStyle: {
+					font: 'Anuphan',
+					fontSize: 12,
+				},
+				styles: {
+					header: {
+						fontSize: 14,
+						margin: [0, 0, 0, 1],
+					},
+				},
+				pageMargins: 20,
+				// footer: function (currentPage, pageCount) {
+				// 	return {
+				// 		text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+				// 		alignment: currentPage % 2 === 0 ? 'left' : 'right',
+				// 		style: 'normalText',
+				// 		margin: [10, 10, 10, 10],
+				// 	}
+				// },
+			}
+			pdfMake.createPdf(docDefinition).open()
+		},
+		[formik],
+	)
 
 	useEffect(() => {
 		if (

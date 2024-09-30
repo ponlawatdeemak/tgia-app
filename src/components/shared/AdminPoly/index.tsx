@@ -50,9 +50,6 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 		enabled: !!formik?.values?.districtCode,
 	})
 
-	console.log('subDistrictLookupData ::', subDistrictLookupData)
-	console.log('districtLookupData ::', districtLookupData)
-
 	const { data: yearLookupData, isLoading: isYearDataLoading } = useQuery({
 		queryKey: ['getYear'],
 		queryFn: () => service.lookup.get('years'),
