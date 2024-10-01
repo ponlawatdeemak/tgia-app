@@ -9,9 +9,11 @@ import { Alert, Button, CircularProgress, Paper, Snackbar, Typography } from '@m
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
-import pdfMake from 'pdfmake/build/pdfmake'
-import pdfFonts from './vfs_fonts'
-import { TDocumentDefinitions } from 'pdfmake/interfaces'
+import * as report from '@/utils/export-pdf'
+import { GetTableLossDtoIn } from '@/api/annual-analysis/dto-in.dto'
+import useAreaType from '@/store/area-type'
+import { ResponseDto, ResponseLanguage } from '@/api/interface'
+import useAreaUnit from '@/store/area-unit'
 
 interface SearchFormType {
 	provinceCode?: number
@@ -19,6 +21,10 @@ interface SearchFormType {
 	subDistrictCode?: number
 	year: number[]
 	format: string
+}
+
+interface NavigatorWithSaveBlob extends Navigator {
+	msSaveOrOpenBlob?: (blob: Blob, defaultName?: string) => boolean
 }
 
 const defaultFormValues: SearchFormType = {
@@ -30,6 +36,8 @@ const defaultFormValues: SearchFormType = {
 }
 
 const ReportMain = () => {
+	const { areaType } = useAreaType()
+	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default', 'report'])
 	const [alertInfo, setAlertInfo] = useState<AlertInfoType>({
 		open: false,
@@ -37,34 +45,26 @@ const ReportMain = () => {
 		message: '',
 	})
 	const [csvLoading, setCsvLoading] = useState(false)
-	const [selectedYear, setSelectedYear] = useState([])
+	const [pdfLoading, setPdfLoading] = useState(false)
+	const language = i18n.language as keyof ResponseLanguage
 
 	const { data: userData, isLoading: isUserDataLoading } = useQuery({
 		queryKey: ['getProfile'],
 		queryFn: async () => await service.um.getProfile(),
 	})
 
-	const { data: yearLookupData, isLoading: isYearDataLoading } = useQuery({
-		queryKey: ['getYear'],
-		queryFn: () => service.lookup.get('years'),
-	})
-
-	const { data: provinceLookupData, isLoading: isProvinceDataLoading } = useQuery({
-		queryKey: ['getProvince'],
-		queryFn: () => service.lookup.get('provinces'),
-	})
-
 	const onSubmit = useCallback(
 		(values: SearchFormType) => {
 			if (userData?.data?.orgCode) {
-				const { year, subDistrictCode, ...props } = values
+				const { year, subDistrictCode, format, ...props } = values
 				const years = values.year.join(',')
 				const params = {
 					...props,
 					subdistrictCode: subDistrictCode,
 					orgCode: userData?.data?.orgCode,
 					language: i18n.language,
-					years: years,
+					years,
+					format,
 				}
 				if (values.format === 'csv') {
 					setCsvLoading(true)
@@ -87,16 +87,36 @@ const ReportMain = () => {
 							setCsvLoading(false)
 						})
 				} else {
-					printPdf(values)
+					const params: GetTableLossDtoIn = {
+						...props,
+						subDistrictCode: subDistrictCode,
+						registrationAreaType: areaType,
+						years: values.year,
+					}
+					setPdfLoading(true)
+					service.annualAnalysis
+						.getTableLossStatistic(params)
+						.then((res) => {
+							handleClickExport(values, res)
+						})
+						.catch((error) => {
+							console.log(error)
+							setAlertInfo({
+								open: true,
+								severity: 'error',
+								message: error?.title ? error.title : t('error.somethingWrong'),
+							})
+						})
+						.finally(() => {
+							setPdfLoading(false)
+						})
 				}
 			}
 		},
-		[userData, i18n.language],
+		[userData, i18n.language, areaType],
 	)
 
-	const validationSchema = yup.object({
-		year: yup.array().min(1, t('warning.inputDataYear')),
-	})
+	const validationSchema = yup.object({})
 
 	const formik = useFormik<SearchFormType>({
 		enableReinitialize: true,
@@ -105,58 +125,55 @@ const ReportMain = () => {
 		onSubmit,
 	})
 
-	const printPdf = useCallback(
-		(values: SearchFormType) => {
-			pdfMake.vfs = pdfFonts.vfs
-			pdfMake.fonts = {
-				Anuphan: {
-					normal: 'Anuphan-Regular.ttf',
-					bold: 'Anuphan-Bold.ttf',
-				},
-			}
+	const settings = useMemo(() => {
+		return {
+			language: language,
+			areaUnit: areaUnit,
+			areaType: areaType,
+		}
+	}, [, language, areaType, areaUnit])
 
-			const docDefinition: TDocumentDefinitions = {
-				content: [
-					{
-						stack: [
-							{ text: 'รายงานพื้นที่เสียหายจากภัยพิบัติ', bold: true, style: 'header' },
-							{
-								text: !values.provinceCode
-									? 'ทุกจังหวัด'
-									: provinceLookupData?.data?.find((item) => item.code === values.provinceCode)?.name
-											.th ?? '-',
-								margin: [0, 0, 0, 1],
-							},
-							{
-								text: `ปี ` + values.year.join(','),
-							},
-						],
-						alignment: 'center',
-					},
-				],
-				defaultStyle: {
-					font: 'Anuphan',
-					fontSize: 12,
-				},
-				styles: {
-					header: {
-						fontSize: 14,
-						margin: [0, 0, 0, 1],
-					},
-				},
-				pageMargins: 20,
-				// footer: function (currentPage, pageCount) {
-				// 	return {
-				// 		text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
-				// 		alignment: currentPage % 2 === 0 ? 'left' : 'right',
-				// 		style: 'normalText',
-				// 		margin: [10, 10, 10, 10],
-				// 	}
-				// },
+	const handleClickExport = useCallback(
+		async (values: SearchFormType, response: ResponseDto) => {
+			try {
+				let district, subDistrict
+				const province = (await service.lookup.get('provinces'))?.data
+				if (values.provinceCode) {
+					district = (await service.lookup.get(`districts/${values?.provinceCode}`))?.data
+				}
+				if (values.subDistrictCode) {
+					subDistrict = (await service.lookup.get(`sub-districts/${values?.districtCode}`))?.data
+				}
+				const lookups = {
+					province,
+					district,
+					subDistrict,
+				}
+				const blob = await report.exportPdf(response.data, values, lookups, userData?.data, settings)
+				const fileName = `damaged_area_report.pdf`
+				const navigator = window.navigator as NavigatorWithSaveBlob
+				if (navigator && navigator.msSaveOrOpenBlob) {
+					navigator.msSaveOrOpenBlob(
+						new Blob([blob as Blob], {
+							type: 'application/pdf',
+						}),
+						fileName,
+					)
+				} else {
+					window.open(
+						URL.createObjectURL(
+							new Blob([blob as Blob], {
+								type: 'application/pdf',
+							}),
+						),
+						'_blank',
+					)
+				}
+			} catch (error) {
+				console.log('error', error)
 			}
-			pdfMake.createPdf(docDefinition).open()
 		},
-		[formik],
+		[userData, settings],
 	)
 
 	useEffect(() => {
@@ -180,15 +197,15 @@ const ReportMain = () => {
 					{t('downloadReportTitle', { ns: 'report' })}
 				</Typography>
 				<form noValidate onSubmit={formik.handleSubmit} className='flex flex-col gap-4'>
-					<AdminPoly formik={formik} isShowFileType isYearMultiple loading={csvLoading} />
+					<AdminPoly formik={formik} isShowFileType isYearMultiple loading={csvLoading || pdfLoading} />
 					<Button
 						className='py-2 max-lg:rounded'
 						fullWidth
 						variant='contained'
 						type='submit'
-						disabled={csvLoading}
+						disabled={csvLoading || pdfLoading}
 					>
-						{csvLoading ? (
+						{csvLoading || pdfLoading ? (
 							<CircularProgress size='20px' className='py-[4px]' />
 						) : (
 							<span className='font-semibold'>{t('download', { ns: 'report' })}</span>
