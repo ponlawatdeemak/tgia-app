@@ -12,14 +12,22 @@ pdfMake.fonts = {
 	},
 }
 
-export const exportPdf = (data: any, formData: any, lookups: any, user: any, settings: any) => {
+export const exportPdf = (
+	data: any,
+	formData: any,
+	lookups: any,
+	user: any,
+	settings: any,
+	imgBarData: any,
+	imgLineData: any,
+) => {
 	return new Promise((resolve, reject) => {
 		try {
 			const docDefinition: any = {
 				pageSize: 'A4',
-				pageMargins: [30, 90, 30, 40],
+				pageMargins: [30, 100, 30, 40],
 				header: getPdfReportHeader(data, formData, lookups, settings),
-				content: getPdfReportContent(data, formData, lookups, user, settings),
+				content: getPdfReportContent(data, formData, lookups, user, settings, imgBarData, imgLineData),
 				footer: getPdfReportFooter(user),
 				defaultStyle: {
 					font: 'Anuphan',
@@ -105,8 +113,100 @@ function getPdfReportHeader(data: any, formData: any, lookups: any, settings: an
 	return header
 }
 
-function getPdfReportContent(data: any, formData: any, lookups: any, user: any, settings: any) {
-	let content = [{}]
+function getPdfReportContent(
+	data: any,
+	formData: any,
+	lookups: any,
+	user: any,
+	settings: any,
+	imgBarData: any,
+	imgLineData: any,
+) {
+	let content = [
+		{
+			alignment: 'justify',
+			columns: [
+				{
+					table: {
+						widths: ['*'],
+						body: [
+							[
+								{
+									stack: [
+										{
+											text: 'เปรียบเทียบพื้นที่เสียหาย (เฉพาะที่มีขอบแปลงเท่านั้น)',
+											fontSize: 10,
+										},
+										{
+											image: imgBarData,
+											width: 230,
+											height: 180,
+											margin: [0, 12, 0, 0],
+										},
+									],
+									margin: [4, 4, 4, 4],
+								},
+							],
+						],
+					},
+					layout: {
+						hLineWidth: function () {
+							return 1
+						},
+						vLineWidth: function () {
+							return 1
+						},
+						hLineColor: function () {
+							return '#D6D6D6'
+						},
+						vLineColor: function () {
+							return '#D6D6D6'
+						},
+					},
+				},
+				{
+					table: {
+						widths: ['*'],
+						body: [
+							[
+								{
+									stack: [
+										{
+											text: 'เปรียบเทียบพื้นที่เสียหายรายปี (เฉพาะที่มีขอบแปลงเท่านั้น)',
+											fontSize: 10,
+										},
+										{
+											image: imgLineData,
+											width: 230,
+											height: 180,
+											margin: [0, 12, 0, 0],
+										},
+									],
+									margin: [4, 4, 4, 4],
+								},
+							],
+						],
+					},
+					layout: {
+						hLineWidth: function () {
+							return 1
+						},
+						vLineWidth: function () {
+							return 1
+						},
+						hLineColor: function () {
+							return '#D6D6D6'
+						},
+						vLineColor: function () {
+							return '#D6D6D6'
+						},
+					},
+				},
+			],
+			columnGap: 12,
+			margin: [0, 0, 0, 12],
+		},
+	]
 	content = content.concat(getTableLossStatistic(data, formData, settings) as any)
 
 	return content
@@ -116,25 +216,22 @@ function getPdfReportFooter(user: any) {
 	return (currentPage: number, pageCount: number) => {
 		const footer = [
 			{
+				alignment: 'justify',
 				columns: [
 					{
-						stack: [
-							{
-								text: `วันเวลาออกเอกสาร: ${moment().format(
-									'DD/MM/YYYY HH:mm น.',
-								)} ผู้ออกเอกสาร: ${user?.firstName}`,
-								style: 'footer',
-							},
-						],
+						text: `วันเวลาออกเอกสาร: ${moment().format(
+							'DD/MM/YYYY HH:mm น.',
+						)} ผู้ออกเอกสาร: ${user?.firstName} ${user?.lastName}`,
+						style: 'footer',
+						noWrap: true,
+						width: 'auto',
 					},
 					{
-						stack: [
-							{
-								text: `หน้า ${currentPage} / ${pageCount}`,
-								style: 'footer',
-								alignment: 'right',
-							},
-						],
+						text: `หน้า ${currentPage} / ${pageCount}`,
+						style: 'footer',
+						alignment: 'right',
+						noWrap: true,
+						width: '*',
 					},
 				],
 				margin: [10, 10],
@@ -204,6 +301,11 @@ function getTableLossStatistic(data: any, formData: any, settings: any) {
 		body.push(row)
 	})
 	const content = [
+		{
+			text: 'อันดับพื้นที่ความเสียหาย (ไร่)',
+			bold: true,
+			margin: [0, 12, 0, 0],
+		},
 		{
 			style: 'table',
 			margin: [0, 12, 0, 0],

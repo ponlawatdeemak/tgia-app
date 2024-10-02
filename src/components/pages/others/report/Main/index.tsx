@@ -3,7 +3,7 @@
 import AdminPoly from '@/components/shared/AdminPoly'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as yup from 'yup'
 import { Alert, Button, CircularProgress, Paper, Snackbar, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
@@ -12,8 +12,10 @@ import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
 import * as report from '@/utils/export-pdf'
 import { GetTableLossDtoIn } from '@/api/annual-analysis/dto-in.dto'
 import useAreaType from '@/store/area-type'
-import { ResponseDto, ResponseLanguage } from '@/api/interface'
+import { ResponseAnnualAnalysisBarDto, ResponseAnnualAnalysisLineDto, ResponseLanguage } from '@/api/interface'
 import useAreaUnit from '@/store/area-unit'
+import bb, { bar, line } from 'billboard.js'
+import { DataLossStatisticDtoOut, LegendLossStatisticDtoOut } from '@/api/annual-analysis/dto-out.dto'
 
 interface SearchFormType {
 	provinceCode?: number
@@ -47,6 +49,9 @@ const ReportMain = () => {
 	const [csvLoading, setCsvLoading] = useState(false)
 	const [pdfLoading, setPdfLoading] = useState(false)
 	const language = i18n.language as keyof ResponseLanguage
+
+	const chartBarRef = useRef<HTMLDivElement | null>(null)
+	const chartLineRef = useRef<HTMLDivElement | null>(null)
 
 	const { data: userData, isLoading: isUserDataLoading } = useQuery({
 		queryKey: ['getProfile'],
@@ -87,29 +92,7 @@ const ReportMain = () => {
 							setCsvLoading(false)
 						})
 				} else {
-					const params: GetTableLossDtoIn = {
-						...props,
-						subDistrictCode: subDistrictCode,
-						registrationAreaType: areaType,
-						years: values.year,
-					}
-					setPdfLoading(true)
-					service.annualAnalysis
-						.getTableLossStatistic(params)
-						.then((res) => {
-							handleClickExport(values, res)
-						})
-						.catch((error) => {
-							console.log(error)
-							setAlertInfo({
-								open: true,
-								severity: 'error',
-								message: error?.title ? error.title : t('error.somethingWrong'),
-							})
-						})
-						.finally(() => {
-							setPdfLoading(false)
-						})
+					handleClickExport(values)
 				}
 			}
 		},
@@ -133,9 +116,232 @@ const ReportMain = () => {
 		}
 	}, [, language, areaType, areaUnit])
 
+	const generateBarChart = (
+		chartBarData: ResponseAnnualAnalysisBarDto<DataLossStatisticDtoOut[], LegendLossStatisticDtoOut>,
+		chartBarRef: React.RefObject<HTMLDivElement>,
+	) => {
+		const lossBarColumns: (string | number)[][] = [['x']]
+		const lossBarColorArr: { [key: string]: string } = {}
+		const lossBarGroupArr: string[][] = [[]]
+		const isBarInteger = true
+		if (chartBarData?.data && chartBarData?.legend) {
+			lossBarColumns[0] = ['x', ...chartBarData.data.map((item) => item.name[language])]
+
+			chartBarData.legend.items.forEach((legendItem) => {
+				const row: (string | number)[] = [legendItem.label[language]]
+				chartBarData.data?.forEach((dataItem) => {
+					const category = dataItem.categories.find(
+						(cat) => cat.label[language] === legendItem.label[language],
+					)
+					if (category) {
+						row.push(isBarInteger ? category.value.area[areaUnit] : category.value.percent[areaUnit])
+					}
+				})
+				lossBarColumns.push(row)
+				lossBarColorArr[legendItem.label[language]] = legendItem.color
+				lossBarGroupArr[0].push(legendItem.label[language])
+			})
+		}
+		if (chartBarRef.current) {
+			bb.generate({
+				size: {
+					height: 442,
+				},
+				data: {
+					x: 'x',
+					columns: lossBarColumns,
+					order: 'asc' as const,
+					groups: lossBarGroupArr,
+					type: bar(),
+					labels: {
+						centered: true,
+						colors: 'white' as string,
+						format: (x: number) => {
+							return isBarInteger ? x.toLocaleString() : x.toLocaleString() + ' %'
+						},
+					},
+					colors: lossBarColorArr,
+				},
+				bar: {
+					width: {
+						ratio: 0.85,
+					},
+				},
+				axis: {
+					x: {
+						type: 'category' as const,
+						tick: {
+							format: function (index: number, categoryName: string) {
+								return categoryName
+							},
+						},
+					},
+					y: {
+						tick: {
+							format: function (x: number) {
+								const usformatter = Intl.NumberFormat('en-US', {
+									notation: 'compact',
+									compactDisplay: 'short',
+								})
+								return isBarInteger ? usformatter.format(x) : usformatter.format(x) + '%'
+							},
+						},
+					},
+				},
+				legend: {
+					show: true,
+				},
+				grid: {
+					y: {
+						show: true,
+					},
+				},
+				padding: {
+					// mode: 'fit' as const,
+					// bottom: 20,
+					// right: 100,
+				},
+				bindto: chartBarRef.current,
+			})
+		}
+	}
+
+	const generateLineChart = (
+		chartLineData: ResponseAnnualAnalysisLineDto,
+		chartLineRef: React.RefObject<HTMLDivElement>,
+	) => {
+		const lossLineColumns: (number | string)[][] = []
+		const lossLineColorArr: { [key: string]: string } = {}
+		const lossCategoriesArr: string[] = []
+		if (chartLineData?.values && chartLineData?.data && chartLineData?.legend) {
+			for (let i = 0; i < chartLineData?.values?.length; i++) {
+				const label: string = chartLineData.values[i].label[language]
+				const areas: number[] = chartLineData.values[i].area[areaUnit]
+				const tempArr: (number | string)[] = [label, ...areas]
+				lossLineColumns.push(tempArr)
+			}
+			for (let i = 0; i < chartLineData.data.length; i++) {
+				lossCategoriesArr.push(chartLineData.data[i].name[language])
+			}
+			for (let i = 0; i < chartLineData.legend.items.length; i++) {
+				const label: string = chartLineData.legend.items[i].label[language]
+				if (label) {
+					lossLineColorArr[label] = chartLineData.legend.items[i].color
+				} else {
+					// some error handling
+				}
+			}
+		}
+		if (chartLineRef.current) {
+			bb.generate({
+				size: {
+					height: 462,
+				},
+				data: {
+					columns: lossLineColumns,
+					type: line(),
+					colors: lossLineColorArr,
+				},
+				point: {
+					// r: 4,
+					// type: 'circle',
+					pattern: [
+						"<g><circle cx='6' cy='6' r='6'></circle><circle cx='6' cy='6' r='3' style='fill:#fff'></circle></g>",
+					],
+				},
+				axis: {
+					x: {
+						type: 'category' as const,
+						categories: lossCategoriesArr,
+					},
+					y: {
+						tick: {
+							format: (x: number) => {
+								return x.toLocaleString()
+							},
+						},
+					},
+				},
+				line: {
+					classes: ['line-chart'],
+				},
+				grid: {
+					y: {
+						show: true,
+					},
+				},
+				padding: {
+					top: 10,
+				},
+				legend: {
+					position: 'bottom',
+				},
+				bindto: chartLineRef.current,
+			})
+		}
+	}
+
+	// Utility function to wait for the next animation frame
+	const waitForRender = () => {
+		return new Promise<void>((resolve) => {
+			requestAnimationFrame(() => resolve())
+		})
+	}
+
+	// Function to capture the chart image
+	const captureChartImage = async (chartDiv: HTMLDivElement | null) => {
+		if (!chartDiv) return ''
+
+		const svgElement = chartDiv.querySelector('svg')
+		if (!svgElement) return ''
+
+		const svgData = new XMLSerializer().serializeToString(svgElement)
+		const canvas = document.createElement('canvas')
+		const context = canvas.getContext('2d')
+		const image = new Image()
+
+		const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })
+		const url = URL.createObjectURL(svgBlob)
+
+		return new Promise<string>((resolve) => {
+			image.onload = () => {
+				canvas.width = image.width
+				canvas.height = image.height
+				context?.drawImage(image, 0, 0)
+				URL.revokeObjectURL(url)
+
+				const imgData = canvas.toDataURL('image/png')
+				resolve(imgData)
+			}
+
+			image.src = url
+		})
+	}
+
 	const handleClickExport = useCallback(
-		async (values: SearchFormType, response: ResponseDto) => {
+		async (values: SearchFormType) => {
+			setPdfLoading(true)
+
 			try {
+				const params: GetTableLossDtoIn = {
+					provinceCode: values.provinceCode,
+					districtCode: values.districtCode,
+					subDistrictCode: values.subDistrictCode,
+					registrationAreaType: areaType,
+					years: values.year,
+				}
+
+				const tableData = await service.annualAnalysis.getTableLossStatistic(params)
+				const chartBarData = await service.annualAnalysis.getBarLossStatistic(params)
+				const chartLineData = await service.annualAnalysis.getLineLossStatistic(params)
+
+				generateBarChart(chartBarData, chartBarRef)
+				generateLineChart(chartLineData, chartLineRef)
+				await waitForRender()
+
+				const imgBarData = await captureChartImage(chartBarRef.current)
+				const imgLineData = await captureChartImage(chartLineRef.current)
+
 				let district, subDistrict
 				const province = (await service.lookup.get('provinces'))?.data
 				if (values.provinceCode) {
@@ -149,7 +355,15 @@ const ReportMain = () => {
 					district,
 					subDistrict,
 				}
-				const blob = await report.exportPdf(response.data, values, lookups, userData?.data, settings)
+				const blob = await report.exportPdf(
+					tableData.data,
+					values,
+					lookups,
+					userData?.data,
+					settings,
+					imgBarData,
+					imgLineData,
+				)
 				const fileName = `damaged_area_report.pdf`
 				const navigator = window.navigator as NavigatorWithSaveBlob
 				if (navigator && navigator.msSaveOrOpenBlob) {
@@ -169,8 +383,15 @@ const ReportMain = () => {
 						'_blank',
 					)
 				}
-			} catch (error) {
+			} catch (error: any) {
 				console.log('error', error)
+				setAlertInfo({
+					open: true,
+					severity: 'error',
+					message: error?.title ? error.title : t('error.somethingWrong'),
+				})
+			} finally {
+				setPdfLoading(false)
 			}
 		},
 		[userData, settings],
@@ -213,6 +434,9 @@ const ReportMain = () => {
 					</Button>
 				</form>
 			</Paper>
+			{/* Static hidden divs for charts */}
+			<div ref={chartBarRef} className='!absolute left-[-9999px] top-[-9999px] w-[600px]'></div>
+			<div ref={chartLineRef} className='!absolute left-[-9999px] top-[-9999px] w-[600px]'></div>
 			<Snackbar
 				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
 				open={alertInfo.open}
