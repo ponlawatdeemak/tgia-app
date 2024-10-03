@@ -55,7 +55,7 @@ export const exportPdf = (
 				pageMargins: [30, 100, 30, 40],
 				header: getPdfReportHeader(data, formData, lookups, settings),
 				content: getPdfReportContent(data, formData, lookups, settings, imgBarData, imgLineData),
-				footer: getPdfReportFooter(user),
+				footer: getPdfReportFooter(user, settings),
 				defaultStyle: {
 					font: 'Anuphan',
 					fontSize: 12,
@@ -89,21 +89,27 @@ export const exportPdf = (
 
 function getPdfReportHeader(data: any, formData: SearchFormType, lookups: LookupsType, settings: SettingsType) {
 	const provinceName = formData?.provinceCode
-		? `จังหวัด${lookups?.province?.find((item) => item.code === formData?.provinceCode)?.name?.[settings?.language]}`
+		? `${settings?.language === 'en' ? '' : 'จังหวัด'}${lookups?.province?.find((item) => item.code === formData?.provinceCode)?.name?.[settings?.language]}`
 		: ''
 	const districtName = formData?.districtCode
-		? `อำเภอ${lookups?.district?.find((item) => item.code === formData?.districtCode)?.name?.[settings?.language]}`
+		? `${settings?.language === 'en' ? '' : 'อำเภอ'}${lookups?.district?.find((item) => item.code === formData?.districtCode)?.name?.[settings?.language]}${settings?.language === 'en' ? ', ' : ''}`
 		: ''
 	const subDistrictName = formData?.subDistrictCode
-		? `ตำบล${lookups?.subDistrict?.find((item) => item.code === formData?.subDistrictCode)?.name?.[settings?.language]}`
+		? `${settings?.language === 'en' ? '' : 'ตำบล'}${lookups?.subDistrict?.find((item) => item.code === formData?.subDistrictCode)?.name?.[settings?.language]}${settings?.language === 'en' ? ', ' : ''}`
 		: ''
 	const header = [
 		{
 			stack: [
-				{ text: 'รายงานพื้นที่เสียหายจากภัยพิบัติ', bold: true, style: 'header' },
+				{
+					text: settings?.language === 'en' ? 'Damaged Area Report' : 'รายงานพื้นที่เสียหายจากภัยพิบัติ',
+					bold: true,
+					style: 'header',
+				},
 				{
 					text: !provinceName
-						? 'ทุกจังหวัด'
+						? settings?.language === 'en'
+							? 'All Provinces'
+							: 'ทุกจังหวัด'
 						: !districtName
 							? provinceName
 							: !subDistrictName
@@ -114,11 +120,13 @@ function getPdfReportHeader(data: any, formData: SearchFormType, lookups: Lookup
 				{
 					text:
 						formData?.year.length === 0
-							? 'ทุกปี'
-							: `ปี ${lookups?.years
+							? settings?.language === 'en'
+								? 'All Years'
+								: 'ทุกปี'
+							: `${settings?.language === 'en' ? 'Year' : 'ปี'} ${lookups?.years
 									?.filter((year) => formData?.year?.includes(year.code))
 									?.map((year) => year?.name?.[settings?.language])
-									?.join(',')}`,
+									?.join(', ')}`,
 					margin: [0, 4, 0, 0],
 				},
 			],
@@ -178,8 +186,11 @@ function getPdfReportContent(
 								{
 									stack: [
 										{
-											text: 'เปรียบเทียบพื้นที่เสียหาย (เฉพาะที่มีขอบแปลงเท่านั้น)',
-											fontSize: 10,
+											text:
+												settings?.language === 'en'
+													? 'Compare Damaged Areas (Only with Plot Boundaries)'
+													: 'เปรียบเทียบพื้นที่เสียหาย (เฉพาะที่มีขอบแปลงเท่านั้น)',
+											fontSize: settings?.language === 'en' ? 9 : 10,
 										},
 										data?.length === 0
 											? {
@@ -224,8 +235,11 @@ function getPdfReportContent(
 								{
 									stack: [
 										{
-											text: 'เปรียบเทียบพื้นที่เสียหายรายปี (เฉพาะที่มีขอบแปลงเท่านั้น)',
-											fontSize: 10,
+											text:
+												settings?.language === 'en'
+													? 'Compare Yearly Damaged Areas (Only with Plot Boundaries)'
+													: 'เปรียบเทียบพื้นที่เสียหายรายปี (เฉพาะที่มีขอบแปลงเท่านั้น)',
+											fontSize: settings?.language === 'en' ? 9 : 10,
 										},
 										data?.length === 0
 											? {
@@ -258,22 +272,22 @@ function getPdfReportContent(
 	return content
 }
 
-function getPdfReportFooter(user: UserType) {
+function getPdfReportFooter(user: UserType, settings: SettingsType) {
 	return (currentPage: number, pageCount: number) => {
 		const footer = [
 			{
 				alignment: 'justify',
 				columns: [
 					{
-						text: `วันเวลาออกเอกสาร: ${moment().format(
-							'DD/MM/YYYY HH:mm น.',
-						)} ผู้ออกเอกสาร: ${user?.firstName} ${user?.lastName}`,
+						text: `${settings?.language === 'en' ? 'Created Date:' : 'วันเวลาออกเอกสาร:'} ${moment().format(
+							`DD/MM/YYYY HH:mm ${settings?.language === 'en' ? '' : 'น.'}`,
+						)} ${settings?.language === 'en' ? 'Created By:' : 'ผู้ออกเอกสาร:'} ${user?.firstName} ${user?.lastName}`,
 						style: 'footer',
 						noWrap: true,
 						width: 'auto',
 					},
 					{
-						text: `หน้า ${currentPage} / ${pageCount}`,
+						text: `${settings?.language === 'en' ? 'page' : 'หน้า'} ${currentPage} / ${pageCount}`,
 						style: 'footer',
 						alignment: 'right',
 						noWrap: true,
@@ -291,9 +305,19 @@ function getTableLossStatistic(data: any, formData: SearchFormType, lookups: Loo
 	const widths = ['auto', 80, 'auto']
 	const body: any = [
 		[
-			{ text: 'ลำดับ', style: 'tableHeader', alignment: 'left', noWrap: true },
-			{ text: 'พื้นที่', style: 'tableHeader', alignment: 'left' },
-			{ text: 'ผลรวม ความเสียหาย', style: 'tableHeader', alignment: 'right', noWrap: true },
+			{
+				text: settings?.language === 'en' ? 'No.' : 'ลำดับ',
+				style: 'tableHeader',
+				alignment: 'left',
+				noWrap: true,
+			},
+			{ text: settings?.language === 'en' ? 'Area' : 'พื้นที่', style: 'tableHeader', alignment: 'left' },
+			{
+				text: settings?.language === 'en' ? 'Total Analysis' : 'ผลรวม ความเสียหาย',
+				style: 'tableHeader',
+				alignment: 'right',
+				noWrap: true,
+			},
 		],
 	]
 	data[0]?.disasterAreas?.forEach((item: any) => {
@@ -347,17 +371,17 @@ function getTableLossStatistic(data: any, formData: SearchFormType, lookups: Loo
 		body.push(row)
 	})
 	const provinceName = formData?.provinceCode
-		? `จังหวัด${lookups?.province?.find((item) => item.code === formData?.provinceCode)?.name?.[settings?.language]}`
+		? `${settings?.language === 'en' ? '' : 'จังหวัด'}${lookups?.province?.find((item) => item.code === formData?.provinceCode)?.name?.[settings?.language]}`
 		: ''
 	const districtName = formData?.districtCode
-		? `อำเภอ${lookups?.district?.find((item) => item.code === formData?.districtCode)?.name?.[settings?.language]}`
+		? `${settings?.language === 'en' ? '' : 'อำเภอ'}${lookups?.district?.find((item) => item.code === formData?.districtCode)?.name?.[settings?.language]}${settings?.language === 'en' ? ', ' : ''}`
 		: ''
 	const subDistrictName = formData?.subDistrictCode
-		? `ตำบล${lookups?.subDistrict?.find((item) => item.code === formData?.subDistrictCode)?.name?.[settings?.language]}`
+		? `${settings?.language === 'en' ? '' : 'ตำบล'}${lookups?.subDistrict?.find((item) => item.code === formData?.subDistrictCode)?.name?.[settings?.language]}${settings?.language === 'en' ? ', ' : ''}`
 		: ''
 	const content = [
 		{
-			text: 'อันดับพื้นที่ความเสียหาย (ไร่)',
+			text: settings?.language === 'en' ? 'Damaged Area Rank (Rai)' : 'อันดับพื้นที่ความเสียหาย (ไร่)',
 			bold: true,
 			margin: [0, 12, 0, 0],
 		},
@@ -367,7 +391,9 @@ function getTableLossStatistic(data: any, formData: SearchFormType, lookups: Loo
 				{
 					text: `(${
 						!provinceName
-							? 'ทุกจังหวัด'
+							? settings?.language === 'en'
+								? 'All Provinces'
+								: 'ทุกจังหวัด'
 							: !districtName
 								? provinceName
 								: !subDistrictName
@@ -375,11 +401,13 @@ function getTableLossStatistic(data: any, formData: SearchFormType, lookups: Loo
 									: `${subDistrictName} ${districtName} ${provinceName}`
 					} ${
 						formData?.year.length === 0
-							? 'ทุกปี'
-							: `ปี ${lookups?.years
+							? settings?.language === 'en'
+								? 'All Years'
+								: 'ทุกปี'
+							: `${settings?.language === 'en' ? 'Year' : 'ปี'} ${lookups?.years
 									?.filter((year) => formData?.year?.includes(year.code))
 									?.map((year) => year?.name?.[settings?.language])
-									?.join(',')}`
+									?.join(', ')}`
 					})`,
 					width: '*',
 				},
@@ -388,14 +416,16 @@ function getTableLossStatistic(data: any, formData: SearchFormType, lookups: Loo
 						{
 							type: 'square',
 							markerColor: '#9F9F9F',
-							ul: ['ความเสียหายตามกษ.02'],
+							ul: [settings?.language === 'en' ? 'Damage According to GS.02' : 'ความเสียหายตามกษ.02'],
 							noWrap: true,
 							width: 'auto',
 						},
 						{
 							type: 'square',
 							markerColor: '#B23B56',
-							ul: ['ความเสียหายจากระบบวิเคราะห์'],
+							ul: [
+								settings?.language === 'en' ? 'Analysis System Damage' : 'ความเสียหายจากระบบวิเคราะห์',
+							],
 							noWrap: true,
 							width: 'auto',
 						},
