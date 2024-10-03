@@ -4,6 +4,10 @@ import pdfMake from 'pdfmake/build/pdfmake'
 //import pdfFonts from 'pdfmake/build/vfs_fonts'
 import pdfFonts from '@/components/pages/others/report/Main/vfs_fonts'
 import { TDocumentDefinitions } from 'pdfmake/interfaces'
+import { GetProfileDtoOut } from '@/api/um/dto-out.dto'
+import { GetLookupOutDto } from '@/api/lookup/dto-out.dto'
+import { ResponseLanguage } from '@/api/interface'
+import { AreaTypeKey, AreaUnitKey } from '@/enum'
 pdfMake.vfs = pdfFonts.vfs
 pdfMake.fonts = {
 	Anuphan: {
@@ -12,14 +16,37 @@ pdfMake.fonts = {
 	},
 }
 
+type SearchFormType = {
+	provinceCode?: number
+	districtCode?: number
+	subDistrictCode?: number
+	year: number[]
+	format: string
+}
+
+type LookupsType = {
+	province?: GetLookupOutDto[]
+	district?: GetLookupOutDto[]
+	subDistrict?: GetLookupOutDto[]
+	years?: GetLookupOutDto[]
+}
+
+type UserType = GetProfileDtoOut | undefined
+
+type SettingsType = {
+	language: keyof ResponseLanguage
+	areaUnit: AreaUnitKey
+	areaType: AreaTypeKey
+}
+
 export const exportPdf = (
 	data: any,
-	formData: any,
-	lookups: any,
-	user: any,
-	settings: any,
-	imgBarData: any,
-	imgLineData: any,
+	formData: SearchFormType,
+	lookups: LookupsType,
+	user: UserType,
+	settings: SettingsType,
+	imgBarData: string,
+	imgLineData: string,
 ) => {
 	return new Promise((resolve, reject) => {
 		try {
@@ -27,7 +54,7 @@ export const exportPdf = (
 				pageSize: 'A4',
 				pageMargins: [30, 100, 30, 40],
 				header: getPdfReportHeader(data, formData, lookups, settings),
-				content: getPdfReportContent(data, formData, lookups, user, settings, imgBarData, imgLineData),
+				content: getPdfReportContent(data, formData, lookups, settings, imgBarData, imgLineData),
 				footer: getPdfReportFooter(user),
 				defaultStyle: {
 					font: 'Anuphan',
@@ -60,15 +87,15 @@ export const exportPdf = (
 	})
 }
 
-function getPdfReportHeader(data: any, formData: any, lookups: any, settings: any) {
+function getPdfReportHeader(data: any, formData: SearchFormType, lookups: LookupsType, settings: SettingsType) {
 	const provinceName = formData?.provinceCode
-		? `จังหวัด${lookups?.province?.find((item: any) => item.code === formData?.provinceCode)?.name?.[settings?.language]}`
+		? `จังหวัด${lookups?.province?.find((item) => item.code === formData?.provinceCode)?.name?.[settings?.language]}`
 		: ''
 	const districtName = formData?.districtCode
-		? `อำเภอ${lookups?.district?.find((item: any) => item.code === formData?.districtCode)?.name?.[settings?.language]}`
+		? `อำเภอ${lookups?.district?.find((item) => item.code === formData?.districtCode)?.name?.[settings?.language]}`
 		: ''
 	const subDistrictName = formData?.subDistrictCode
-		? `ตำบล${lookups?.subDistrict?.find((item: any) => item.code === formData?.subDistrictCode)?.name?.[settings?.language]}`
+		? `ตำบล${lookups?.subDistrict?.find((item) => item.code === formData?.subDistrictCode)?.name?.[settings?.language]}`
 		: ''
 	const header = [
 		{
@@ -85,9 +112,13 @@ function getPdfReportHeader(data: any, formData: any, lookups: any, settings: an
 					margin: [0, 4, 0, 0],
 				},
 				{
-					text: `ปี ${data[0]?.disasterAreas
-						?.map((item: any) => item?.column?.[settings.language])
-						.join(',')}`,
+					text:
+						formData?.year.length === 0
+							? 'ทุกปี'
+							: `ปี ${lookups?.years
+									?.filter((year) => formData?.year?.includes(year.code))
+									?.map((year) => year?.name?.[settings?.language])
+									?.join(',')}`,
 					margin: [0, 4, 0, 0],
 				},
 			],
@@ -115,18 +146,31 @@ function getPdfReportHeader(data: any, formData: any, lookups: any, settings: an
 
 function getPdfReportContent(
 	data: any,
-	formData: any,
-	lookups: any,
-	user: any,
-	settings: any,
-	imgBarData: any,
-	imgLineData: any,
+	formData: SearchFormType,
+	lookups: LookupsType,
+	settings: SettingsType,
+	imgBarData: string,
+	imgLineData: string,
 ) {
 	let content = [
 		{
 			alignment: 'justify',
 			columns: [
 				{
+					layout: {
+						hLineWidth: function () {
+							return 1
+						},
+						vLineWidth: function () {
+							return 1
+						},
+						hLineColor: function () {
+							return '#D6D6D6'
+						},
+						vLineColor: function () {
+							return '#D6D6D6'
+						},
+					},
 					table: {
 						widths: ['*'],
 						body: [
@@ -137,18 +181,28 @@ function getPdfReportContent(
 											text: 'เปรียบเทียบพื้นที่เสียหาย (เฉพาะที่มีขอบแปลงเท่านั้น)',
 											fontSize: 10,
 										},
-										{
-											image: imgBarData,
-											width: 230,
-											height: 180,
-											margin: [0, 12, 0, 0],
-										},
+										data?.length === 0
+											? {
+													text: 'ไม่พบข้อมูล',
+													alignment: 'center',
+													fontSize: 10,
+													color: '#202020',
+													margin: [0, 90, 0, 90],
+												}
+											: {
+													image: imgBarData,
+													width: 240,
+													height: 180,
+													margin: [0, 12, 0, 0],
+												},
 									],
 									margin: [4, 4, 4, 4],
 								},
 							],
 						],
 					},
+				},
+				{
 					layout: {
 						hLineWidth: function () {
 							return 1
@@ -163,8 +217,6 @@ function getPdfReportContent(
 							return '#D6D6D6'
 						},
 					},
-				},
-				{
 					table: {
 						widths: ['*'],
 						body: [
@@ -175,31 +227,25 @@ function getPdfReportContent(
 											text: 'เปรียบเทียบพื้นที่เสียหายรายปี (เฉพาะที่มีขอบแปลงเท่านั้น)',
 											fontSize: 10,
 										},
-										{
-											image: imgLineData,
-											width: 230,
-											height: 180,
-											margin: [0, 12, 0, 0],
-										},
+										data?.length === 0
+											? {
+													text: 'ไม่พบข้อมูล',
+													alignment: 'center',
+													fontSize: 10,
+													color: '#202020',
+													margin: [0, 90, 0, 90],
+												}
+											: {
+													image: imgLineData,
+													width: 240,
+													height: 180,
+													margin: [0, 12, 0, 0],
+												},
 									],
 									margin: [4, 4, 4, 4],
 								},
 							],
 						],
-					},
-					layout: {
-						hLineWidth: function () {
-							return 1
-						},
-						vLineWidth: function () {
-							return 1
-						},
-						hLineColor: function () {
-							return '#D6D6D6'
-						},
-						vLineColor: function () {
-							return '#D6D6D6'
-						},
 					},
 				},
 			],
@@ -207,12 +253,12 @@ function getPdfReportContent(
 			margin: [0, 0, 0, 12],
 		},
 	]
-	content = content.concat(getTableLossStatistic(data, formData, settings) as any)
+	content = content.concat(getTableLossStatistic(data, formData, lookups, settings) as any)
 
 	return content
 }
 
-function getPdfReportFooter(user: any) {
+function getPdfReportFooter(user: UserType) {
 	return (currentPage: number, pageCount: number) => {
 		const footer = [
 			{
@@ -241,7 +287,7 @@ function getPdfReportFooter(user: any) {
 	}
 }
 
-function getTableLossStatistic(data: any, formData: any, settings: any) {
+function getTableLossStatistic(data: any, formData: SearchFormType, lookups: LookupsType, settings: SettingsType) {
 	const widths = ['auto', 80, 'auto']
 	const body: any = [
 		[
@@ -300,6 +346,15 @@ function getTableLossStatistic(data: any, formData: any, settings: any) {
 		})
 		body.push(row)
 	})
+	const provinceName = formData?.provinceCode
+		? `จังหวัด${lookups?.province?.find((item) => item.code === formData?.provinceCode)?.name?.[settings?.language]}`
+		: ''
+	const districtName = formData?.districtCode
+		? `อำเภอ${lookups?.district?.find((item) => item.code === formData?.districtCode)?.name?.[settings?.language]}`
+		: ''
+	const subDistrictName = formData?.subDistrictCode
+		? `ตำบล${lookups?.subDistrict?.find((item) => item.code === formData?.subDistrictCode)?.name?.[settings?.language]}`
+		: ''
 	const content = [
 		{
 			text: 'อันดับพื้นที่ความเสียหาย (ไร่)',
@@ -307,38 +362,120 @@ function getTableLossStatistic(data: any, formData: any, settings: any) {
 			margin: [0, 12, 0, 0],
 		},
 		{
-			style: 'table',
-			margin: [0, 12, 0, 0],
-			layout: {
-				vLineWidth: (i: number) => {
-					if (i === 2) {
-						return 1
-					}
-					return 0
+			alignment: 'justify',
+			columns: [
+				{
+					text: `(${
+						!provinceName
+							? 'ทุกจังหวัด'
+							: !districtName
+								? provinceName
+								: !subDistrictName
+									? `${districtName} ${provinceName}`
+									: `${subDistrictName} ${districtName} ${provinceName}`
+					} ${
+						formData?.year.length === 0
+							? 'ทุกปี'
+							: `ปี ${lookups?.years
+									?.filter((year) => formData?.year?.includes(year.code))
+									?.map((year) => year?.name?.[settings?.language])
+									?.join(',')}`
+					})`,
+					width: '*',
 				},
-				hLineWidth: (i: number) => {
-					if (i === 0) {
-						return 0
-					}
-					return 1
+				{
+					stack: [
+						{
+							type: 'square',
+							markerColor: '#9F9F9F',
+							ul: ['ความเสียหายตามกษ.02'],
+							noWrap: true,
+							width: 'auto',
+						},
+						{
+							type: 'square',
+							markerColor: '#B23B56',
+							ul: ['ความเสียหายจากระบบวิเคราะห์'],
+							noWrap: true,
+							width: 'auto',
+						},
+					],
+					width: 'auto',
+					noWrap: true,
 				},
-				vLineColor: () => '#D6D6D6',
-				hLineColor: (i: number) => {
-					if (i === 1) {
-						return '#D6D6D6'
-					}
-					return '#F2F2F2'
-				},
-				fillColor: (rowIndex: number, node: any, columnIndex: number) => {
-					return rowIndex !== 0 && columnIndex === 2 ? '#F8FAFD' : null
-				},
-			},
-			table: {
-				headerRows: 1,
-				widths,
-				body,
-			},
+			],
+			fontSize: 10,
+			color: '#202020',
+			columnGap: 20,
+			margin: [0, 4, 0, 0],
 		},
+		data?.length === 0
+			? {
+					margin: [0, 16, 0, 0],
+					layout: {
+						hLineWidth: function () {
+							return 1
+						},
+						vLineWidth: function () {
+							return 1
+						},
+						hLineColor: function () {
+							return '#D6D6D6'
+						},
+						vLineColor: function () {
+							return '#D6D6D6'
+						},
+					},
+					table: {
+						widths: ['*'],
+						body: [
+							[
+								{
+									stack: [
+										{
+											text: 'ไม่พบข้อมูล',
+											alignment: 'center',
+											fontSize: 10,
+											color: '#202020',
+											margin: [0, 180, 0, 180],
+										},
+									],
+									margin: [4, 4, 4, 4],
+								},
+							],
+						],
+					},
+				}
+			: {
+					style: 'table',
+					margin: [0, 16, 0, 0],
+					layout: {
+						vLineWidth: (i: number, node: any) => {
+							if (i <= 2 || i === node.table.widths.length) {
+								return 1
+							}
+							return 0
+						},
+						hLineWidth: (i: number) => {
+							return 1
+						},
+						vLineColor: () => '#D6D6D6',
+						hLineColor: (i: number, node: any) => {
+							if (i <= 1 || i === node.table.body.length) {
+								return '#D6D6D6'
+							}
+							return '#F2F2F2'
+						},
+						fillColor: (rowIndex: number, node: any, columnIndex: number) => {
+							return rowIndex !== 0 && columnIndex === 2 ? '#F8FAFD' : null
+						},
+					},
+					table: {
+						headerRows: 1,
+						widths,
+						body,
+					},
+				},
 	]
 	return content
 }

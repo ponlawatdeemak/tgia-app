@@ -318,6 +318,16 @@ const ReportMain = () => {
 		})
 	}
 
+	const styleChartSVG = (chartDiv: HTMLDivElement | null) => {
+		if (!chartDiv) return
+
+		const paths = chartDiv.querySelectorAll('.bb-axis path, .bb-shapes path')
+		paths.forEach((element) => {
+			element.setAttribute('fill', 'none')
+			element.setAttribute('stroke', '#000')
+		})
+	}
+
 	const handleClickExport = useCallback(
 		async (values: SearchFormType) => {
 			setPdfLoading(true)
@@ -335,12 +345,22 @@ const ReportMain = () => {
 				const chartBarData = await service.annualAnalysis.getBarLossStatistic(params)
 				const chartLineData = await service.annualAnalysis.getLineLossStatistic(params)
 
-				generateBarChart(chartBarData, chartBarRef)
-				generateLineChart(chartLineData, chartLineRef)
-				await waitForRender()
+				let imgBarData = ''
+				let imgLineData = ''
 
-				const imgBarData = await captureChartImage(chartBarRef.current)
-				const imgLineData = await captureChartImage(chartLineRef.current)
+				if (chartBarData?.data && chartBarData?.data?.length > 0) {
+					generateBarChart(chartBarData, chartBarRef)
+					await waitForRender()
+					styleChartSVG(chartBarRef.current)
+					imgBarData = await captureChartImage(chartBarRef.current)
+				}
+
+				if (chartLineData?.data && chartLineData?.data.length > 0) {
+					generateLineChart(chartLineData, chartLineRef)
+					await waitForRender()
+					styleChartSVG(chartLineRef.current)
+					imgLineData = await captureChartImage(chartLineRef.current)
+				}
 
 				let district, subDistrict
 				const province = (await service.lookup.get('provinces'))?.data
@@ -350,10 +370,12 @@ const ReportMain = () => {
 				if (values.subDistrictCode) {
 					subDistrict = (await service.lookup.get(`sub-districts/${values?.districtCode}`))?.data
 				}
+				const years = (await service.lookup.get('years'))?.data
 				const lookups = {
 					province,
 					district,
 					subDistrict,
+					years,
 				}
 				const blob = await report.exportPdf(
 					tableData.data,
