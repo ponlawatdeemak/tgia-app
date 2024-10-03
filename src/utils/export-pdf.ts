@@ -280,7 +280,7 @@ function getPdfReportFooter(user: UserType) {
 						width: '*',
 					},
 				],
-				margin: [10, 10],
+				margin: [30, 10, 30, 10],
 			},
 		]
 		return footer
