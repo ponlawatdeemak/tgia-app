@@ -68,15 +68,14 @@ const YearPicker: React.FC<YearPickerProps> = ({ formik, isFullOnMobile = false,
 	}
 
 	const handleSelectYear = (year: number) => {
+		let updatedSelectedYear: number[] = []
 		setSelectedYear((prevSelectedYear) => {
-			const updatedSelectedYear = prevSelectedYear.includes(year)
+			updatedSelectedYear = prevSelectedYear.includes(year)
 				? prevSelectedYear.filter((y) => y !== year)
 				: [...prevSelectedYear, year]
-
-			console.log('updatedSelectedYear', updatedSelectedYear)
-			formik?.setFieldValue('year', updatedSelectedYear)
 			return updatedSelectedYear.sort((a, b) => a - b)
 		})
+		formik?.setFieldValue('year', updatedSelectedYear)
 	}
 
 	const isYearSelected = (year: number) => selectedYear.includes(year)
