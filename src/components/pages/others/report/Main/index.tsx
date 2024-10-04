@@ -61,7 +61,7 @@ const ReportMain = () => {
 	const onSubmit = useCallback(
 		(values: SearchFormType) => {
 			if (userData?.data?.orgCode) {
-				const { year, subDistrictCode, format, ...props } = values
+				const { year, subDistrictCode, ...props } = values
 				const years = values.year.join(',')
 				const params = {
 					...props,
@@ -69,7 +69,6 @@ const ReportMain = () => {
 					orgCode: userData?.data?.orgCode,
 					language: i18n.language,
 					years,
-					format,
 				}
 				if (values.format === 'csv') {
 					setCsvLoading(true)
@@ -190,6 +189,7 @@ const ReportMain = () => {
 				},
 				legend: {
 					show: true,
+					padding: 4,
 				},
 				grid: {
 					y: {
@@ -197,9 +197,7 @@ const ReportMain = () => {
 					},
 				},
 				padding: {
-					// mode: 'fit' as const,
-					// bottom: 20,
-					// right: 100,
+					bottom: 60,
 				},
 				bindto: chartBarRef.current,
 			})
@@ -243,8 +241,6 @@ const ReportMain = () => {
 					colors: lossLineColorArr,
 				},
 				point: {
-					// r: 4,
-					// type: 'circle',
 					pattern: [
 						"<g><circle cx='6' cy='6' r='6'></circle><circle cx='6' cy='6' r='3' style='fill:#fff'></circle></g>",
 					],
@@ -271,10 +267,11 @@ const ReportMain = () => {
 					},
 				},
 				padding: {
-					top: 10,
+					bottom: 50,
 				},
 				legend: {
 					position: 'bottom',
+					padding: 4,
 				},
 				bindto: chartLineRef.current,
 			})
