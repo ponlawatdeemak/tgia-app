@@ -138,7 +138,7 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 								</Typography>
 								<div className='flex items-baseline justify-end gap-1'>
 									<span className='text-xl font-semibold text-black-light'>
-										{summaryData?.data?.actAreaNoGeom[areaUnit]?.toLocaleString()}
+										{summaryData?.data?.actAreaNoGeom?.[areaUnit]?.toLocaleString()}
 									</span>
 									<span className='text-base text-black-dark'>{t(areaUnit)}</span>
 								</div>
@@ -157,14 +157,14 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 								<div className='flex flex-col items-end gap-1'>
 									<div className='flex items-baseline justify-end gap-1'>
 										<span className='text-xl font-semibold text-secondary'>
-											{summaryData?.data?.claimedArea[areaUnit]?.toLocaleString()}
+											{summaryData?.data?.claimedArea?.[areaUnit]?.toLocaleString()}
 										</span>
 										<span className='text-base text-black-dark'>{t(areaUnit)}</span>
 									</div>
 									<p className='m-0 text-base font-normal text-black-dark'>
 										{i18n.language === 'th' && 'คิดเป็น'}{' '}
 										<span className='text-base font-semibold text-secondary'>
-											{(summaryData?.data?.claimedArea.percent || '') + '%'}
+											{(summaryData?.data?.claimedArea?.percent || '') + '%'}
 										</span>{' '}
 										{t('percentTotalRegisteredAreas', { ns: 'field-loss' })}
 									</p>
@@ -233,12 +233,12 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 								</Typography>
 								<div className='flex items-baseline justify-end gap-1'>
 									<span className='text-xl font-semibold text-secondary'>
-										{summaryData?.data?.predictedArea[areaUnit]?.toLocaleString()}
+										{summaryData?.data?.predictedArea?.[areaUnit]?.toLocaleString()}
 									</span>
 									<span className='text-base text-black-dark'>{t(areaUnit)}</span>
 								</div>
 								<div className='flex flex-col gap-2'>
-									{summaryData?.data?.lossPredicted.map((item) => (
+									{summaryData?.data?.lossPredicted?.map((item) => (
 										<FieldLossCard
 											key={item.lossType}
 											item={item}
