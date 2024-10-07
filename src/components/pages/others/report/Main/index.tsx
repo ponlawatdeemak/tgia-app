@@ -195,7 +195,7 @@ const ReportMain = () => {
 				},
 				legend: {
 					show: true,
-					padding: 4,
+					padding: 8,
 				},
 				grid: {
 					y: {
@@ -277,7 +277,7 @@ const ReportMain = () => {
 				},
 				legend: {
 					position: 'bottom',
-					padding: 4,
+					padding: 8,
 				},
 				bindto: chartLineRef.current,
 			})
