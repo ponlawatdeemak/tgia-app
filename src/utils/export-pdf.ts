@@ -310,7 +310,7 @@ function getTableLossStatistic(data: any, formData: SearchFormType, lookups: Loo
 			{
 				text: settings?.language === 'en' ? 'No.' : 'ลำดับ',
 				style: 'tableHeader',
-				alignment: 'left',
+				alignment: 'center',
 				noWrap: true,
 			},
 			{ text: settings?.language === 'en' ? 'Area' : 'พื้นที่', style: 'tableHeader', alignment: 'left' },
@@ -332,7 +332,7 @@ function getTableLossStatistic(data: any, formData: SearchFormType, lookups: Loo
 	})
 	data?.forEach((item: any, index: number) => {
 		const row = [
-			{ text: index + 1, alignment: 'left' },
+			{ text: index + 1, alignment: 'center' },
 			{ text: item?.name?.[settings?.language], alignment: 'left', noWrap: true },
 			{
 				stack: [
