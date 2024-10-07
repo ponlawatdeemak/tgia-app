@@ -304,6 +304,26 @@ function getPdfReportFooter(user: UserType, settings: SettingsType) {
 }
 
 function getTableLossStatistic(data: any, formData: SearchFormType, lookups: LookupsType, settings: SettingsType) {
+	const totalAreas: { [key: string]: { [key: string]: number } } = {}
+	data?.forEach((item: any) => {
+		item?.disasterAreas?.forEach((subItem: any) => {
+			const disasterArea = subItem?.[settings?.areaUnit]
+			const predictedArea = item?.predictedAreas?.find(
+				(area: any) => area?.column?.[settings.language] === subItem?.column?.[settings.language],
+			)?.[settings?.areaUnit]
+
+			if (!totalAreas[subItem?.column?.[settings.language]]) {
+				totalAreas[subItem?.column?.[settings.language]] = {
+					disaster: 0,
+					predicted: 0,
+				}
+			}
+
+			totalAreas[subItem?.column?.[settings.language]].disaster += disasterArea
+			totalAreas[subItem?.column?.[settings.language]].predicted += predictedArea
+		})
+	})
+
 	const widths = ['auto', 'auto', 'auto']
 	const body: any = [
 		[
@@ -372,6 +392,63 @@ function getTableLossStatistic(data: any, formData: SearchFormType, lookups: Loo
 		})
 		body.push(row)
 	})
+
+	const endRowTotal = [
+		{ text: settings?.language === 'en' ? 'Total' : 'รวม', alignment: 'center', colSpan: 2 },
+		{},
+		{
+			stack: [
+				{
+					text:
+						data?.length > 0
+							? Number(
+									data
+										?.map((item: any) => item?.totalDisasterArea?.[settings?.areaUnit])
+										?.reduce((total: number, value: number) => total + value)
+										?.toFixed(2) || 0,
+								)?.toLocaleString()
+							: '',
+					alignment: 'right',
+					noWrap: true,
+				},
+				{
+					text:
+						data?.length > 0
+							? Number(
+									data
+										?.map((item: any) => item?.totalPredictedArea?.[settings?.areaUnit])
+										?.reduce((total: number, value: number) => total + value)
+										?.toFixed(2) || 0,
+								)?.toLocaleString()
+							: '',
+					style: 'predictedArea',
+					alignment: 'right',
+					noWrap: true,
+				},
+			],
+		},
+	]
+
+	for (let data in totalAreas) {
+		const totalByYear = {
+			stack: [
+				{
+					text: Number(totalAreas?.[data]?.disaster?.toFixed(2) || 0)?.toLocaleString(),
+					alignment: 'right',
+					noWrap: true,
+				},
+				{
+					text: Number(totalAreas?.[data]?.predicted?.toFixed(2) || 0)?.toLocaleString(),
+					style: 'predictedArea',
+					alignment: 'right',
+					noWrap: true,
+				},
+			],
+		}
+		endRowTotal.push(totalByYear)
+	}
+	body.push(endRowTotal)
+
 	const provinceName = formData?.provinceCode
 		? `${settings?.language === 'en' ? '' : 'จังหวัด'}${lookups?.province?.find((item) => item.code === formData?.provinceCode)?.name?.[settings?.language]}`
 		: ''
