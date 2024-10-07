@@ -84,7 +84,7 @@ const ReportMain = () => {
 							setAlertInfo({
 								open: true,
 								severity: 'error',
-								message: error?.title ? error.title : t('error.somethingWrong'),
+								message: t('error.somethingWrong'),
 							})
 						})
 						.finally(() => {
