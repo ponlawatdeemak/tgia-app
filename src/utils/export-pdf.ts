@@ -273,6 +273,8 @@ function getPdfReportContent(
 }
 
 function getPdfReportFooter(user: UserType, settings: SettingsType) {
+	const fullName = `${user?.firstName} ${user?.lastName}`
+	const displayName = fullName?.length > 40 ? `${fullName.substring(0, 40)}...` : fullName
 	return (currentPage: number, pageCount: number) => {
 		const footer = [
 			{
@@ -281,7 +283,7 @@ function getPdfReportFooter(user: UserType, settings: SettingsType) {
 					{
 						text: `${settings?.language === 'en' ? 'Created Date:' : 'วันเวลาออกเอกสาร:'} ${moment().format(
 							`DD/MM/YYYY HH:mm ${settings?.language === 'en' ? '' : 'น.'}`,
-						)} ${settings?.language === 'en' ? 'Created By:' : 'ผู้ออกเอกสาร:'} ${user?.firstName} ${user?.lastName}`,
+						)} ${settings?.language === 'en' ? 'Created By:' : 'ผู้ออกเอกสาร:'} ${displayName}`,
 						style: 'footer',
 						noWrap: true,
 						width: 'auto',
@@ -302,7 +304,7 @@ function getPdfReportFooter(user: UserType, settings: SettingsType) {
 }
 
 function getTableLossStatistic(data: any, formData: SearchFormType, lookups: LookupsType, settings: SettingsType) {
-	const widths = ['auto', 80, 'auto']
+	const widths = ['auto', 'auto', 'auto']
 	const body: any = [
 		[
 			{
@@ -331,7 +333,7 @@ function getTableLossStatistic(data: any, formData: SearchFormType, lookups: Loo
 	data?.forEach((item: any, index: number) => {
 		const row = [
 			{ text: index + 1, alignment: 'left' },
-			{ text: item?.name?.[settings?.language], alignment: 'left' },
+			{ text: item?.name?.[settings?.language], alignment: 'left', noWrap: true },
 			{
 				stack: [
 					{

@@ -21,14 +21,20 @@ interface YearPickerProps {
 	formik?: FormikProps<any>
 	isFullOnMobile?: boolean
 	disabled?: boolean
+	isShowOnReport?: boolean
 }
 
-const YearPicker: React.FC<YearPickerProps> = ({ formik, isFullOnMobile = false, disabled = false }) => {
+const YearPicker: React.FC<YearPickerProps> = ({
+	formik,
+	isFullOnMobile = false,
+	disabled = false,
+	isShowOnReport = false,
+}) => {
 	const { open, setOpen } = useYearPicker()
 	const { areaType } = useAreaType()
 	const { queryParams, setQueryParams } = useSearchAnnualAnalysis()
 	const { isDesktop } = useResponsive()
-	const { t, i18n } = useTranslation(['default'])
+	const { t, i18n } = useTranslation(['default', 'report'])
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 	const [selectedYear, setSelectedYear] = useState<number[]>([])
 	const language = i18n.language as keyof ResponseLanguage
@@ -115,7 +121,11 @@ const YearPicker: React.FC<YearPickerProps> = ({ formik, isFullOnMobile = false,
 							'opacity-45': disabled,
 						})}
 					>
-						{selectedYear.length > 0 ? formatYears(selectedYear) : `${t('dataYear')}`}
+						{selectedYear.length > 0
+							? formatYears(selectedYear)
+							: isShowOnReport
+								? `${t('totalYear', { ns: 'report' })}`
+								: `${t('dataYear')}`}
 					</div>
 				</IconButton>
 			) : (
@@ -145,7 +155,11 @@ const YearPicker: React.FC<YearPickerProps> = ({ formik, isFullOnMobile = false,
 				onClick={handleClick}
 			>
 				<div className={clsx('truncate', { 'pl-2': !(selectedYear.length > 0), 'opacity-45': disabled })}>
-					{selectedYear.length > 0 ? formatYears(selectedYear) : `${t('dataYear')}`}
+					{selectedYear.length > 0
+						? formatYears(selectedYear)
+						: isShowOnReport
+							? `${t('totalYear', { ns: 'report' })}`
+							: `${t('dataYear')}`}
 				</div>
 			</Button>
 

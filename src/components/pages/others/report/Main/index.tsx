@@ -5,7 +5,7 @@ import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as yup from 'yup'
-import { Alert, Button, CircularProgress, Paper, Snackbar, Typography } from '@mui/material'
+import { Alert, CircularProgress, Paper, Snackbar, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
@@ -16,6 +16,7 @@ import { ResponseAnnualAnalysisBarDto, ResponseAnnualAnalysisLineDto, ResponseLa
 import useAreaUnit from '@/store/area-unit'
 import bb, { bar, line } from 'billboard.js'
 import { DataLossStatisticDtoOut, LegendLossStatisticDtoOut } from '@/api/annual-analysis/dto-out.dto'
+import LoadingButton from '@mui/lab/LoadingButton'
 
 interface SearchFormType {
 	provinceCode?: number
@@ -440,19 +441,17 @@ const ReportMain = () => {
 				</Typography>
 				<form noValidate onSubmit={formik.handleSubmit} className='flex flex-col gap-4'>
 					<AdminPoly formik={formik} isShowFileType isYearMultiple loading={csvLoading || pdfLoading} />
-					<Button
-						className='py-2 max-lg:rounded'
+					<LoadingButton
 						fullWidth
+						loading={csvLoading || pdfLoading}
+						loadingPosition='start'
+						startIcon={<CircularProgress size={0} />}
 						variant='contained'
 						type='submit'
-						disabled={csvLoading || pdfLoading}
+						className='py-2 max-lg:rounded [&_.MuiButton-startIcon]:m-0'
 					>
-						{csvLoading || pdfLoading ? (
-							<CircularProgress size='20px' className='py-[4px]' />
-						) : (
-							<span className='font-semibold'>{t('download', { ns: 'report' })}</span>
-						)}
-					</Button>
+						<span className='font-semibold'>{t('download', { ns: 'report' })}</span>
+					</LoadingButton>
 				</form>
 			</Paper>
 			{/* Static hidden divs for charts */}
