@@ -70,15 +70,20 @@ const ReportMain = () => {
 					orgCode: userData?.data?.orgCode,
 					language: i18n.language,
 					years,
+					registrationAreaType: areaType,
 				}
 				if (values.format === 'csv') {
 					setCsvLoading(true)
 					service.report
 						.download(params)
 						.then((res) => {
-							res?.data?.urls.map((item) => {
-								window.open(item)
-							})
+							if (res?.data?.urls instanceof Array) {
+								res?.data?.urls.map((item) => {
+									window.open(item)
+								})
+							} else if (typeof res?.data?.urls === 'string') {
+								window.open(res?.data?.urls)
+							}
 						})
 						.catch((error) => {
 							console.log(error)

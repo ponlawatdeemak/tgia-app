@@ -1,3 +1,3 @@
-export interface ReportDtoOut{
-    urls: string[]
+export interface ReportDtoOut {
+	urls: string[] | string
 }
