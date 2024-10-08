@@ -111,6 +111,8 @@ const YearPicker: React.FC<YearPickerProps> = ({
 					disabled={disabled}
 					className={clsx('btn-shadow flex max-h-[40px] min-h-[40px] min-w-[40px] justify-start lg:hidden', {
 						'box-border border-2 border-solid border-primary': open,
+						'border-gray-light5 max-h-[41.875px] min-h-[41.875px] border border-solid shadow-none':
+							isShowOnReport,
 					})}
 					onClick={handleClick}
 				>
@@ -150,6 +152,8 @@ const YearPicker: React.FC<YearPickerProps> = ({
 					'[&_.MuiButton-startIcon]:mr-0': !(selectedYear.length > 0),
 					'border-2 border-solid border-primary': open,
 					'max-w-[200px]': !isFullOnMobile,
+					'border-gray-light5 max-h-[41.875px] min-h-[41.875px] border border-solid shadow-none':
+						isShowOnReport,
 				})}
 				startIcon={<Icon path={mdiCalendarMonthOutline} size={1} className={disabled ? 'opacity-45' : ''} />}
 				onClick={handleClick}
