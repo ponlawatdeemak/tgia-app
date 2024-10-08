@@ -78,9 +78,17 @@ const ReportMain = () => {
 						.download(params)
 						.then((res) => {
 							if (res?.data?.urls instanceof Array) {
-								res?.data?.urls.map((item) => {
-									window.open(item)
-								})
+								if (res?.data?.urls.length > 0) {
+									res?.data?.urls.map((item) => {
+										window.open(item)
+									})
+								} else {
+									setAlertInfo({
+										open: true,
+										severity: 'error',
+										message: t('error.noResultsFound', { ns: 'report' }),
+									})
+								}
 							} else if (typeof res?.data?.urls === 'string') {
 								window.open(res?.data?.urls)
 							}
