@@ -169,8 +169,24 @@ const ReportMain = () => {
 					labels: {
 						centered: true,
 						colors: 'white' as string,
+						backgroundColors: lossBarColorArr,
 						format: (x: number) => {
-							return isBarInteger ? x.toLocaleString() : x.toLocaleString() + ' %'
+							return isBarInteger
+								? Number(x?.toFixed(2) || 0)?.toLocaleString()
+								: Number(x?.toFixed(2) || 0)?.toLocaleString() + ' %'
+						},
+						position: function (type, v, id, i, texts) {
+							let pos = 0
+							if (type === 'y') {
+								pos = -(
+									texts
+										.data()
+										.filter((item) => item.index === i)
+										.map((subItem) => subItem.id)
+										.indexOf(id) * 20
+								)
+							}
+							return pos
 						},
 					},
 					colors: lossBarColorArr,
