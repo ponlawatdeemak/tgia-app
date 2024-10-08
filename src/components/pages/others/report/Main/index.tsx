@@ -404,34 +404,32 @@ const ReportMain = () => {
 					subDistrict,
 					years,
 				}
-				const blob = await report.exportPdf(
-					tableData.data,
-					values,
-					lookups,
-					userData?.data,
-					settings,
-					imgBarData,
-					imgLineData,
-				)
-				const fileName = `damaged_area_report.pdf`
-				const navigator = window.navigator as NavigatorWithSaveBlob
-				if (navigator && navigator.msSaveOrOpenBlob) {
-					navigator.msSaveOrOpenBlob(
-						new Blob([blob as Blob], {
-							type: 'application/pdf',
-						}),
-						fileName,
-					)
-				} else {
-					window.open(
-						URL.createObjectURL(
-							new Blob([blob as Blob], {
-								type: 'application/pdf',
-							}),
-						),
-						'_blank',
-					)
-				}
+				report
+					.exportPdf(tableData.data, values, lookups, userData?.data, settings, imgBarData, imgLineData)
+					.then((blob: Blob) => {
+						const fileName = `damaged_area_report.pdf`
+						const navigator = window.navigator as NavigatorWithSaveBlob
+						if (navigator && navigator.msSaveOrOpenBlob) {
+							navigator.msSaveOrOpenBlob(
+								new Blob([blob], {
+									type: 'application/pdf',
+								}),
+								fileName,
+							)
+						} else {
+							window.open(
+								URL.createObjectURL(
+									new Blob([blob], {
+										type: 'application/pdf',
+									}),
+								),
+								'_blank',
+							)
+						}
+					})
+					.catch((error) => {
+						console.log('error', error)
+					})
 			} catch (error: any) {
 				console.log('error', error)
 				setAlertInfo({

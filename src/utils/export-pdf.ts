@@ -47,7 +47,7 @@ export const exportPdf = (
 	settings: SettingsType,
 	imgBarData: string,
 	imgLineData: string,
-) => {
+): Promise<Blob> => {
 	return new Promise((resolve, reject) => {
 		try {
 			const docDefinition: any = {
@@ -78,7 +78,7 @@ export const exportPdf = (
 					},
 				},
 			}
-			pdfMake.createPdf(docDefinition).getBlob((blob) => {
+			pdfMake.createPdf(docDefinition).getBlob((blob: Blob) => {
 				resolve(blob)
 			})
 		} catch (error) {

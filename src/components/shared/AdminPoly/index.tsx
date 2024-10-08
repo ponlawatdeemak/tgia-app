@@ -232,7 +232,7 @@ const AdminPoly: React.FC<AdminPolyProps> = ({
 									disabled={loading}
 								>
 									<FormLabel id={`year-label`} className='mb-2'>
-										{t('totalYear', { ns: 'report' })}
+										{t('dataYear')}
 									</FormLabel>
 									<YearPicker formik={formik} isFullOnMobile disabled={loading} isShowOnReport />
 									{typeof errorMessageYear === 'string' && (
