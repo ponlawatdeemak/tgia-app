@@ -65,8 +65,8 @@ const RangeCalendar: React.FC<RangeCalendarProps> = ({ dateRange = undefined, on
 	const { areaUnit } = useAreaUnit()
 	const [ranges, setRanges] = useState<Range[]>([{ ...dateRange, key: 'selection' }])
 	const [filter, setFilter] = useState<FilterType>({
-		startDate: queryParams.startDate ? format(addDays(startOfMonth(new Date()), -7), 'yyyy-MM-dd') : '',
-		endDate: queryParams.endDate ? format(addDays(endOfMonth(new Date()), 7), 'yyyy-MM-dd') : '',
+		startDate: queryParams.startDate ? format(addDays(startOfMonth(queryParams.startDate), -7), 'yyyy-MM-dd') : '',
+		endDate: queryParams.endDate ? format(addDays(endOfMonth(queryParams.endDate), 7), 'yyyy-MM-dd') : '',
 		registrationAreaType: areaType,
 		provinceCode: queryParams.provinceCode,
 		districtCode: queryParams.districtCode,
