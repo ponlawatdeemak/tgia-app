@@ -39,8 +39,22 @@ const LossStatisticBar: React.FC<PlantStatisticTableProps> = ({
 				labels: {
 					centered: true,
 					colors: 'white' as string,
+					backgroundColors: lossBarColorArr,
 					format: (x: number) => {
 						return isBarInteger ? x.toLocaleString() : x.toLocaleString() + ' %'
+					},
+					position: function (type: any, v: any, id: any, i: any, texts: any) {
+						let pos = 0
+						if (type === 'y') {
+							pos = -(
+								texts
+									.data()
+									.filter((item: any) => item.index === i)
+									.map((subItem: any) => subItem.id)
+									.indexOf(id) * 20
+							)
+						}
+						return pos
 					},
 				},
 				colors: lossBarColorArr,
