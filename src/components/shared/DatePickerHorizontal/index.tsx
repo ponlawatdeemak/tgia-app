@@ -48,7 +48,7 @@ const DatePickerHorizontal: React.FC<DatePickerHorizontalProps> = ({ startDate, 
 		infinite: false,
 		slidesToShow: 16,
 		swipeToSlide: true,
-		slidesToScroll: 4,
+		slidesToScroll: 2,
 		arrows: false,
 		responsive: [
 			{
@@ -109,7 +109,7 @@ const DatePickerHorizontal: React.FC<DatePickerHorizontalProps> = ({ startDate, 
 				<div className='px-6'>
 					<Slider
 						{...settings}
-						className='slider variable-width left-[-26px] h-[30px] border-0 border-x border-solid border-transparent [&_.slick-track]:h-[30px]'
+						className='slider variable-width left-[-26px] h-[30px] border-0 border-x border-solid border-transparent [&_.slick-track]:m-0 [&_.slick-track]:h-[30px]'
 						draggable={false}
 						ref={monthSliderRef}
 					>
@@ -149,7 +149,7 @@ const DatePickerHorizontal: React.FC<DatePickerHorizontalProps> = ({ startDate, 
 					<Slider
 						ref={dateSliderRef}
 						{...settings}
-						className='slider variable-width calendar-slider min-w-0 border-0 border-x border-solid border-gray'
+						className='slider variable-width calendar-slider min-w-0 border-0 border-x border-solid border-gray [&_.slick-track]:m-0'
 						afterChange={(index) => {
 							setSlideIndex(index)
 							monthSliderRef.current?.slickGoTo(index, true)
