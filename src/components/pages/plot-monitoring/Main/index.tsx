@@ -72,12 +72,14 @@ export const PlotMonitoringSearchMain: React.FC<PlotMonitoringSearchMain> = ({ i
 	useEffect(() => {
 		if (
 			!formik.values.districtCode ||
-			formik.values.districtCode.toString() !== formik.values.subDistrictCode?.toString().substring(0, 4)
+			(formik.values.subDistrictCode &&
+				formik.values.districtCode.toString() !== formik.values.subDistrictCode?.toString().substring(0, 4))
 		) {
 			formik.setFieldValue('subDistrictCode', null)
 		} else if (
 			!formik.values.provinceCode ||
-			formik.values.provinceCode.toString() !== formik.values.districtCode?.toString().substring(0, 2)
+			(formik.values.districtCode &&
+				formik.values.provinceCode.toString() !== formik.values.districtCode?.toString().substring(0, 2))
 		) {
 			formik.setFieldValue('districtCode', null)
 		}
