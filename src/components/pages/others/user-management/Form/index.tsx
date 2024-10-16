@@ -273,11 +273,19 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 			if (reason === 'backdropClick') {
 				return
 			}
-			formik.resetForm()
-			onClose()
+			// formik.resetForm()
+			// onClose()
+			setOpen(false)
 		},
 		[onClose],
 	)
+
+	useEffect(() => {
+		if (open) {
+			// queryClient.invalidateQueries({ queryKey: ['getUM', userId] })
+			formik.resetForm()
+		}
+	}, [open])
 
 	const formik = useFormik<UMFormValues>({
 		enableReinitialize: true,
