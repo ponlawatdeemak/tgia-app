@@ -36,7 +36,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 		if (plotDetail === 'plantDetail') {
 			setLayers([
 				new MVTLayer({
-					id: `boundary_$${queryParams.year}`,
+					id: `boundary_$${queryParams.year}` + `-${new Date().getTime()}`,
 					name: `boundary_$${queryParams.year}`,
 					loadOptions: {
 						fetch: {
@@ -71,7 +71,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 					},
 				}),
 				new MVTLayer({
-					id: `rnr_$${queryParams.year}`,
+					id: `rnr_$${queryParams.year}` + `-${new Date().getTime()}`,
 					name: `rnr_$${queryParams.year}`,
 					loadOptions: {
 						fetch: {
@@ -109,7 +109,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 		} else if (plotDetail === 'lossDetail') {
 			setLayers([
 				new MVTLayer({
-					id: `boundary_$${queryParams.year}`,
+					id: `boundary_$${queryParams.year}` + `-${new Date().getTime()}`,
 					name: `boundary_$${queryParams.year}`,
 					loadOptions: {
 						fetch: {
@@ -147,7 +147,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 			if (lossType && !['noData', 'noDamage'].includes(lossType || '')) {
 				addLayer(
 					new MVTLayer({
-						id: `${lossType}_$${queryParams.year}`,
+						id: `${lossType}_$${queryParams.year}` + `-${new Date().getTime()}`,
 						name: `${lossType}_$${queryParams.year}`,
 						loadOptions: {
 							fetch: {

@@ -26,17 +26,12 @@ export const recreateLayer = (layerList: Layer[]) => {
 			beforeId: 'custom-referer-layer',
 		} as any
 
-		console.log('recreateLayer ', newProp)
-
 		if (item instanceof IconLayer) {
 			newProp.data = item.props.data
-
-			console.log('IconLayer ', newProp)
 			return new IconLayer(newProp)
 		}
 
 		if (item instanceof MVTLayer) {
-			console.log('MVTLayer ', newProp)
 			return new MVTLayer(newProp)
 		}
 		return item

@@ -137,7 +137,7 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 						? 'province'
 						: !queryParams.subDistrictCode
 							? 'district'
-							: 'subDistrict',
+							: 'subDistrict' + `-${new Date().getTime()}`,
 				name: !queryParams.provinceCode
 					? 'country'
 					: !queryParams.districtCode
@@ -221,7 +221,7 @@ const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 		if (areaSearchPlot) {
 			addLayer(
 				new MVTLayer({
-					id: `boundary_$${queryParams.year}`,
+					id: `boundary_$${queryParams.year}` + `-${new Date().getTime()}`,
 					name: `boundary_$${queryParams.year}`,
 					loadOptions: {
 						fetch: {
