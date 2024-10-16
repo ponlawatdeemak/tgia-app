@@ -9,15 +9,22 @@ import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 
 interface PlotMonitoringListProps {
+	areaDetail: string
 	isFullList: boolean
+	setAreaDetail: React.Dispatch<React.SetStateAction<string>>
 	setIsFullList: React.Dispatch<React.SetStateAction<boolean>>
 	// TO DO
 	mapViewRef?: any
 }
 
-const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({ isFullList, setIsFullList, mapViewRef }) => {
+const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({
+	areaDetail,
+	isFullList,
+	setAreaDetail,
+	setIsFullList,
+	mapViewRef,
+}) => {
 	const { t } = useTranslation(['default', 'plot-monitoring'])
-	const [areaDetail, setAreaDetail] = useState('cards')
 
 	const handleAreaDetailChange = useCallback((_event: React.MouseEvent<HTMLElement>, newAreaDetail: string) => {
 		setAreaDetail((prev) => newAreaDetail || prev)
