@@ -87,6 +87,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 							formik={formik}
 							required
 							disabled={loading}
+							inputProps={{ maxLength: 100 }}
 						/>
 						<FormInput
 							className='w-full text-sm font-medium lg:w-[240px]'
@@ -95,6 +96,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 							formik={formik}
 							required
 							disabled={loading}
+							inputProps={{ maxLength: 100 }}
 						/>
 					</div>
 					<div className='flex gap-[12px] max-lg:flex-col'>
@@ -105,6 +107,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 							formik={formik}
 							required
 							disabled={isDisabledProfile || loading || isEditFormUM}
+							inputProps={{ maxLength: 100 }}
 						/>
 					</div>
 				</Box>
