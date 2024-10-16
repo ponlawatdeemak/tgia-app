@@ -98,6 +98,15 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 	const { layers, addLayer, setLayers } = useLayerStore()
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null)
 
+	const { data: provinceLookupData, isLoading: isProvinceDataLoading } = useQuery({
+		queryKey: ['getMapProvince'],
+		queryFn: () => service.lookup.get('provinces'),
+	})
+
+	const provinceLookupId = useMemo(() => {
+		return provinceLookupData?.data?.map((item) => Number(item.code)) || []
+	}, [provinceLookupData])
+
 	const filterRangeMonth = useMemo(() => {
 		const filter: FilterRangeMonthType = {
 			startDate: queryParams.startDate
@@ -241,7 +250,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, ProvincePropertiesType>) {
-						if (summaryAreaId.includes(d.properties.provinceCode)) {
+						if (provinceLookupId.includes(Number(d.properties.provinceCode))) {
 							return SelectedLineWidth
 						}
 						return DefaultLineWidth
@@ -809,6 +818,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 		queryParams.districtCode,
 		queryParams.subDistrictCode,
 		summaryAreaId,
+		provinceLookupId,
 	])
 
 	function handleCountryClick() {
