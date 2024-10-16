@@ -208,7 +208,7 @@ export const FormImport: React.FC<FormImportProps> = ({ ...props }) => {
 	}
 
 	const handleCloseImport = (event: any, reason: string) => {
-		if (reason === 'backdropClick' && isLoading) {
+		if (reason === 'backdropClick' || isLoading) {
 			return
 		}
 		onClose()

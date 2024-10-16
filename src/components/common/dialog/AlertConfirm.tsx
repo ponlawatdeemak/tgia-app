@@ -45,7 +45,15 @@ const AlertConfirm: React.FC<AlertConfirmProps> = ({
 	const { t } = useTranslation(['default'])
 
 	return (
-		<Dialog open={open} onClose={onClose} className='[&_.MuiDialog-paper]:m-4 [&_.MuiDialog-paper]:w-[560px]'>
+		<Dialog
+			open={open}
+			onClose={(event, reason) => {
+				if (reason !== 'backdropClick') {
+					onClose()
+				}
+			}}
+			className='[&_.MuiDialog-paper]:m-4 [&_.MuiDialog-paper]:w-[560px]'
+		>
 			<DialogTitle className='flex items-center justify-between p-[8px] pl-[24px] max-sm:pl-4'>
 				<Typography className='text-md font-semibold'>{title}</Typography>
 				{!hideClose && (

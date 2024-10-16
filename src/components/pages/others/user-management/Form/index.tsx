@@ -268,10 +268,16 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 		[mutatePostProfileUM, mutatePutProfileUM, t, isEdit, session?.user.id, setIsSearch, setOpen, update],
 	)
 
-	const handleOnClose = useCallback(() => {
-		formik.resetForm()
-		onClose()
-	}, [onClose])
+	const handleOnClose = useCallback(
+		(event: any, reason: string) => {
+			if (reason === 'backdropClick') {
+				return
+			}
+			formik.resetForm()
+			onClose()
+		},
+		[onClose],
+	)
 
 	const formik = useFormik<UMFormValues>({
 		enableReinitialize: true,
@@ -352,7 +358,7 @@ export const FormMain: React.FC<UserManagementProps> = ({ ...props }) => {
 						<Button
 							className='h-[40px] w-[71px] bg-white text-sm text-black'
 							variant='contained'
-							onClick={handleOnClose}
+							onClick={(e) => handleOnClose(e, '')}
 							disabled={isPostProfileUMPending || isPutProfileUMPending || isUserDataLoading}
 						>
 							{t('cancel')}
