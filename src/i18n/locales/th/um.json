@@ -31,6 +31,7 @@
 	"userDocExample": "ตัวอย่างเอกสารผู้ใช้งาน",
 	"downloadTemplate": "ดาวน์โหลด Template",
 	"successImport": "นำเข้าผู้ใช้งานสำเร็จ",
+    "noItem": "ไม่พบข้อมูล",
 	"alert": {
 		"deleteUserProfile": "ลบบัญชีผู้ใช้งาน",
 		"enableUserProfile": "เปิดบัญชีผู้ใช้งาน",

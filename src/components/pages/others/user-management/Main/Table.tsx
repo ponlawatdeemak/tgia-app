@@ -33,7 +33,7 @@ import { useSwitchLanguage } from '@/i18n/client'
 import { Language } from '@/enum'
 import { GetSearchUMDtoOut } from '@/api/um/dto-out.dto'
 import { ResponseLanguage } from '@/api/interface'
-import { mdiTrashCanOutline, mdiPencilOutline } from '@mdi/js'
+import { mdiTrashCanOutline, mdiPencilOutline, mdiAccount, mdiAccountOff, mdiFolderOffOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
 import { useSession } from 'next-auth/react'
@@ -42,9 +42,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import useResponsive from '@/hook/responsive'
 import classNames from 'classnames'
-import { mdiAccount } from '@mdi/js'
-import { mdiAccountOff } from '@mdi/js'
 import { FormMain } from '../Form'
+import clsx from 'clsx'
 
 interface Data {
 	id: string
@@ -209,7 +208,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	React.useEffect(() => {
 		if (resData) {
 			setTableData(resData.data || [])
-			setTotal(resData.total || 1)
+			setTotal(resData.total || 0)
 		}
 	}, [resData])
 
@@ -441,8 +440,12 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 						{t('userList', { ns: 'um' })}
 					</Typography>
 					<Typography variant='body2' className='text-[#7A7A7A]'>
-						{t('showing', { ns: 'um' })} {(page - 1) * 10 + 1}-{Math.min(page * 10, total)}{' '}
-						{t('of', { ns: 'um' })} {total} {t('item', { ns: 'um' })}
+						{total !== 0 && (
+							<>
+								{t('showing', { ns: 'um' })} {(page - 1) * 10 + 1}-{Math.min(page * 10, total)}{' '}
+								{t('of', { ns: 'um' })} {total} {t('item', { ns: 'um' })}
+							</>
+						)}
 					</Typography>
 				</div>
 
@@ -507,226 +510,257 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								</Stack>
 							</Box>
 						)}
-						<Table
-							aria-labelledby='tableTitle'
-							size={dense ? 'small' : 'medium'}
-							stickyHeader
-							aria-label='sticky table'
-							sx={{
-								// tableLayout: 'auto',
-								width: '100%',
-								height: '90%',
-							}}
-						>
-							<TableHead>
-								<TableRow>
-									<TableCell padding='checkbox'>
-										<Checkbox
-											color='primary'
-											indeterminate={
-												selected.length > 0 && selected.length < tableData.length - 1
-											}
-											checked={
-												selected.length ===
-												tableData.filter((n) => n.id !== session?.user.id).length
-											}
-											onChange={handleSelectAllClick}
-											inputProps={{
-												'aria-label': 'select all desserts',
-											}}
-										/>
-									</TableCell>
-									{headCells.map((headCell) => (
-										<TableCell
-											key={headCell.id}
-											// align={headCell.id === "status" ? 'center':'left'}
-											align={'left'}
-											padding={headCell.disablePadding ? 'none' : 'normal'}
-											sortDirection={orderBy === headCell.id ? order : false}
-											className={`text-sm font-semibold`}
-											sx={{
-												minWidth: headCell.minWidth,
-											}}
-										>
-											<TableSortLabel
-												active={orderBy === headCell.id}
-												direction={orderBy === headCell.id ? order : SortType.ASC}
-												onClick={createSortHandler(headCell.id)}
-											>
-												{headCell.label}
-												{orderBy === headCell.id ? (
-													<Box component='span' sx={visuallyHidden}>
-														{order === SortType.DESC
-															? 'sorted descending'
-															: 'sorted ascending'}
-													</Box>
-												) : null}
-											</TableSortLabel>
-										</TableCell>
-									))}
-									<TableCell />
-								</TableRow>
-							</TableHead>
-							<TableBody className='overflow-y max-h-[40px] min-h-[40px]'>
-								{tableData.map((row, index) => {
-									const isItemSelected = isSelected(row.id)
-									const labelId = `enhanced-table-checkbox-${index}`
-									return (
-										<TableRow
-											hover
-											onClick={(event) => handleClick(event, row.id)}
-											role='checkbox'
-											aria-checked={isItemSelected}
-											tabIndex={-1}
-											key={row.id}
-											selected={isItemSelected}
-											sx={{ cursor: 'pointer' }}
-										>
-											<TableCell padding='checkbox'>
-												<Checkbox
-													color='primary'
-													checked={isItemSelected}
-													inputProps={{
-														'aria-labelledby': labelId,
-													}}
-													disabled={session?.user.id === row.id}
-												/>
-											</TableCell>
-											<TableCell component='th' id={labelId} scope='row' padding='none'>
-												<Box className='flex'>
-													{
-														<Avatar
-															className='mr-[4px] h-[24px] w-[24px] bg-primary'
-															src={row.image}
-														/>
-													}{' '}
-													{row.firstName} {row.lastName}
-												</Box>
-											</TableCell>
-											<TableCell>{row.email}</TableCell>
-											<TableCell>
-												{row.orgName[i18n.language as keyof ResponseLanguage]}
-											</TableCell>
-											<TableCell>
-												{row.roleName[i18n.language as keyof ResponseLanguage]}
-											</TableCell>
-											<TableCell>
-												{row.responsibleProvinceName[i18n.language as keyof ResponseLanguage]}
-											</TableCell>
-											<TableCell>
-												{row.responsibleDistrictName[i18n.language as keyof ResponseLanguage]}
-											</TableCell>
-											<TableCell>
-												{
-													<div
-														className={`flex items-center justify-center rounded-2xl ${row.flagStatus === 'A' ? 'bg-success-light' : 'bg-error-light'} h-[25px] w-[64px]`}
-													>
-														<Typography
-															className={`p-0.5 text-${row.flagStatus === 'A' ? 'success' : 'error'} text-sm`}
-														>
-															{
-																row.flagStatusName[
-																	i18n.language as keyof ResponseLanguage
-																]
-															}
-														</Typography>
-													</div>
+						{total === 0 ? (
+							<Box className='flex grow flex-col items-center justify-center'>
+								<Box className='flex flex-col items-center'>
+									<Icon path={mdiFolderOffOutline} size={6} color='var(--light-gray-color)' />
+									<Typography variant='body1' className='!font-semibold text-gray'>
+										{t('noItem', { ns: 'um' })}
+									</Typography>
+								</Box>
+							</Box>
+						) : (
+							<Table
+								aria-labelledby='tableTitle'
+								size={dense ? 'small' : 'medium'}
+								stickyHeader
+								aria-label='sticky table'
+								sx={{
+									// tableLayout: 'auto',
+									width: '100%',
+									height: '90%',
+								}}
+							>
+								<TableHead>
+									<TableRow>
+										<TableCell padding='checkbox'>
+											<Checkbox
+												color='primary'
+												indeterminate={
+													selected.length > 0 && selected.length < tableData.length - 1
 												}
+												checked={
+													total === 0
+														? false
+														: selected.length ===
+															tableData.filter((n) => n.id !== session?.user.id).length
+												}
+												disabled={total === 0}
+												onChange={handleSelectAllClick}
+												inputProps={{
+													'aria-label': 'select all desserts',
+												}}
+											/>
+										</TableCell>
+										{headCells.map((headCell) => (
+											<TableCell
+												key={headCell.id}
+												// align={headCell.id === "status" ? 'center':'left'}
+												align={'left'}
+												padding={headCell.disablePadding ? 'none' : 'normal'}
+												sortDirection={orderBy === headCell.id ? order : false}
+												className={`text-sm font-semibold`}
+												sx={{
+													minWidth: headCell.minWidth,
+												}}
+											>
+												<TableSortLabel
+													active={orderBy === headCell.id}
+													direction={orderBy === headCell.id ? order : SortType.ASC}
+													onClick={createSortHandler(headCell.id)}
+												>
+													{headCell.label}
+													{orderBy === headCell.id ? (
+														<Box component='span' sx={visuallyHidden}>
+															{order === SortType.DESC
+																? 'sorted descending'
+																: 'sorted ascending'}
+														</Box>
+													) : null}
+												</TableSortLabel>
 											</TableCell>
-											<TableCell>
-												<Box>
-													<Stack direction='row' spacing={1}>
-														<IconButton
-															onClick={(e) => {
-																e.stopPropagation()
-																setCurrentEditId(row.id)
-																setIsEditOpen(true)
-															}}
-														>
-															<Icon
-																path={mdiPencilOutline}
-																size={1}
-																color='var(--black-color)'
-															/>
-														</IconButton>
-														<IconButton
-															onClick={(e) => {
-																// stop event propagation to prevent row select
-																e.stopPropagation()
-																setCurrentDeleteId(row.id)
-																setIsConfirmDeleteOneOpen(true)
-															}}
-															disabled={session?.user.id === row.id}
-														>
-															<Icon
-																path={mdiTrashCanOutline}
-																size={1}
-																color={
-																	session?.user.id === row.id
-																		? 'var(--dark-gray-color)'
-																		: 'var(--error-color-1)'
-																}
-															/>
-														</IconButton>
-													</Stack>
-												</Box>
-											</TableCell>
-										</TableRow>
-									)
-								})}
-								{emptyRows > 0 && (
-									<TableRow
-										style={{
-											// height: (dense ? 33 : 53) * emptyRows,
-											height: 168 * emptyRows,
-										}}
-									>
-										<TableCell colSpan={10} />
+										))}
+										<TableCell />
 									</TableRow>
-								)}
-							</TableBody>
-						</Table>
+								</TableHead>
+								<TableBody className='overflow-y max-h-[40px] min-h-[40px]'>
+									{tableData.map((row, index) => {
+										const isItemSelected = isSelected(row.id)
+										const labelId = `enhanced-table-checkbox-${index}`
+										return (
+											<TableRow
+												hover
+												onClick={(event) => handleClick(event, row.id)}
+												role='checkbox'
+												aria-checked={isItemSelected}
+												tabIndex={-1}
+												key={row.id}
+												selected={isItemSelected}
+												sx={{ cursor: 'pointer' }}
+											>
+												<TableCell padding='checkbox'>
+													<Checkbox
+														color='primary'
+														checked={isItemSelected}
+														inputProps={{
+															'aria-labelledby': labelId,
+														}}
+														disabled={session?.user.id === row.id}
+													/>
+												</TableCell>
+												<TableCell component='th' id={labelId} scope='row' padding='none'>
+													<Box className='flex'>
+														{
+															<Avatar
+																className='mr-[4px] h-[24px] w-[24px] bg-primary'
+																src={row.image}
+															/>
+														}{' '}
+														{row.firstName} {row.lastName}
+													</Box>
+												</TableCell>
+												<TableCell>{row.email}</TableCell>
+												<TableCell>
+													{row.orgName[i18n.language as keyof ResponseLanguage]}
+												</TableCell>
+												<TableCell>
+													{row.roleName[i18n.language as keyof ResponseLanguage]}
+												</TableCell>
+												<TableCell>
+													{
+														row.responsibleProvinceName[
+															i18n.language as keyof ResponseLanguage
+														]
+													}
+												</TableCell>
+												<TableCell>
+													{
+														row.responsibleDistrictName[
+															i18n.language as keyof ResponseLanguage
+														]
+													}
+												</TableCell>
+												<TableCell>
+													{
+														<div
+															className={`flex items-center justify-center rounded-2xl ${row.flagStatus === 'A' ? 'bg-success-light' : 'bg-error-light'} h-[25px] w-[64px]`}
+														>
+															<Typography
+																className={`p-0.5 text-${row.flagStatus === 'A' ? 'success' : 'error'} text-sm`}
+															>
+																{
+																	row.flagStatusName[
+																		i18n.language as keyof ResponseLanguage
+																	]
+																}
+															</Typography>
+														</div>
+													}
+												</TableCell>
+												<TableCell>
+													<Box>
+														<Stack direction='row' spacing={1}>
+															<IconButton
+																onClick={(e) => {
+																	e.stopPropagation()
+																	setCurrentEditId(row.id)
+																	setIsEditOpen(true)
+																}}
+															>
+																<Icon
+																	path={mdiPencilOutline}
+																	size={1}
+																	color='var(--black-color)'
+																/>
+															</IconButton>
+															<IconButton
+																onClick={(e) => {
+																	// stop event propagation to prevent row select
+																	e.stopPropagation()
+																	setCurrentDeleteId(row.id)
+																	setIsConfirmDeleteOneOpen(true)
+																}}
+																disabled={session?.user.id === row.id}
+															>
+																<Icon
+																	path={mdiTrashCanOutline}
+																	size={1}
+																	color={
+																		session?.user.id === row.id
+																			? 'var(--dark-gray-color)'
+																			: 'var(--error-color-1)'
+																	}
+																/>
+															</IconButton>
+														</Stack>
+													</Box>
+												</TableCell>
+											</TableRow>
+										)
+									})}
+									{emptyRows > 0 && (
+										<TableRow
+											// style={{
+											// 	// height: (dense ? 33 : 53) * emptyRows,
+											// 	height: total === 0 ? '100%' : 168 * emptyRows, //total height is around 396px at dev screen height when total === 0
+											// }}
+											className={clsx(`h-[${168 * emptyRows}px]`, {
+												'h-[calc(100vh-404px)]': total === 0,
+											})}
+										>
+											<TableCell colSpan={10} />
+										</TableRow>
+									)}
+								</TableBody>
+							</Table>
+						)}
 					</TableContainer>
 					<Box className={'flex w-full items-center justify-between'}>
 						<Typography className='text-base font-normal'>
-							{t('page', { ns: 'um' })} {page} {t('of', { ns: 'um' })} {Math.ceil(total / 10)}
-						</Typography>
-						<Pagination
-							className={
-								isDesktop
-									? 'um-table-pagination [&_ul]:divide-x [&_ul]:divide-y-0 [&_ul]:divide-solid [&_ul]:divide-gray [&_ul]:rounded [&_ul]:border [&_ul]:border-solid [&_ul]:border-gray'
-									: 'mobile-um-table-pagination [&_ul]:divide-x [&_ul]:divide-y-0 [&_ul]:divide-solid [&_ul]:divide-gray [&_ul]:rounded [&_ul]:border [&_ul]:border-solid [&_ul]:border-gray'
-							}
-							count={Math.ceil(total / 10)}
-							variant='outlined'
-							shape='rounded'
-							siblingCount={isDesktop ? 1 : 0}
-							boundaryCount={isDesktop ? 1 : 0}
-							onChange={handlePagination}
-							page={page}
-							sx={{
-								gap: 0,
-							}}
-							renderItem={(item) => (
-								<PaginationItem
-									slots={{
-										previous: () => (
-											<>
-												<ArrowBackIcon className='h-[20px] w-[20px]' />
-												{isDesktop && t('previous')}
-											</>
-										),
-										next: () => (
-											<>
-												{isDesktop && t('next')}
-												<ArrowForwardIcon className='h-[20px] w-[20px]' />
-											</>
-										),
-									}}
-									{...item}
-								/>
+							{total !== 0 && (
+								<>
+									{t('page', { ns: 'um' })} {page} {t('of', { ns: 'um' })} {Math.ceil(total / 10)}
+								</>
 							)}
-						/>
+						</Typography>
+						{total !== 0 && (
+							<Pagination
+								className={
+									isDesktop
+										? 'um-table-pagination [&_ul]:divide-x [&_ul]:divide-y-0 [&_ul]:divide-solid [&_ul]:divide-gray [&_ul]:rounded [&_ul]:border [&_ul]:border-solid [&_ul]:border-gray'
+										: 'mobile-um-table-pagination [&_ul]:divide-x [&_ul]:divide-y-0 [&_ul]:divide-solid [&_ul]:divide-gray [&_ul]:rounded [&_ul]:border [&_ul]:border-solid [&_ul]:border-gray'
+								}
+								count={Math.ceil(total / 10)}
+								variant='outlined'
+								shape='rounded'
+								siblingCount={isDesktop ? 1 : 0}
+								boundaryCount={isDesktop ? 1 : 0}
+								onChange={handlePagination}
+								page={page}
+								sx={{
+									gap: 0,
+								}}
+								renderItem={(item) => (
+									<PaginationItem
+										slots={{
+											previous: () => (
+												<>
+													<ArrowBackIcon className='h-[20px] w-[20px]' />
+													{isDesktop && t('previous')}
+												</>
+											),
+											next: () => (
+												<>
+													{isDesktop && t('next')}
+													<ArrowForwardIcon className='h-[20px] w-[20px]' />
+												</>
+											),
+										}}
+										{...item}
+									/>
+								)}
+							/>
+						)}
 					</Box>
 				</Box>
 				{/* OverlayLoading */}
