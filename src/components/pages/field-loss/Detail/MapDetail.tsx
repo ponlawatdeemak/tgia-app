@@ -190,7 +190,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 		if (!queryParams.layerName) {
 			setLayers([
 				new MVTLayer({
-					id: 'province',
+					id: 'province' + `-${new Date().getTime()}`,
 					name: 'province',
 					loadOptions: {
 						fetch: {
@@ -312,7 +312,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 		} else if (queryParams.layerName === 'province') {
 			setLayers([
 				new MVTLayer({
-					id: 'province-district',
+					id: 'province-district' + `-${new Date().getTime()}`,
 					name: 'province-district',
 					loadOptions: {
 						fetch: {
@@ -341,7 +341,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 					},
 				}),
 				new MVTLayer({
-					id: 'district',
+					id: 'district' + `-${new Date().getTime()}`,
 					name: 'district',
 					loadOptions: {
 						fetch: {
@@ -485,7 +485,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 		} else if (queryParams.layerName === 'district') {
 			setLayers([
 				new MVTLayer({
-					id: 'district-subDistrict',
+					id: 'district-subDistrict' + `-${new Date().getTime()}`,
 					name: 'district-subDistrict',
 					loadOptions: {
 						fetch: {
@@ -513,7 +513,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 					},
 				}),
 				new MVTLayer({
-					id: 'subDistrict',
+					id: 'subDistrict' + `-${new Date().getTime()}`,
 					name: 'subDistrict',
 					loadOptions: {
 						fetch: {
@@ -657,7 +657,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 		} else if (queryParams.layerName === 'subdistrict') {
 			setLayers([
 				new MVTLayer({
-					id: 'subDistrict-subDistrict',
+					id: 'subDistrict-subDistrict' + `-${new Date().getTime()}`,
 					name: 'subDistrict-subDistrict',
 					loadOptions: {
 						fetch: {
