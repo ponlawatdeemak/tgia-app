@@ -12,12 +12,14 @@ import useResponsive from '@/hook/responsive'
 import { FormImport } from '../Import'
 
 export interface UserManagementSearchFormProps {
+	searchParams: GetSearchUMDtoIn
 	setSearchParams: React.Dispatch<React.SetStateAction<GetSearchUMDtoIn>>
 	setIsSearch: React.Dispatch<React.SetStateAction<boolean>>
 	setPage: React.Dispatch<React.SetStateAction<number>>
 }
 
 const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
+	searchParams,
 	setSearchParams,
 	setIsSearch,
 	setPage,
@@ -26,31 +28,44 @@ const UserManagementSearchForm: React.FC<UserManagementSearchFormProps> = ({
 	const [openImport, setOpenImport] = useState<boolean>(false)
 	const { t, i18n } = useTranslation(['default', 'um'])
 	const { isDesktop } = useResponsive()
+	const [previousInput, setPreviousInput] = useState<string>('')
+
 	const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-		// setSearchString(event.target.value)
 		setSearchParams((prevSearch) => ({
 			...prevSearch,
 			offset: 0,
 			keyword: event.target.value,
 			respLang: i18n.language,
 		}))
-		setPage(1)
 	}
 
-	const handleOnBlur = (event: React.FocusEvent<HTMLInputElement> | React.FormEvent<Element>) => {
+	const handleOnSubmint = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 		setIsSearch(true)
+		setSearchParams((prevSearch) => ({
+			...prevSearch,
+			offset: 0,
+		}))
+		setPage(1)
+		setPreviousInput(searchParams.keyword)
+	}
+
+	const handleOnBlur = () => {
+		if (searchParams.keyword === previousInput) return
+
+		setIsSearch(true)
+		setSearchParams((prevSearch) => ({
+			...prevSearch,
+			offset: 0,
+		}))
+		setPage(1)
+		setPreviousInput(searchParams.keyword)
 	}
 
 	return (
 		<>
 			<Paper className='flex gap-[6px] bg-[#D9E0EB] p-[4px]'>
-				<form
-					onSubmit={(event) => {
-						handleOnBlur(event)
-					}}
-					className='w-full'
-				>
+				<form onSubmit={handleOnSubmint} className='flex w-full items-center'>
 					<FormControl fullWidth variant='standard' className='h-[40px] rounded-[8px] bg-white'>
 						<Input
 							className='flex h-[40px] gap-[8px] px-[12px] py-[8px] [&_.MuiInputAdornment-positionStart]:m-0'

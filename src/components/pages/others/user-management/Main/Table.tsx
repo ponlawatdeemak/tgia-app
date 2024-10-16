@@ -174,13 +174,14 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 
 	const { data: resData, isLoading: isTableDataLoading } = useQuery({
 		queryKey: ['getSearchUM'],
-		queryFn: () => {
-			const res = um.getSearchUM(searchParams)
+		queryFn: async () => {
+			const res = await um.getSearchUM(searchParams)
 			setIsSearch(false)
 			return res
 		},
 		enabled: isSearch && searchParams && JSON.stringify(searchParams).length !== 0,
 	})
+
 	const {
 		data: patchStatusData,
 		error: patchStatusError,
