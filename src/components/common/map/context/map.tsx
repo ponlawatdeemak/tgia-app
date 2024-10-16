@@ -40,17 +40,21 @@ export const MapProvider = ({ children }: { children: ReactNode }) => {
 
 	const setExtent = useCallback(
 		(extent: [number, number, number, number]) => {
-			if (mapLibreInstance) {
-				mapLibreInstance.fitBounds([
-					[extent[0], extent[1]],
-					[extent[2], extent[3]],
-				])
+			if (mapLibreInstance) { 
+				mapLibreInstance.fitBounds(
+					[
+						[extent[0], extent[1]],
+						[extent[2], extent[3]],
+					],
+					{ padding: 200 },
+				)
 			} else if (googleMapInstance) {
 				googleMapInstance.fitBounds(
 					new window.google.maps.LatLngBounds(
 						{ lat: extent[1], lng: extent[0] },
 						{ lat: extent[3], lng: extent[2] },
 					),
+					200,
 				)
 			}
 		},
