@@ -6,11 +6,11 @@ import type { GoogleMapsOverlay } from '@deck.gl/google-maps'
 export type LayerStore = {
 	overlay?: MapboxOverlay | GoogleMapsOverlay
 	setOverlay: (overlay: MapboxOverlay | GoogleMapsOverlay) => void
-	layers: LayersList
-	addLayer: (layer: Layer | undefined) => void
-	setLayers: (layers: Layer[] | undefined) => void
-	getLayer: (layerId: string) => Layer | undefined
-	getLayers: () => LayersList
+	layers: Layer[]
+	addLayer: (value: Layer) => void
+	setLayers: (value: Layer[]) => void
+	getLayer: (value: string) => Layer | undefined
+	getLayers: () => Layer[]
 	removeLayer: (layerId: string) => void
 	removeAllLayer: () => void
 }
@@ -20,6 +20,7 @@ export const useLayerStore = create<LayerStore>()((set, get) => ({
 	setOverlay: (overlay) => set((state) => ({ ...state, overlay })),
 	layers: [],
 	addLayer: (layer) => set((state) => ({ ...state, layers: [...state.layers, layer] })),
+
 	setLayers: (layers) =>
 		set((state) => {
 			return { ...state, layers }
@@ -28,7 +29,8 @@ export const useLayerStore = create<LayerStore>()((set, get) => ({
 		const layer = get().layers.find((layer) => layer instanceof Layer && layer.id === layerId)
 		return layer instanceof Layer ? layer : undefined
 	},
-	getLayers: (): LayersList => {
+
+	getLayers: (): Layer[] => {
 		return get().layers
 	},
 	removeLayer: (layerId) =>

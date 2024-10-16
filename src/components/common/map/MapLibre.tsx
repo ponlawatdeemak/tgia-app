@@ -5,18 +5,55 @@ import { MapboxOverlay } from '@deck.gl/mapbox'
 import useLayerStore from './store/map'
 import { MapInterface } from './interface/map'
 import { useMap } from './context/map'
+import { IconLayer } from '@deck.gl/layers'
+import { MVTLayer } from '@deck.gl/geo-layers'
+import { Layer } from '@deck.gl/core'
+import { MapStyleDataEvent, StyleSpecification } from 'maplibre-gl'
 
 interface MapLibreProps extends MapInterface {
-	mapStyle: string
+	mapStyle: string | StyleSpecification
+}
+
+export const recreateLayer = (layerList: Layer[]) => {
+	return layerList.map((item) => {
+		// const spliter = '---'
+		// let id = item.id?.split(spliter)?.[0] || ''
+		// id = `${id}${spliter}${new Date().getTime()}`
+
+		const newProp = {
+			...item.props,
+			// id,
+			beforeId: 'custom-referer-layer',
+		} as any
+
+		console.log('recreateLayer ', newProp)
+
+		if (item instanceof IconLayer) {
+			newProp.data = item.props.data
+
+			console.log('IconLayer ', newProp)
+			return new IconLayer(newProp)
+		}
+
+		if (item instanceof MVTLayer) {
+			console.log('MVTLayer ', newProp)
+			return new MVTLayer(newProp)
+		}
+		return item
+	})
 }
 
 const DeckGLOverlay = () => {
 	const layers = useLayerStore((state) => state.layers)
 	const setOverlay = useLayerStore((state) => state.setOverlay)
-	const overlay = useControl<MapboxOverlay>(() => new MapboxOverlay({}))
+	// const overlay = useControl<MapboxOverlay>(() => new MapboxOverlay({}))
+
+	const overlay = useControl<MapboxOverlay>(() => new MapboxOverlay({ interleaved: true }))
+
 	useEffect(() => {
 		if (overlay instanceof MapboxOverlay) {
-			overlay.setProps({ layers })
+			const temp = recreateLayer(layers)
+			overlay.setProps({ layers: temp })
 		}
 	}, [layers, overlay])
 	useEffect(() => {
@@ -46,6 +83,28 @@ export default function MapLibre({ viewState, mapStyle, onViewStateChange, onMap
 		}
 	}, [setMapLibreInstance])
 
+	const onStyleData = (event: MapStyleDataEvent) => {
+		// add reference layer for all deck.gl layer under this layer and display draw layer to top
+		const map = event.target
+
+		const refSource = map.getSource('custom-referer-source')
+		if (!refSource) {
+			map.addSource('custom-referer-source', {
+				type: 'geojson',
+				data: { type: 'FeatureCollection', features: [] },
+			})
+		}
+		const refLayer = map.getLayer('custom-referer-layer')
+		if (!refLayer) {
+			map.addLayer({
+				id: 'custom-referer-layer',
+				type: 'symbol',
+				source: 'custom-referer-source',
+				layout: { visibility: 'none' },
+			})
+		}
+	}
+
 	return (
 		<Map
 			initialViewState={viewState}
@@ -55,6 +114,7 @@ export default function MapLibre({ viewState, mapStyle, onViewStateChange, onMap
 			onMove={(e) => onViewStateChange?.(e.viewState)}
 			ref={(ref) => setMapLibreInstance(ref?.getMap() || null)}
 			onClick={(e) => onMapClick?.({ latitude: e?.lngLat?.lat, longitude: e?.lngLat?.lng })}
+			onStyleData={onStyleData}
 		>
 			<DeckGLOverlay />
 		</Map>
