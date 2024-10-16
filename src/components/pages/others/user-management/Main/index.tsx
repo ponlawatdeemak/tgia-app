@@ -23,7 +23,12 @@ export const UserManagementMain = () => {
 	const { isDesktop } = useResponsive()
 	return (
 		<div className={`flex flex-col ${isDesktop ? 'pl-[32px] pr-[32px]' : 'pl-[8px] pr-[8px]'}`}>
-			<UserManagementSearchForm setSearchParams={setSearchParams} setIsSearch={setIsSearch} setPage={setPage} />
+			<UserManagementSearchForm
+				searchParams={searchParams}
+				setSearchParams={setSearchParams}
+				setIsSearch={setIsSearch}
+				setPage={setPage}
+			/>
 			<UserManagementTable
 				searchParams={searchParams}
 				setSearchParams={setSearchParams}

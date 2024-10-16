@@ -32,16 +32,24 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 					label={t('password')}
 					formik={formik}
 					disabled={loading}
+					required
 				/>
 			)}
-			<PasswordInput name='password' label={t('passwordNew')} formik={formik} disabled={loading} />
+			<PasswordInput name='password' label={t('passwordNew')} formik={formik} disabled={loading} required />
 			<PasswordInput
 				name='confirmPassword'
 				label={t('passwordConfirm')}
 				formik={formik}
 				disabled={loading}
+				required
 			/>
-			{resetPassword && <FormInput name='confirmationCode' label={t('auth.verificationCode', { ns: 'appbar' })} formik={formik} />}
+			{resetPassword && (
+				<FormInput
+					name='confirmationCode'
+					label={t('auth.verificationCode', { ns: 'appbar' })}
+					formik={formik}
+				/>
+			)}
 		</div>
 	)
 }
