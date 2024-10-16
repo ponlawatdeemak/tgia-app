@@ -15,6 +15,7 @@ export const onCapture = () => {
 				const element = elements[index] as HTMLElement
 				element.style.overflowY = 'visible !important'
 				element.style.maxHeight = 'unset !important'
+				element.style.height = 'unset !important'
 			}
 			return true
 		},

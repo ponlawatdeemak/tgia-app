@@ -129,7 +129,7 @@ const AnnualAnalysisMain = () => {
 						</Box>
 					)}
 
-					<Box className='h-[calc(100vh-194px)] overflow-y-auto'>
+					<Box className='capture h-[calc(100vh-194px)] overflow-y-auto'>
 						<CustomTabPanel value={value} index={0} isDesktop={isDesktop}>
 							<PlantStatistic />
 						</CustomTabPanel>

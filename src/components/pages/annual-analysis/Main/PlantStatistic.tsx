@@ -190,7 +190,7 @@ const PlantStatistic = () => {
 				</Grid>
 			</Grid>
 			<Box
-				className={clsx('mt-3 h-[612px] bg-white', {
+				className={clsx('capture mt-3 h-[612px] bg-white', {
 					'flex items-center justify-center': isBarDataLoading || isLineDataLoading || isTableDataLoading,
 				})}
 			>
