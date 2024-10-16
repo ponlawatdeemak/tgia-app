@@ -15,6 +15,7 @@ import FavoriteSearchForm from '@/components/shared/FavoriteSearchForm'
 import { useTranslation } from 'react-i18next'
 
 import { useMap } from '@/components/common/map/context/map'
+import { LngLatBoundsLike } from 'maplibre-gl'
 
 interface OptionType {
 	name: ResponseLanguage
@@ -25,6 +26,8 @@ interface OptionType {
 interface HistoryType {
 	[key: string]: OptionType[]
 }
+
+export const thaiExtent: LngLatBoundsLike = [97.3758964376, 5.69138418215, 105.589038527, 20.4178496363]
 
 const FavoriteLengthMax = 5
 const HistoryLengthMax = 5
@@ -126,14 +129,16 @@ const SearchForm: React.FC<SearchFormProps> = ({ mapViewRef }) => {
 			}
 
 			try {
-				if (adminPolyCode === null) return
-
-				const extentProvince = (await service.fieldLoss.getExtentAdminPoly({ id: adminPolyCode })).data
-				if (extentProvince?.extent) {
-					setExtent(extentProvince?.extent)
+				if (adminPolyCode === null) {
+					setExtent(thaiExtent)
+				} else {
+					const extentProvince = (await service.fieldLoss.getExtentAdminPoly({ id: adminPolyCode })).data
+					if (extentProvince?.extent) {
+						setExtent(extentProvince?.extent)
+					}
 				}
 			} catch (error) {
-				console.log('error zoom extent: ', error)
+				console.error('error zoom extent: ', error)
 			}
 		}
 
