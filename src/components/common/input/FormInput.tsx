@@ -32,6 +32,7 @@ const FormInput: React.FC<FormInputProps> = ({
 				size='small'
 				value={formik?.values[name] || value}
 				error={formik?.touched[name] && Boolean(formik?.errors[name])}
+				inputProps={{ maxLength: 100 }}
 			/>
 			{typeof errorMessage === 'string' && <FormHelperText error>{errorMessage}</FormHelperText>}
 		</FormControl>

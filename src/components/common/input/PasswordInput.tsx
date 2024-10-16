@@ -40,6 +40,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ formik, label, name, disa
 					</IconButton>
 				</InputAdornment>
 			}
+			inputProps={{ maxLength: 100 }}
 		/>
 	)
 }
