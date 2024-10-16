@@ -457,12 +457,16 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					>
 						{selected.length > 0 && (
 							<Box
-								sx={{ display: 'inline-flex', backgroundColor: '#F8FAFD', position: 'sticky', left: 0 }}
-								className={
-									isDesktop
-										? 'flex h-[48px] w-auto rounded-[2px] rounded-lg p-2'
-										: 'flex h-[100px] w-auto flex-col rounded-[2px] rounded-lg p-2'
-								}
+								// sx={{ display: 'inline-flex', backgroundColor: '#F8FAFD', position: 'sticky', left: 0 }}
+								// className={
+								// 	isDesktop
+								// 		? 'flex h-[48px] w-auto rounded-[2px] rounded-lg p-2'
+								// 		: 'flex h-[100px] w-auto flex-col rounded-[2px] rounded-lg p-2'
+								// }
+								className={clsx('sticky left-0 top-0 z-[100] inline-flex !bg-[#F2F2F2]', {
+									'flex h-[48px] w-auto rounded-[2px] rounded-lg p-2': isDesktop,
+									'flex h-[100px] w-auto flex-col rounded-[2px] rounded-lg p-2': !isDesktop,
+								})}
 							>
 								<Typography className='m-4 flex items-center font-medium'>
 									{t('selecting', { ns: 'um' })}{' '}
@@ -529,10 +533,22 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 									// tableLayout: 'auto',
 									width: '100%',
 									height: '90%',
+									position: 'relative',
 								}}
 							>
 								<TableHead>
-									<TableRow>
+									<TableRow
+										// sx={{
+										// 	position: 'sticky',
+										// 	top: selected.length > 0 ? (isDesktop ? '46px' : '78px') : 0,
+										// 	zIndex: 9998,
+										// }}
+										className={clsx('sticky z-[100]', {
+											'top-[64px]': selected.length > 0 && isDesktop,
+											'top-[115.42px]': selected.length > 0 && !isDesktop,
+										})}
+										//change this value according to height of selection control box
+									>
 										<TableCell padding='checkbox'>
 											<Checkbox
 												color='primary'
