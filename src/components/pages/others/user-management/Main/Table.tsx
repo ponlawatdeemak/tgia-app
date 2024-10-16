@@ -174,13 +174,13 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	// ModalAction
 
 	const { data: resData, isLoading: isTableDataLoading } = useQuery({
-		queryKey: ['getSearchUM', searchParams],
+		queryKey: ['getSearchUM'],
 		queryFn: () => {
 			const res = um.getSearchUM(searchParams)
 			setIsSearch(false)
 			return res
 		},
-		enabled: isSearch,
+		enabled: isSearch && searchParams && JSON.stringify(searchParams).length !== 0,
 	})
 	const {
 		data: patchStatusData,
