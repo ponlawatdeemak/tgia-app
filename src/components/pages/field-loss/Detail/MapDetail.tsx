@@ -98,6 +98,15 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 	const { layers, addLayer, setLayers } = useLayerStore()
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null)
 
+	const { data: provinceLookupData, isLoading: isProvinceDataLoading } = useQuery({
+		queryKey: ['getMapProvince'],
+		queryFn: () => service.lookup.get('provinces'),
+	})
+
+	const provinceLookupId = useMemo(() => {
+		return provinceLookupData?.data?.map((item) => Number(item.code)) || []
+	}, [provinceLookupData])
+
 	const filterRangeMonth = useMemo(() => {
 		const filter: FilterRangeMonthType = {
 			startDate: queryParams.startDate
@@ -205,35 +214,49 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 					lineWidthUnits: 'pixels',
 					//visible: layer.layerName === 'country',
 					getFillColor(d: Feature<Geometry, ProvincePropertiesType>) {
-						if (summaryAreaId.includes(d.properties.provinceCode)) {
-							const province = summaryAreaData?.data?.find(
-								(item) => parseInt(item.id) === d.properties.provinceCode,
-							)
-							switch (queryParams.lossType) {
-								case LossType.Drought: {
-									const percentDrought =
-										province?.lossPredicted.find((item) => item.lossType === 'drought')?.percent ||
-										null
-									const levelDroughtColor = percentDrought
-										? checkLevelTileColor(percentDrought)
-										: null
-									return levelDroughtColor
-										? DroughtTileColor[levelDroughtColor]
-										: DroughtTileColor.default
-								}
-								case LossType.Flood: {
-									const percentFlood =
-										province?.lossPredicted.find((item) => item.lossType === 'flood')?.percent ||
-										null
-									const levelFloodColor = percentFlood ? checkLevelTileColor(percentFlood) : null
-									return levelFloodColor ? FloodTileColor[levelFloodColor] : FloodTileColor.default
-								}
-								default: {
-									const percentTotal = province?.totalPredictedArea.percent || null
-									const levelTotalColor = percentTotal ? checkLevelTileColor(percentTotal) : null
-									return levelTotalColor ? TotalTileColor[levelTotalColor] : TotalTileColor.default
+						if (provinceLookupId.includes(Number(d.properties.provinceCode))) {
+							if (summaryAreaId.includes(Number(d.properties.provinceCode))) {
+								const province = summaryAreaData?.data?.find(
+									(item) => Number(item.id) === Number(d.properties.provinceCode),
+								)
+								switch (queryParams.lossType) {
+									case LossType.Drought: {
+										const percentDrought =
+											province?.lossPredicted?.find((item) => item.lossType === 'drought')
+												?.percent ?? null
+										const levelDroughtColor =
+											percentDrought !== null && percentDrought >= 0
+												? checkLevelTileColor(percentDrought)
+												: null
+										return levelDroughtColor
+											? DroughtTileColor[levelDroughtColor]
+											: DroughtTileColor.default
+									}
+									case LossType.Flood: {
+										const percentFlood =
+											province?.lossPredicted?.find((item) => item.lossType === 'flood')
+												?.percent ?? null
+										const levelFloodColor =
+											percentFlood !== null && percentFlood >= 0
+												? checkLevelTileColor(percentFlood)
+												: null
+										return levelFloodColor
+											? FloodTileColor[levelFloodColor]
+											: FloodTileColor.default
+									}
+									default: {
+										const percentTotal = province?.totalPredictedArea?.percent ?? null
+										const levelTotalColor =
+											percentTotal !== null && percentTotal >= 0
+												? checkLevelTileColor(percentTotal)
+												: null
+										return levelTotalColor
+											? TotalTileColor[levelTotalColor]
+											: TotalTileColor.default
+									}
 								}
 							}
+							return TotalTileColor.default
 						}
 						return TotalTileColor.default
 					},
@@ -241,7 +264,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, ProvincePropertiesType>) {
-						if (summaryAreaId.includes(d.properties.provinceCode)) {
+						if (provinceLookupId.includes(Number(d.properties.provinceCode))) {
 							return SelectedLineWidth
 						}
 						return DefaultLineWidth
@@ -254,51 +277,54 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 					},
 					onHover: (info, event) => {
 						if (info.object) {
-							if (summaryAreaId.includes(info.object.properties.provinceCode)) {
-								const province =
-									summaryAreaData?.data?.find(
-										(item) => parseInt(item.id) === info.object.properties.provinceCode,
-									) || null
-								console.log('lossType', queryParams.lossType)
-								switch (queryParams.lossType) {
-									case LossType.Drought: {
-										if (province?.lossPredicted.find((item) => item.lossType === 'drought')) {
+							if (provinceLookupId.includes(Number(info.object.properties.provinceCode))) {
+								if (summaryAreaId.includes(Number(info.object.properties.provinceCode))) {
+									const province =
+										summaryAreaData?.data?.find(
+											(item) => Number(item.id) === Number(info.object.properties.provinceCode),
+										) || null
+									switch (queryParams.lossType) {
+										case LossType.Drought: {
+											if (province?.lossPredicted?.find((item) => item.lossType === 'drought')) {
+												setHoverInfo({
+													x: info.x,
+													y: info.y,
+													area: province,
+													areaCode: Number(info.object.properties.provinceCode),
+													layerName: info.object.properties.layerName,
+												})
+											} else {
+												setHoverInfo(null)
+											}
+											break
+										}
+										case LossType.Flood: {
+											if (province?.lossPredicted?.find((item) => item.lossType === 'flood')) {
+												setHoverInfo({
+													x: info.x,
+													y: info.y,
+													area: province,
+													areaCode: Number(info.object.properties.provinceCode),
+													layerName: info.object.properties.layerName,
+												})
+											} else {
+												setHoverInfo(null)
+											}
+											break
+										}
+										default: {
 											setHoverInfo({
 												x: info.x,
 												y: info.y,
 												area: province,
-												areaCode: info.object.properties.provinceCode,
+												areaCode: Number(info.object.properties.provinceCode),
 												layerName: info.object.properties.layerName,
 											})
-										} else {
-											setHoverInfo(null)
+											break
 										}
-										break
 									}
-									case LossType.Flood: {
-										if (province?.lossPredicted.find((item) => item.lossType === 'flood')) {
-											setHoverInfo({
-												x: info.x,
-												y: info.y,
-												area: province,
-												areaCode: info.object.properties.provinceCode,
-												layerName: info.object.properties.layerName,
-											})
-										} else {
-											setHoverInfo(null)
-										}
-										break
-									}
-									default: {
-										setHoverInfo({
-											x: info.x,
-											y: info.y,
-											area: province,
-											areaCode: info.object.properties.provinceCode,
-											layerName: info.object.properties.layerName,
-										})
-										break
-									}
+								} else {
+									setHoverInfo(null)
 								}
 							} else {
 								setHoverInfo(null)
@@ -334,7 +360,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, ProvincePropertiesType>) {
-						if (queryParams.provinceCode === d.properties.provinceCode) {
+						if (queryParams.provinceCode === Number(d.properties.provinceCode)) {
 							return SelectedLineWidth
 						}
 						return DefaultLineWidth
@@ -356,32 +382,39 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 					//visible: layer.layerName === 'province',
 					lineWidthUnits: 'pixels',
 					getFillColor(d: Feature<Geometry, DistrictPropertiesType>) {
-						if (summaryAreaId.includes(d.properties.districtCode)) {
+						if (summaryAreaId.includes(Number(d.properties.districtCode))) {
 							const district = summaryAreaData?.data?.find(
-								(item) => parseInt(item.id) === d.properties.districtCode,
+								(item) => Number(item.id) === Number(d.properties.districtCode),
 							)
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									const percentDrought =
-										district?.lossPredicted.find((item) => item.lossType === 'drought')?.percent ||
+										district?.lossPredicted?.find((item) => item.lossType === 'drought')?.percent ??
 										null
-									const levelDroughtColor = percentDrought
-										? checkLevelTileColor(percentDrought)
-										: null
+									const levelDroughtColor =
+										percentDrought !== null && percentDrought >= 0
+											? checkLevelTileColor(percentDrought)
+											: null
 									return levelDroughtColor
 										? DroughtTileColor[levelDroughtColor]
 										: DroughtTileColor.default
 								}
 								case LossType.Flood: {
 									const percentFlood =
-										district?.lossPredicted.find((item) => item.lossType === 'flood')?.percent ||
+										district?.lossPredicted?.find((item) => item.lossType === 'flood')?.percent ??
 										null
-									const levelFloodColor = percentFlood ? checkLevelTileColor(percentFlood) : null
+									const levelFloodColor =
+										percentFlood !== null && percentFlood >= 0
+											? checkLevelTileColor(percentFlood)
+											: null
 									return levelFloodColor ? FloodTileColor[levelFloodColor] : FloodTileColor.default
 								}
 								default: {
-									const percentTotal = district?.totalPredictedArea.percent || null
-									const levelTotalColor = percentTotal ? checkLevelTileColor(percentTotal) : null
+									const percentTotal = district?.totalPredictedArea?.percent ?? null
+									const levelTotalColor =
+										percentTotal !== null && percentTotal >= 0
+											? checkLevelTileColor(percentTotal)
+											: null
 									return levelTotalColor ? TotalTileColor[levelTotalColor] : TotalTileColor.default
 								}
 							}
@@ -392,21 +425,21 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, DistrictPropertiesType>) {
-						if (summaryAreaId.includes(d.properties.districtCode)) {
+						if (summaryAreaId.includes(Number(d.properties.districtCode))) {
 							const district =
 								summaryAreaData?.data?.find(
-									(item) => parseInt(item.id) === d.properties.districtCode,
+									(item) => Number(item.id) === Number(d.properties.districtCode),
 								) || null
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
-									if (district?.lossPredicted.find((item) => item.lossType === 'drought')) {
+									if (district?.lossPredicted?.find((item) => item.lossType === 'drought')) {
 										return SelectedLineWidth
 									} else {
 										return DefaultLineWidth
 									}
 								}
 								case LossType.Flood: {
-									if (district?.lossPredicted.find((item) => item.lossType === 'flood')) {
+									if (district?.lossPredicted?.find((item) => item.lossType === 'flood')) {
 										return SelectedLineWidth
 									} else {
 										return DefaultLineWidth
@@ -427,20 +460,19 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 					},
 					onHover: (info, event) => {
 						if (info.object) {
-							if (summaryAreaId.includes(info.object.properties.districtCode)) {
+							if (summaryAreaId.includes(Number(info.object.properties.districtCode))) {
 								const district =
 									summaryAreaData?.data?.find(
-										(item) => parseInt(item.id) === info.object.properties.districtCode,
+										(item) => Number(item.id) === Number(info.object.properties.districtCode),
 									) || null
-								console.log('lossType', queryParams.lossType)
 								switch (queryParams.lossType) {
 									case LossType.Drought: {
-										if (district?.lossPredicted.find((item) => item.lossType === 'drought')) {
+										if (district?.lossPredicted?.find((item) => item.lossType === 'drought')) {
 											setHoverInfo({
 												x: info.x,
 												y: info.y,
 												area: district,
-												areaCode: info.object.properties.districtCode,
+												areaCode: Number(info.object.properties.districtCode),
 												layerName: info.object.properties.layerName,
 											})
 										} else {
@@ -449,12 +481,12 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 										break
 									}
 									case LossType.Flood: {
-										if (district?.lossPredicted.find((item) => item.lossType === 'flood')) {
+										if (district?.lossPredicted?.find((item) => item.lossType === 'flood')) {
 											setHoverInfo({
 												x: info.x,
 												y: info.y,
 												area: district,
-												areaCode: info.object.properties.districtCode,
+												areaCode: Number(info.object.properties.districtCode),
 												layerName: info.object.properties.layerName,
 											})
 										} else {
@@ -467,7 +499,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 											x: info.x,
 											y: info.y,
 											area: district,
-											areaCode: info.object.properties.districtCode,
+											areaCode: Number(info.object.properties.districtCode),
 											layerName: info.object.properties.layerName,
 										})
 										break
@@ -506,7 +538,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, DistrictPropertiesType>) {
-						if (queryParams.districtCode === d.properties.districtCode) {
+						if (queryParams.districtCode === Number(d.properties.districtCode)) {
 							return SelectedLineWidth
 						}
 						return DefaultLineWidth
@@ -528,32 +560,39 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 					lineWidthUnits: 'pixels',
 					//visible: layer.layerName === 'district',
 					getFillColor(d: Feature<Geometry, SubDistrictPropertiesType>) {
-						if (summaryAreaId.includes(d.properties.subDistrictCode)) {
+						if (summaryAreaId.includes(Number(d.properties.subDistrictCode))) {
 							const subDistrict = summaryAreaData?.data?.find(
-								(item) => parseInt(item.id) === d.properties.subDistrictCode,
+								(item) => Number(item.id) === Number(d.properties.subDistrictCode),
 							)
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									const percentDrought =
-										subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')
-											?.percent || null
-									const levelDroughtColor = percentDrought
-										? checkLevelTileColor(percentDrought)
-										: null
+										subDistrict?.lossPredicted?.find((item) => item.lossType === 'drought')
+											?.percent ?? null
+									const levelDroughtColor =
+										percentDrought !== null && percentDrought >= 0
+											? checkLevelTileColor(percentDrought)
+											: null
 									return levelDroughtColor
 										? DroughtTileColor[levelDroughtColor]
 										: DroughtTileColor.default
 								}
 								case LossType.Flood: {
 									const percentFlood =
-										subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')?.percent ||
-										null
-									const levelFloodColor = percentFlood ? checkLevelTileColor(percentFlood) : null
+										subDistrict?.lossPredicted?.find((item) => item.lossType === 'flood')
+											?.percent ?? null
+									const levelFloodColor =
+										percentFlood !== null && percentFlood >= 0
+											? checkLevelTileColor(percentFlood)
+											: null
 									return levelFloodColor ? FloodTileColor[levelFloodColor] : FloodTileColor.default
 								}
 								default: {
-									const percentTotal = subDistrict?.totalPredictedArea.percent || null
-									const levelTotalColor = percentTotal ? checkLevelTileColor(percentTotal) : null
+									const percentTotal = subDistrict?.totalPredictedArea?.percent ?? null
+									const levelTotalColor =
+										percentTotal !== null && percentTotal >= 0
+											? checkLevelTileColor(percentTotal)
+											: null
 									return levelTotalColor ? TotalTileColor[levelTotalColor] : TotalTileColor.default
 								}
 							}
@@ -564,21 +603,21 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, SubDistrictPropertiesType>) {
-						if (summaryAreaId.includes(d.properties.subDistrictCode)) {
+						if (summaryAreaId.includes(Number(d.properties.subDistrictCode))) {
 							const subDistrict =
 								summaryAreaData?.data?.find(
-									(item) => parseInt(item.id) === d.properties.subDistrictCode,
+									(item) => Number(item.id) === Number(d.properties.subDistrictCode),
 								) || null
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
-									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')) {
+									if (subDistrict?.lossPredicted?.find((item) => item.lossType === 'drought')) {
 										return SelectedLineWidth
 									} else {
 										return DefaultLineWidth
 									}
 								}
 								case LossType.Flood: {
-									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')) {
+									if (subDistrict?.lossPredicted?.find((item) => item.lossType === 'flood')) {
 										return SelectedLineWidth
 									} else {
 										return DefaultLineWidth
@@ -599,20 +638,19 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 					},
 					onHover: (info, event) => {
 						if (info.object) {
-							if (summaryAreaId.includes(info.object.properties.subDistrictCode)) {
+							if (summaryAreaId.includes(Number(info.object.properties.subDistrictCode))) {
 								const subDistrict =
 									summaryAreaData?.data?.find(
-										(item) => parseInt(item.id) === info.object.properties.subDistrictCode,
+										(item) => Number(item.id) === Number(info.object.properties.subDistrictCode),
 									) || null
-								console.log('lossType', queryParams.lossType)
 								switch (queryParams.lossType) {
 									case LossType.Drought: {
-										if (subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')) {
+										if (subDistrict?.lossPredicted?.find((item) => item.lossType === 'drought')) {
 											setHoverInfo({
 												x: info.x,
 												y: info.y,
 												area: subDistrict,
-												areaCode: info.object.properties.subDistrictCode,
+												areaCode: Number(info.object.properties.subDistrictCode),
 												layerName: info.object.properties.layerName,
 											})
 										} else {
@@ -621,12 +659,12 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 										break
 									}
 									case LossType.Flood: {
-										if (subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')) {
+										if (subDistrict?.lossPredicted?.find((item) => item.lossType === 'flood')) {
 											setHoverInfo({
 												x: info.x,
 												y: info.y,
 												area: subDistrict,
-												areaCode: info.object.properties.subDistrictCode,
+												areaCode: Number(info.object.properties.subDistrictCode),
 												layerName: info.object.properties.layerName,
 											})
 										} else {
@@ -639,7 +677,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 											x: info.x,
 											y: info.y,
 											area: subDistrict,
-											areaCode: info.object.properties.subDistrictCode,
+											areaCode: Number(info.object.properties.subDistrictCode),
 											layerName: info.object.properties.layerName,
 										})
 										break
@@ -672,32 +710,39 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 					//visible: layer.layerName === 'subdistrict',
 					lineWidthUnits: 'pixels',
 					getFillColor(d: Feature<Geometry, SubDistrictPropertiesType>) {
-						if (queryParams.subDistrictCode === d.properties.subDistrictCode) {
+						if (queryParams.subDistrictCode === Number(d.properties.subDistrictCode)) {
 							const subDistrict = summaryAreaData?.data?.find(
-								(item) => parseInt(item.id) === d.properties.subDistrictCode,
+								(item) => Number(item.id) === Number(d.properties.subDistrictCode),
 							)
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
 									const percentDrought =
-										subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')
-											?.percent || null
-									const levelDroughtColor = percentDrought
-										? checkLevelTileColor(percentDrought)
-										: null
+										subDistrict?.lossPredicted?.find((item) => item.lossType === 'drought')
+											?.percent ?? null
+									const levelDroughtColor =
+										percentDrought !== null && percentDrought >= 0
+											? checkLevelTileColor(percentDrought)
+											: null
 									return levelDroughtColor
 										? DroughtTileColor[levelDroughtColor]
 										: DroughtTileColor.default
 								}
 								case LossType.Flood: {
 									const percentFlood =
-										subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')?.percent ||
-										null
-									const levelFloodColor = percentFlood ? checkLevelTileColor(percentFlood) : null
+										subDistrict?.lossPredicted?.find((item) => item.lossType === 'flood')
+											?.percent ?? null
+									const levelFloodColor =
+										percentFlood !== null && percentFlood >= 0
+											? checkLevelTileColor(percentFlood)
+											: null
 									return levelFloodColor ? FloodTileColor[levelFloodColor] : FloodTileColor.default
 								}
 								default: {
-									const percentTotal = subDistrict?.totalPredictedArea.percent || null
-									const levelTotalColor = percentTotal ? checkLevelTileColor(percentTotal) : null
+									const percentTotal = subDistrict?.totalPredictedArea?.percent ?? null
+									const levelTotalColor =
+										percentTotal !== null && percentTotal >= 0
+											? checkLevelTileColor(percentTotal)
+											: null
 									return levelTotalColor ? TotalTileColor[levelTotalColor] : TotalTileColor.default
 								}
 							}
@@ -708,21 +753,21 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 						return LineWidthColor.default
 					},
 					getLineWidth(d: Feature<Geometry, SubDistrictPropertiesType>) {
-						if (queryParams.subDistrictCode === d.properties.subDistrictCode) {
+						if (queryParams.subDistrictCode === Number(d.properties.subDistrictCode)) {
 							const subDistrict =
 								summaryAreaData?.data?.find(
-									(item) => parseInt(item.id) === d.properties.subDistrictCode,
+									(item) => Number(item.id) === Number(d.properties.subDistrictCode),
 								) || null
 							switch (queryParams.lossType) {
 								case LossType.Drought: {
-									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')) {
+									if (subDistrict?.lossPredicted?.find((item) => item.lossType === 'drought')) {
 										return SelectedLineWidth
 									} else {
 										return DefaultLineWidth
 									}
 								}
 								case LossType.Flood: {
-									if (subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')) {
+									if (subDistrict?.lossPredicted?.find((item) => item.lossType === 'flood')) {
 										return SelectedLineWidth
 									} else {
 										return DefaultLineWidth
@@ -743,20 +788,19 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 					},
 					onHover: (info, event) => {
 						if (info.object) {
-							if (queryParams.subDistrictCode === info.object.properties.subDistrictCode) {
+							if (queryParams.subDistrictCode === Number(info.object.properties.subDistrictCode)) {
 								const subDistrict =
 									summaryAreaData?.data?.find(
-										(item) => parseInt(item.id) === info.object.properties.subDistrictCode,
+										(item) => Number(item.id) === Number(info.object.properties.subDistrictCode),
 									) || null
-								console.log('lossType', queryParams.lossType)
 								switch (queryParams.lossType) {
 									case LossType.Drought: {
-										if (subDistrict?.lossPredicted.find((item) => item.lossType === 'drought')) {
+										if (subDistrict?.lossPredicted?.find((item) => item.lossType === 'drought')) {
 											setHoverInfo({
 												x: info.x,
 												y: info.y,
 												area: subDistrict,
-												areaCode: info.object.properties.subDistrictCode,
+												areaCode: Number(info.object.properties.subDistrictCode),
 												layerName: 'endLayer',
 											})
 										} else {
@@ -765,12 +809,12 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 										break
 									}
 									case LossType.Flood: {
-										if (subDistrict?.lossPredicted.find((item) => item.lossType === 'flood')) {
+										if (subDistrict?.lossPredicted?.find((item) => item.lossType === 'flood')) {
 											setHoverInfo({
 												x: info.x,
 												y: info.y,
 												area: subDistrict,
-												areaCode: info.object.properties.subDistrictCode,
+												areaCode: Number(info.object.properties.subDistrictCode),
 												layerName: 'endLayer',
 											})
 										} else {
@@ -783,7 +827,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 											x: info.x,
 											y: info.y,
 											area: subDistrict,
-											areaCode: info.object.properties.subDistrictCode,
+											areaCode: Number(info.object.properties.subDistrictCode),
 											layerName: 'endLayer',
 										})
 										break
@@ -809,6 +853,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 		queryParams.districtCode,
 		queryParams.subDistrictCode,
 		summaryAreaId,
+		provinceLookupId,
 	])
 
 	function handleCountryClick() {
