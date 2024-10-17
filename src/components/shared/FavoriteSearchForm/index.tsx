@@ -64,14 +64,14 @@ const FavoriteSearchForm: React.FC<FavoriteSearchFormProp> = ({
 					return isDesktop ? (
 						<Popper
 							{...props}
-							className='z-50 rounded-lg rounded-t-none border-2 border-t-0 border-solid border-primary bg-white [&_.MuiPaper-root]:rounded-t-none [&_ul]:max-h-full [&_ul]:p-0'
+							className='z-50 max-h-[500px] overflow-auto rounded-lg rounded-t-none border-2 border-t-0 border-solid border-primary bg-white [&_.MuiPaper-root]:rounded-t-none [&_ul]:max-h-full [&_ul]:p-0'
 						>
 							{props.children}
 						</Popper>
 					) : (
 						<Popper
 							{...props}
-							className='z-50 h-full !w-full !translate-y-[124px] rounded-none bg-white [&_.MuiAutocomplete-listbox]:divide-x-0 [&_.MuiAutocomplete-listbox]:divide-y [&_.MuiAutocomplete-listbox]:divide-solid [&_.MuiAutocomplete-listbox]:divide-gray [&_.MuiPaper-root]:h-full [&_.MuiPaper-root]:rounded-none [&_ul]:max-h-full [&_ul]:p-0'
+							className='z-50 h-[calc(100vh-124px)] !w-full !translate-y-[124px] rounded-none bg-white [&_.MuiAutocomplete-listbox]:divide-x-0 [&_.MuiAutocomplete-listbox]:divide-y [&_.MuiAutocomplete-listbox]:divide-solid [&_.MuiAutocomplete-listbox]:divide-gray [&_.MuiPaper-root]:h-full [&_.MuiPaper-root]:rounded-none [&_ul]:max-h-full [&_ul]:p-0'
 						>
 							{props.children}
 						</Popper>
