@@ -26,129 +26,21 @@ interface MapDetailProps {
 	activityId: number
 	plotDetail: string
 	lossType: string | undefined
+	plantYear: string | undefined
+	lossYear: string | undefined
 }
 
-const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType }) => {
-	const { queryParams } = useSearchPlotMonitoring()
+const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType, plantYear, lossYear }) => {
+	//const { queryParams } = useSearchPlotMonitoring()
 	const { layers, addLayer, setLayers } = useLayerStore()
 
 	useEffect(() => {
 		if (plotDetail === 'plantDetail') {
-			setLayers([
-				new MVTLayer({
-					id: `boundary_$${queryParams.year}` + `-${new Date().getTime()}`,
-					name: `boundary_$${queryParams.year}`,
-					loadOptions: {
-						fetch: {
-							headers: {
-								'content-type': 'application/json',
-								Authorization: `Bearer ${apiAccessToken}`,
-							},
-						},
-					},
-					data: `${API_URL_TILE}/boundary_${queryParams.year}/tiles.json`,
-					filled: true,
-					getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
-						if (Number(d.properties.activity_id) === Number(activityId)) {
-							return BoundaryTileColor.gray
-						}
-						return BoundaryTileColor.default
-					},
-					getLineColor(d: Feature<Geometry, BoundaryLayerType>) {
-						return LineWidthColor.default
-					},
-					getLineWidth(d: Feature<Geometry, BoundaryLayerType>) {
-						if (Number(d.properties.activity_id) === Number(activityId)) {
-							return SelectedLineWidth
-						}
-						return DefaultLineWidth
-					},
-					pickable: true,
-					updateTriggers: {
-						getFillColor: plotDetail,
-						getLineColor: plotDetail,
-						getLineWidth: plotDetail,
-					},
-				}),
-				new MVTLayer({
-					id: `rnr_$${queryParams.year}` + `-${new Date().getTime()}`,
-					name: `rnr_$${queryParams.year}`,
-					loadOptions: {
-						fetch: {
-							headers: {
-								'content-type': 'application/json',
-								Authorization: `Bearer ${apiAccessToken}`,
-							},
-						},
-					},
-					data: `${API_URL_TILE}/rnr_${queryParams.year}/tiles.json`,
-					filled: true,
-					getFillColor(d: Feature<Geometry, DetailLayerType>) {
-						if (Number(d.properties.activity_id) === Number(activityId)) {
-							return LossTypeTileColor.rnr
-						}
-						return BoundaryTileColor.default
-					},
-					getLineColor(d: Feature<Geometry, DetailLayerType>) {
-						return LineWidthColor.default
-					},
-					getLineWidth(d: Feature<Geometry, DetailLayerType>) {
-						if (Number(d.properties.activity_id) === Number(activityId)) {
-							return SelectedLineWidth
-						}
-						return DefaultLineWidth
-					},
-					pickable: true,
-					updateTriggers: {
-						getFillColor: plotDetail,
-						getLineColor: plotDetail,
-						getLineWidth: plotDetail,
-					},
-				}),
-			])
-		} else if (plotDetail === 'lossDetail') {
-			setLayers([
-				new MVTLayer({
-					id: `boundary_$${queryParams.year}` + `-${new Date().getTime()}`,
-					name: `boundary_$${queryParams.year}`,
-					loadOptions: {
-						fetch: {
-							headers: {
-								'content-type': 'application/json',
-								Authorization: `Bearer ${apiAccessToken}`,
-							},
-						},
-					},
-					data: `${API_URL_TILE}/boundary_${queryParams.year}/tiles.json`,
-					filled: true,
-					getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
-						if (Number(d.properties.activity_id) === Number(activityId)) {
-							return BoundaryTileColor.gray
-						}
-						return BoundaryTileColor.default
-					},
-					getLineColor(d: Feature<Geometry, BoundaryLayerType>) {
-						return LineWidthColor.default
-					},
-					getLineWidth(d: Feature<Geometry, BoundaryLayerType>) {
-						if (Number(d.properties.activity_id) === Number(activityId)) {
-							return SelectedLineWidth
-						}
-						return DefaultLineWidth
-					},
-					pickable: true,
-					updateTriggers: {
-						getFillColor: plotDetail,
-						getLineColor: plotDetail,
-						getLineWidth: plotDetail,
-					},
-				}),
-			])
-			if (lossType && !['noData', 'noDamage'].includes(lossType || '')) {
-				addLayer(
+			if (!!plantYear) {
+				setLayers([
 					new MVTLayer({
-						id: `${lossType}_$${queryParams.year}` + `-${new Date().getTime()}`,
-						name: `${lossType}_$${queryParams.year}`,
+						id: `boundary_$${plantYear}` + `-${new Date().getTime()}`,
+						name: `boundary_$${plantYear}`,
 						loadOptions: {
 							fetch: {
 								headers: {
@@ -157,11 +49,46 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 								},
 							},
 						},
-						data: `${API_URL_TILE}/${lossType}_${queryParams.year}/tiles.json`,
+						data: `${API_URL_TILE}/boundary_${plantYear}/tiles.json`,
+						filled: true,
+						getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
+							if (Number(d.properties.activity_id) === Number(activityId)) {
+								return BoundaryTileColor.gray
+							}
+							return BoundaryTileColor.default
+						},
+						getLineColor(d: Feature<Geometry, BoundaryLayerType>) {
+							return LineWidthColor.default
+						},
+						getLineWidth(d: Feature<Geometry, BoundaryLayerType>) {
+							if (Number(d.properties.activity_id) === Number(activityId)) {
+								return SelectedLineWidth
+							}
+							return DefaultLineWidth
+						},
+						pickable: true,
+						updateTriggers: {
+							getFillColor: plotDetail,
+							getLineColor: plotDetail,
+							getLineWidth: plotDetail,
+						},
+					}),
+					new MVTLayer({
+						id: `rnr_$${plantYear}` + `-${new Date().getTime()}`,
+						name: `rnr_$${plantYear}`,
+						loadOptions: {
+							fetch: {
+								headers: {
+									'content-type': 'application/json',
+									Authorization: `Bearer ${apiAccessToken}`,
+								},
+							},
+						},
+						data: `${API_URL_TILE}/rnr_${plantYear}/tiles.json`,
 						filled: true,
 						getFillColor(d: Feature<Geometry, DetailLayerType>) {
 							if (Number(d.properties.activity_id) === Number(activityId)) {
-								return LossTypeTileColor[`${lossType}`]
+								return LossTypeTileColor.rnr
 							}
 							return BoundaryTileColor.default
 						},
@@ -181,10 +108,89 @@ const MapDetail: React.FC<MapDetailProps> = ({ activityId, plotDetail, lossType 
 							getLineWidth: plotDetail,
 						},
 					}),
-				)
+				])
+			}
+		} else if (plotDetail === 'lossDetail') {
+			if (!!lossYear) {
+				setLayers([
+					new MVTLayer({
+						id: `boundary_$${lossYear}` + `-${new Date().getTime()}`,
+						name: `boundary_$${lossYear}`,
+						loadOptions: {
+							fetch: {
+								headers: {
+									'content-type': 'application/json',
+									Authorization: `Bearer ${apiAccessToken}`,
+								},
+							},
+						},
+						data: `${API_URL_TILE}/boundary_${lossYear}/tiles.json`,
+						filled: true,
+						getFillColor(d: Feature<Geometry, BoundaryLayerType>) {
+							if (Number(d.properties.activity_id) === Number(activityId)) {
+								return BoundaryTileColor.gray
+							}
+							return BoundaryTileColor.default
+						},
+						getLineColor(d: Feature<Geometry, BoundaryLayerType>) {
+							return LineWidthColor.default
+						},
+						getLineWidth(d: Feature<Geometry, BoundaryLayerType>) {
+							if (Number(d.properties.activity_id) === Number(activityId)) {
+								return SelectedLineWidth
+							}
+							return DefaultLineWidth
+						},
+						pickable: true,
+						updateTriggers: {
+							getFillColor: plotDetail,
+							getLineColor: plotDetail,
+							getLineWidth: plotDetail,
+						},
+					}),
+				])
+				if (lossType && !['noData', 'noDamage'].includes(lossType || '')) {
+					addLayer(
+						new MVTLayer({
+							id: `${lossType}_$${lossYear}` + `-${new Date().getTime()}`,
+							name: `${lossType}_$${lossYear}`,
+							loadOptions: {
+								fetch: {
+									headers: {
+										'content-type': 'application/json',
+										Authorization: `Bearer ${apiAccessToken}`,
+									},
+								},
+							},
+							data: `${API_URL_TILE}/${lossType}_${lossYear}/tiles.json`,
+							filled: true,
+							getFillColor(d: Feature<Geometry, DetailLayerType>) {
+								if (Number(d.properties.activity_id) === Number(activityId)) {
+									return LossTypeTileColor[`${lossType}`]
+								}
+								return BoundaryTileColor.default
+							},
+							getLineColor(d: Feature<Geometry, DetailLayerType>) {
+								return LineWidthColor.default
+							},
+							getLineWidth(d: Feature<Geometry, DetailLayerType>) {
+								if (Number(d.properties.activity_id) === Number(activityId)) {
+									return SelectedLineWidth
+								}
+								return DefaultLineWidth
+							},
+							pickable: true,
+							updateTriggers: {
+								getFillColor: plotDetail,
+								getLineColor: plotDetail,
+								getLineWidth: plotDetail,
+							},
+						}),
+					)
+				}
 			}
 		}
-	}, [setLayers, activityId, plotDetail, lossType, queryParams.year])
+	}, [setLayers, activityId, plotDetail, lossType, plantYear, lossYear])
 
 	return (
 		<Paper className='relative max-lg:bg-white max-lg:px-4 lg:block lg:flex-grow'>
