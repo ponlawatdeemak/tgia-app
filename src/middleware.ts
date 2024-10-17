@@ -1,6 +1,6 @@
 import withAuth, { NextRequestWithAuth } from 'next-auth/middleware'
 import { NextResponse } from 'next/server'
-import { AppPath, authPathPrefix } from './config/app'
+import { AppPath, authPathPrefix, reportPathSuffix, userManagementPathSuffix } from './config/app'
 import acceptLanguage from 'accept-language'
 import { appLanguages, cookieName, fallbackLng } from './i18n/settings'
 import { cookies } from 'next/headers'
@@ -14,8 +14,11 @@ export default withAuth(
 		const { nextUrl } = req
 
 		const token = req.nextauth.token
+		const userRole = token?.role
 		const isLoggedIn = !!token
 		const isAuthRoute = nextUrl.pathname.includes(authPathPrefix)
+		const isUserManagementRoute = nextUrl.pathname.includes(userManagementPathSuffix)
+		const isReportRoute = nextUrl.pathname.includes(reportPathSuffix)
 
 		if (isAuthRoute) {
 			if (isLoggedIn) {
@@ -32,6 +35,19 @@ export default withAuth(
 				new URL(`${AppPath.Login}/?callbackUrl=${encodeURI(callback)}`, nextUrl),
 			)
 		}
+
+		if (isUserManagementRoute) {
+			if (userRole === 'officer' || userRole === 'analyst') {
+				return responseWithLanguageCookie(req, new URL(AppPath.FieldLoss, nextUrl))
+			}
+		}
+
+		if (isReportRoute) {
+			if (userRole === 'officer') {
+				return responseWithLanguageCookie(req, new URL(AppPath.FieldLoss, nextUrl))
+			}
+		}
+
 		return responseWithLanguageCookie(req)
 	},
 	{

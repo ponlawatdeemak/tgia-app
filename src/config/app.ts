@@ -8,6 +8,8 @@ export enum AuthPath {
 }
 
 export const authPathPrefix = '/auth'
+export const userManagementPathSuffix = '/user-management'
+export const reportPathSuffix = '/report'
 
 export enum PrivatePath {
 	FieldLoss = '/field-loss',
