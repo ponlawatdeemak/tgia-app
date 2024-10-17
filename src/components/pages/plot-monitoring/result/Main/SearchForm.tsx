@@ -19,10 +19,11 @@ import { AppPath } from '@/config/app'
 import { useMap } from '@/components/common/map/context/map'
 
 interface PlotMonitoringSearchFormProps {
+	areaDetail: string
 	mapViewRef?: any
 }
 
-const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ mapViewRef }) => {
+const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ areaDetail, mapViewRef }) => {
 	const router = useRouter()
 	const { isDesktop } = useResponsive()
 	const { setOpen } = useSearchForm()
@@ -102,7 +103,7 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 		}
 
 		displayMapExtent()
-	}, [queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode])
+	}, [queryParams.provinceCode, queryParams.districtCode, queryParams.subDistrictCode, areaDetail])
 
 	const handleSelectProvince = useCallback(
 		(_event: ChangeEvent<{}>, newSelectedValue: GetLookupOutDto | null, AutocompleteCloseReason: string) => {

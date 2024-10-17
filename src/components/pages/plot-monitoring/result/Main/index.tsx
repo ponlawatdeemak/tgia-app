@@ -19,6 +19,7 @@ export const PlotMonitoringResultMain = () => {
 	const { open } = useSearchForm()
 	const [isFullList, setIsFullList] = useState<boolean>(false)
 	const provinceCode = searchParams.get('provinceCode')
+	const [areaDetail, setAreaDetail] = useState('cards')
 
 	useEffect(() => {
 		setQueryParams({ ...queryParams, provinceCode: provinceCode ? parseInt(provinceCode) : undefined })
@@ -34,14 +35,17 @@ export const PlotMonitoringResultMain = () => {
 			) : (
 				<div className='flex flex-grow flex-col gap-4 overflow-auto'>
 					<PlotMonitoringSearchForm
-					// TO DO
-					// mapViewRef={mapViewRef}
+						// TO DO
+						// mapViewRef={mapViewRef}
+						areaDetail={areaDetail}
 					/>
 					<Paper className='flex h-full overflow-hidden rounded-none lg:mx-4 lg:mb-4 lg:h-[calc(100vh-154px)] lg:rounded-lg'>
 						<div className='box-border flex w-full overflow-auto max-lg:flex-col'>
 							<PlotMonitoringFilter isFullList={isFullList} />
 							<PlotMonitoringList
+								areaDetail={areaDetail}
 								isFullList={isFullList}
+								setAreaDetail={setAreaDetail}
 								setIsFullList={setIsFullList}
 								// TO DO
 								// mapViewRef={mapViewRef}
