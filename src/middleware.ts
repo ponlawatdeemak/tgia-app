@@ -4,6 +4,7 @@ import { AppPath, authPathPrefix, reportPathSuffix, userManagementPathSuffix } f
 import acceptLanguage from 'accept-language'
 import { appLanguages, cookieName, fallbackLng } from './i18n/settings'
 import { cookies } from 'next/headers'
+import { UserRole } from './enum/um.enum'
 
 acceptLanguage.languages(appLanguages)
 
@@ -37,13 +38,13 @@ export default withAuth(
 		}
 
 		if (isUserManagementRoute) {
-			if (userRole === 'officer' || userRole === 'analyst') {
+			if (userRole === UserRole.Officer || userRole === UserRole.Analyst) {
 				return responseWithLanguageCookie(req, new URL(AppPath.FieldLoss, nextUrl))
 			}
 		}
 
 		if (isReportRoute) {
-			if (userRole === 'officer') {
+			if (userRole === UserRole.Officer) {
 				return responseWithLanguageCookie(req, new URL(AppPath.FieldLoss, nextUrl))
 			}
 		}
