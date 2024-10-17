@@ -42,6 +42,8 @@
 	"thailand": "Thailand",
 	"search": "Search",
 	"dataYear": "Data Year",
+    "totalYear": "All Year",
+    "noYearSelected": "No Year Selected",
 	"noDisaster": "No Disaster",
 	"item": "Item",
 	"riceCultivationArea": "Rice Cultivation Area",
