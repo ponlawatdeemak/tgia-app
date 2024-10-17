@@ -3,9 +3,36 @@ import { APIProvider, Map, useMap as useMapGoogle } from '@vis.gl/react-google-m
 import { GoogleMapsOverlay } from '@deck.gl/google-maps'
 import useLayerStore from './store/map'
 import { useMap } from './context/map'
+import { IconLayer } from '@deck.gl/layers'
+import { MVTLayer } from '@deck.gl/geo-layers'
+import { Layer } from '@deck.gl/core'
 import { MapInterface } from './interface/map'
 
 interface MapGoogleProps extends MapInterface {}
+
+export const recreateLayer = (layerList: Layer[]) => {
+	return layerList.map((item) => {
+		// const spliter = '---'
+		// let id = item.id?.split(spliter)?.[0] || ''
+		// id = `${id}${spliter}${new Date().getTime()}`
+
+		const newProp = {
+			...item.props,
+			// id,
+			beforeId: 'custom-referer-layer',
+		} as any
+
+		if (item instanceof IconLayer) {
+			newProp.data = item.props.data
+			return new IconLayer(newProp)
+		}
+
+		if (item instanceof MVTLayer) {
+			return new MVTLayer(newProp)
+		}
+		return item
+	})
+}
 
 const DeckGLOverlay = () => {
 	const layers = useLayerStore((state) => state.layers)
@@ -14,7 +41,8 @@ const DeckGLOverlay = () => {
 	const overlay = useMemo(() => new GoogleMapsOverlay({}), [])
 	useEffect(() => {
 		if (overlay instanceof GoogleMapsOverlay) {
-			overlay.setProps({ layers })
+			const temp = recreateLayer(layers)
+			overlay.setProps({ layers: temp })
 		}
 	}, [layers, overlay])
 	useEffect(() => {
