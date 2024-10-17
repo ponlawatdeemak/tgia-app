@@ -57,6 +57,8 @@ export const PlotMonitoringDetailMain = () => {
 							activityId={activityId}
 							plotDetail={plotDetail}
 							lossType={lossDetailData?.data?.lossType}
+							plantYear={plantDetailData?.data?.year?.en}
+							lossYear={lossDetailData?.data?.year?.en}
 						/>
 						<div className='mx-4 lg:hidden'>
 							{plotDetail === 'plantDetail' ? (
