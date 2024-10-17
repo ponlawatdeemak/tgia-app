@@ -77,20 +77,7 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 		})?.key
 	}, [pathname])
 
-	// const handleCloseNavMenu = useCallback(
-	// 	(key: keyof typeof AppPath) => {
-	// 		console.log('handleCloseNavMenu ', AppPath[key], AppPath, key, router)
-
-	// 		router.push(AppPath[key])
-	// 		setAnchorOthersMenuEl(null)
-	// 		setDrawerOpen(false)
-	// 	},
-	// 	[router],
-	// )
-
 	const handleCloseNavMenu = (key: keyof typeof AppPath) => {
-		console.log('handleCloseNavMenu ', AppPath[key], AppPath, key, router)
-
 		router.push(AppPath[key])
 		setAnchorOthersMenuEl(null)
 		setDrawerOpen(false)
