@@ -38,7 +38,7 @@ const YearPicker: React.FC<YearPickerProps> = ({
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 	const [selectedYear, setSelectedYear] = useState<number[]>([])
 	const language = i18n.language as keyof ResponseLanguage
-	const { selectOption, setSelectOption } = useSelectOption()
+	//const { selectOption, setSelectOption } = useSelectOption()
 
 	const { data: yearData } = useQuery({
 		queryKey: ['getLookupYears'],
@@ -50,11 +50,17 @@ const YearPicker: React.FC<YearPickerProps> = ({
 	})
 
 	useEffect(() => {
+		const initialSelectedYear: number[] = yearData?.data?.map((year) => year.code)?.sort((a, b) => a - b) || []
+		setSelectedYear(initialSelectedYear)
+		formik?.setFieldValue('year', initialSelectedYear)
+	}, [yearData])
+
+	useEffect(() => {
 		if (selectedYear.length > 0) {
-			setSelectOption({ ...selectOption, selectedYear: formatYears(selectedYear) })
+			//setSelectOption({ ...selectOption, selectedYear: formatYears(selectedYear) })
 			setQueryParams({ ...queryParams, years: selectedYear })
 		} else {
-			setSelectOption({ ...selectOption, selectedYear: '' })
+			//setSelectOption({ ...selectOption, selectedYear: '' })
 			setQueryParams({ ...queryParams, years: [] })
 		}
 	}, [selectedYear, language])
@@ -124,10 +130,10 @@ const YearPicker: React.FC<YearPickerProps> = ({
 						})}
 					>
 						{selectedYear.length > 0
-							? formatYears(selectedYear)
-							: isShowOnReport
-								? `${t('totalYear', { ns: 'report' })}`
-								: `${t('dataYear')}`}
+							? selectedYear.length === yearData?.data?.length
+								? `${t('totalYear')}`
+								: formatYears(selectedYear)
+							: `${t('noYearSelected')}`}
 					</div>
 				</IconButton>
 			) : (
@@ -160,10 +166,10 @@ const YearPicker: React.FC<YearPickerProps> = ({
 			>
 				<div className={clsx('truncate', { 'pl-2': !(selectedYear.length > 0), 'opacity-45': disabled })}>
 					{selectedYear.length > 0
-						? formatYears(selectedYear)
-						: isShowOnReport
-							? `${t('totalYear', { ns: 'report' })}`
-							: `${t('dataYear')}`}
+						? selectedYear.length === yearData?.data?.length
+							? `${t('totalYear')}`
+							: formatYears(selectedYear)
+						: `${t('noYearSelected')}`}
 				</div>
 			</Button>
 
