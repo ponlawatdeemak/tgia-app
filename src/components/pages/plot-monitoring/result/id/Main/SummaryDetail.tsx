@@ -41,7 +41,7 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({
 		if (!plantDetailData) return
 
 		if (plantDetailData?.extent) {
-			setExtent?.(plantDetailData.extent, 300)
+			setExtent?.(plantDetailData.extent, isDesktop ? 300 : 50)
 		}
 	}, [plantDetailData, setExtent])
 
