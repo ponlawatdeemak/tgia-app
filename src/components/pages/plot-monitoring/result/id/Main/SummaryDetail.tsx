@@ -41,9 +41,9 @@ const SummaryDetail: React.FC<SummaryDetailProps> = ({
 		if (!plantDetailData) return
 
 		if (plantDetailData?.extent) {
-			setExtent?.(plantDetailData.extent)
+			setExtent?.(plantDetailData.extent, 300)
 		}
-	}, [plantDetailData])
+	}, [plantDetailData, setExtent])
 
 	return (
 		<div className='lg:bg-bg-white box-border flex flex-col gap-0 bg-white lg:w-[30%] lg:min-w-[360px] lg:max-w-[580px] lg:gap-4 lg:overflow-auto'>

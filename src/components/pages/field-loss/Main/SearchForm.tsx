@@ -134,7 +134,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ mapViewRef }) => {
 				} else {
 					const extentProvince = (await service.fieldLoss.getExtentAdminPoly({ id: adminPolyCode })).data
 					if (extentProvince?.extent) {
-						setExtent(extentProvince?.extent)
+						setExtent(extentProvince?.extent, 150)
 					}
 				}
 			} catch (error) {

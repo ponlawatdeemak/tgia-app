@@ -28,7 +28,7 @@ const PlotMonitoringSearchForm: React.FC<PlotMonitoringSearchFormProps> = ({ map
 	const { setOpen } = useSearchForm()
 	const { queryParams, setQueryParams } = useSearchPlotMonitoring()
 	const { t, i18n } = useTranslation(['default', 'plot-monitoring'])
-	const { setExtent, setMapInfoWindow } = useMap()
+	const { setExtent } = useMap()
 	const language = i18n.language as keyof ResponseLanguage
 
 	const [inputActivityId, setInputActivityId] = useState('')

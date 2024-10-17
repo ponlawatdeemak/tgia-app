@@ -4,7 +4,7 @@ import { LatLng, MapInfoWindow } from '../interface/map'
 import useLayerStore from '../store/map'
 
 interface MapContextProps {
-	setExtent: (extent: [number, number, number, number]) => void
+	setExtent: (extent: [number, number, number, number], padding?: number) => void
 	setGoogleMapInstance: (mapInstance: google.maps.Map | null) => void
 	setMapLibreInstance: (mapInstance: maplibregl.Map | null) => void
 	setCenter: (coords: LatLng) => void
@@ -39,14 +39,14 @@ export const MapProvider = ({ children }: { children: ReactNode }) => {
 	const [latLng, setLatLng] = useState<LatLng | null>(null)
 
 	const setExtent = useCallback(
-		(extent: [number, number, number, number]) => {
-			if (mapLibreInstance) { 
+		(extent: [number, number, number, number], padding: number = 0) => {
+			if (mapLibreInstance) {
 				mapLibreInstance.fitBounds(
 					[
 						[extent[0], extent[1]],
 						[extent[2], extent[3]],
 					],
-					{ padding: 200 },
+					{ padding },
 				)
 			} else if (googleMapInstance) {
 				googleMapInstance.fitBounds(
@@ -54,7 +54,7 @@ export const MapProvider = ({ children }: { children: ReactNode }) => {
 						{ lat: extent[1], lng: extent[0] },
 						{ lat: extent[3], lng: extent[2] },
 					),
-					200,
+					padding,
 				)
 			}
 		},
