@@ -125,7 +125,7 @@ const RangeCalendar: React.FC<RangeCalendarProps> = ({ dateRange = undefined, on
     ) => void,
   ) => {
     const monthRange = Array.from({ length: 12 }, (_, i) => i);
-    const yearRange = Array.from({ length: 6 }, (_, i) => i + focusedDate.getFullYear() - 5);
+    const yearRange = [2019, 2020, 2021, 2022, 2023, 2024];
     return (
       <div className='flex items-center justify-between' onMouseUp={(e) => e.stopPropagation()}>
         <IconButton className='pl-0' onClick={() => changeShownDate(-1, 'monthOffset')}>
