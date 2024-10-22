@@ -28,20 +28,17 @@ import AlertConfirm from '../dialog/AlertConfirm'
 import { AlertInfoType } from '@/components/shared/ProfileForm/interface'
 import { ErrorResponse } from '@/api/interface'
 import classNames from 'classnames'
-import MapPinDialog from '@/components/pages/plot-monitoring/result/Map/MapPin/MapPinDialog'
 import * as yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import { PostPOISDtoIn } from '@/api/plot-monitoring/dto-in.dto'
 import useResponsive from '@/hook/responsive'
 import { useMap } from './context/map'
-import { FormikProps } from 'formik'
 import FormInput from '@/components/common/input/FormInput'
 import { LocationSearching } from '@mui/icons-material'
 import { getPin } from '@/utils/pin'
 import { IconLayer } from '@deck.gl/layers'
 import useLayerStore from '@/components/common/map/store/map'
-import { getCoords, getPermissionCoods } from '@/utils/geometry'
 
 interface FormValues {
 	name: string
@@ -395,40 +392,39 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 	}, [isAddPin])
 
 	const handleGetCurrentLocation = useCallback(async () => {
-		const permission = await getPermissionCoods()
+		try {
+			setCurrentBusy(true)
 
-		if (permission.state === 'granted') {
-			getCoords().then(async (position) => {
-				try {
-					if (position) {
-						setCurrentBusy(true)
-						const longitude = Number(position?.coords?.longitude.toFixed(6))
-						const latitude = Number(position?.coords?.latitude.toFixed(6))
-						setLatLng({
-							latitude,
-							longitude,
-						})
-					}
-				} catch (error) {
-					console.error('Error getting location:', error)
-					setAlertInfo({
-						open: true,
-						severity: 'error',
-						message: t('error.grantedPermissionCoods', { ns: 'default' }),
+			// Permission API is implemented
+			navigator.permissions &&
+				navigator.permissions
+					.query({
+						name: 'geolocation',
 					})
-				} finally {
-					setCurrentBusy(false)
-					setBusy(false)
-				}
-			})
-		} else if (permission.state === 'denied') {
-			setAlertInfo({
-				open: true,
-				severity: 'error',
-				message: t('error.grantedPermissionCoods', { ns: 'default' }),
-			})
+					.then((permission) => {
+						// is geolocation granted?
+						if (permission.state === 'granted') {
+							navigator.geolocation.getCurrentPosition((position) => {
+								const longitude = Number(position.coords.longitude.toFixed(6))
+								const latitude = Number(position.coords.latitude.toFixed(6))
+
+								setLatLng({
+									latitude,
+									longitude,
+								})
+							})
+						} else {
+							setCurrentBusy(false)
+							setBusy(false)
+						}
+					})
+		} catch (error) {
+			console.error('Error getting location:', error)
+		} finally {
+			setCurrentBusy(false)
+			setBusy(false)
 		}
-	}, [setLatLng, t])
+	}, [setLatLng])
 
 	const handleLocationEnter = useCallback(
 		(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
