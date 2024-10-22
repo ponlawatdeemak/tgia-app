@@ -105,7 +105,7 @@ export default function MapLibre({ viewState, mapStyle, onViewStateChange, onMap
 			initialViewState={viewState}
 			mapStyle={mapStyle}
 			preserveDrawingBuffer={true}
-			zoom={viewState?.zoom}
+			// zoom={viewState?.zoom}
 			onMove={(e) => onViewStateChange?.(e.viewState)}
 			ref={(ref) => setMapLibreInstance(ref?.getMap() || null)}
 			onClick={(e) => onMapClick?.({ latitude: e?.lngLat?.lat, longitude: e?.lngLat?.lng })}
