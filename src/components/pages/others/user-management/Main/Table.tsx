@@ -427,7 +427,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 	}
 
 	// Avoid a layout jump when reaching the last page with empty rows.
-	const emptyRows = page > Math.ceil(total / 10) - 1 ? Math.max(0, (1 + page) * 2 - tableData.length) : 0
+	// const emptyRows = page > Math.ceil(total / 10) - 1 ? Math.max(0, 10 - tableData.length) : 0
 
 	return (
 		<div
@@ -450,12 +450,8 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 					</Typography>
 				</div>
 
-				<Box className='flex h-[calc(100vh-200px)] flex-col gap-[16px] lg:h-[calc(100vh-220px)]'>
-					<TableContainer
-						className='flex flex-col overflow-y-auto'
-						sx={{ minHeight: '90%', flex: 1 }}
-						component={'div'}
-					>
+				<Box className='flex h-[calc(100vh-200px)] flex-col justify-between lg:h-[calc(100vh-220px)]'>
+					<TableContainer className='flex h-full grow flex-col overflow-y-auto' component={'div'}>
 						{selected.length > 0 && (
 							<Box
 								// sx={{ display: 'inline-flex', backgroundColor: '#F8FAFD', position: 'sticky', left: 0 }}
@@ -530,12 +526,7 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 								size={dense ? 'small' : 'medium'}
 								stickyHeader
 								aria-label='sticky table'
-								sx={{
-									// tableLayout: 'auto',
-									width: '100%',
-									height: '90%',
-									position: 'relative',
-								}}
+								className='relative max-h-full w-full'
 							>
 								<TableHead>
 									<TableRow
@@ -715,24 +706,24 @@ const UserManagementTable: React.FC<UserManagementTableProps> = ({
 											</TableRow>
 										)
 									})}
-									{emptyRows > 0 && (
+									{/* {emptyRows > 0 && (
 										<TableRow
-											// style={{
-											// 	// height: (dense ? 33 : 53) * emptyRows,
-											// 	height: total === 0 ? '100%' : 168 * emptyRows, //total height is around 396px at dev screen height when total === 0
-											// }}
-											className={clsx(`h-[${168 * emptyRows}px]`, {
-												'h-[calc(100vh-404px)]': total === 0,
-											})}
+											style={{
+												// height: (dense ? 33 : 53) * emptyRows,
+												height: total === 0 ? '100%' : 168 * emptyRows, //total height is around 396px at dev screen height when total === 0
+											}}
+											// className={clsx(`h-[${168 * emptyRows}px]`, {
+											// 	'h-[calc(100vh-404px)]': total === 0,
+											// })}
 										>
 											<TableCell colSpan={10} />
 										</TableRow>
-									)}
+									)} */}
 								</TableBody>
 							</Table>
 						)}
 					</TableContainer>
-					<Box className={'flex w-full items-center justify-between'}>
+					<Box className={'mt-4 flex w-full items-center justify-between'}>
 						<Typography className='text-base font-normal'>
 							{total !== 0 && (
 								<>
