@@ -42,8 +42,8 @@
 	"thailand": "Thailand",
 	"search": "Search",
 	"dataYear": "Data Year",
-    "totalYear": "All Year",
-    "noYearSelected": "No Year Selected",
+	"totalYear": "All Year",
+	"noYearSelected": "No Year Selected",
 	"noDisaster": "No Disaster",
 	"item": "Item",
 	"riceCultivationArea": "Rice Cultivation Area",
@@ -72,7 +72,8 @@
 	"success": {},
 	"error": {
 		"somethingWrong": "Something went wrong. Please check the information again.",
-		"incorrectEmailOrPassword": "Incorrect email or password"
+		"incorrectEmailOrPassword": "Incorrect email or password.",
+		"grantedPermissionCoods": "Please check your location access permissions."
 	},
 	"common": {
 		"uploadImg": "Upload Image",

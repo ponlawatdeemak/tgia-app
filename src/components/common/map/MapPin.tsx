@@ -41,6 +41,7 @@ import { LocationSearching } from '@mui/icons-material'
 import { getPin } from '@/utils/pin'
 import { IconLayer } from '@deck.gl/layers'
 import useLayerStore from '@/components/common/map/store/map'
+import { getCoords, getPermissionCoods } from '@/utils/geometry'
 
 interface FormValues {
 	name: string
@@ -394,26 +395,40 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 	}, [isAddPin])
 
 	const handleGetCurrentLocation = useCallback(async () => {
-		try {
-			setCurrentBusy(true)
-			const position: GeolocationPosition = await new Promise<GeolocationPosition>((resolve, reject) => {
-				navigator.geolocation.getCurrentPosition(resolve, reject)
-			})
+		const permission = await getPermissionCoods()
 
-			const longitude = Number(position.coords.longitude.toFixed(6))
-			const latitude = Number(position.coords.latitude.toFixed(6))
-
-			setLatLng({
-				latitude,
-				longitude,
+		if (permission.state === 'granted') {
+			getCoords().then(async (position) => {
+				try {
+					if (position) {
+						setCurrentBusy(true)
+						const longitude = Number(position?.coords?.longitude.toFixed(6))
+						const latitude = Number(position?.coords?.latitude.toFixed(6))
+						setLatLng({
+							latitude,
+							longitude,
+						})
+					}
+				} catch (error) {
+					console.error('Error getting location:', error)
+					setAlertInfo({
+						open: true,
+						severity: 'error',
+						message: t('error.grantedPermissionCoods', { ns: 'default' }),
+					})
+				} finally {
+					setCurrentBusy(false)
+					setBusy(false)
+				}
 			})
-		} catch (error) {
-			console.error('Error getting location:', error)
-		} finally {
-			setCurrentBusy(false)
-			setBusy(false)
+		} else if (permission.state === 'denied') {
+			setAlertInfo({
+				open: true,
+				severity: 'error',
+				message: t('error.grantedPermissionCoods', { ns: 'default' }),
+			})
 		}
-	}, [])
+	}, [setLatLng, t])
 
 	const handleLocationEnter = useCallback(
 		(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {

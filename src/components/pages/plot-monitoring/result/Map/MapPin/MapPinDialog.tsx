@@ -115,25 +115,25 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 	// 	}
 	// }, [extentData])
 
-	const handleGetCurrentLocation = useCallback(() => {
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition((position) => {
-				const longitude = position.coords.longitude
-				const latitude = position.coords.latitude
-				formik.setFieldValue('lng', longitude.toFixed(6))
-				formik.setFieldValue('lat', latitude.toFixed(6))
-				// TO DO
-				// if (mapViewRef.current) {
-				// 	mapViewRef.current.setMapCenter({
-				// 		latitude,
-				// 		longitude,
-				// 	})
-				// }
-			})
-		} else {
-			console.log('Geolocation is not supported by this browser.')
-		}
-	}, [formik])
+	// const handleGetCurrentLocation = useCallback(() => {
+	// 	// if (navigator.geolocation) {
+	// 	// 	navigator.geolocation.getCurrentPosition((position) => {
+	// 	// 		const longitude = position.coords.longitude
+	// 	// 		const latitude = position.coords.latitude
+	// 	// 		formik.setFieldValue('lng', longitude.toFixed(6))
+	// 	// 		formik.setFieldValue('lat', latitude.toFixed(6))
+	// 	// 		// TO DO
+	// 	// 		// if (mapViewRef.current) {
+	// 	// 		// 	mapViewRef.current.setMapCenter({
+	// 	// 		// 		latitude,
+	// 	// 		// 		longitude,
+	// 	// 		// 	})
+	// 	// 		// }
+	// 	// 	})
+	// 	// } else {
+	// 	// 	console.log('Geolocation is not supported by this browser.')
+	// 	// }
+	// }, [formik])
 
 	const handleLocationEnter = useCallback(
 		(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -261,7 +261,7 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 					<Button
 						className='border-gray pl-2 pr-2.5 [&_.MuiButton-startIcon]:m-0 [&_.MuiButton-startIcon]:mr-1'
 						variant='outlined'
-						onClick={handleGetCurrentLocation}
+						// onClick={handleGetCurrentLocation}
 						disabled={loading}
 						startIcon={
 							loading ? (
