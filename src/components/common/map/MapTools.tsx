@@ -38,8 +38,10 @@ const MapTools: React.FC<MapToolsProps> = ({
 
 	const handleChange = useCallback(
 		(_: React.MouseEvent<HTMLElement>, newBasemap: BasemapType) => {
-			setBasemap((prev) => newBasemap || prev)
-			onBasemapChanged?.(newBasemap)
+			setBasemap((prev) => newBasemap ?? prev)
+			if (newBasemap !== null) {
+				onBasemapChanged?.(newBasemap)
+			}
 		},
 		[onBasemapChanged],
 	)
