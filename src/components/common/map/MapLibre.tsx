@@ -110,8 +110,9 @@ export default function MapLibre({ viewState, mapStyle, onViewStateChange, onMap
 			ref={(ref) => setMapLibreInstance(ref?.getMap() || null)}
 			onClick={(e) => onMapClick?.({ latitude: e?.lngLat?.lat, longitude: e?.lngLat?.lng })}
 			onStyleData={onStyleData}
+			touchZoomRotate={true}
+			touchPitch={false}
 			dragRotate={false}
-			touchZoomRotate={false}
 		>
 			<DeckGLOverlay />
 		</Map>
