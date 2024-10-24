@@ -45,6 +45,8 @@
 	"totalYear": "All Year",
 	"noYearSelected": "No Year Selected",
 	"noDisaster": "No Disaster",
+	"noLandPlot": "No land plot.",
+	"noAnalyze": "Unable to analyze disaster.",
 	"item": "Item",
 	"riceCultivationArea": "Rice Cultivation Area",
 	"filter": "Filter",

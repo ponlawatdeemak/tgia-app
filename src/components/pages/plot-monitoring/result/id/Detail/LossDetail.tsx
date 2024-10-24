@@ -14,9 +14,21 @@ const LossDetail: React.FC<LossDetailProps> = ({ lossDetailData }) => {
 	const { t, i18n } = useTranslation(['default', 'plot-monitoring'])
 	const language = i18n.language as keyof ResponseLanguage
 
-	return lossDetailData?.lossType === 'noData' ? (
+	return lossDetailData?.lossType === 'noData' || lossDetailData?.lossType === 'noDamage' ? (
 		<Box className='flex h-full items-center justify-center max-lg:rounded max-lg:border max-lg:border-solid max-lg:border-gray max-lg:p-4'>
-			<span className='text-base font-normal text-gray-dark2'>{t('noDisaster')}</span>
+			{lossDetailData?.lossType === 'noDamage' ? (
+				<>
+					<span className='text-base font-normal text-gray-dark2'>{t('noDisaster')}</span>
+				</>
+			) : (
+				<>
+					<div className='flex-row items-center'>
+						<div className='text-center text-base font-normal text-gray-dark2'>{t('noPlot')}</div>
+
+						<div className='text-center text-base font-normal text-gray-dark2'>{t('noAnalyze')}</div>
+					</div>
+				</>
+			)}
 		</Box>
 	) : (
 		<>

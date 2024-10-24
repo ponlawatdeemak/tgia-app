@@ -45,6 +45,8 @@
 	"totalYear": "ปีทั้งหมด",
 	"noYearSelected": "ไม่เลือกปี",
 	"noDisaster": "ไม่มีภัยพิบัติ",
+	"noPlot": "ไม่มีขอบแปลง",
+	"noAnalyze": "วิเคราะห์ภัยพิบัติไม่ได้",
 	"item": "รายการ",
 	"riceCultivationArea": "พื้นที่ปลูกข้าว",
 	"filter": "ตัวกรอง",
