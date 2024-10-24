@@ -37,10 +37,10 @@ export const getDateInRange = (startDate: Date, endDate: Date) => {
 }
 
 export const getMonthFull = (month: number, language: string) => {
-  const d = new Date();
-  d.setMonth(month);
-  if (language === Language.TH) {
-    return format(d, "MMMM", { locale: th });
-  }
-  return format(d, "MMMM", { locale: enUS });
+	const d = new Date()
+	d.setMonth(month)
+	if (language === Language.TH) {
+		return format(d, 'MMMM', { locale: th })
+	}
+	return format(d, 'MMMM', { locale: enUS })
 }
