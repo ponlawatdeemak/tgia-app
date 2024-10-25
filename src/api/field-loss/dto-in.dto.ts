@@ -32,6 +32,9 @@ export interface GetAreaStatisticDtoIn {
 	registrationAreaType: number
 	sort?: string
 	sortType?: string
+	provinceCode?: number
+	districtCode?: number
+	subDistrictCode?: number
 }
 
 export interface GetTimeStatisticDtoIn {
@@ -39,4 +42,7 @@ export interface GetTimeStatisticDtoIn {
 	endDate?: string
 	lossType?: number
 	registrationAreaType: number
+	provinceCode?: number
+	districtCode?: number
+	subDistrictCode?: number
 }

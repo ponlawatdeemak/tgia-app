@@ -96,5 +96,6 @@
 		"hybrid": "Satellite"
 	},
 	"dataSetYear": "Data Set Year",
-	"area": "Area"
+	"area": "Area",
+    "noSearchResultsFound": "No Search Results Found"
 }

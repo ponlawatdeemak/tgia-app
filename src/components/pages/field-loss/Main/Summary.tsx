@@ -169,14 +169,14 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 										{t('percentTotalRegisteredAreas', { ns: 'field-loss' })}
 									</p>
 								</div>
-								<div className='flex justify-end'>
+								{/* <div className='flex justify-end'>
 									<span
 										onClick={() => setOpenCalDialog(true)}
 										className='cursor-pointer text-right text-sm font-normal text-black-dark underline'
 									>
 										{t('calculationMethod', { ns: 'field-loss' })}
 									</span>
-								</div>
+								</div> */}
 								<Dialog
 									open={openCalDialog}
 									onClick={() => setOpenCalDialog(false)}

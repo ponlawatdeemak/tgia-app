@@ -338,7 +338,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 						) : searchPlotData?.pages[0]?.data?.length === 0 ? (
 							<Box className='flex h-full items-center justify-center'>
 								<span className='text-base font-normal text-gray-dark2'>
-									{t('noSearchResultsFound', { ns: 'plot-monitoring' })}
+									{t('noSearchResultsFound')}
 								</span>
 							</Box>
 						) : (

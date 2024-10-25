@@ -73,6 +73,9 @@ const fieldLoss = {
 			params.append('registrationAreaType', payload.registrationAreaType.toString())
 		if (payload.sort) params.append('sort', payload.sort)
 		if (payload.sortType) params.append('sortType', payload.sortType)
+		if (payload.provinceCode !== undefined) params.append('provinceCode', payload.provinceCode.toString())
+		if (payload.districtCode !== undefined) params.append('districtCode', payload.districtCode.toString())
+		if (payload.subDistrictCode !== undefined) params.append('subDistrictCode', payload.subDistrictCode.toString())
 
 		return await api.get(`/predicted-loss/area-statistic?${params}`, APIService.DisasterAPI)
 	},
@@ -86,6 +89,9 @@ const fieldLoss = {
 		if (payload.lossType !== undefined) params.append('lossType', payload.lossType.toString())
 		if (payload.registrationAreaType !== undefined)
 			params.append('registrationAreaType', payload.registrationAreaType.toString())
+		if (payload.provinceCode !== undefined) params.append('provinceCode', payload.provinceCode.toString())
+		if (payload.districtCode !== undefined) params.append('districtCode', payload.districtCode.toString())
+		if (payload.subDistrictCode !== undefined) params.append('subDistrictCode', payload.subDistrictCode.toString())
 
 		return await api.get(`/predicted-loss/time-statistic?${params}`, APIService.DisasterAPI)
 	},

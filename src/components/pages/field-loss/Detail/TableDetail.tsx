@@ -74,6 +74,9 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 			endDate: queryParams.endDate ? format(queryParams.endDate, 'yyyy-MM-dd') : '',
 			lossType: queryParams.lossType || undefined,
 			registrationAreaType: areaType,
+			provinceCode: queryParams.provinceCode,
+			districtCode: queryParams.districtCode,
+			subDistrictCode: queryParams.subDistrictCode,
 			// sort: queryParams.sortTypeField || 'totalPredicted',
 			// sortType: queryParams.sortType || SortType.DESC,
 		}
@@ -93,7 +96,7 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 		return filter
 	}, [queryParams, areaType])
 
-	const { data: areaStatisticData, isLoading: isAreaStatisticData } = useQuery({
+	const { data: areaStatisticData, isLoading: isAreaStatisticLoadingData } = useQuery({
 		queryKey: ['getAreaStatistic', filterAreaStatistic],
 		queryFn: () => service.fieldLoss.getAreaStatistic({ ...filterAreaStatistic, ...filterOrder }),
 		//enabled: areaDetail === 'area-statistic' || !isDesktop,
@@ -159,10 +162,14 @@ const TableDetail: React.FC<TableDetailProps> = ({ areaDetail }) => {
 					{t('disasterDamageRank', { ns: 'field-loss' })}
 				</Typography>
 			</div>
-			{isAreaStatisticData ? (
+			{isAreaStatisticLoadingData ? (
 				<div className='flex h-60 flex-col items-center justify-center bg-white lg:h-full'>
 					<CircularProgress size={80} color='primary' />
 				</div>
+			) : !areaStatisticData?.data?.length || Number(areaStatisticData?.data?.[0]?.id) === 0 ? (
+				<Box className='flex h-full items-center justify-center'>
+					<span className='text-base font-normal text-gray-dark2'>{t('noSearchResultsFound')}</span>
+				</Box>
 			) : (
 				<TableContainer>
 					<Table aria-labelledby='tableTitle'>

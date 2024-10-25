@@ -97,5 +97,6 @@
 		"hybrid": "ภูมิประเทศ"
 	},
 	"dataSetYear": "ปีชุดข้อมูล",
-	"area": "พื้นที่"
+	"area": "พื้นที่",
+    "noSearchResultsFound": "ไม่พบผลลัพธ์การค้นหา"
 }

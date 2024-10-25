@@ -57,11 +57,14 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 			startDate: queryParams.startDate ? format(queryParams.startDate, 'yyyy-MM-dd') : '',
 			endDate: queryParams.endDate ? format(queryParams.endDate, 'yyyy-MM-dd') : '',
 			registrationAreaType: areaType,
+			provinceCode: queryParams.provinceCode,
+			districtCode: queryParams.districtCode,
+			subDistrictCode: queryParams.subDistrictCode,
 		}
 		return filter
 	}, [queryParams, areaType])
 
-	const { data: timeStatisticData, isLoading: isTimeStatisticData } = useQuery({
+	const { data: timeStatisticData, isLoading: isTimeStatisticLoadingData } = useQuery({
 		queryKey: ['getTimeStatistic', filterTimeStatistic],
 		queryFn: () => service.fieldLoss.getTimeStatistic(filterTimeStatistic),
 		//enabled: areaDetail === 'time-statistic' || !isDesktop,
@@ -169,10 +172,14 @@ const ChartDetail: React.FC<ChartDetailProps> = ({ areaDetail }) => {
 					</div>
 				)}
 			</div>
-			{isTimeStatisticData ? (
+			{isTimeStatisticLoadingData ? (
 				<div className='flex h-60 flex-col items-center justify-center bg-white lg:h-full'>
 					<CircularProgress size={80} color='primary' />
 				</div>
+			) : !timeStatisticData?.data?.length || Number(timeStatisticData?.data?.[0]?.month) === 0 ? (
+				<Box className='flex h-full items-center justify-center'>
+					<span className='text-base font-normal text-gray-dark2'>{t('noSearchResultsFound')}</span>
+				</Box>
 			) : (
 				<TableContainer>
 					<Table aria-labelledby='tableTitle'>
