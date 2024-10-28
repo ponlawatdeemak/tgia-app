@@ -7,6 +7,7 @@ COPY package.json /tmp/app/
 COPY next.config.mjs /tmp/app/
 COPY tsconfig.json /tmp/app/
 
+
 WORKDIR /tmp/app
 RUN npm ci --cache /cache/.npm && \
     (npm run build || mkdir -p .next) && \
@@ -28,14 +29,14 @@ RUN addgroup --gid ${P_UID} ${P_USER_NAME} && \
 WORKDIR ${HOME}
 USER ${P_UID}
 
-COPY --chmod=755 package*.json ./
-COPY --from=compile-stage --chmod=755 /cache/.npm /cache/.npm
+COPY --chown=root:root --chmod=755 package*.json ./
+COPY --from=compile-stage --chown=root:root --chmod=755 /cache/.npm /cache/.npm
 
 RUN npm ci --omit=dev --cache /cache/.npm && \
     rm -rf package-lock.json /cache/.npm
 
-COPY --chmod=755 public ./public
-COPY --from=compile-stage --chmod=755 /tmp/app/.next ./.next
-COPY --chmod=755 next.config.mjs ./
+COPY --chown=root:root --chmod=755 public ./public
+COPY --from=compile-stage --chown=root:root --chmod=755 /tmp/app/.next ./.next
+COPY --chown=root:root --chmod=755 next.config.mjs ./
 
 CMD ["npm", "start"]
