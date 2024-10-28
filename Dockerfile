@@ -31,15 +31,15 @@ RUN addgroup --gid ${P_UID} ${P_USER_NAME} && \
 WORKDIR ${HOME}
 USER ${P_UID}
 
-COPY --chown="21001:21001" --chmod=755 package*.json ./
-COPY --from=compile-stage --chown="21001:21001" --chmod=755 /cache/.npm /cache/.npm
+COPY --chmod=755 package*.json ./
+COPY --from=compile-stage --chmod=755 /cache/.npm /cache/.npm
 
-# ADD --chown="21001:21001" --chmod=755 public ./public
-# ADD --chown="21001:21001" --chmod=755 .next ./.next
-# ADD --chown="21001:21001" --chmod=755 next.config.mjs ./
+ADD --chmod=755 public ./public
+ADD --chmod=755 .next ./.next
+ADD --chmod=755 next.config.mjs ./
 
-COPY --chown="21001:21001" --chmod=755 public ./public
-COPY --from=compile-stage --chown="21001:21001" --chmod=755 /tmp/app/.next ./.next
+COPY --chmod=755 public ./public
+COPY --from=compile-stage --chmod=755 /tmp/app/.next ./.next
 COPY --chmod=755 next.config.mjs ./
 
 CMD ["npm", "start"]
