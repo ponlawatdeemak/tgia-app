@@ -35,7 +35,7 @@ import clsx from 'clsx'
 import FilterButtonMain from '../Filter'
 import useAreaType from '@/store/area-type'
 import { toPolygon } from '@/utils/geometry'
-import { numberWithCommas } from '@/utils/number'
+import commaNumber from 'comma-number'
 
 const LimitCardsPerPage = 10
 
@@ -235,7 +235,7 @@ const CardList: React.FC<CardListProps> = ({ areaDetail }) => {
 						</Typography>
 						<span className='p-2.5 text-base font-semibold text-black-light max-lg:py-0 max-lg:pt-3'>
 							{searchPlotData?.pages[0]?.total && searchPlotData?.pages[0]?.total > 0
-								? numberWithCommas(Number(searchPlotData?.pages[0]?.total))
+								? commaNumber(Number(searchPlotData?.pages[0]?.total))
 								: ''}
 						</span>
 					</div>
