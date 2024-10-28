@@ -29,8 +29,8 @@ RUN addgroup --gid ${P_UID} ${P_USER_NAME} && \
 WORKDIR ${HOME}
 USER ${P_UID}
 
-COPY --chown="21001:21001" package*.json ./
-COPY --from=compile-stage --chown="21001:21001" /cache/.npm /cache/.npm
+COPY --chown="21001:21001" --chmod=755 package*.json ./
+COPY --from=compile-stage --chown="21001:21001" --chmod=755 /cache/.npm /cache/.npm
 
 ADD --chown="21001:21001" --chmod=755 public ./public
 ADD --chown="21001:21001" --chmod=755 .next ./.next
