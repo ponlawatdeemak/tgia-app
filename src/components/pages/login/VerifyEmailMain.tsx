@@ -1,32 +1,36 @@
 'use client'
 
-import { Button, Typography } from '@mui/material'
-import { useMemo } from 'react'
-import AuthBreadcrumbs from './AuthBreadcrumbs'
 import EmailIcon from '@/components/svg/icons/EmailIcon'
-import useResponsive from '@/hook/responsive'
 import { AppPath } from '@/config/app'
+import { Button, Typography } from '@mui/material'
+import { useTranslation } from 'react-i18next'
+import AuthBreadcrumbs from './AuthBreadcrumbs'
 
-const VerifyEmailMain = () => {
-	const { isDesktop } = useResponsive()
+interface VerifyEmailMainProps {
+	email: string
+}
 
-	const email = 'Somchai@gmail.com'
-
+const VerifyEmailMain: React.FC<VerifyEmailMainProps> = ({ email }) => {
+	const { t } = useTranslation('appbar')
 	return (
 		<>
-			<AuthBreadcrumbs name='ตรวจสอบอีเมล' href={AppPath.Login} />
+			<AuthBreadcrumbs name={t('auth.checkEmail')} href={AppPath.Login} />
 
 			<div className='flex flex-grow flex-row'>
 				<div className='flex w-full items-center justify-center'>
 					<div className='mx-2 flex w-full max-w-[340px] flex-col items-center sm:max-w-[500px]'>
-						<EmailIcon width={isDesktop ? 100 : 134} height={isDesktop ? 100 : 134} />
-						<Typography className='mb-2 mt-4 text-2xl font-bold'>ตรวจสอบอีเมลของคุณ?</Typography>
-						<Typography className='mt-2 text-center'>
-							เราได้ส่งคำแนะนำเกี่ยวกับวิธีการรีเซ็ตรหัสผ่านของคุณไปที่
-						</Typography>
+						<EmailIcon width={100} height={100} className='hidden lg:block' />
+						<EmailIcon width={134} height={134} className='block lg:hidden' />
+						<Typography className='mb-2 mt-4 text-2xl font-bold'> {t('auth.headerCheckEmail')} </Typography>
+						<Typography className='mt-2 text-center'>{t('auth.subHeaderCheckEmail')}</Typography>
 						<Typography className='text-center font-semibold text-primary'>{email}</Typography>
-						<Button fullWidth variant='contained' href={AppPath.Login} className='mt-10'>
-							กลับสู่หน้าลงชื่อเข้าใช้
+						<Button
+							fullWidth
+							variant='contained'
+							href={`${AppPath.ResetPassword}?email=${email}`}
+							className='mt-10'
+						>
+							{t('auth.goToResetPassword')}
 						</Button>
 					</div>
 				</div>

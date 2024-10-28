@@ -1,48 +1,63 @@
 'use client'
-import { LoginDtoIn } from '@/api/auth/dto-in.dto'
+import type { LoginDtoIn } from '@/api/auth/dto-in.dto'
+import type { ErrorResponse } from '@/api/interface'
 import FormInput from '@/components/common/input/FormInput'
 import PasswordInput from '@/components/common/input/PasswordInput'
 import AgriculturalDepartmentLogo from '@/components/svg/AgriculturalDepartmentLogo'
 import ThaicomLogo from '@/components/svg/ThaicomLogo'
 import TriangleLogo from '@/components/svg/TriangleLogo'
 import { AppPath } from '@/config/app'
-import { Button, FormHelperText, Link, Typography } from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton'
+import { CircularProgress, FormHelperText, Link, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import { signIn } from 'next-auth/react'
-import { useSearchParams } from 'next/navigation'
-import { useCallback, useMemo } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
+import LanguageSwitcher from './LanguageSwitcher'
+import { Language } from '@/enum'
 
-const validationSchema = yup.object({
-	username: yup.string().required('กรุณากรอกอีเมล'),
-	password: yup.string().min(8, 'รหัสผ่านต้องมีขนาดอย่างน้อย 8 ตัวอักษร').required('กรุณากรอกรหัสผ่าน'),
-})
+interface LoginMainProps {}
 
-const LoginMain = () => {
+const LoginMain: React.FC<LoginMainProps> = () => {
 	const searchParams = useSearchParams()
-
+	const { t, i18n } = useTranslation(['appbar', 'default'])
+	const router = useRouter()
 	const callbackUrl = useMemo(() => searchParams?.get('callbackUrl'), [searchParams])
-	const error = useMemo(() => searchParams?.get('error'), [searchParams])
+	const [busy, setBusy] = useState<boolean>(false)
+	const [error, setError] = useState<ErrorResponse>()
 
-	const errorMessage = useMemo(() => {
-		if (error) {
-			if (error === 'CredentialsSignin') return 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'
-			return 'มีบางอย่างผิดพลาด'
-		}
-		return null
-	}, [error])
+	const validationSchema = useMemo(
+		() =>
+			yup.object({
+				username: yup.string().required(t('warning.inputEmail')),
+				password: yup.string().required(t('warning.inputPassword')),
+			}),
+		[t],
+	)
 
 	const onSubmit = useCallback(
 		async (values: LoginDtoIn) => {
-			const res = await signIn('credentials', {
-				username: values.username,
-				password: values.password,
-				redirect: true,
-				callbackUrl: callbackUrl ?? AppPath.FieldLoss,
-			})
-			console.log('TLOG ~ res:', res)
+			try {
+				setBusy(true)
+				const res = await signIn('credentials', {
+					username: values.username,
+					password: values.password,
+					redirect: false,
+				})
+				if (!res?.ok) {
+					setError(res?.error ? JSON.parse(res.error) : t('error.somethingWrong'))
+					return
+				}
+				router.push(callbackUrl || AppPath.FieldLoss)
+			} catch (error) {
+				console.log('Login failed', error)
+			} finally {
+				setBusy(false)
+			}
 		},
-		[callbackUrl],
+		[callbackUrl, router, t],
 	)
 
 	const formik = useFormik<LoginDtoIn>({
@@ -75,26 +90,49 @@ const LoginMain = () => {
 				</div>
 			</div>
 			<div className='flex h-full flex-col items-center justify-center bg-white'>
+				<div className='fixed right-4 top-4'>
+					<LanguageSwitcher />
+				</div>
 				<div className='mx-2 flex flex-col lg:w-[500px]'>
 					<div className='flex justify-center gap-1'>
 						<TriangleLogo width={70} height={70} />
 						<AgriculturalDepartmentLogo width={70} height={70} />
 					</div>
 					<Typography className='mb-6 mt-3 text-center text-2xl font-semibold sm:mx-10'>
-						โครงการพัฒนาระบบเทคโนโลยี
-						<br />
-						เพื่องานประกันภัยข้าวนาปี
+						{t('appName', { ns: 'default' })}
+						{i18n.language === Language.TH ? (
+							<>
+								<br />
+							</>
+						) : (
+							<> </>
+						)}
+						{t('subAppName', { ns: 'default' })}
 					</Typography>
 					<form onSubmit={formik.handleSubmit} className='flex flex-col lg:mx-6'>
-						<FormInput name='username' label='ชื่อผู้ใช้งาน' formik={formik} />
-						<PasswordInput name='password' label='รหัสผ่าน' formik={formik} className='mt-4' />
+						<FormInput disabled={busy} name='username' label={t('userName')} formik={formik} />
+						<PasswordInput
+							disabled={busy}
+							name='password'
+							label={t('password')}
+							formik={formik}
+							className='mt-4'
+						/>
 						<Link href={AppPath.ForgetPassword} className='mt-3 self-end font-medium no-underline'>
-							ลืมรหัสผ่าน
+							{t('auth.forgotPassword')}
 						</Link>
-						<FormHelperText error>{errorMessage}</FormHelperText>
-						<Button fullWidth variant='contained' className='mt-8' type='submit'>
-							เข้าสู่ระบบ
-						</Button>
+						<FormHelperText error>{error?.title}</FormHelperText>
+						<LoadingButton
+							fullWidth
+							loading={busy}
+							loadingPosition='start'
+							startIcon={<CircularProgress size={0} />}
+							variant='contained'
+							type='submit'
+							className='mt-8 [&_.MuiButton-startIcon]:m-0'
+						>
+							<span>{t('auth.login')}</span>
+						</LoadingButton>
 					</form>
 				</div>
 

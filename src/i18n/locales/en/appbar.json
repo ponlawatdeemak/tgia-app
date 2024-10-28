@@ -1,0 +1,47 @@
+{
+	"auth": {
+		"title": "Technology System Development Project",
+		"subTitle": "For Annual Rice Insurance",
+		"login": "Login",
+		"signIn": "Sign In",
+		"returnLogin": "Return to login",
+		"returnProfile": "Return to profile",
+		"forgotPassword": "Forgot password",
+		"headerForgotPassword": "You forgot your password?",
+		"subHeaderForgotPassword": "Please enter email.",
+		"subHeaderSendLink": " We will email you a link to reset your password.",
+		"checkEmail": "Check email",
+		"headerCheckEmail": "Check your email",
+		"subHeaderCheckEmail": "We have sent instructions on how to reset your password to",
+		"goToResetPassword": "Go Reset Password",
+		"verificationCode": "Verification code (Form E-mail)",
+		"loginOut": "Log Out",
+		"headerResetPasswordSuccess": "Reset reset successful.",
+		"subHeaderResetPasswordSuccess": "Please use your new password to log in.",
+		"headerResetPasswordUnsuccess": "Reset reset unsuccessful.",
+		"subHeaderResetPasswordUnsuccess": "Please check the accuracy again.",
+		"tokenExpire": "The Token has expired.",
+		"loginAgain": "Please Login again."
+	},
+	"menu": {
+		"fieldLoss": "Field Loss",
+		"plotMonitoring": "Plot Monitoring",
+		"annualAnalysis": "Annual Analysis",
+		"others": "Others",
+		"language": "Language",
+		"report": "Report",
+		"userManagement": "User Management",
+		"about": "About",
+		"glossary": "Glossary",
+		"areaType": "Area Type",
+		"areaTypeUnit": {
+			"registration": "Registration",
+			"insurance": "Insurance"
+		},
+		"areaUnit": "Area Unit",
+		"areaUnitUnit": {
+			"rai": "Rai",
+			"landPlot": "Land Plot"
+		}
+	}
+}

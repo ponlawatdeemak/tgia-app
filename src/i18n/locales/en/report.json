@@ -1,0 +1,9 @@
+{
+    "downloadReportTitle": "Download Damaged Area Report",
+    "download": "Download",
+    "fileType": "File Type",
+    "totalYear": "All Year",
+    "error": {
+        "noResultsFound": "No Results Found" 
+    }
+}

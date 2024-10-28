@@ -1,0 +1,9 @@
+{
+    "downloadReportTitle": "ดาวน์โหลดรายงานพื้นที่เสียหายจากภัยพิบัติ",
+    "download": "ดาวน์โหลด",
+    "fileType": "ประเภทไฟล์",
+    "totalYear": "ปีทั้งหมด",
+    "error": {
+        "noResultsFound": "ไม่พบข้อมูล" 
+    }
+}

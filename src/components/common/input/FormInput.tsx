@@ -4,24 +4,35 @@ import React from 'react'
 
 export interface FormInputProps extends OutlinedInputProps {
 	name: string
-	formik: FormikProps<any>
+	formik?: FormikProps<any>
+	required?: boolean
 }
 
-const FormInput: React.FC<FormInputProps> = ({ formik, name, label, className, ...props }) => {
-	const errorMessage = formik.touched[name] && formik.errors[name]
+const FormInput: React.FC<FormInputProps> = ({
+	formik,
+	name,
+	label,
+	className,
+	required = false,
+	fullWidth = true,
+	value,
+	...props
+}) => {
+	const errorMessage = formik?.touched[name] && formik?.errors[name]
 	return (
-		<FormControl fullWidth className={className}>
+		<FormControl fullWidth={fullWidth} required={required} className={className}>
 			<FormLabel id={`${name}-label`} className='mb-2'>
 				{label}
 			</FormLabel>
 			<OutlinedInput
+				onChange={formik?.handleChange}
 				{...props}
 				id={`${name}-input`}
 				name={name}
 				size='small'
-				value={formik.values[name]}
-				onChange={formik.handleChange}
-				error={formik.touched[name] && Boolean(formik.errors[name])}
+				value={formik?.values[name] || value}
+				error={formik?.touched[name] && Boolean(formik?.errors[name])}
+				inputProps={{ maxLength: 100 }}
 			/>
 			{typeof errorMessage === 'string' && <FormHelperText error>{errorMessage}</FormHelperText>}
 		</FormControl>

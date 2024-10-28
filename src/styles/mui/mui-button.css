@@ -1,3 +1,30 @@
-.MuiButton-root {
+.MuiButton-root,
+.MuiIconButton-root {
 	border-radius: 0.5rem;
+	text-transform: none;
+}
+
+.MuiButton-root input {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+}
+
+.MuiButton-colorSecondary,
+.MuiIconButton-colorSecondary {
+	color: var(--black-color);
+	background-color: white;
+}
+
+.btn-shadow {
+	box-shadow:
+		0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+		0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+		0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+.btn-shadow:hover {
+	box-shadow:
+		0px 2px 4px -1px rgba(0, 0, 0, 0.2),
+		0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+		0px 1px 10px 0px rgba(0, 0, 0, 0.12);
 }

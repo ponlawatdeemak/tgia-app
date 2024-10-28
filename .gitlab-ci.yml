@@ -36,13 +36,25 @@ docker_build:
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
+    APP_PASSWORD: $APP_PASSWORD_DEV
+    NEXTAUTH_SECRET: $NEXTAUTH_SECRET_DEV
+    API_KEY: $API_KEY_DEV
+    GOOGLE_MAPS_API_KEY: $GOOGLE_MAPS_API_KEY_DEV
+    API_KEY_DISASTER: $API_KEY_DISASTER_DEV
+    API_KEY_TILE: $API_KEY_TILE_DEV
+
   before_script:
     - docker login ${CI_REGISTRY} -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD}
+    - sed -ri -e "s|API_KEY_TILE_DEV|$API_KEY_TILE|" -e "s|API_KEY_DISASTER_DEV|$API_KEY_DISASTER|" -e "s|GOOGLE_MAPS_API_KEY_DEV|$GOOGLE_MAPS_API_KEY|" -e "s|APP_PASSWORD_DEV|$APP_PASSWORD|" -e "s|NEXTAUTH_SECRET_DEV|$NEXTAUTH_SECRET|" -e "s|API_KEY_DEV|$API_KEY|" .env.dev
   script:
-    - docker build -t ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest .
-    - docker tag ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_TIMESTAMP:0:10}-$CI_COMMIT_SHORT_SHA
-    - docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_TIMESTAMP:0:10}-$CI_COMMIT_SHORT_SHA
-    - docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
+    - cp .env.dev .env.production
+    - cat .env.production
+    - docker build -t ${CI_REGISTRY}/${CI_PROJECT_PATH}-${ENV_VAR}:latest .
+    - docker tag ${CI_REGISTRY}/${CI_PROJECT_PATH}-${ENV_VAR}:latest ${CI_REGISTRY}/${CI_PROJECT_PATH}-${ENV_VAR}:${CI_COMMIT_TIMESTAMP:0:10}-$CI_COMMIT_SHORT_SHA
+    - docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}-${ENV_VAR}:${CI_COMMIT_TIMESTAMP:0:10}-$CI_COMMIT_SHORT_SHA
+    - docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}-${ENV_VAR}:latest
+
+
 
 deploy_dev:
   stage: deploy-dev
@@ -88,7 +100,7 @@ container_scanning:
     - echo $FULL_IMAGE_NAME
   script:
     - trivy --version
-    - time trivy image --clear-cache
+    - time trivy clean --scan-cache
     - time trivy image --download-db-only
     - time trivy image --exit-code 0 --format template --template "@/contrib/gitlab.tpl" --scanners vuln --output "$CI_PROJECT_DIR/container-scanning-report.json" "$FULL_IMAGE_NAME"
     - time trivy image --exit-code 0 --severity HIGH,CRITICAL --scanners vuln "$FULL_IMAGE_NAME"
