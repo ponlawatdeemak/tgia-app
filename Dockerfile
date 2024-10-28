@@ -40,7 +40,8 @@ ADD --chown="21001:21001" --chmod=755 public ./public
 ADD --chown="21001:21001" --chmod=755 .next ./.next
 ADD --chown="21001:21001" --chmod=755 next.config.mjs ./
 
-RUN chmod -R g=u public 
+
+RUN chmod -R g=u . 
 
 COPY --chown="21001:21001" --chmod=755 public ./public
 COPY --from=compile-stage --chown="21001:21001" --chmod=755 /tmp/app/.next ./.next
