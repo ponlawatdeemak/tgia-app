@@ -40,4 +40,4 @@ COPY --chown="21001:21001" --chmod=0755 public ./public
 COPY --from=compile-stage --chown="21001:21001" --chmod=0755 /tmp/app/.next ./.next
 COPY --chown="21001:21001" --chmod=0755 next.config.mjs ./
 
-CMD npm start
+CMD ["npm", "start"]
