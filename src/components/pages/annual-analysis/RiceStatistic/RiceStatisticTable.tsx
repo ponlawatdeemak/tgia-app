@@ -1,13 +1,11 @@
 'use client'
 import * as React from 'react'
-import { alpha } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
-import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import Toolbar from '@mui/material/Toolbar'
@@ -15,14 +13,12 @@ import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 import { visuallyHidden } from '@mui/utils'
 import { useTranslation } from 'react-i18next'
-import { useSwitchLanguage } from '@/i18n/client'
-import { Language, SortType } from '@/enum'
+import { SortType } from '@/enum'
 import { ResponseArea, ResponseLanguage } from '@/api/interface'
 import useAreaUnit from '@/store/area-unit'
 import useAreaType from '@/store/area-type'
 import useResponsive from '@/hook/responsive'
 import { dataAreas } from '@/api/annual-analysis/dto-out.dto'
-import { bar } from 'billboard.js'
 import { useSelectOption } from '../Main/context'
 import clsx from 'clsx'
 
@@ -62,318 +58,18 @@ interface RiceStatisticTableProps {
 	riceTableData?: any[]
 }
 
-// const mockResp = [
-// 	{
-// 		id: '36',
-// 		name: {
-// 			th: 'นครราชสีมา A',
-// 			en: 'Nakhon Ratchasima',
-// 		},
-// 		totalActArea: {
-// 			areaRai: 2132325,
-// 			areaPlot: 20000,
-// 		},
-// 		totalPredictedRiceArea: {
-// 			areaRai: 200000,
-// 			areaPlot: 50000,
-// 		},
-// 		actAreas: [
-// 			{
-// 				column: {
-// 					th: '2562',
-// 					en: '2019',
-// 				},
-// 				areaRai: 2250001,
-// 				areaPlot: 2132325,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2563',
-// 					en: '2020',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2500000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2564',
-// 					en: '2021',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2500000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2565',
-// 					en: '2022',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2500000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2566',
-// 					en: '2023',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2500000,
-// 			},
-// 		],
-// 		predictedRiceAreas: [
-// 			{
-// 				column: {
-// 					th: '2562',
-// 					en: '2019',
-// 				},
-// 				areaRai: 2132325,
-// 				areaPlot: 2002500,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2563',
-// 					en: '2020',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2925000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2564',
-// 					en: '2021',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2925000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2565',
-// 					en: '2022',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2925000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2566',
-// 					en: '2023',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2925000,
-// 			},
-// 		],
-// 	},
-// 	{
-// 		id: '37',
-// 		name: {
-// 			th: 'นครราชสีมา B',
-// 			en: 'Nakhon Ratchasima',
-// 		},
-// 		totalActArea: {
-// 			areaRai: 2132326,
-// 			areaPlot: 20000,
-// 		},
-// 		totalPredictedRiceArea: {
-// 			areaRai: 200000,
-// 			areaPlot: 50000,
-// 		},
-// 		actAreas: [
-// 			{
-// 				column: {
-// 					th: '2562',
-// 					en: '2019',
-// 				},
-// 				areaRai: 2250002,
-// 				areaPlot: 2132325,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2563',
-// 					en: '2020',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2500000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2564',
-// 					en: '2021',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2500000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2565',
-// 					en: '2022',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2500000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2566',
-// 					en: '2023',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2500000,
-// 			},
-// 		],
-// 		predictedRiceAreas: [
-// 			{
-// 				column: {
-// 					th: '2562',
-// 					en: '2019',
-// 				},
-// 				areaRai: 2132325,
-// 				areaPlot: 2002500,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2563',
-// 					en: '2020',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2925000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2564',
-// 					en: '2021',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2925000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2565',
-// 					en: '2022',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2925000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2566',
-// 					en: '2023',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2925000,
-// 			},
-// 		],
-// 	},
-// 	{
-// 		id: '38',
-// 		name: {
-// 			th: 'นครราชสีมา C',
-// 			en: 'Nakhon Ratchasima',
-// 		},
-// 		totalActArea: {
-// 			areaRai: 2132327,
-// 			areaPlot: 20000,
-// 		},
-// 		totalPredictedRiceArea: {
-// 			areaRai: 200000,
-// 			areaPlot: 50000,
-// 		},
-// 		actAreas: [
-// 			{
-// 				column: {
-// 					th: '2562',
-// 					en: '2019',
-// 				},
-// 				areaRai: 2250003,
-// 				areaPlot: 2132325,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2563',
-// 					en: '2020',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2500000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2564',
-// 					en: '2021',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2500000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2565',
-// 					en: '2022',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2500000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2566',
-// 					en: '2023',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2500000,
-// 			},
-// 		],
-// 		predictedRiceAreas: [
-// 			{
-// 				column: {
-// 					th: '2562',
-// 					en: '2019',
-// 				},
-// 				areaRai: 2132325,
-// 				areaPlot: 2002500,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2563',
-// 					en: '2020',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2925000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2564',
-// 					en: '2021',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2925000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2565',
-// 					en: '2022',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2925000,
-// 			},
-// 			{
-// 				column: {
-// 					th: '2566',
-// 					en: '2023',
-// 				},
-// 				areaRai: 2500000,
-// 				areaPlot: 2925000,
-// 			},
-// 		],
-// 	},
-// ]
-
 const RiceStatisticTable: React.FC<RiceStatisticTableProps> = ({ riceTableData }) => {
 	const { isDesktop } = useResponsive()
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default'])
-	const { selectOption, setSelectOption } = useSelectOption()
+	const { selectOption } = useSelectOption()
 
-	const id = React.useId()
+	// const id = React.useId()
 	const language = i18n.language as keyof ResponseLanguage
 	const [order, setOrder] = React.useState<SortType>(SortType.DESC)
 	const [orderBy, setOrderBy] = React.useState<keyof Data>('totalActArea')
-	const [dense, setDense] = React.useState(false)
+	const [dense] = React.useState(false)
 	const [tableHead, setTableHead] = React.useState<HeadCell[]>([])
 	const [tableData, setTableData] = React.useState<any[]>([]) // change from any to dto out
 

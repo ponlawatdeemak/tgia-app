@@ -1,6 +1,6 @@
 'use client'
 import '@/components/common/map/inject'
-import React, { useRef } from 'react'
+import React from 'react'
 import MapView from '@/components/common/map/MapView'
 import { Box, IconButton, Container, Paper } from '@mui/material'
 import StickyHeadTable from './table'
@@ -12,10 +12,10 @@ import html2canvas from 'html2canvas'
 import { mdiFullscreen } from '@mdi/js'
 import Icon from '@mdi/react'
 
-import { useMap } from '@/components/common/map/context/map'
+// import { useMap } from '@/components/common/map/context/map'
 
 export default function Page() {
-	const { setExtent, setMapInfoWindow } = useMap()
+	// const { setExtent, setMapInfoWindow } = useMap()
 
 	// const mapViewRef = useRef<MapViewRef>(null)
 	const onCapture = () => {
