@@ -1,13 +1,11 @@
 'use client'
-import React from 'react'
-
 import useResponsive from '@/hook/responsive'
 import { mdiCalendarMonthOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import { Button, Checkbox, IconButton, Menu, MenuItem } from '@mui/material'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSearchAnnualAnalysis, useSelectOption } from '../Main/context'
+import { useSearchAnnualAnalysis } from '../Main/context'
 import { useQuery } from '@tanstack/react-query'
 import service from '@/api'
 import { GetLookupOutDto } from '@/api/lookup/dto-out.dto'
@@ -38,7 +36,6 @@ const YearPicker: React.FC<YearPickerProps> = ({
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 	const [selectedYear, setSelectedYear] = useState<number[]>([])
 	const language = i18n.language as keyof ResponseLanguage
-	//const { selectOption, setSelectOption } = useSelectOption()
 
 	const { data: yearData } = useQuery({
 		queryKey: ['getLookupYears'],
@@ -117,7 +114,7 @@ const YearPicker: React.FC<YearPickerProps> = ({
 					disabled={disabled}
 					className={clsx('btn-shadow flex max-h-[40px] min-h-[40px] min-w-[40px] justify-start lg:hidden', {
 						'box-border border-2 border-solid border-primary': open,
-						'border-gray-light5 max-h-[41.875px] min-h-[41.875px] border border-solid shadow-none':
+						'max-h-[41.875px] min-h-[41.875px] border border-solid border-gray-light5 shadow-none':
 							isShowOnReport,
 					})}
 					onClick={handleClick}
@@ -158,7 +155,7 @@ const YearPicker: React.FC<YearPickerProps> = ({
 					'[&_.MuiButton-startIcon]:mr-0': !(selectedYear.length > 0),
 					'border-2 border-solid border-primary': open,
 					'max-w-[200px]': !isFullOnMobile,
-					'border-gray-light5 max-h-[41.875px] min-h-[41.875px] border border-solid shadow-none':
+					'max-h-[41.875px] min-h-[41.875px] border border-solid border-gray-light5 shadow-none':
 						isShowOnReport,
 				})}
 				startIcon={<Icon path={mdiCalendarMonthOutline} size={1} className={disabled ? 'opacity-45' : ''} />}

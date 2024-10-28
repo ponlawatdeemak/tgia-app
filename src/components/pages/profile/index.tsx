@@ -18,6 +18,7 @@ import ProfileForm from '@/components/shared/ProfileForm'
 
 import { useTranslation } from 'react-i18next'
 import { useSwitchLanguage } from '@/i18n/client'
+import { formatText } from '@/utils/text'
 
 const defaultFormValues: FormValues = {
 	id: '',
@@ -84,7 +85,7 @@ const ProfileMain: React.FC<ProfileMainProps> = () => {
 				} catch (error) {
 					throw new Error('Image upload failed')
 				}
-				values.image = imageUrl.data?.download_file_url || ''
+				values.image = formatText(imageUrl.data?.download_file_url)
 			}
 
 			const profileData: PutProfileDtoIn = {
