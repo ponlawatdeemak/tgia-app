@@ -12,7 +12,7 @@ WORKDIR /tmp/app
 RUN npm ci --cache /cache/.npm && \
     (npm run build || mkdir -p .next) && \
     rm -rf ./.next/cache && \
-    chmod -R g=u  /cache \
+    chmod -R g=u /cache \
     chmod -R g=u /tmp/app \
     chmod -R g=u /tmp/app/.next \
     chmod -R g=u ./ \
@@ -39,6 +39,8 @@ COPY --from=compile-stage --chown="21001:21001" --chmod=755 /cache/.npm /cache/.
 ADD --chown="21001:21001" --chmod=755 public ./public
 ADD --chown="21001:21001" --chmod=755 .next ./.next
 ADD --chown="21001:21001" --chmod=755 next.config.mjs ./
+
+RUN chmod -R g=u public 
 
 COPY --chown="21001:21001" --chmod=755 public ./public
 COPY --from=compile-stage --chown="21001:21001" --chmod=755 /tmp/app/.next ./.next
