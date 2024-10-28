@@ -14,6 +14,7 @@ RUN npm ci --cache /cache/.npm && \
     rm -rf ./.next/cache && \
     chmod -R g=u  /cache \
     chmod -R g=u /tmp/app \
+    chmod -R g=u /tmp/app/.next \
     chmod -R g=u ./ \
 VOLUME [ "/cache" ]
 
