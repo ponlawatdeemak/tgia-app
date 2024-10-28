@@ -9,9 +9,6 @@ COPY postcss.config.mjs /tmp/app/
 COPY tailwind.config.ts /tmp/app/
 COPY tsconfig.json /tmp/app/
 
-RUN ls -l /tmp/app/ && \
-    ls -l ./
-
 WORKDIR /tmp/app
 RUN npm ci --cache /cache/.npm && \
     (npm run build || mkdir -p .next) && \
