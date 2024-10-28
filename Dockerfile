@@ -12,10 +12,10 @@ WORKDIR /tmp/app
 RUN npm ci --cache /cache/.npm && \
     (npm run build || mkdir -p .next) && \
     rm -rf ./.next/cache && \
-    chmod -R g=u /cache \
-    chmod -R g=u /tmp/app \
-    chmod -R g=u /tmp/app/.next \
-    chmod -R g=u public  \
+    chmod -R g=u /cache && \
+    chmod -R g=u /tmp/app && \
+    chmod -R g=u /tmp/app/.next && \
+    chmod -R g=u public && \
 VOLUME [ "/cache" ]
 
 FROM node:20-alpine
