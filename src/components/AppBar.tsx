@@ -47,6 +47,7 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 	const { isDesktop } = useResponsive()
 	const { data: session } = useSession()
 	const user = session?.user ?? null
+	const version = process.env.APP_VERSION
 
 	const [image, setImage] = useState<string>(user?.image || '')
 	const [anchorOthersMenuEl, setAnchorOthersMenuEl] = React.useState<null | HTMLElement>(null)
@@ -109,7 +110,7 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 
 	if (isDesktop) {
 		return (
-			<div className={classNames('mb-4 flex items-center justify-between', className)}>
+			<div className={classNames('mb-3 flex items-center justify-between', className)}>
 				<div className='flex items-center gap-4'>
 					<div className='ml-1 flex items-center gap-2 py-1'>
 						<TriangleLogo width={30} height={30} />
@@ -326,7 +327,8 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 					</div>
 					<div className='flex flex-col'>
 						<span className='text-2xs font-medium leading-[12px]'>Powered by</span>
-						<ThaicomLogo width={70} height={19.02} />
+						<ThaicomLogo width={70} height={19} />
+						<span className='text-[9px]'>Version {version}</span>
 					</div>
 				</div>
 			</div>
@@ -450,7 +452,8 @@ const AppBar: React.FC<AppBarProps> = ({ className = '' }) => {
 							</div>
 							<div className='flex flex-col'>
 								<span className='text-2xs font-medium leading-[12px]'>Powered by</span>
-								<ThaicomLogo width={70} height={19.02} />
+								<ThaicomLogo width={70} height={19} />
+								<span className='text-[9px]'>Version {version}</span>
 							</div>
 						</div>
 					</div>

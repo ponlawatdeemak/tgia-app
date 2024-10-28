@@ -1,3 +1,5 @@
+import packageJson from './package.json' assert { type: 'json' };
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     env: {
@@ -12,8 +14,10 @@ const nextConfig = {
         APP_USERNAME: process.env.APP_USERNAME || '',
         APP_PASSWORD: process.env.APP_PASSWORD || '',
         GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
-        GOOGLE_MAPS_API_MAP_ID: process.env.GOOGLE_MAPS_API_MAP_ID
+        GOOGLE_MAPS_API_MAP_ID: process.env.GOOGLE_MAPS_API_MAP_ID,
+        APP_VERSION: packageJson.version
     },
+
     async redirects() {
         return [
             {
