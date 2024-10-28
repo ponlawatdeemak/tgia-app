@@ -32,12 +32,12 @@ USER ${P_UID}
 COPY --chown="21001:21001" package*.json ./
 COPY --from=compile-stage --chown="21001:21001" /cache/.npm /cache/.npm
 
-ADD --chown="21001:21001" public ./public
-ADD --chown="21001:21001" .next ./.next
-ADD --chown="21001:21001" next.config.mjs ./
+ADD --chown="21001:21001" --chmod=0755 public ./public
+ADD --chown="21001:21001" --chmod=0755 .next ./.next
+ADD --chown="21001:21001" --chmod=0755 next.config.mjs ./
 
-COPY --chown="21001:21001" public ./public
-COPY --from=compile-stage --chown="21001:21001" /tmp/app/.next ./.next
-COPY --chown="21001:21001" next.config.mjs ./
+COPY --chown="21001:21001" --chmod=0755 public ./public
+COPY --from=compile-stage --chown="21001:21001" --chmod=0755 /tmp/app/.next ./.next
+COPY --chown="21001:21001" --chmod=0755 next.config.mjs ./
 
 CMD npm start
