@@ -1,0 +1,117 @@
+stages:
+  - build-dev
+  - deploy-dev
+  - source-scan
+  - container-scan
+  - deploy-prod
+
+source-code-scan:
+  stage: source-scan
+  tags:
+    - docker-runner
+  image: sonarsource/sonar-scanner-cli:latest
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  only:
+    refs:
+      - main
+  script: 
+    - sonar-scanner -Dsonar.projectKey=$CI_PROJECT_NAMESPACE--$CI_PROJECT_NAME -Dsonar.sources=. -Dsonar.host.url=https://madrid.thaicom.io/sonar -Dsonar.login=$SONAR_ID
+
+docker_build:
+  stage: build-dev
+  tags:
+    - docker-runner
+  only:
+    refs:
+      - main
+  image: rome.thaicom.io/docker:24.0.5
+  services:
+    - name: rome.thaicom.io/docker:24.0.5-dind
+      alias: docker
+  variables:
+    ENV_VAR: "dev"
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - docker login ${CI_REGISTRY} -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD}
+  script:
+    - docker build -t ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest .
+    - docker tag ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_TIMESTAMP:0:10}-$CI_COMMIT_SHORT_SHA
+    - docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_TIMESTAMP:0:10}-$CI_COMMIT_SHORT_SHA
+    - docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
+
+deploy_dev:
+  stage: deploy-dev
+  tags:
+    - shell
+  only:
+    refs:
+      - main
+  script:
+    - echo deploy_dev
+    - kubectl --insecure-skip-tls-verify --kubeconfig=/kubeconfig/crop-insurance-dev-aws apply -f tgia-web-dev.yaml -n crop-insurance
+    - kubectl --insecure-skip-tls-verify --kubeconfig=/kubeconfig/crop-insurance-dev-aws rollout restart deployments tgia-web -n crop-insurance
+
+container_scanning:
+  image:
+    name: docker.io/aquasec/trivy:latest
+    entrypoint: [""]
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  allow_failure: true
+  stage: container-scan
+  only:
+    refs:
+      - main
+  tags:
+    - docker-runner
+  when: manual
+  services:
+    - name: rome.thaicom.io/docker:24.0.5-dind
+      alias: docker
+  variables:
+    GIT_STRATEGY: none
+    TRIVY_USERNAME: "$CI_REGISTRY_USER"
+    TRIVY_PASSWORD: "$CI_REGISTRY_PASSWORD"
+    TRIVY_AUTH_URL: "$CI_REGISTRY"
+    TRIVY_NO_PROGRESS: "true"
+    TRIVY_CACHE_DIR: ".trivycache/"
+    ENV_VAR: "dev"
+    FULL_IMAGE_NAME: ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
+  before_script:
+    - echo $FULL_IMAGE_NAME
+  script:
+    - trivy --version
+    - time trivy image --clear-cache
+    - time trivy image --download-db-only
+    - time trivy image --exit-code 0 --format template --template "@/contrib/gitlab.tpl" --scanners vuln --output "$CI_PROJECT_DIR/container-scanning-report.json" "$FULL_IMAGE_NAME"
+    - time trivy image --exit-code 0 --severity HIGH,CRITICAL --scanners vuln "$FULL_IMAGE_NAME"
+  cache:
+    paths:
+      - .trivycache/
+  artifacts:
+    when: always
+    reports:
+      container_scanning: container-scanning-report.json
+
+deploy_prod:
+  stage: deploy-prod
+  tags:
+    - shell
+  when: manual
+  allow_failure: false
+  only:
+    refs:
+      - main
+  variables:
+    ENV_VAR: "prod"
+  before_script:
+    - docker login ${CI_REGISTRY} -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD}
+  script:
+    - echo deploy production

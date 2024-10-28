@@ -1,0 +1,13 @@
+include:
+    - project: 'internal/auto-devops'
+      file: '/templates/auto-devops.gitlab-ci.yml'
+
+variables:
+    COMPILE_DISABLED: "true"
+    DEPLOY_AUTO: 'false'
+    DOMAIN: tgia.app.mapboss.co.th
+    GIT_SUBMODULE_STRATEGY: recursive
+
+deploy:
+    tags:
+        - app-deploy
