@@ -31,9 +31,9 @@ USER ${P_UID}
 COPY --chmod=755 package*.json ./
 COPY --from=compile-stage --chmod=755 /cache/.npm /cache/.npm
 
-ADD --chmod=755 public ./public
-ADD --chmod=755 .next ./.next
-ADD --chmod=755 next.config.mjs ./
+# ADD --chmod=755 public ./public
+# ADD --chmod=755 .next ./.next
+# ADD --chmod=755 next.config.mjs ./
 
 COPY --chmod=755 public ./public
 COPY --from=compile-stage --chmod=755 /tmp/app/.next ./.next
