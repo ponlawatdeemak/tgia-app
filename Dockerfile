@@ -1,13 +1,13 @@
 FROM node:20-alpine AS compile-stage
 
-# COPY . /tmp/app
-COPY ./src /tmp/app/src
-COPY next.config.mjs /tmp/app/
-COPY package-lock.json /tmp/app/
-COPY package.json /tmp/app/
-COPY postcss.config.mjs /tmp/app/
-COPY tailwind.config.ts /tmp/app/
-COPY tsconfig.json /tmp/app/
+COPY . /tmp/app
+# COPY ./src /tmp/app/src
+# COPY next.config.mjs /tmp/app/
+# COPY package-lock.json /tmp/app/
+# COPY package.json /tmp/app/
+# COPY postcss.config.mjs /tmp/app/
+# COPY tailwind.config.ts /tmp/app/
+# COPY tsconfig.json /tmp/app/
 
 WORKDIR /tmp/app
 RUN npm ci --cache /cache/.npm && \
