@@ -12,10 +12,8 @@ WORKDIR /tmp/app
 RUN npm ci --cache /cache/.npm && \
     (npm run build || mkdir -p .next) && \
     rm -rf ./.next/cache && \
-    chmod -R g=u /cache && \
-    chmod -R g=u /tmp/app && \
-    chmod -R g=u /tmp/app/.next && \
-    chmod -R g=u public && \
+    chgrp -R 0 /cache/.npm && \
+    chmod -R 755 /cache/.npm && \
 VOLUME [ "/cache" ]
 
 FROM node:20-alpine
@@ -42,6 +40,6 @@ COPY --from=compile-stage --chown="21001:21001" --chmod=755 /cache/.npm /cache/.
 
 COPY --chown="21001:21001" --chmod=755 public ./public
 COPY --from=compile-stage --chown="21001:21001" --chmod=755 /tmp/app/.next ./.next
-COPY --chown="21001:21001" --chmod=755 next.config.mjs ./
+COPY --chmod=755 next.config.mjs ./
 
 CMD ["npm", "start"]
