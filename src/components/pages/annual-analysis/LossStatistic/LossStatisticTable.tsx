@@ -1,13 +1,11 @@
 'use client'
 import * as React from 'react'
-import { alpha } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
-import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import Toolbar from '@mui/material/Toolbar'
@@ -15,14 +13,12 @@ import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 import { visuallyHidden } from '@mui/utils'
 import { useTranslation } from 'react-i18next'
-import { useSwitchLanguage } from '@/i18n/client'
-import { Language, SortType } from '@/enum'
+import { SortType } from '@/enum'
 import { ResponseArea, ResponseLanguage } from '@/api/interface'
 import useAreaUnit from '@/store/area-unit'
 import useAreaType from '@/store/area-type'
 import useResponsive from '@/hook/responsive'
 import { dataAreas } from '@/api/annual-analysis/dto-out.dto'
-import { TextColor } from '@/config/color'
 import { useSelectOption } from '../Main/context'
 import clsx from 'clsx'
 
@@ -67,13 +63,13 @@ const LossStatisticTable: React.FC<LossStatisticTableProps> = ({ lossTableData }
 	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default', 'annual-analysis'])
-	const { selectOption, setSelectOption } = useSelectOption()
+	const { selectOption } = useSelectOption()
 
-	const id = React.useId()
+	// const id = React.useId()
 	const language = i18n.language as keyof ResponseLanguage
 	const [order, setOrder] = React.useState<SortType>(SortType.DESC)
 	const [orderBy, setOrderBy] = React.useState<keyof Data>('totalDisasterArea')
-	const [dense, setDense] = React.useState(false)
+	const [dense] = React.useState(false)
 	const [tableHead, setTableHead] = React.useState<HeadCell[]>([])
 	const [tableData, setTableData] = React.useState<any[]>([]) // change from any to dto out
 

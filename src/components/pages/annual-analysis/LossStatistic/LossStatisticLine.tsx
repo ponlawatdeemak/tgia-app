@@ -1,8 +1,6 @@
 import React from 'react'
 import BillboardJS, { IChart } from '@billboard.js/react'
-import bb, { bar, ChartOptions, line } from 'billboard.js'
-import useAreaType from '@/store/area-type'
-import useAreaUnit from '@/store/area-unit'
+import bb, { line } from 'billboard.js'
 import { useTranslation } from 'react-i18next'
 import { ResponseLanguage } from '@/api/interface'
 
@@ -18,9 +16,7 @@ const LossStatisticLine: React.FC<LossStatisticLineProps> = ({
 	lossCategoriesArr,
 }) => {
 	const lossLineChart = React.useRef<IChart>(null)
-	const { areaType } = useAreaType()
-	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default'])
+	const { i18n } = useTranslation(['default'])
 	const language = i18n.language as keyof ResponseLanguage
 
 	const barOption = React.useMemo(() => {
