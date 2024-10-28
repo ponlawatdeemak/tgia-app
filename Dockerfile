@@ -15,7 +15,7 @@ RUN npm ci --cache /cache/.npm && \
     chmod -R g=u /cache \
     chmod -R g=u /tmp/app \
     chmod -R g=u /tmp/app/.next \
-    chmod -R g=u ./ \
+    chmod -R g=u public  \
 VOLUME [ "/cache" ]
 
 FROM node:20-alpine
