@@ -1,11 +1,12 @@
 FROM node:20-alpine AS compile-stage
 
-# COPY . /tmp/app
-COPY ./src /tmp/app/src
-COPY package-lock.json /tmp/app/
-COPY package.json /tmp/app/
-COPY next.config.mjs /tmp/app/
-COPY tsconfig.json /tmp/app/
+COPY . /tmp/app
+# COPY ./src /tmp/app/src
+# COPY package-lock.json /tmp/app/
+# COPY package.json /tmp/app/
+# COPY next.config.mjs /tmp/app/
+# COPY tsconfig.json /tmp/app/
+
 
 WORKDIR /tmp/app
 RUN npm ci --cache /cache/.npm && \
@@ -31,9 +32,8 @@ USER ${P_UID}
 COPY --chown="21001:21001" --chmod=755 package*.json ./
 COPY --from=compile-stage --chown="21001:21001" --chmod=755 /cache/.npm /cache/.npm
 
-# ADD --chmod=755 public ./public
-# ADD --chmod=755 .next ./.next
-# ADD --chmod=755 next.config.mjs ./
+RUN npm ci --omit=dev --cache /cache/.npm && \
+    rm -rf package-lock.json /cache/.npm
 
 COPY --chown="21001:21001" --chmod=755 public ./public
 COPY --from=compile-stage --chown="21001:21001" --chmod=755 /tmp/app/.next ./.next
