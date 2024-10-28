@@ -1,11 +1,7 @@
 'use client'
 import React from 'react'
 import BillboardJS, { IChart } from '@billboard.js/react'
-import bb, { bar, ChartOptions, line } from 'billboard.js'
-import useAreaType from '@/store/area-type'
-import useAreaUnit from '@/store/area-unit'
-import { useTranslation } from 'react-i18next'
-import { ResponseLanguage } from '@/api/interface'
+import bb, { bar } from 'billboard.js'
 
 interface PlantStatisticTableProps {
 	plantBarColumns?: any
@@ -14,10 +10,6 @@ interface PlantStatisticTableProps {
 
 const PlantStatisticBar: React.FC<PlantStatisticTableProps> = ({ plantBarColumns, plantBarColorArr }) => {
 	const plantBarChart = React.useRef<IChart>(null)
-	const { areaType } = useAreaType()
-	const { areaUnit } = useAreaUnit()
-	const { t, i18n } = useTranslation(['default'])
-	const language = i18n.language as keyof ResponseLanguage
 	const barOption = React.useMemo(() => {
 		return {
 			size: {

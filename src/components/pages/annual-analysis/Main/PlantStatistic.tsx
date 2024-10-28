@@ -1,7 +1,5 @@
 import React from 'react'
-import bb, { bar, ChartOptions, line } from 'billboard.js'
 import 'billboard.js/dist/billboard.css'
-import BillboardJS, { IChart } from '@billboard.js/react'
 import { Box, CircularProgress, Grid, Typography } from '@mui/material'
 import PlantStatisticTable from '../PlantStatistic/PlantStatisticTable'
 import { useQuery } from '@tanstack/react-query'
@@ -23,7 +21,6 @@ type lineColorType = {
 const PlantStatistic = () => {
 	const { queryParams } = useSearchAnnualAnalysis()
 	const { isDesktop } = useResponsive()
-	const { areaType } = useAreaType()
 	const { areaUnit } = useAreaUnit()
 	const { t, i18n } = useTranslation(['default', 'annual-analysis'])
 	const language = i18n.language as keyof ResponseLanguage

@@ -1,4 +1,3 @@
-import { AreaUnitKey } from '@/enum'
 import { ResponseArea, ResponseLanguage } from '../interface'
 
 export interface dataAreas extends ResponseArea {
