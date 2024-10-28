@@ -29,14 +29,14 @@ RUN addgroup --gid ${P_UID} ${P_USER_NAME} && \
 WORKDIR ${HOME}
 USER ${P_UID}
 
-COPY --chown="21001:21001" --chmod=755 package*.json ./
-COPY --from=compile-stage --chown="21001:21001" --chmod=755 /cache/.npm /cache/.npm
+COPY --chmod=755 package*.json ./
+COPY --from=compile-stage --chmod=755 /cache/.npm /cache/.npm
 
 RUN npm ci --omit=dev --cache /cache/.npm && \
     rm -rf package-lock.json /cache/.npm
 
-COPY --chown="21001:21001" --chmod=755 public ./public
-COPY --from=compile-stage --chown="21001:21001" --chmod=755 /tmp/app/.next ./.next
-COPY --chown="21001:21001" --chmod=755 next.config.mjs ./
+COPY --chmod=755 public ./public
+COPY --from=compile-stage --chmod=755 /tmp/app/.next ./.next
+COPY --chmod=755 next.config.mjs ./
 
 CMD ["npm", "start"]
