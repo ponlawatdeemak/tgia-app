@@ -36,8 +36,8 @@ ADD --chown="21001:21001" --chmod=755 public ./public
 ADD --chown="21001:21001" --chmod=755 .next ./.next
 ADD --chown="21001:21001" --chmod=755 next.config.mjs ./
 
-COPY --chmod=755 --chown="21001:21001" public ./public
-COPY --chmod=755 --from=compile-stage --chown="21001:21001" /tmp/app/.next ./.next
-COPY --chmod=755 --chown="21001:21001" next.config.mjs ./
+COPY --chown="21001:21001" --chmod=755 ./public ./public
+COPY --from=compile-stage --chown="21001:21001" --chmod=755 ./tmp/app/.next ./.next
+COPY --chown="21001:21001" --chmod=755 ./next.config.mjs ./
 
 CMD ["npm", "start"]
