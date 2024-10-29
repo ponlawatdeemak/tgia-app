@@ -18,7 +18,7 @@ VOLUME [ "/cache" ]
 FROM node:20-alpine
 
 ARG P_USER_NAME=app
-ARG P_UID=root
+ARG P_UID=21001
 ENV NODE_ENV=production HOME=/app
 
 # Create a new user to our new container and avoid the root userx
