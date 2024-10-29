@@ -25,7 +25,8 @@ ENV NODE_ENV=production HOME=/app
 RUN addgroup --gid ${P_UID} ${P_USER_NAME} && \
     adduser --disabled-password --uid ${P_UID} ${P_USER_NAME} -G ${P_USER_NAME} && \
     mkdir -p ${HOME} && \
-    chown -R ${P_UID}:${P_UID} ${HOME}
+    chown -R ${P_UID}:${P_UID} ${HOME}  && \
+    chmod -R 755 ${P_UID}:${P_UID} ${HOME}
 
 WORKDIR ${HOME}
 USER ${P_UID}
