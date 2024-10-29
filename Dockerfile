@@ -25,13 +25,12 @@ ENV NODE_ENV=production HOME=/app
 RUN addgroup --gid ${P_UID} ${P_USER_NAME} && \
     adduser --disabled-password --uid ${P_UID} ${P_USER_NAME} -G ${P_USER_NAME} && \
     mkdir -p ${HOME} && \
-    chown -R ${P_UID}:${P_UID} ${HOME}  && \
-    chmod -R 755 ${P_UID}:${P_UID} ${HOME}
+    chown -R ${P_UID}:${P_UID} ${HOME}
 
 WORKDIR ${HOME}
 USER ${P_UID}
 
-COPY --chown=${P_UID}:${P_UID} --chmod=755 package*.json ./
+COPY --chown="21001:21001" --chmod=755 package*.json ./
 COPY --from=compile-stage --chown="21001:21001" --chmod=755 /cache/.npm /cache/.npm
 
 RUN npm ci --omit=dev --cache /cache/.npm && \
