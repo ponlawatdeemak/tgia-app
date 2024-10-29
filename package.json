@@ -1,6 +1,6 @@
 {
 	"name": "tgia-app",
-	"version": "2024.10.28-01",
+	"version": "2024.10.28-02",
 	"private": true,
 	"scripts": {
 		"dev": "next dev",
