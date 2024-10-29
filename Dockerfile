@@ -41,4 +41,8 @@ COPY --chown=${P_UID}:${P_UID} --chmod=755 public ./public
 COPY --from=compile-stage --chown=${P_UID}:${P_UID} --chmod=755 /tmp/app/.next ./.next
 COPY --chown=${P_UID}:${P_UID} --chmod=755 next.config.mjs ./
  
+USER ${P_UID}
+
+EXPOSE 3000
+
 CMD ["npm", "start"]
