@@ -31,7 +31,7 @@ RUN addgroup --gid ${P_UID} ${P_USER_NAME} && \
 WORKDIR ${HOME}
 USER ${P_UID}
 
-COPY --chown="21001:21001" --chmod=755 package*.json ./
+COPY --chown=${P_UID}:${P_UID} --chmod=755 package*.json ./
 COPY --from=compile-stage --chown="21001:21001" --chmod=755 /cache/.npm /cache/.npm
 
 RUN npm ci --omit=dev --cache /cache/.npm && \
