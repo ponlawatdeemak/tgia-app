@@ -15,6 +15,7 @@ export interface GetSummaryPredictedLossDtoIn {
 	registrationAreaType: number
 	provinceCode?: number
 	districtCode?: number
+	subDistrictCode?: number
 }
 
 export interface GetSummaryAreaDtoIn {
@@ -23,6 +24,7 @@ export interface GetSummaryAreaDtoIn {
 	registrationAreaType: number
 	provinceCode?: number
 	districtCode?: number
+	subDistrictCode?: number
 }
 
 export interface GetAreaStatisticDtoIn {

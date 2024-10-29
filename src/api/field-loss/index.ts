@@ -46,6 +46,7 @@ const fieldLoss = {
 			params.append('registrationAreaType', payload.registrationAreaType.toString())
 		if (payload.provinceCode !== undefined) params.append('provinceCode', payload.provinceCode.toString())
 		if (payload.districtCode !== undefined) params.append('districtCode', payload.districtCode.toString())
+		if (payload.subDistrictCode !== undefined) params.append('subDistrictCode', payload.subDistrictCode.toString())
 
 		return await api.get(`/predicted-loss/summary?${params}`, APIService.DisasterAPI)
 	},
@@ -58,6 +59,7 @@ const fieldLoss = {
 			params.append('registrationAreaType', payload.registrationAreaType.toString())
 		if (payload.provinceCode !== undefined) params.append('provinceCode', payload.provinceCode.toString())
 		if (payload.districtCode !== undefined) params.append('districtCode', payload.districtCode.toString())
+		if (payload.subDistrictCode !== undefined) params.append('subDistrictCode', payload.subDistrictCode.toString())
 
 		return await api.get(`/predicted-loss/summary-area?${params}`, APIService.DisasterAPI)
 	},
