@@ -142,6 +142,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ areaDetail, mapViewRef }) => {
 			registrationAreaType: areaType,
 			provinceCode: queryParams.provinceCode,
 			districtCode: queryParams.districtCode,
+			subDistrictCode: queryParams.subDistrictCode,
 		}
 		return filter
 	}, [queryParams, areaType])

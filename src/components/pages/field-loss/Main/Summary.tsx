@@ -59,6 +59,7 @@ const FieldLossSummary: React.FC<FieldLossSummaryProps> = () => {
 			registrationAreaType: areaType,
 			provinceCode: queryParams.provinceCode,
 			districtCode: queryParams.districtCode,
+			subDistrictCode: queryParams.subDistrictCode,
 		}
 		return filter
 	}, [queryParams, areaType])
