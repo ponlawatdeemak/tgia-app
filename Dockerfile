@@ -9,6 +9,7 @@ COPY package.json /tmp/app/
 COPY postcss.config.mjs /tmp/app/
 COPY tailwind.config.ts /tmp/app/
 COPY tsconfig.json /tmp/app/
+COPY .env.production /tmp/app/
 
 WORKDIR /tmp/app
 RUN npm ci --cache /cache/.npm && \
