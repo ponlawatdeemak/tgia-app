@@ -12,7 +12,7 @@ COPY tsconfig.json /tmp/app/
 COPY .env.production /tmp/app/
 
 WORKDIR /tmp/app
-RUN npm ci --cache /cache/.npm && \
+RUN npm ci --cache /cache/.npm --ignore-scripts && \
     (npm run build || mkdir -p .next) && \
     rm -rf ./.next/cache
 VOLUME [ "/cache" ]
@@ -36,13 +36,13 @@ COPY --chown=root:node --chmod=755 --from=builder /tmp/app/package.json ./
 COPY --chown=root:node --chmod=755 --from=builder /tmp/app/package-lock.json ./
 COPY --chown=root:node --chmod=755 --from=builder /cache/.npm /cache/.npm
 
-RUN npm ci --omit=dev --cache /cache/.npm && \
+RUN npm ci --omit=dev --cache /cache/.npm --ignore-scripts && \
     rm -rf package-lock.json /cache/.npm
 
 COPY --chown=root:node --chmod=755 --from=builder  /tmp/app/public ./public
 COPY --chown=root:node --chmod=755 --from=builder  /tmp/app/.next ./.next
 COPY --chown=root:node --chmod=755 --from=builder  /tmp/app/next.config.mjs ./
- 
+
 USER root
 
 USER node
