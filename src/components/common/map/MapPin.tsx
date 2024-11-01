@@ -391,33 +391,76 @@ const MapPin: React.FC<MapPinProps> = ({ onAddPin }) => {
 		if (!isAddPin) removeLayer(selectPinId)
 	}, [isAddPin])
 
+	const getLocation = useCallback(() => {
+		if (navigator.geolocation) {
+			return navigator.geolocation.getCurrentPosition(
+				(position: GeolocationPosition) => {
+					const longitude = Number(position.coords.longitude.toFixed(6))
+					const latitude = Number(position.coords.latitude.toFixed(6))
+
+					setLatLng({
+						latitude,
+						longitude,
+					})
+				},
+				(error: GeolocationPositionError) => {
+					switch (error.code) {
+						case error.PERMISSION_DENIED:
+							alert('Permission denied. Location access is required for certain features.')
+							break
+						case error.POSITION_UNAVAILABLE:
+							alert('Location information is unavailable.')
+							break
+						case error.TIMEOUT:
+							alert('The request to get user location timed out.')
+							break
+						default:
+							alert('An unknown error occurred.')
+							break
+					}
+				},
+				{
+					// enableHighAccuracy: false,
+					timeout: 10000,
+					maximumAge: 60000,
+				},
+			)
+		}
+	}, [])
+
 	const handleGetCurrentLocation = useCallback(async () => {
 		try {
 			setCurrentBusy(true)
 
 			// Permission API is implemented
-			navigator.permissions &&
-				navigator.permissions
-					.query({
-						name: 'geolocation',
-					})
-					.then((permission) => {
-						// is geolocation granted?
-						if (permission.state === 'granted') {
-							navigator.geolocation.getCurrentPosition((position) => {
-								const longitude = Number(position.coords.longitude.toFixed(6))
-								const latitude = Number(position.coords.latitude.toFixed(6))
+			navigator.permissions
+				.query({
+					name: 'geolocation',
+				})
+				.then((permission) => {
+					// is geolocation granted or prompt?
+					if (permission.state === 'granted' || permission.state === 'prompt') {
+						getLocation()
+					} else {
+						setCurrentBusy(false)
+						setBusy(false)
+						alert(
+							'Location access has been denied. Please enable location permissions in your browser settings to use this feature.',
+						)
+					}
 
-								setLatLng({
-									latitude,
-									longitude,
-								})
-							})
-						} else {
-							setCurrentBusy(false)
-							setBusy(false)
+					// Optional: listen for changes in permission state
+					permission.onchange = () => {
+						if (permission.state === 'granted') {
+							getLocation()
+						} else if (permission.state === 'denied') {
+							alert('Location access is now denied.')
 						}
-					})
+					}
+				})
+				.catch((error) => {
+					console.error('Permission query error: ', error)
+				})
 		} catch (error) {
 			console.error('Error getting location:', error)
 		} finally {
