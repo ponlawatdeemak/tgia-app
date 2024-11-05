@@ -25,7 +25,6 @@ export const PlotMonitoringResultMain = () => {
 		setQueryParams({ ...queryParams, provinceCode: provinceCode ? parseInt(provinceCode) : undefined })
 	}, [])
 
-	// TO DO
 	// const mapViewRef = useRef<MapViewRef>(null)
 
 	return (
@@ -35,7 +34,6 @@ export const PlotMonitoringResultMain = () => {
 			) : (
 				<div className='flex flex-grow flex-col gap-4 overflow-auto'>
 					<PlotMonitoringSearchForm
-						// TO DO
 						// mapViewRef={mapViewRef}
 						areaDetail={areaDetail}
 					/>
@@ -47,7 +45,6 @@ export const PlotMonitoringResultMain = () => {
 								isFullList={isFullList}
 								setAreaDetail={setAreaDetail}
 								setIsFullList={setIsFullList}
-								// TO DO
 								// mapViewRef={mapViewRef}
 							/>
 						</div>

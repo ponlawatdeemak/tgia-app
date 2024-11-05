@@ -18,7 +18,6 @@ export const FieldLossMain = () => {
 	const { open } = useRangePicker()
 	const { setQueryParams } = useSearchFieldLoss()
 
-	// TO DO
 	// const mapViewRef = useRef<MapViewRef>(null)
 
 	useEffect(() => {
@@ -28,7 +27,6 @@ export const FieldLossMain = () => {
 	return (
 		<div className='flex flex-grow flex-col gap-4 overflow-auto'>
 			<SearchForm />
-			{/* // TO DO */}
 			{/* mapViewRef={mapViewRef}  */}
 
 			<Paper className='flex h-full overflow-hidden rounded-none lg:mx-4 lg:mb-4 lg:h-[calc(100vh-154px)] lg:rounded-lg'>
@@ -39,7 +37,6 @@ export const FieldLossMain = () => {
 				) : (
 					<div className='box-border flex w-full overflow-auto px-4 max-lg:flex-col max-lg:gap-3 max-lg:bg-gray-light max-lg:pb-4 lg:px-0'>
 						<FieldLossSummary />
-						{/* // TO DO */}
 						{/* mapViewRef={mapViewRef} */}
 						<FieldLossDetail />
 					</div>
