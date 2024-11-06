@@ -122,7 +122,7 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 	// 	// 		const latitude = position.coords.latitude
 	// 	// 		formik.setFieldValue('lng', longitude.toFixed(6))
 	// 	// 		formik.setFieldValue('lat', latitude.toFixed(6))
-	// 	// 		// TO DO
+
 	// 	// 		// if (mapViewRef.current) {
 	// 	// 		// 	mapViewRef.current.setMapCenter({
 	// 	// 		// 		latitude,
@@ -139,7 +139,6 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 		(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 			if (event.key === 'Enter') {
 				if (formik.values.lng && formik.values.lat) {
-					// TO DO
 					// if (mapViewRef.current) {
 					// 	mapViewRef.current.setMapCenter({
 					// 		latitude: parseFloat(formik.values.lat),
@@ -155,7 +154,6 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 	const handleLocationBlur = useCallback(
 		(_event: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement, Element>) => {
 			if (formik.values.lng && formik.values.lat) {
-				// TO DO
 				// if (mapViewRef.current) {
 				// 	mapViewRef.current.setMapCenter({
 				// 		latitude: parseFloat(formik.values.lat),
@@ -247,7 +245,6 @@ const MapPinDialog: React.FC<MapPinDialogProps> = ({
 					<Paper className='relative grid flex-grow overflow-hidden'>
 						<Box className='relative h-full w-full'>
 							<MapView
-								// TO DO
 								// ref={mapViewRef}
 								onMapClick={(latLng) => {
 									formik.setFieldValue('lng', latLng?.longitude?.toFixed(5) || null)

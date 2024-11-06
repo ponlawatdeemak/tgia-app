@@ -59,7 +59,7 @@ interface MapListProps {
 	areaDetail: string
 	mapViewRef: any
 }
-// TO DO
+
 const MapList: React.FC<MapListProps> = ({ areaDetail, mapViewRef }) => {
 	const { queryParams } = useSearchPlotMonitoring()
 	const { open } = useMapPin()

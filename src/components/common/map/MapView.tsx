@@ -36,7 +36,6 @@ export interface MapViewProps extends PropsWithChildren {
 	onMapClick?: (latLng: LatLng) => void
 }
 
-// TO DO
 export default function MapView({ className = '', isShowMapPin = false, initialLayer, onMapClick }: MapViewProps) {
 	const { googleMapInstance, mapLibreInstance, setCenter, setMapInfoWindow, setLatLng } = useMap()
 	const { getLayer, getLayers, setLayers } = useLayerStore()

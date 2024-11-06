@@ -13,7 +13,6 @@ interface PlotMonitoringListProps {
 	isFullList: boolean
 	setAreaDetail: React.Dispatch<React.SetStateAction<string>>
 	setIsFullList: React.Dispatch<React.SetStateAction<boolean>>
-	// TO DO
 	mapViewRef?: any
 }
 
@@ -70,7 +69,6 @@ const PlotMonitoringList: React.FC<PlotMonitoringListProps> = ({
 				</ToggleButton>
 			</ToggleButtonGroup>
 			<CardList areaDetail={areaDetail} />
-			{/* // TO DO */}
 			<MapList areaDetail={areaDetail} mapViewRef={mapViewRef} />
 		</Paper>
 	)
