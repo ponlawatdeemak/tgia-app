@@ -105,6 +105,7 @@ export function middleware(request: NextRequest) {
         frame-ancestors 'none';
         block-all-mixed-content;
         upgrade-insecure-requests;
+        frame-src 'self' https://www.youtube.com/;
     `
 
 	const contentSecurityPolicyHeaderValue = cspHeader.replace(/\s{2,}/g, ' ').trim()
