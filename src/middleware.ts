@@ -86,3 +86,36 @@ const responseWithLanguageCookie = (req: NextRequestWithAuth, redirectUrl?: URL)
 export const config = {
 	matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
 }
+
+export function middleware(request: NextRequestWithAuth) {
+	const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
+	const baseApiUrl = process.env.API_URL?.split('/api')
+	const cspHeader = `
+        default-src 'self' ${baseApiUrl};
+        script-src 'self' 'nonce-${nonce}' 'unsafe-eval' 'strict-dynamic';
+        style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
+        font-src 'self' https://fonts.gstatic.com;
+        img-src 'self' ${baseApiUrl} https://api.mapbox.com blob: data:;
+        connect-src 'self' ${baseApiUrl} https://*.googleapis.com https://*.mapbox.com https://*.bedr.dev data:;
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+        frame-ancestors 'none';
+        block-all-mixed-content;
+        upgrade-insecure-requests;
+    `
+
+	const requestHeaders = new Headers(request.headers)
+	requestHeaders.set('x-nonce', nonce)
+	requestHeaders.set(
+		'Content-Security-Policy',
+		// Replace newline characters and spaces
+		cspHeader.replace(/\s{2,}/g, ' ').trim(),
+	)
+
+	return NextResponse.next({
+		request: {
+			headers: requestHeaders,
+		},
+	})
+}
