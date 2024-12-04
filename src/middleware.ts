@@ -89,17 +89,16 @@ export const config = {
 }
 
 export function middleware(request: NextRequest) {
+	console.log('middleware called')
 	const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
-	const baseApiUrl = process.env.API_URL?.split('/api')
-	const disasterApiUrl = process.env.API_URL_DISASTER?.split('/api')
-	const tileApiUrl = process.env.API_URL_TILE?.split('/api')
+	const baseApiUrl = process.env.API_URL
 	const cspHeader = `
         default-src 'self' ${baseApiUrl};
         script-src 'self' 'nonce-${nonce}' 'unsafe-eval' 'strict-dynamic';
         style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
         font-src 'self' https://fonts.gstatic.com;
-        img-src 'self' ${baseApiUrl} https://api.maplibre.com blob: data:;
-        connect-src 'self' ${baseApiUrl} https://*.googleapis.com https://*.maplibre.com https://*.thaicom.io data:;
+        img-src 'self' ${baseApiUrl} https://api.maplibre.com https://*.cloudfront.net blob: data:;
+        connect-src 'self' ${baseApiUrl} https://*.googleapis.com https://*.maplibre.com https://*.thaicom.io https://basemaps.cartocdn.com https://*.basemaps.cartocdn.com/ https://*.cloudfront.net data:;
         object-src 'none';
         base-uri 'self';
         form-action 'self';
@@ -108,17 +107,19 @@ export function middleware(request: NextRequest) {
         upgrade-insecure-requests;
     `
 
+	const contentSecurityPolicyHeaderValue = cspHeader.replace(/\s{2,}/g, ' ').trim()
+
 	const requestHeaders = new Headers(request.headers)
 	requestHeaders.set('x-nonce', nonce)
-	requestHeaders.set(
-		'Content-Security-Policy',
-		// Replace newline characters and spaces
-		cspHeader.replace(/\s{2,}/g, ' ').trim(),
-	)
 
-	return NextResponse.next({
+	requestHeaders.set('Content-Security-Policy', contentSecurityPolicyHeaderValue)
+
+	const response = NextResponse.next({
 		request: {
 			headers: requestHeaders,
 		},
 	})
+	response.headers.set('Content-Security-Policy', cspHeader.replace(/\s{2,}/g, ' ').trim())
+
+	return response
 }
