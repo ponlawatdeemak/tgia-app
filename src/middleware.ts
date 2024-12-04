@@ -91,13 +91,15 @@ export const config = {
 export function middleware(request: NextRequest) {
 	const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
 	const baseApiUrl = process.env.API_URL?.split('/api')
+	const disasterApiUrl = process.env.API_URL_DISASTER?.split('/api')
+	const tileApiUrl = process.env.API_URL_TILE?.split('/api')
 	const cspHeader = `
         default-src 'self' ${baseApiUrl};
         script-src 'self' 'nonce-${nonce}' 'unsafe-eval' 'strict-dynamic';
         style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
         font-src 'self' https://fonts.gstatic.com;
         img-src 'self' ${baseApiUrl} https://api.mapbox.com blob: data:;
-        connect-src 'self' ${baseApiUrl} https://*.googleapis.com https://*.mapbox.com https://*.bedr.dev data:;
+        connect-src 'self' ${baseApiUrl} https://*.googleapis.com https://*.mapbox.com https://*.thaicom.io data:;
         object-src 'none';
         base-uri 'self';
         form-action 'self';
