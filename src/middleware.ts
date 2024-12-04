@@ -98,8 +98,8 @@ export function middleware(request: NextRequest) {
         script-src 'self' 'nonce-${nonce}' 'unsafe-eval' 'strict-dynamic';
         style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
         font-src 'self' https://fonts.gstatic.com;
-        img-src 'self' ${baseApiUrl} https://api.mapbox.com blob: data:;
-        connect-src 'self' ${baseApiUrl} https://*.googleapis.com https://*.mapbox.com https://*.thaicom.io data:;
+        img-src 'self' ${baseApiUrl} https://api.maplibre.com blob: data:;
+        connect-src 'self' ${baseApiUrl} https://*.googleapis.com https://*.maplibre.com https://*.thaicom.io data:;
         object-src 'none';
         base-uri 'self';
         form-action 'self';
