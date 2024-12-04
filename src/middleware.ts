@@ -1,4 +1,5 @@
 import withAuth, { NextRequestWithAuth } from 'next-auth/middleware'
+import { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import { AppPath, authPathPrefix, reportPathSuffix, userManagementPathSuffix } from './config/app'
 import acceptLanguage from 'accept-language'
@@ -87,7 +88,7 @@ export const config = {
 	matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
 }
 
-export function middleware(request: NextRequestWithAuth) {
+export function middleware(request: NextRequest) {
 	const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
 	const baseApiUrl = process.env.API_URL?.split('/api')
 	const cspHeader = `
